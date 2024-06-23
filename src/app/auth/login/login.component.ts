@@ -38,20 +38,25 @@ export default class LoginComponent {
   getLogin() {
     if (this.loginForm.valid) {
       const dataLogin = this.loginForm.value;
+      if (dataLogin.usuario == '' || dataLogin.clave == '') {
+        this.srvMensajes.add({severity: 'error', summary: 'Error', detail: 'Usuario o contraseña no introducido'});
+        return;
+      }else{
+        this.srvAuth.login(dataLogin).subscribe((res: any) => {
+          if (res.retorno == 1) {
+            console.log(res.mensaje);
+            this.srvMensajes.add({severity: 'success', summary: 'Login', detail: res.mensaje});
+           // this.router.navigate(['home']);
+          } else {
+            console.log(res.mensaje);
+            this.srvMensajes.add({severity: 'error', summary: 'Error', detail: res.mensaje});
+          }
+        });
+      }
 
-      this.srvAuth.login(dataLogin).subscribe((res: any) => {
-        if (res.retorno == 1) {
-          console.log(res.mensaje);
-          this.srvMensajes.add({severity: 'success', summary: 'Login', detail: res.mensaje});
-         // this.router.navigate(['home']);
-        } else {
-          console.log(res.mensaje);
-        }
-      });
+     
     }
   }
 
-  show() {
-    this.srvMensajes.add({ severity: 'success', summary: 'Success', detail: 'Message Content' });
-}
+ 
 }
