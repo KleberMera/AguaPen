@@ -6,8 +6,8 @@ import { Router } from '@angular/router';
 })
 export class GeneralService {
 
-  public URLAPI: string = 'https://klebermera.000webhostapp.com/api/moniwiseapi/';
-  // public URLAPI: string = 'http://127.0.0.1/moniwiseapi/';
+
+  public URLAPI: string = 'http://127.0.0.1/aguapenapi/';
     constructor(private router: Router, ) {}
     
     //funciones generales
