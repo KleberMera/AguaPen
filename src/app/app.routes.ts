@@ -10,4 +10,13 @@ export const routes: Routes = [
     redirectTo: 'auth',
     pathMatch: 'full',
   },
+  {
+    path: 'home',
+    loadChildren: () => import('./home/home.routes'),
+  },
+  {
+    path : '',
+    redirectTo: 'home',
+    pathMatch: 'full'
+  }
 ];
