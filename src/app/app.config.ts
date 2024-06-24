@@ -8,6 +8,8 @@ import { BrowserModule } from '@angular/platform-browser';
 export const appConfig: ApplicationConfig = {
   providers: [provideRouter(routes),
     provideAnimations(),
-    provideHttpClient()
+    provideHttpClient(),
+    BrowserModule,
+    BrowserAnimationsModule
   ]
 };

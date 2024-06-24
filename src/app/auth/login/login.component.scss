@@ -1,0 +1,79 @@
+// Variables
+$primary-color: #00bcd4;
+$primary-color-hover: #0097a7;
+$secondary-color: #4969de;
+$text-color: #fff;
+$background-color: #1e1e1e;
+$input-background-color: #2e2e2e;
+$box-shadow-color: rgba(0, 0, 0, 0.5);
+$font-family: Arial, sans-serif;
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin button-styles($color, $hover-color) {
+  background-color: $color;
+  color: $text-color;
+  border: none;
+  border-radius: 4px;
+  padding: 20px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: $hover-color;
+  }
+}
+
+// Global Styles
+body {
+  font-family: $font-family;
+  color: $text-color;
+  @include flex-center;
+  height: 100vh;
+}
+
+.login-container {
+  background-color: $background-color;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px $box-shadow-color;
+
+  text-align: center;
+
+  h2 {
+    color: $secondary-color;
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    text-align: left;
+    margin-bottom: 8px;
+    color: #b0bec5;
+  }
+
+  img {
+    max-width: 200px;
+    margin-bottom: 20px;
+  }
+
+  a {
+    color: $primary-color;
+    text-decoration: none;
+    display: block;
+    margin-top: 10px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  
+ 
+}
+

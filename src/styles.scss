@@ -1,0 +1,18 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeng/resources/primeng.css";
+@import "primeicons/primeicons.css";
+
+:root {
+    color-scheme: light dark;
+    --p-primary-color: #00bcd4;
+    --p-secondary-color: #4969de;
+    --p-text-color: #fff;
+    --p-background-color: #1e1e1e;
+    --p-input-background-color: #2e2e2e;
+    --p-error-color: #e57373;
+    --p-box-shadow-color: rgba(0, 0, 0, 0.5);
+    --p-font-family: Arial, sans-serif;
+
+}

@@ -6,7 +6,7 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [RouterLink],
   templateUrl: './forgot.component.html',
-  styleUrl: './forgot.component.css'
+  styleUrl: './forgot.component.scss'
 })
 export default class ForgotComponent {
 
