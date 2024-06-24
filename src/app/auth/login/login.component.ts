@@ -52,14 +52,7 @@ export default class LoginComponent {
       this.loading = false;
     }, 2000);
 
-    if (this.loginForm.invalid) {
-      this.srvMensajes.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Usuario o clave no introducido',
-      });
-      return;
-    }
+    
 
     if (this.loginForm.valid) {
       const dataLogin = this.loginForm.value;
@@ -81,6 +74,12 @@ export default class LoginComponent {
             detail: res.mensaje,
           });
         }
+      });
+    }else{
+      this.srvMensajes.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Usuario o clave no introducido',
       });
     }
   }

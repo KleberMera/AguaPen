@@ -26,23 +26,28 @@
           required
           feedback="false"
         />
+        <p-divider />
       </div>
-      <p-divider />
-      <p-button
-        label="Ingresar"
-        type="submit"
-        icon="pi pi-sign-in"
-        [loading]="loading"
-      />
-
-      <p-button
-        routerLink="register"
-        label="Registrar"
-        type="button"
-        icon="pi pi-user-plus"
-      />
-      <a routerLink="forgot">Olvidé mi contraseña</a>
+      <div class="card flex justify-content-center gap-2">
+        <p-button
+          label="Ingresar"
+          type="submit"
+          icon="pi pi-sign-in"
+          [loading]="loading"
+        />
+        &nbsp;
+        <p-button
+          routerLink="register"
+          label="Registrar"
+          type="button"
+          icon="pi pi-user-plus"
+        />
+        <a routerLink="forgot">Olvidé mi contraseña</a>
+      </div>
     </form>
   </div>
 </body>
-<p-toast [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }" />
+
+<p-toast
+  [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
+/>
