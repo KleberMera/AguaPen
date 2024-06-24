@@ -7,7 +7,7 @@ export const routes : Routes = [
    },
    { 
       path: 'productos',
-      loadComponent: () => import('./dashboard/productos/productos.component')
+      loadComponent: () => import('./productos/productos.component')
    }
 ]
 
