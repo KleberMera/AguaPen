@@ -1,0 +1,43 @@
+{
+    "model": [
+      {
+        "label": "Authentication",
+        "items": [
+          {
+            "label": "Ingresar",
+            "icon": "pi pi-fw pi-sign-in",
+            "type": "submit",
+            "styleClass": "p-button-primary",
+            "routerLink": ["/login"]
+          },
+          {
+            "label": "Registrar",
+            "icon": "pi pi-fw pi-user-plus",
+            "type": "button",
+            "styleClass": "p-button-secondary",
+            "routerLink": ["/register"]
+          }
+        ]
+      },
+      {
+        "label": "Navigation",
+        "items": [
+          {
+            "label": "Productos",
+            "icon": "pi pi-fw pi-list",
+            "type": "button",
+            "styleClass": "p-button-success",
+            "routerLink": ["/productos"]
+          },
+          {
+            "label": "Personal",
+            "icon": "pi pi-fw pi-users",
+            "type": "button",
+            "styleClass": "p-button-info",
+            "routerLink": ["/staff"]
+          }
+        ]
+      }
+    ]
+  }
+  

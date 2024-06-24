@@ -1,10 +1,11 @@
-<p-sidebar [(visible)]="sidebarVisible" styleClass="w-30rem">
-    <ng-template pTemplate="header">
-        <span class="font-semibold text-xl">Menu</span>
-    </ng-template>
-    <ng-container>
-        
-    </ng-container>
-    
-</p-sidebar>
-<p-button (click)="sidebarVisible = true" icon="pi pi-bars" />
+<ng-template pTemplate="header">
+  <span class="font-semibold text-xl">Menu</span>
+</ng-template>
+
+<ng-container>
+  <p-panelMenu
+    [model]="menuItems"
+    [style]="{ width: '300px' }"
+    [multiple]="true"
+  ></p-panelMenu>
+</ng-container>
