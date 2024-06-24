@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 
 import { TableModule } from 'primeng/table';
-import { ProductosService } from '../../servicios/productos.service';
+import { ProductosService } from '../servicios/productos.service';
 @Component({
   selector: 'app-productos',
   standalone: true,

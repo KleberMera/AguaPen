@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
-import { MenuComponent } from '../components/menu/menu.component';
-import { HeaderComponent } from '../components/header/header.component';
+import { MenuComponent } from '../components/header/menu/menu.component';
+import HeaderComponent from '../components/header/header.component';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,

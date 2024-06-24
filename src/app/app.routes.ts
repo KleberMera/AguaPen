@@ -18,5 +18,9 @@ export const routes: Routes = [
     path : '',
     redirectTo: 'home',
     pathMatch: 'full'
+  },
+  {
+    path: 'productos',
+    loadChildren: () => import('./productos/productos.component'),
   }
 ];

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuComponent } from '../menu/menu.component';
+import { MenuComponent } from './menu/menu.component';
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
 import { SplitButtonModule } from 'primeng/splitbutton';
@@ -12,7 +12,7 @@ import { SidebarModule } from 'primeng/sidebar';
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
-export class HeaderComponent implements OnInit {
+export default class HeaderComponent implements OnInit {
   menuItems: any[] = [];
   showMenu: boolean = false;
 
@@ -39,12 +39,12 @@ export class HeaderComponent implements OnInit {
           {
             label: 'Productos',
             icon: 'pi pi-fw pi-list',
-            routerLink: ['/productos']
+            routerLink: ['productos']
           },
           {
             label: 'Personal',
             icon: 'pi pi-fw pi-users',
-            routerLink: ['/staff']
+            routerLink: ['staff']
           }
         ]
       }

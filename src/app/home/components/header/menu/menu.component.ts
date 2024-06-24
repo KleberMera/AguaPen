@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { ScrollerModule } from 'primeng/scroller';
-import { MenuService } from '../../../servicios/menu.service';
+import { MenuService } from '../../../../servicios/menu.service';
 import { RouterLink } from '@angular/router'
 import { PanelMenuModule } from 'primeng/panelmenu';;
 @Component({
