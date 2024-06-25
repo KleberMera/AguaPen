@@ -6,21 +6,20 @@ export const routes: Routes = [
     loadChildren: () => import('./auth/auth.routes'),
   },
   {
+    path: 'pages',
+    loadChildren: () => import('./pages/pages.routes'),
+  },
+  {
     path: '',
     redirectTo: 'auth',
     pathMatch: 'full',
   },
   {
-    path: 'home',
-    loadChildren: () => import('./home/home.routes'),
-  },
-  {
-    path : '',
-    redirectTo: 'home',
-    pathMatch: 'full'
-  },
-  {
-    path: 'productos',
-    loadChildren: () => import('./productos/productos.component'),
+    path: '',
+    redirectTo: 'pages',
+    pathMatch: 'full',
   }
+  
+
+  
 ];

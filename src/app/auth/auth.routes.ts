@@ -10,8 +10,8 @@ export const routes : Routes = [
         loadComponent: () => import('./register/register.component')
     },
     {
-        path: 'forgot',
-        loadComponent: () => import('./forgot/forgot.component')
+        path: 'forgot-password',
+        loadComponent: () => import('./forgot-password/forgot-password.component')
     }
 ]
 

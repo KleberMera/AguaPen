@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GeneralService {
   constructor(private router: Router) {}
+
+
 
   //funciones generales
   irA(url: string) {

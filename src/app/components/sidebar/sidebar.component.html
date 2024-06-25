@@ -1,0 +1,12 @@
+<div class="card flex justify-content-center">
+  <p-sidebar [(visible)]="sidebarVisible">
+    <ng-template pTemplate="header">
+      <div class="flex align-items-center gap-2">
+        <p-avatar image="assets/iconapp.webp" shape="circle" />
+        <span class="font-bold"> Amy Elsner </span>
+      </div>
+    </ng-template>
+        <p-panelMenu [model]="items" [style]="{'width':'300px'}" [multiple]="true" />
+    
+  </p-sidebar>
+</div>

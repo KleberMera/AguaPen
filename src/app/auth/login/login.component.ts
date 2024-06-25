@@ -1,31 +1,31 @@
-import { Component, Injectable, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../servicios/auth.service';
-import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { PasswordModule } from 'primeng/password';
-import { DividerModule } from 'primeng/divider';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { PasswordModule } from 'primeng/password';
+import { DividerModule } from 'primeng/divider';
+
+const PRIMEMG_MODULES = [
+  ToastModule,
+  ButtonModule,
+  InputTextModule,
+  PasswordModule,
+  DividerModule,
+];
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    RouterLink,
-    ReactiveFormsModule,
-    ToastModule,
-    ButtonModule,
-    InputTextModule,
-    PasswordModule,
-    DividerModule,
-  ],
+  imports: [PRIMEMG_MODULES, RouterLink, ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   providers: [MessageService],
@@ -52,8 +52,6 @@ export default class LoginComponent {
       this.loading = false;
     }, 2000);
 
-    
-
     if (this.loginForm.valid) {
       const dataLogin = this.loginForm.value;
 
@@ -75,7 +73,7 @@ export default class LoginComponent {
           });
         }
       });
-    }else{
+    } else {
       this.srvMensajes.add({
         severity: 'error',
         summary: 'Error',

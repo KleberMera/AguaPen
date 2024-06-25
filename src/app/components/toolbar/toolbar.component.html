@@ -1,0 +1,19 @@
+<p-toolbar>
+    <div class="p-toolbar-group-start">
+        <p-button icon="pi pi-bars" class="mr-2" (click)="toggleMenu()"/>
+        &nbsp;
+      
+    </div>
+    <div class="p-toolbar-group-center">
+        <!-----Aguapen-->
+    </div>
+    <div class="p-toolbar-group-end">
+        <p-button icon="pi pi-user" class="mr-2"/>
+        &nbsp;
+        <p-button icon="pi pi-sign-out" class="mr-2"/>
+    </div>
+</p-toolbar>
+
+@if (menuOpen) {
+    <app-sidebar></app-sidebar>
+}
