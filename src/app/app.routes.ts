@@ -6,7 +6,7 @@ export const routes: Routes = [
     loadChildren: () => import('./auth/auth.routes'),
   },
   {
-    path: 'pages',
+    path: 'home',
     loadChildren: () => import('./pages/pages.routes'),
   },
   {
