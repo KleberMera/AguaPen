@@ -73,7 +73,7 @@ export class SidebarComponent {
                       label: 'Products',
                       icon: 'pi pi-list',
                       badge: '6',
-                      routerLink: '/productos'
+                      routerLink: '/pages/productos'
                   }
               ]
           },

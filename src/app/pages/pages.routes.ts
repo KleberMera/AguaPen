@@ -4,11 +4,14 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () => import('./home/home.component'),
+    children: [
+      {
+        path: 'productos',
+        loadComponent: () => import('./productos/productos.component'),
+      }
+    ]
   },
-  {
-    path: 'productos',
-    loadComponent: () => import('./productos/productos.component'),
-  }
+
 ];
 
 export default routes;
