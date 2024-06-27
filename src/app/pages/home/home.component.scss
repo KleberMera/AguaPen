@@ -1,36 +1,24 @@
-/* home.component.scss */
-.card {
-  width: 100%;
-}
-
-.responsive-splitter {
+.layout {
+  display: flex;
+  flex-direction: column;
   height: 100vh;
-}
 
-@media (max-width: 1200px) {
-  .responsive-splitter p-splitter {
-    flex-direction: column;
-  }
+  .main-content {
+    display: flex;
+    flex: 1;
+    transition: margin-left 0.3s ease;
 
-  .responsive-splitter p-splitter .ui-splitter-panel {
-    width: 100%;
-  }
+    &.sidebar-open {
+      margin-left: 250px; /* Ajusta según el ancho de tu sidebar */
+    }
 
-  .responsive-splitter .ui-splitter-horizontal > .ui-splitter-panel {
-    width: 100%;
-  }
-}
+    &.sidebar-closed {
+      margin-left: 0;
+    }
 
-@media (max-width: 768px) {
-  .responsive-splitter p-splitter {
-    flex-direction: column;
-  }
-
-  .responsive-splitter p-splitter .ui-splitter-panel {
-    width: 100%;
-  }
-
-  .responsive-splitter .ui-splitter-horizontal > .ui-splitter-panel {
-    width: 100%;
+    .content {
+      flex: 1;
+      padding: 1rem; /* Ajusta según tus necesidades */
+    }
   }
 }

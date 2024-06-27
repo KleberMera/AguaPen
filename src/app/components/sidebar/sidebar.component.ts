@@ -43,6 +43,8 @@ export class SidebarComponent {
       this.visible = visible;
       this.sidebarVisibilityChange.emit(this.visible);
     });
+  
+
     this.items = [
       {
         label: 'Mail',

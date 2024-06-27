@@ -1,11 +1,38 @@
-$text-color: #000000;
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 
-.p-input-icon-left {
-  color: $text-color;
-  font-size-adjust: initial;
-}
-
-img {
-    max-width: 225px;
-   
+  app-toolbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000; /* Ajusta según tus necesidades */
   }
+
+  .main-content {
+    display: flex;
+    flex: 1;
+    margin-top: 50px; /* Ajusta según la altura del toolbar */
+    transition: margin-left 0.3s ease;
+
+    app-sidebar {
+      position: fixed;
+      top: 50px; /* Ajusta según la altura del toolbar */
+      left: 0;
+      z-index: 999; /* Ajusta según tus necesidades */
+      height: calc(100vh - 50px); /* Ajusta según la altura del toolbar */
+    }
+
+    .content {
+      flex: 1;
+      padding: 1rem; /* Ajusta según tus necesidades */
+      margin-left: 250px; /* Ajusta según el ancho del sidebar */
+      transition: margin-left 0.3s ease;
+    }
+
+    &.sidebar-closed .content {
+      margin-left: 0;
+    }
+  }
+}

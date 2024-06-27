@@ -1,7 +1,9 @@
-<div [ngClass]="{'sidebar-open': sidebarVisible, 'sidebar-closed': !sidebarVisible}">
+<div class="layout">
   <app-toolbar (sidebarVisibilityChange)="onSidebarVisibilityChange($event)"></app-toolbar>
-  <app-sidebar (sidebarVisibilityChange)="onSidebarVisibilityChange($event)"></app-sidebar>
-  <div class="content">
-    <router-outlet></router-outlet>
+  <div class="main-content" [ngClass]="{'sidebar-open': sidebarVisible, 'sidebar-closed': !sidebarVisible}">
+    <app-sidebar (sidebarVisibilityChange)="onSidebarVisibilityChange($event)"></app-sidebar>
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
   </div>
 </div>

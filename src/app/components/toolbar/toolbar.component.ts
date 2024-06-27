@@ -27,7 +27,6 @@ const PRIMEMG_MODULES = [
 export class ToolbarComponent {
   items: MenuItem[] | undefined;
   @Output() sidebarVisibilityChange = new EventEmitter<boolean>();
-
   constructor(private sidebarService: SidebarService) {}
 
   menuOpen = false;
