@@ -1,0 +1,12 @@
+/* sidebar.component.scss */
+.sidebar-open .content {
+  margin-left: 300px; /* Ajusta este valor según el ancho de tu sidebar */
+  transition: margin-left 0.3s;
+}
+
+.sidebar-closed .content {
+  margin-left: 0;
+  transition: margin-left 0.3s;
+}
+
+

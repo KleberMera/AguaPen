@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ButtonModule } from 'primeng/button';
@@ -8,6 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { AvatarModule } from 'primeng/avatar';
 import { SidebarModule } from 'primeng/sidebar';
 import { SidebarComponent } from '../sidebar/sidebar.component';
+import { SidebarService } from '../../services/sidebar.service';
 const PRIMEMG_MODULES = [
   ToolbarModule,
   ButtonModule,
@@ -25,6 +26,9 @@ const PRIMEMG_MODULES = [
 })
 export class ToolbarComponent {
   items: MenuItem[] | undefined;
+  @Output() sidebarVisibilityChange = new EventEmitter<boolean>();
+
+  constructor(private sidebarService: SidebarService) {}
 
   menuOpen = false;
 
@@ -41,7 +45,8 @@ export class ToolbarComponent {
     ];
   }
 
-  toggleMenu() {
-    this.menuOpen = !this.menuOpen;
+  toggleSidebar() {
+    console.log('Sidebar toggle button clicked');
+    this.sidebarService.toggleSidebar();
   }
 }

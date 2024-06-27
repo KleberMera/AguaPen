@@ -1,19 +1,18 @@
-<p-toolbar>
-    <div class="p-toolbar-group-start">
-        <p-button icon="pi pi-bars" class="mr-2" (click)="toggleMenu()"/>
-        &nbsp;
-      
-    </div>
-    <div class="p-toolbar-group-center">
-        <!-----Aguapen-->
-    </div>
-    <div class="p-toolbar-group-end">
-        <p-button icon="pi pi-user" class="mr-2"/>
-        &nbsp;
-        <p-button icon="pi pi-sign-out" class="mr-2"/>
-    </div>
-</p-toolbar>
-
-@if (menuOpen) {
-    <app-sidebar></app-sidebar>
-}
+<div class="card">
+    <p-toolbar>
+      <div class="p-toolbar-group-start">
+        <p-button icon="pi pi-bars" class="mr-2" (click)="toggleSidebar()"></p-button>
+        <p-button icon="pi pi-print" class="mr-2"></p-button>
+        <p-button icon="pi pi-upload"></p-button>
+      </div>
+      <div class="p-toolbar-group-center">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input pInputText placeholder="Search" />
+        </span>
+      </div>
+      <div class="p-toolbar-group-end">
+        <p-splitButton label="Save" icon="pi pi-check" [model]="items"></p-splitButton>
+      </div>
+    </p-toolbar>
+</div>

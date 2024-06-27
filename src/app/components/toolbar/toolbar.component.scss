@@ -1,3 +1,11 @@
-spam{
-    color: red;
+$text-color: #000000;
+
+.p-input-icon-left {
+  color: $text-color;
+  font-size-adjust: initial;
 }
+
+img {
+    max-width: 225px;
+   
+  }

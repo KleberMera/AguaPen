@@ -1,0 +1,36 @@
+/* home.component.scss */
+.card {
+  width: 100%;
+}
+
+.responsive-splitter {
+  height: 100vh;
+}
+
+@media (max-width: 1200px) {
+  .responsive-splitter p-splitter {
+    flex-direction: column;
+  }
+
+  .responsive-splitter p-splitter .ui-splitter-panel {
+    width: 100%;
+  }
+
+  .responsive-splitter .ui-splitter-horizontal > .ui-splitter-panel {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .responsive-splitter p-splitter {
+    flex-direction: column;
+  }
+
+  .responsive-splitter p-splitter .ui-splitter-panel {
+    width: 100%;
+  }
+
+  .responsive-splitter .ui-splitter-horizontal > .ui-splitter-panel {
+    width: 100%;
+  }
+}

@@ -1,48 +1,19 @@
-import { Component, EventEmitter, OnInit, Output, computed, inject } from '@angular/core';
-import { SidebarModule } from 'primeng/sidebar';
-import { ButtonModule } from 'primeng/button';
-import { RippleModule } from 'primeng/ripple';
-import { AvatarModule } from 'primeng/avatar';
-import { StyleClassModule } from 'primeng/styleclass';
+import { Component, OnInit } from '@angular/core';
 import { PanelMenuModule } from 'primeng/panelmenu';
-import { BadgeModule } from 'primeng/badge';
 import { MenuItem } from 'primeng/api';
-import { SidebarService } from '../../services/sidebar.service';
-import { CommonModule } from '@angular/common';
 
-const PRIMEMG_MODULES = [
-  SidebarModule,
-  ButtonModule,
-  RippleModule,
-  AvatarModule,
-  StyleClassModule,
-  PanelMenuModule,
-  BadgeModule,
-];
 @Component({
-  selector: 'app-sidebar',
+  selector: 'app-menu',
   standalone: true,
-  imports: [PRIMEMG_MODULES, CommonModule],
-  templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.scss',
+  imports: [PanelMenuModule],
+  templateUrl: './menu.component.html',
+  styleUrl: './menu.component.scss'
 })
-export class SidebarComponent {
-  sidebarVisible: boolean = true;
-
+export class MenuComponent implements OnInit {
   items: MenuItem[] = [];
 
-  visible: boolean = false;
 
-  @Output() sidebarVisibilityChange = new EventEmitter<boolean>();
-
-  constructor(private sidebarService: SidebarService) {}
-
-  ngOnInit() {
-    this.sidebarService.sidebarVisibility$.subscribe((visible) => {
-      console.log('Sidebar visibility changed to', visible);
-      this.visible = visible;
-      this.sidebarVisibilityChange.emit(this.visible);
-    });
+  ngOnInit(): void {
     this.items = [
       {
         label: 'Mail',
@@ -108,9 +79,7 @@ export class SidebarComponent {
       },
     ];
   }
-
-  handleSidebarHide() {
-    console.log('Sidebar hidden');
-    this.sidebarService.toggleSidebar();
   }
-}
+
+
+

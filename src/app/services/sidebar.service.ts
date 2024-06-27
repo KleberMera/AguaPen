@@ -5,16 +5,12 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class SidebarService {
-
-  constructor() { }
-
-  private sidebarVisibility = signal<boolean>(false);
-
-  get sidebarVisibility$() {
-    return this.sidebarVisibility.asReadonly();
-  }
+  private sidebarVisibility = new BehaviorSubject<boolean>(false);
+  sidebarVisibility$ = this.sidebarVisibility.asObservable();
 
   toggleSidebar() {
-    this.sidebarVisibility.update(value => !value);
+    const newValue = !this.sidebarVisibility.value;
+    console.log('Toggling sidebar visibility to', newValue);
+    this.sidebarVisibility.next(newValue);
   }
 }

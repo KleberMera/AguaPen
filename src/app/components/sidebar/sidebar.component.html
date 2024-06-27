@@ -1,12 +1,18 @@
-<div class="card flex justify-content-center">
-  <p-sidebar [(visible)]="sidebarVisible">
-    <ng-template pTemplate="header">
-      <div class="flex align-items-center gap-2">
-        <p-avatar image="assets/iconapp.webp" shape="circle" />
-        <span class="font-bold"> Amy Elsner </span>
-      </div>
-    </ng-template>
-        <p-panelMenu [model]="items" [style]="{'width':'300px'}" [multiple]="true" />
-    
-  </p-sidebar>
-</div>
+<div class="card">
+    <p-sidebar [(visible)]="visible" (onHide)="handleSidebarHide()" [style]="{'width':'250px'}">
+      <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-2">
+          <p-avatar 
+            image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" 
+            shape="circle"></p-avatar>
+          <span class="font-bold">
+            Amy Elsner
+          </span>
+        </div>
+      </ng-template>
+      <p>
+        <p-panelMenu [model]="items" [style]="{'width':'200px'}" [multiple]="true" />
+      </p>
+    </p-sidebar>
+  </div>
+  
