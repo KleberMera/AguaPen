@@ -3,10 +3,19 @@
   flex-direction: column;
   height: 100vh;
 
+  app-sidebar {
+   
+    top: 50px; /* Ajusta según la altura del toolbar */
+    left: 0;
+    z-index: 999; /* Ajusta según tus necesidades */
+    height: calc(100vh - 50px); /* Ajusta según la altura del toolbar */
+  }
+
   .main-content {
-    display: flex;
+   
     flex: 1;
     transition: margin-left 0.3s ease;
+
 
     &.sidebar-open {
       margin-left: 250px; /* Ajusta según el ancho de tu sidebar */
@@ -19,6 +28,9 @@
     .content {
       flex: 1;
       padding: 1rem; /* Ajusta según tus necesidades */
+   
+      transition: margin-left 0.3s ease;
+
     }
   }
 }
