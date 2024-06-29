@@ -5,7 +5,7 @@
       <span class="font-bold">Productos</span>
     </div>
   </ng-template>
-  <p-card>
+
     <div class="p-inputgroup p-d-flex p-jc-between p-ai-center p-mb-3">
       <div class="p-inputgroup p-d-flex p-ai-center">
         <span class="p-inputgroup-addon">
@@ -17,7 +17,7 @@
           placeholder="Buscar por nombre"
           [(ngModel)]="searchTerm"
         />
-        &nbsp; &nbsp;
+        &nbsp; 
         <button
           pButton
           label="Nuevo"
@@ -25,6 +25,7 @@
           class="p-button-success mt-2"
           (click)="addProduct()"
         ></button>
+        
       </div>
     </div>
 
@@ -39,6 +40,7 @@
         ></p-progressSpinner>
       </div>
     } @else {
+      &nbsp;
       <p-table [value]="filteredProducts()" responsiveLayout="scroll">
         <ng-template pTemplate="header">
           <tr>
@@ -73,5 +75,5 @@
         </ng-template>
       </p-table>
     }
-  </p-card>
+ 
 </p-fieldset>
