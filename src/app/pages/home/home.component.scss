@@ -1,56 +1,47 @@
 .layout {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-
-  app-toolbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000; /* Ajusta según tus necesidades */
-  }
-
   .main-content {
+    margin-top: 60px; // Ajusta según la altura del toolbar
     display: flex;
-    flex: 1;
-    margin-top: 60px; /* Ajusta según la altura del toolbar */
-    transition: margin-left 0.3s ease;
 
     &.menu-open .content {
-      margin-left: 250px; /* Ajusta según el ancho del menú */
+      margin-left: 250px; // Ajusta según el ancho del menú
+      flex: 1;
     }
 
     &.menu-closed .content {
       margin-left: 0;
+      flex: 1;
     }
   }
 
   app-menu {
+    height: 100vh; // Asegúrate de que el menú tenga un fondo que cubra toda la altura de la pantalla
+    background-color: #1e1e1e; // Asegúrate de que el menú tenga un fondo
+    top: 77px; // Posición justo debajo del toolbar
    
-    height: calc(100vh - 60px); /* Altura del menú menos la altura del toolbar */
     position: fixed;
-    top: 80px; /* Posición justo debajo del toolbar */
-  
+  }
+
+  app-toolbar {
+    
+    
    
+    z-index: 1000; /* Ajusta según tus necesidades */
   }
 
   .content {
-    flex: 1;
-    padding: 20px; /* Ajusta según tus necesidades */
+    padding: 30px; // Ajusta según tus necesidades
     transition: margin-left 0.3s ease;
+    overflow: auto; // Asegúrate de que el contenido sea desplazable
     height: calc(100vh - 60px); /* Altura del contenido menos la altura del toolbar */
-
-   
+    position: relative;
   }
 
   @media (max-width: 768px) {
     .main-content {
       flex-direction: column;
 
-      &.menu-open .content {
-        margin-left: 0;
-      }
-
+      &.menu-open .content,
       &.menu-closed .content {
         margin-left: 0;
       }
@@ -59,8 +50,8 @@
     app-menu {
       width: 100%;
       height: auto;
-      position: relative;
       top: 0;
+      position: relative;
     }
 
     .content {
