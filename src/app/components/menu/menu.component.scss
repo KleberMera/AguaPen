@@ -1,0 +1,10 @@
+/* menu.component.scss */
+.menu-open {
+  right: 0;
+  transition: right 0.3s;
+}
+
+.menu-closed {
+  right: -250px; /* Ajusta según el ancho del menú */
+  transition: right 0.3s;
+}

@@ -3,34 +3,75 @@
   flex-direction: column;
   height: 100vh;
 
-  app-sidebar {
-   
-    top: 50px; /* Ajusta según la altura del toolbar */
-    left: 0;
-    z-index: 999; /* Ajusta según tus necesidades */
-    height: calc(100vh - 50px); /* Ajusta según la altura del toolbar */
+  app-toolbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000; /* Ajusta según tus necesidades */
   }
 
   .main-content {
-   
+    display: flex;
     flex: 1;
+    margin-top: 60px; /* Ajusta según la altura del toolbar */
     transition: margin-left 0.3s ease;
 
-
-    &.sidebar-open {
-      margin-left: 250px; /* Ajusta según el ancho de tu sidebar */
+    &.menu-open .content {
+      margin-left: 250px; /* Ajusta según el ancho del menú */
     }
 
-    &.sidebar-closed {
+    &.menu-closed .content {
       margin-left: 0;
+    }
+  }
+
+  app-menu {
+   
+    height: calc(100vh - 60px); /* Altura del menú menos la altura del toolbar */
+    position: fixed;
+    top: 80px; /* Posición justo debajo del toolbar */
+  
+   
+  }
+
+  .content {
+    flex: 1;
+    padding: 20px; /* Ajusta según tus necesidades */
+    transition: margin-left 0.3s ease;
+    height: calc(100vh - 60px); /* Altura del contenido menos la altura del toolbar */
+
+   
+  }
+
+  @media (max-width: 768px) {
+    .main-content {
+      flex-direction: column;
+
+      &.menu-open .content {
+        margin-left: 0;
+      }
+
+      &.menu-closed .content {
+        margin-left: 0;
+      }
+    }
+
+    app-menu {
+      width: 100%;
+      height: auto;
+      position: relative;
+      top: 0;
     }
 
     .content {
-      flex: 1;
-      padding: 1rem; /* Ajusta según tus necesidades */
-   
-      transition: margin-left 0.3s ease;
+      margin-top: 20px;
+      height: auto;
+    }
+  }
 
+  @media (max-width: 480px) {
+    .content {
+      padding: 15px;
     }
   }
 }

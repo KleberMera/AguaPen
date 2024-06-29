@@ -7,6 +7,7 @@ import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import { CommonModule } from '@angular/common';
 import { SplitterModule } from 'primeng/splitter';
 import { MenuComponent } from '../../components/menu/menu.component';
+
 const PRIMEMG_MODULES = [SplitterModule];
 const Componentes = [
   ToolbarComponent,
@@ -23,13 +24,13 @@ const Componentes = [
   styleUrl: './home.component.scss',
 })
 export default class HomeComponent implements OnInit {
-  sidebarVisible: boolean = false;
+  menuVisible: boolean = true;
 
   constructor() {}
 
   ngOnInit() {}
 
-  onSidebarVisibilityChange(visible: boolean) {
-    this.sidebarVisible = visible;
+  onMenuVisibilityChange(visible: boolean) {
+    this.menuVisible = visible;
   }
 }

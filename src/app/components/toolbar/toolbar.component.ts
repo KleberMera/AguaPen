@@ -26,10 +26,8 @@ const PRIMEMG_MODULES = [
 })
 export class ToolbarComponent {
   items: MenuItem[] | undefined;
-  @Output() sidebarVisibilityChange = new EventEmitter<boolean>();
-  constructor(private sidebarService: SidebarService) {}
-
-  menuOpen = false;
+  @Output() menuVisibilityChange = new EventEmitter<boolean>();
+  menuVisible: boolean = true;
 
   ngOnInit() {
     this.items = [
@@ -44,8 +42,8 @@ export class ToolbarComponent {
     ];
   }
 
-  toggleSidebar() {
-    console.log('Sidebar toggle button clicked');
-    this.sidebarService.toggleSidebar();
+  toggleMenu() {
+    this.menuVisible = !this.menuVisible;
+    this.menuVisibilityChange.emit(this.menuVisible);
   }
 }
