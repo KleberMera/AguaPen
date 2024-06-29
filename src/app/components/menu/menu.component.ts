@@ -7,43 +7,52 @@ import { MenuModule } from 'primeng/menu';
   standalone: true,
   imports: [PanelMenuModule, MenuModule],
   templateUrl: './menu.component.html',
-  styleUrl: './menu.component.scss'
+  styleUrl: './menu.component.scss',
 })
 export class MenuComponent implements OnInit {
   items: MenuItem[] | undefined;
-    
-    ngOnInit() {
-        this.items = [
-            {
-                label: 'Listados',
-                items: [
-                    {
-                        label: 'Productos',
-                        icon: 'pi pi-shop',
-                        routerLink: '/home/productos'
-                    },
-                    {
-                        label: 'Trabajadores',
-                        icon: 'pi pi-users',
-                    }
-                ]
-            },
-            {
-                label: 'Registros',
-                items: [
-                    {
-                        label: 'Settings',
-                        icon: 'pi pi-cog'
-                    },
-                    {
-                        label: 'Logout',
-                        icon: 'pi pi-sign-out'
-                    }
-                ]
-            }
-        ];
-    }
+
+  ngOnInit() {
+    this.items = [
+      {
+        label: 'Home',
+        items: [
+          {
+            label: 'Dashboard',
+            icon: 'pi pi-home',
+            routerLink: '/home/dashboard',
+          },
+        ],
+      },
+      {
+        label: 'Listados',
+        items: [
+          {
+            label: 'Productos',
+            icon: 'pi pi-shop',
+            routerLink: '/home/productos',
+          },
+          {
+            label: 'Trabajadores',
+            icon: 'pi pi-users',
+          },
+        ],
+      },
+      {
+        label: 'Opciones',
+        items: [
+         
+          {
+            label: 'Registros',
+            icon: 'pi pi-table',
+          },
+          {
+            label: 'Reportes',
+            icon: 'pi pi-th-large',
+          },
+        
+        ],
+      },
+    ];
   }
-
-
-
+}
