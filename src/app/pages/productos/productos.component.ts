@@ -160,6 +160,8 @@ export default class ProductosComponent implements OnInit {
       message: '¿Está seguro de eliminar el producto?',
       header: 'Confirmación',
       icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Eliminar',
+      rejectLabel: 'Cancelar',
       accept: () => {
         this.srvReg.postDeleteProducts(product.id).subscribe((res: any) => {
           if (res.retorno == 1) {
