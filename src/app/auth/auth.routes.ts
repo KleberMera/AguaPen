@@ -6,10 +6,6 @@ export const routes : Routes = [
         loadComponent: () => import('./login/login.component')
     },
     {
-        path: 'register',
-        loadComponent: () => import('./register/register.component')
-    },
-    {
         path: 'forgot-password',
         loadComponent: () => import('./forgot-password/forgot-password.component')
     }

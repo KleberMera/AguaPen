@@ -63,6 +63,16 @@ export default class LoginComponent {
             summary: 'Login',
             detail: res.mensaje,
           });
+
+          const userLogin = {
+            nombres: res.nombres,
+            usuario_id: res.usuario_id,
+          };
+
+          console.log(userLogin);
+
+          localStorage.setItem('userLogin', JSON.stringify(userLogin));
+
           this.router.navigate(['home']);
         } else {
           console.log(res.mensaje);

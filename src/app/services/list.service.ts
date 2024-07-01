@@ -16,8 +16,9 @@ export class ListService {
 
   constructor() { }
 
+  //Listado de Productos
   getListProductos() {
-    let url = 'verProductos';
+    let url = 'viewProducts';
     return this.http.get<any>(this.environment + url);
   }
 }

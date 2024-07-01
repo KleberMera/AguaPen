@@ -8,8 +8,6 @@ import { BehaviorSubject } from 'rxjs';
 export class GeneralService {
   constructor(private router: Router) {}
 
-
-
   //funciones generales
   irA(url: string) {
     this.router.navigateByUrl(url);

@@ -41,7 +41,6 @@ export class MenuComponent implements OnInit {
       {
         label: 'Opciones',
         items: [
-         
           {
             label: 'Registros',
             icon: 'pi pi-table',
@@ -50,7 +49,6 @@ export class MenuComponent implements OnInit {
             label: 'Reportes',
             icon: 'pi pi-th-large',
           },
-        
         ],
       },
     ];

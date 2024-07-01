@@ -7,7 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 
 import { AvatarModule } from 'primeng/avatar';
 import { SidebarModule } from 'primeng/sidebar';
-import { SidebarComponent } from '../sidebar/sidebar.component';
+
 import { SidebarService } from '../../services/sidebar.service';
 const PRIMEMG_MODULES = [
   ToolbarModule,
@@ -20,30 +20,27 @@ const PRIMEMG_MODULES = [
 @Component({
   selector: 'app-toolbar',
   standalone: true,
-  imports: [PRIMEMG_MODULES, SidebarComponent],
+  imports: [PRIMEMG_MODULES],
   templateUrl: './toolbar.component.html',
   styleUrl: './toolbar.component.scss',
 })
 export class ToolbarComponent {
-  items: MenuItem[] | undefined;
+  
   @Output() menuVisibilityChange = new EventEmitter<boolean>();
   menuVisible: boolean = true;
 
   ngOnInit() {
-    this.items = [
-      {
-        label: 'Update',
-        icon: 'pi pi-refresh',
-      },
-      {
-        label: 'Delete',
-        icon: 'pi pi-times',
-      },
-    ];
+   
   }
 
   toggleMenu() {
     this.menuVisible = !this.menuVisible;
     this.menuVisibilityChange.emit(this.menuVisible);
+  }
+
+
+  logout() {
+    //Cerrar sesión
+    
   }
 }
