@@ -13,6 +13,7 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { formatDate } from '@angular/common';
+import { InputTextModule } from 'primeng/inputtext';
 
 const PRIMEMG_MODULES = [
   FieldsetModule,
@@ -23,6 +24,7 @@ const PRIMEMG_MODULES = [
   DialogModule,
   ToastModule,
   ConfirmDialogModule,
+  InputTextModule,
 ];
 
 @Component({

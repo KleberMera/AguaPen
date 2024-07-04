@@ -21,4 +21,10 @@ export class ListService {
     let url = 'viewProducts';
     return this.http.get<any>(this.environment + url);
   }
+
+  //Listado de Usuarios-Trabajadores
+  getListUsuarios() {
+    let url = 'viewUsuariosTrabajadores';
+    return this.http.get<any>(this.environment + url);
+  }
 }

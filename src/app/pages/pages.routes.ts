@@ -14,6 +14,14 @@ export const routes: Routes = [
         loadComponent: () => import('./productos/productos.component'),
       },
       {
+        path: 'usuarios-trabajadores',
+        loadComponent: () => import('./usuarios-trabajadores/usuarios-trabajadores.component'),
+      },
+      {
+        path: 'usuarios-roles',
+        loadComponent: () => import('./usuarios-roles/usuarios-roles.component'),
+      },
+      {
         path: '**',
         redirectTo: '/home/dashboard',
       }

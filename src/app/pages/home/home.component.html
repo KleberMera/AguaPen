@@ -1,19 +1,17 @@
-<div class="layout flex flex-column h-screen">
+<div class="layout flex flex-column h-screen" >
   <app-toolbar
-  
     class="fixed w-full z-1000"
     (menuVisibilityChange)="onMenuVisibilityChange($event)"
+
   ></app-toolbar>
 
   <div
     class="main-content flex flex-1 transition-transform duration-300"
+   
     [ngClass]="{ 'menu-open': menuVisible, 'menu-closed': !menuVisible }"
   >
-    <app-menu
-      *ngIf="menuVisible"
-      class="menu p-fixed"
-    ></app-menu>
-    <div class="content flex-1 p-3">
+    <app-menu *ngIf="menuVisible" class="menu p-fixed" ></app-menu>
+    <div class="content flex-1 p-4">
       <router-outlet></router-outlet>
     </div>
   </div>

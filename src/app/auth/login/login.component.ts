@@ -64,14 +64,10 @@ export default class LoginComponent {
             detail: res.mensaje,
           });
 
-          const userLogin = {
-            nombres: res.nombres,
-            usuario_id: res.usuario_id,
-          };
-
-          console.log(userLogin);
-
-          localStorage.setItem('userLogin', JSON.stringify(userLogin));
+            // Guardar datos en BehaviorSubject
+            this.srvAuth.setNombres(res.nombres);
+            this.srvAuth.setUsuarioId(res.usuario_id);
+   
 
           this.router.navigate(['home']);
         } else {

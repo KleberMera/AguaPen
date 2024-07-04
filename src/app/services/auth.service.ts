@@ -22,4 +22,36 @@ export class AuthService {
   }
 
 
+
+  private nombresSubject = new BehaviorSubject<string | null>(this.getStoredNombres());
+  private usuarioIdSubject = new BehaviorSubject<string | null>(this.getStoredUsuarioId());
+
+  nombres$ = this.nombresSubject.asObservable();
+  usuarioId$ = this.usuarioIdSubject.asObservable();
+
+  private getStoredNombres(): string | null {
+    return localStorage.getItem('nombres');
+  }
+
+  private getStoredUsuarioId(): string | null {
+    return localStorage.getItem('usuario_id');
+  }
+
+  setNombres(nombres: string) {
+    this.nombresSubject.next(nombres);
+    localStorage.setItem('nombres', nombres);
+  }
+
+  setUsuarioId(usuario_id: string) {
+    this.usuarioIdSubject.next(usuario_id);
+    localStorage.setItem('usuario_id', usuario_id);
+  }
+
+  clearAuthData() {
+    this.nombresSubject.next(null);
+    this.usuarioIdSubject.next(null);
+    localStorage.removeItem('nombres');
+    localStorage.removeItem('usuario_id');
+  }
+ 
 }

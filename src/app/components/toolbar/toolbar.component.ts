@@ -12,6 +12,7 @@ import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 const PRIMEMG_MODULES = [
   ToolbarModule,
   ButtonModule,
@@ -38,6 +39,7 @@ export class ToolbarComponent {
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
   private router = inject(Router);
+  private srvAuth = inject(AuthService);
 
   ngOnInit() {}
 
@@ -75,9 +77,7 @@ export class ToolbarComponent {
   }
 
   signOut() {
-    //Borrar Usuario logueado de localStorage
-    localStorage.removeItem('userLogin');
-
+    this.srvAuth.clearAuthData();
     this.router.navigate(['/auth']);
   }
 }
