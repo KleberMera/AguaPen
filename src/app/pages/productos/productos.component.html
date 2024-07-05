@@ -6,28 +6,27 @@
     </div>
   </ng-template>
 
-  <div
-    class="p-inputgroup p-d-flex p-jc-between p-ai-center p-mb-3 p-flex-wrap"
-  >
-    <div class="p-inputgroup p-flex-1 p-mr-2">
-      <span class="p-inputgroup-addon">
-        <i class="pi pi-search"></i>
-      </span>
-      <input
-        type="text"
-        pInputText
-        placeholder="Buscar por nombre"
-        s
-        [(ngModel)]="searchTerm"
-      />
-    </div>
-    <button
-      pButton
-      label="Nuevo"
-      icon="pi pi-plus"
-      class="p-button-success p-mt-2 p-mt-md-0"
-      (click)="openAddProductDialog()"
-    ></button>
+  <div class="card flex flex-wrap justify-content-center gap-3">
+    <p-iconField iconPosition="left">
+      <p-inputIcon styleClass="pi pi-search" />
+
+      <p-autoComplete 
+      [(ngModel)]="searchTerm" 
+      [suggestions]="filteredProductsSearch"
+      (completeMethod)="filterProductsSearch($event)"
+      field="nombre_producto"
+      placeholder="Buscar">
+    </p-autoComplete>
+    </p-iconField>
+    <p-iconField iconPosition="right">
+      <button
+        pButton
+        label="Nuevo"
+        icon="pi pi-plus"
+        class="p-button-success p-mt-2 p-mt-md-0"
+        (click)="openAddProductDialog()"
+      ></button>
+    </p-iconField>
   </div>
 
   @if (loading) {
@@ -42,11 +41,11 @@
   </div>
   } @else { &nbsp;
   <p-table
-    [value]="filteredProducts()"
-    [tableStyle]=""
+    [value]="filterProducts(searchTerm)"
+    [tableStyle]="{ 'min-width': '50rem' }"
     [paginator]="true"
-    [rows]="10"
-    [rowsPerPageOptions]="[5, 10, 20, 30, 40]"
+    [rows]="20"
+    [rowsPerPageOptions]="[20, 30, 40, 50]"
   >
     <ng-template pTemplate="header">
       <tr>
@@ -93,8 +92,8 @@
   [style]="{ width: '25rem' }"
 >
   <ng-template pTemplate="header">
-    <span class="font-semibold ">
-      {{ selectedProduct?.id === 0 ? 'Agregar Producto' : 'Editar Producto' }}
+    <span class="font-semibold">
+      {{ selectedProduct?.id === 0 ? "Agregar Producto" : "Editar Producto" }}
     </span>
   </ng-template>
   @if (selectedProduct) {
@@ -156,13 +155,10 @@
       class="p-button-primary"
       (click)="saveProduct()"
       [loading]="loadingSave"
-    >
-    </button>
+    ></button>
   </div>
   }
 </p-dialog>
-
-
 
 <p-toast
   [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
