@@ -7,7 +7,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
@@ -22,6 +21,7 @@ const PRIMEMG_MODULES = [
   PasswordModule,
   DividerModule,
 ];
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -64,11 +64,12 @@ export default class LoginComponent {
             detail: res.mensaje,
           });
 
-            // Guardar datos en BehaviorSubject
-            this.srvAuth.setNombres(res.nombres);
-            this.srvAuth.setUsuarioId(res.usuario_id);
-   
+          // Guardar datos en BehaviorSubject y localStorage
+          this.srvAuth.setNombres(res.nombres);
+          this.srvAuth.setUsuarioId(res.usuario_id);
+          this.srvAuth.setLoggedIn(true);
 
+          // Redirigir al usuario a la página de inicio
           this.router.navigate(['home']);
         } else {
           console.log(res.mensaje);

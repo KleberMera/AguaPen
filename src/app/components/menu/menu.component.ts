@@ -46,6 +46,7 @@ export class MenuComponent implements OnInit {
           {
             label: 'Registros',
             icon: 'pi pi-table',
+            routerLink: '/home/registros',
           },
           {
             label: 'Reportes',

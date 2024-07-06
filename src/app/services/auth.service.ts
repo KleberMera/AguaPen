@@ -10,7 +10,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class AuthService {
   private environment = environment.aguapenApi;
-
+  private loggedIn = new BehaviorSubject<boolean>(false);
   constructor(private http: HttpClient, private srvG: GeneralService) {}
 
   login(objLogin: any) {
@@ -53,5 +53,25 @@ export class AuthService {
     localStorage.removeItem('nombres');
     localStorage.removeItem('usuario_id');
   }
- 
+  isLoggedIn(): boolean {
+    return this.loggedIn.value;
+  }
+  setLoggedIn(value: boolean) {
+    this.loggedIn.next(value);
+  }
+
+
+  recuperarContraseña(objUsuario: any) {
+    let url = 'recuperarClave';
+    return this.http.post(
+      this.environment + url,
+      this.srvG.objectToFormData({
+        cedula:objUsuario.cedula,
+        nueva_clave:objUsuario.nueva_clave
+  })
+    );
+  
+  
+  }
+  
 }

@@ -22,6 +22,11 @@ export const routes: Routes = [
         loadComponent: () => import('./usuarios-roles/usuarios-roles.component'),
       },
       {
+        path: 'registros',
+        loadComponent: () => import('./registros/registros.component'),
+    
+      },
+      {
         path: '**',
         redirectTo: '/home/dashboard',
       }

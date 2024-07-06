@@ -1,1 +1,76 @@
-<p>registros works!</p>
+<p-fieldset legend="Registro y Detalles">
+    <div class="formgroup-inline">
+      <div class="field">
+        <label for="searchInput" class="p-sr-only">Buscar por Nombre o Cédula:</label>
+        <p-iconField iconPosition="left">
+          <p-inputIcon styleClass="pi pi-search" />
+          <input
+            id="searchInput"
+            type="text"
+            pInputText
+            placeholder="Buscar por Nombre o Cédula"
+            [(ngModel)]="searchQuery"
+          />
+        </p-iconField>
+      </div>
+      <div class="field">
+        <button
+          pButton
+          type="button"
+          label="Buscar"
+          (click)="searchUser()"
+        ></button>
+      </div>
+      <div class="field">
+        <label for="autocomplete" class="p-sr-only">Seleccionar Usuario:</label>
+        <p-iconField iconPosition="left">
+          <p-inputIcon styleClass="pi pi-user" />
+          <p-autoComplete
+            id="autocomplete"
+            [(ngModel)]="selectedUser"
+            [suggestions]="suggestions"
+            (completeMethod)="getSuggestions($event)"
+            (onSelect)="selectUser($event)"
+            field="tx_nombre"
+            placeholder="Seleccionar Usuario"
+          ></p-autoComplete>
+        </p-iconField>
+      </div>
+      <div class="field">
+        <label for="dropdown" class="p-sr-only">Seleccionar Usuario:</label>
+        <p-iconField iconPosition="left">
+          <p-inputIcon styleClass="pi pi-user" />
+          <p-dropdown
+            id="dropdown"
+            [options]="dropdownOptions"
+            [(ngModel)]="selectedUser"
+            (onChange)="selectUser($event.value)"
+            placeholder="Seleccionar Usuario"
+            optionLabel="tx_nombre"
+          ></p-dropdown>
+        </p-iconField>
+      </div>
+    </div>
+  
+    <p-table [value]="filteredUsers">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Nombre</th>
+          <th>Cédula</th>
+          <th>Acciones</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-user>
+        <tr>
+          <td>{{ user.tx_nombre }}</td>
+          <td>{{ user.tx_cedula }}</td>
+          <td>
+            <!-- Aquí puedes agregar acciones adicionales para cada usuario -->
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-fieldset>
+  
+  <p-toast [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"></p-toast>
+  

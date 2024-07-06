@@ -8,6 +8,10 @@ export const routes : Routes = [
     {
         path: 'forgot-password',
         loadComponent: () => import('./forgot-password/forgot-password.component')
+    },
+    {
+        path: 'login',
+        loadComponent: () => import('./login/login.component')
     }
 ]
 
