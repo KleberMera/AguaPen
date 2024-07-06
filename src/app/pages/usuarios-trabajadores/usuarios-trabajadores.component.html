@@ -20,7 +20,6 @@
           placeholder="Buscar por nombre o cédula"
           [(ngModel)]="searchTerm"
         />
-
       </p-iconField>
     </div>
 
@@ -31,6 +30,7 @@
           id="selectedArea"
           [options]="areaOptions"
           [(ngModel)]="selectedArea"
+          (onChange)="onAreaChange()"
           placeholder="Filtrar por área"
         ></p-dropdown>
         <button
@@ -47,7 +47,7 @@
       <p-iconField iconPosition="left">
         <p-dropdown
           id="selectedCargo"
-          [options]="cargoOptions"
+          [options]="filteredCargoOptions"
           [(ngModel)]="selectedCargo"
           placeholder="Filtrar por cargo"
         ></p-dropdown>
@@ -84,8 +84,8 @@
         <th>ID</th>
         <th>Nombre</th>
         <th>Cédula</th>
-        <th>Cargo</th>
         <th>Área</th>
+        <th>Cargo</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-user>
@@ -93,8 +93,8 @@
         <td>{{ user.id_usuario }}</td>
         <td>{{ user.tx_nombre }}</td>
         <td>{{ user.tx_cedula }}</td>
-        <td>{{ user.tx_cargo }}</td>
         <td>{{ user.tx_area }}</td>
+        <td>{{ user.tx_cargo }}</td>
       </tr>
     </ng-template>
   </p-table>

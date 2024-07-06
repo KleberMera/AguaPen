@@ -38,6 +38,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
 
   areaOptions: any[] = []; // Opciones para áreas
   cargoOptions: any[] = []; // Opciones para cargos
+  filteredCargoOptions: any[] = []; // Opciones de cargos filtradas
 
   private srvList = inject(ListService);
 
@@ -55,6 +56,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
         // Inicializa las opciones de filtro
         this.areaOptions = this.getUniqueOptions(res.data, 'tx_area');
         this.cargoOptions = this.getUniqueOptions(res.data, 'tx_cargo');
+        this.filteredCargoOptions = this.cargoOptions;
       },
       (error) => {
         console.error('Error al cargar usuarios:', error);
@@ -66,18 +68,21 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   filterUsers(query: string, area: string, cargo: string) {
     const lowerQuery = query.toLowerCase();
     return this.ListUsersWorkers.filter((user) => {
-      return (user.tx_nombre.toLowerCase().includes(lowerQuery) || user.tx_cedula.toLowerCase().includes(lowerQuery)) &&
+      return (
+        (user.tx_nombre.toLowerCase().includes(lowerQuery) ||
+          user.tx_cedula.toLowerCase().includes(lowerQuery)) &&
         (!area || user.tx_area === area) &&
-        (!cargo || user.tx_cargo === cargo);
+        (!cargo || user.tx_cargo === cargo)
+      );
     });
   }
 
   getUniqueOptions(data: any[], field: string) {
-    return [...new Set(data.map((item) => item[field]))].map((value) => ({
-      label: value,
-      value: value,
-    }));
+    return [...new Set(data.map((item) => item[field]))]
+      .map((value) => ({ label: value, value: value }))
+      .sort((a, b) => a.label.localeCompare(b.label)); // Ordenar alfabéticamente
   }
+  
 
   clearSearchTerm() {
     this.searchTerm = '';
@@ -85,9 +90,27 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
 
   clearSelectedArea() {
     this.selectedArea = '';
+    this.filteredCargoOptions = this.cargoOptions; // Restablece las opciones de cargo
   }
 
   clearSelectedCargo() {
     this.selectedCargo = '';
+  }
+
+  onAreaChange() {
+    if (this.selectedArea) {
+      this.filteredCargoOptions = this.ListUsersWorkers.filter(
+        (user) => user.tx_area === this.selectedArea
+      ).map((user) => ({
+        label: user.tx_cargo,
+        value: user.tx_cargo,
+      }));
+
+      // Eliminar duplicados
+      this.filteredCargoOptions = this.getUniqueOptions(this.filteredCargoOptions, 'label');
+    } else {
+      this.filteredCargoOptions = this.cargoOptions;
+    }
+    this.selectedCargo = ''; // Clear selected cargo when area changes
   }
 }
