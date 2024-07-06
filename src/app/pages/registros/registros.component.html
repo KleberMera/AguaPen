@@ -21,21 +21,7 @@
           (click)="searchUser()"
         ></button>
       </div>
-      <div class="field">
-        <label for="autocomplete" class="p-sr-only">Seleccionar Usuario:</label>
-        <p-iconField iconPosition="left">
-          <p-inputIcon styleClass="pi pi-user" />
-          <p-autoComplete
-            id="autocomplete"
-            [(ngModel)]="selectedUser"
-            [suggestions]="suggestions"
-            (completeMethod)="getSuggestions($event)"
-            (onSelect)="selectUser($event)"
-            field="tx_nombre"
-            placeholder="Seleccionar Usuario"
-          ></p-autoComplete>
-        </p-iconField>
-      </div>
+
       <div class="field">
         <label for="dropdown" class="p-sr-only">Seleccionar Usuario:</label>
         <p-iconField iconPosition="left">
