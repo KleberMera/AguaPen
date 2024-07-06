@@ -1,80 +1,107 @@
 <p-fieldset>
-    <ng-template pTemplate="header">
-      <div>
-        <i class="pi pi-users mr-2"></i>
-        <span class="font-bold">Usuarios Trabajadores</span>
-      </div>
-    </ng-template>
-  
-    <div class="card flex flex-wrap justify-content-center gap-3">
+  <ng-template pTemplate="header">
+    <div>
+      <i class="pi pi-users mr-2"></i>
+      <span class="font-bold">Usuarios Trabajadores</span>
+    </div>
+  </ng-template>
+
+  <div class="formgroup-inline">
+    <div class="field">
+      <label for="searchTerm" class="p-sr-only"
+        >Buscar por nombre o cédula</label
+      >
       <p-iconField iconPosition="left">
         <p-inputIcon styleClass="pi pi-search" />
         <input
+          id="searchTerm"
           type="text"
           pInputText
           placeholder="Buscar por nombre o cédula"
           [(ngModel)]="searchTerm"
         />
-        <button pButton type="button" icon="pi pi-times" (click)="clearSearchTerm()"></button>
-      </p-iconField>
-  
-      <p-iconField iconPosition="left">
-        <p-dropdown 
-          [options]="areaOptions" 
-          [(ngModel)]="selectedArea" 
-          placeholder="Filtrar por área">
-        </p-dropdown>
-        <button pButton type="button" icon="pi pi-times" (click)="clearSelectedArea()"></button>
-      </p-iconField>
-  
-      <p-iconField iconPosition="left">
-        <p-dropdown 
-          [options]="cargoOptions" 
-          [(ngModel)]="selectedCargo" 
-          placeholder="Filtrar por cargo">
-        </p-dropdown>
-        <button pButton type="button" icon="pi pi-times" (click)="clearSelectedCargo()"></button>
+        <button
+          pButton
+          type="button"
+          icon="pi pi-times"
+          (click)="clearSearchTerm()"
+        ></button>
       </p-iconField>
     </div>
-  
-    @if (loading) {
-      <div class="loading-container p-d-flex p-jc-center p-ai-center p-flex-column">
-        <p>Cargando usuarios...</p>
-        <p-progressSpinner
-          ariaLabel="loading"
-          styleClass="w-4rem h-4rem"
-          strokeWidth="8"
-          fill="var(--surface-ground)"
-        ></p-progressSpinner>
-      </div>
-    }
-    @else { &nbsp;
-    <p-table
-      [value]="filterUsers(searchTerm, selectedArea, selectedCargo)"
-      [tableStyle]=""
-      [paginator]="true"
-      [rows]="20"
-      [rowsPerPageOptions]="[20, 30, 40, 50]"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th>ID</th>
-          <th>Nombre</th>
-          <th>Cédula</th>
-          <th>Cargo</th>
-          <th>Área</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-user>
-        <tr>
-          <td>{{ user.id_usuario }}</td>
-          <td>{{ user.tx_nombre }}</td>
-          <td>{{ user.tx_cedula }}</td>
-          <td>{{ user.tx_cargo }}</td>
-          <td>{{ user.tx_area }}</td>
-        </tr>
-      </ng-template>
-    </p-table>
-    }
-  </p-fieldset>
-  
+
+    <div class="field">
+      <label for="selectedArea" class="p-sr-only">Filtrar por área</label>
+      <p-iconField iconPosition="left">
+        <p-dropdown
+          id="selectedArea"
+          [options]="areaOptions"
+          [(ngModel)]="selectedArea"
+          placeholder="Filtrar por área"
+        ></p-dropdown>
+        <button
+          pButton
+          type="button"
+          icon="pi pi-times"
+          (click)="clearSelectedArea()"
+        ></button>
+      </p-iconField>
+    </div>
+
+    <div class="field">
+      <label for="selectedCargo" class="p-sr-only">Filtrar por cargo</label>
+      <p-iconField iconPosition="left">
+        <p-dropdown
+          id="selectedCargo"
+          [options]="cargoOptions"
+          [(ngModel)]="selectedCargo"
+          placeholder="Filtrar por cargo"
+        ></p-dropdown>
+        <button
+          type="button"
+          pButton
+          icon="pi pi-times"
+          (click)="clearSelectedCargo()"
+        ></button>
+      </p-iconField>
+    </div>
+  </div>
+
+  @if (loading) {
+  <div class="loading-container p-d-flex p-jc-center p-ai-center p-flex-column">
+    <p>Cargando usuarios...</p>
+    <p-progressSpinner
+      ariaLabel="loading"
+      styleClass="w-4rem h-4rem"
+      strokeWidth="8"
+      fill="var(--surface-ground)"
+    ></p-progressSpinner>
+  </div>
+  } @else { &nbsp;
+  <p-table
+    [value]="filterUsers(searchTerm, selectedArea, selectedCargo)"
+    [tableStyle]=""
+    [paginator]="true"
+    [rows]="20"
+    [rowsPerPageOptions]="[20, 30, 40, 50]"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Cédula</th>
+        <th>Cargo</th>
+        <th>Área</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-user>
+      <tr>
+        <td>{{ user.id_usuario }}</td>
+        <td>{{ user.tx_nombre }}</td>
+        <td>{{ user.tx_cedula }}</td>
+        <td>{{ user.tx_cargo }}</td>
+        <td>{{ user.tx_area }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+  }
+</p-fieldset>
