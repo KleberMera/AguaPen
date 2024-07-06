@@ -3,20 +3,6 @@
   padding: 20px;
 }
 
-.p-inputgroup .p-button {
-  margin-top: 0 !important;
-}
-
-@media screen and (max-width: 768px) {
-  .p-inputgroup {
-    flex-direction: column;
-  }
-
-  .p-inputgroup .p-button {
-    margin-top: 10px !important;
-  }
-}
-
 ::ng-deep {
   .p-dialog {
     .p-dialog-header {

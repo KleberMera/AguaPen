@@ -10,13 +10,12 @@
     <p-iconField iconPosition="left">
       <p-inputIcon styleClass="pi pi-search" />
 
-      <p-autoComplete 
-      [(ngModel)]="searchTerm" 
-      [suggestions]="filteredProductsSearch"
-      (completeMethod)="filterProductsSearch($event)"
-      field="nombre_producto"
-      placeholder="Buscar">
-    </p-autoComplete>
+      <input
+        type="text"
+        pInputText
+        placeholder="Buscar por nombre"
+        [(ngModel)]="searchTerm"
+      />
     </p-iconField>
     <p-iconField iconPosition="right">
       <button
@@ -42,14 +41,13 @@
   } @else { &nbsp;
   <p-table
     [value]="filterProducts(searchTerm)"
-    [tableStyle]="{ 'min-width': '50rem' }"
+    [tableStyle]=""
     [paginator]="true"
     [rows]="20"
     [rowsPerPageOptions]="[20, 30, 40, 50]"
   >
     <ng-template pTemplate="header">
       <tr>
-        <th>ID</th>
         <th>Nombre del Producto</th>
         <th pSortableColumn="stock_producto">
           Stock
@@ -60,7 +58,6 @@
     </ng-template>
     <ng-template pTemplate="body" let-product>
       <tr>
-        <td>{{ product.id }}</td>
         <td>{{ product.nombre_producto }}</td>
         <td>{{ product.stock_producto }}</td>
         <td>

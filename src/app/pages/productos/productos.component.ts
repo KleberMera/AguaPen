@@ -51,6 +51,7 @@ export default class ProductosComponent implements OnInit {
   loading: boolean = true;
   loadingSave: boolean = false;
   filteredProductsSearch: any[] = [];
+  filteredProducts: any[] = []; // Nueva propiedad para productos filtrados
   interfaceProduct: interfaceProducts[] = [];
   dialogVisible: boolean = false;
   selectedProduct: interfaceProducts | any = null;
@@ -74,6 +75,7 @@ export default class ProductosComponent implements OnInit {
       (res: any) => {
         this.listProduct = res.data;
         this.loading = false;
+        this.filteredProducts = res.data;
       },
       (error) => this.handleError(error, 'Error al cargar productos:')
     );
@@ -84,10 +86,6 @@ export default class ProductosComponent implements OnInit {
     return this.listProduct.filter((product) =>
       product.nombre_producto.toLowerCase().includes(lowerQuery)
     );
-  }
-
-  filterProductsSearch(event: AutoCompleteCompleteEvent) {
-    this.filteredProductsSearch = this.filterProducts(event.query);
   }
 
   openAddProductDialog() {
