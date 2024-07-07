@@ -27,6 +27,10 @@ export const routes: Routes = [
     
       },
       {
+        path: 'reportes',
+        loadComponent: () => import('./reportes/reportes.component'),
+      },
+      {
         path: '**',
         redirectTo: '/home/dashboard',
       }

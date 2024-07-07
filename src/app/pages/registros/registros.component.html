@@ -1,62 +1,81 @@
 <p-fieldset legend="Registro y Detalles">
-    <div class="formgroup-inline">
-      <div class="field">
-        <label for="searchInput" class="p-sr-only">Buscar por Nombre o Cédula:</label>
-        <p-iconField iconPosition="left">
-          <p-inputIcon styleClass="pi pi-search" />
-          <input
-            id="searchInput"
-            type="text"
-            pInputText
-            placeholder="Buscar por Nombre o Cédula"
-            [(ngModel)]="searchQuery"
-          />
-        </p-iconField>
-      </div>
-      <div class="field">
+  <div class="formgroup-inline">
+    <div class="field">
+      <label for="searchInput" class="p-sr-only">Buscar por Cédula:</label>
+      <p-iconField iconPosition="left">
+        <p-inputIcon styleClass="pi pi-search" />
+        <input
+          id="searchInput"
+          type="text"
+          pInputText
+          placeholder="Buscar por Cédula"
+          [(ngModel)]="searchQuery"
+        />
+        @if (this.searchQuery) {
         <button
-          pButton
           type="button"
-          label="Buscar"
-          (click)="searchUser()"
-        ></button>
-      </div>
-
-      <div class="field">
-        <label for="dropdown" class="p-sr-only">Seleccionar Usuario:</label>
-        <p-iconField iconPosition="left">
-          <p-inputIcon styleClass="pi pi-user" />
-          <p-dropdown
-            id="dropdown"
-            [options]="dropdownOptions"
-            [(ngModel)]="selectedUser"
-            (onChange)="selectUser($event.value)"
-            placeholder="Seleccionar Usuario"
-            optionLabel="tx_nombre"
-          ></p-dropdown>
-        </p-iconField>
-      </div>
+          class="p-icon p-component p-button p-button-icon-only p-button-rounded p-button-text"
+          (click)="clearSearch()"
+        >
+          <span class="pi pi-times"></span>
+        </button>
+        }
+      </p-iconField>
     </div>
-  
-    <p-table [value]="filteredUsers">
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Nombre</th>
-          <th>Cédula</th>
-          <th>Acciones</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-user>
-        <tr>
-          <td>{{ user.tx_nombre }}</td>
-          <td>{{ user.tx_cedula }}</td>
-          <td>
-            <!-- Aquí puedes agregar acciones adicionales para cada usuario -->
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </p-fieldset>
-  
-  <p-toast [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"></p-toast>
-  
+    <div class="field">
+      <button
+        pButton
+        type="button"
+        label="Buscar"
+        (click)="searchUser()"
+      ></button>
+    </div>
+
+    <div class="field">
+      <label for="dropdown" class="p-sr-only">Seleccionar Usuario:</label>
+      <p-iconField iconPosition="left">
+        <p-inputIcon styleClass="pi pi-user" />
+        <p-dropdown
+          id="dropdown"
+          [options]="dropdownOptions"
+          [(ngModel)]="selectedUser"
+          optionLabel="tx_nombre"
+          [filter]="true"
+          filterBy="tx_nombre"
+          [showClear]="true"
+          placeholder="Seleccionar o escribir Usuario"
+          (onChange)="selectUser($event)"
+        >
+          <ng-template let-user pTemplate="item">
+            <div class="flex align-items-center gap-2">
+              <div>{{ user.tx_nombre }} ({{ user.tx_cedula }})</div>
+            </div>
+          </ng-template>
+        </p-dropdown>
+      </p-iconField>
+    </div>
+  </div>
+
+  <p-table [value]="filteredUsers">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Nombre</th>
+        <th>Cédula</th>
+        <th>Acciones</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-user>
+      <tr>
+        <td>{{ user.tx_nombre }}</td>
+        <td>{{ user.tx_cedula }}</td>
+        <td>
+          <!-- Aquí puedes agregar acciones adicionales para cada usuario -->
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-fieldset>
+
+<p-toast
+  [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
+></p-toast>

@@ -68,8 +68,7 @@ export default class RegistrosComponent implements OnInit {
     }
 
     this.filteredUsers = this.ListUsers.filter(user =>
-      (user.tx_nombre && user.tx_nombre.toLowerCase().includes(this.searchQuery.toLowerCase())) ||
-      (user.tx_cedula && user.tx_cedula.toLowerCase().includes(this.searchQuery.toLowerCase()))
+      user.tx_cedula && user.tx_cedula.toLowerCase().includes(this.searchQuery.toLowerCase())
     );
 
     if (this.filteredUsers.length > 0) {
@@ -77,6 +76,11 @@ export default class RegistrosComponent implements OnInit {
     } else {
       this.srvMensajes.add({ severity: 'error', summary: 'Usuario no encontrado', detail: 'No se encontraron usuarios con ese criterio de búsqueda' });
     }
+  }
+
+  clearSearch() {
+    this.searchQuery = '';
+    this.filteredUsers = this.ListUsers;
   }
 
   getSuggestions(event: any) {
@@ -87,7 +91,10 @@ export default class RegistrosComponent implements OnInit {
   }
 
   selectUser(event: any) {
-    this.filteredUsers = [event]; // Muestra solo el usuario seleccionado
-    this.srvMensajes.add({ severity: 'info', summary: 'Usuario seleccionado', detail: `Has seleccionado a ${event.tx_nombre}` });
+    const user = event.value; // Obtén el usuario directamente del evento
+    if (user) {
+      this.filteredUsers = [user]; // Muestra solo el usuario seleccionado
+      this.srvMensajes.add({ severity: 'info', summary: 'Usuario seleccionado', detail: `Has seleccionado a ${user.tx_nombre}` });
+    }
   }
 }

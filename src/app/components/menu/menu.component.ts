@@ -51,6 +51,7 @@ export class MenuComponent implements OnInit {
           {
             label: 'Reportes',
             icon: 'pi pi-th-large',
+            routerLink: '/home/reportes',
           },
         ],
       },
