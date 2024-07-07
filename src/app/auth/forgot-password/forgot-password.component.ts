@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
@@ -7,9 +7,9 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { DividerModule } from 'primeng/divider';
-import { FormsModule } from '@angular/forms';
 
-const PRIMEMG_MODULES = [
+
+const PRIMENG_MODULES = [
   ToastModule,
   ButtonModule,
   InputTextModule,
@@ -20,68 +20,94 @@ const PRIMEMG_MODULES = [
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [PRIMEMG_MODULES, RouterLink, FormsModule],
+  imports: [PRIMENG_MODULES, ReactiveFormsModule],
   templateUrl: './forgot-password.component.html',
   styleUrls: ['./forgot-password.component.scss'],
-  providers: [MessageService]
+  providers: [MessageService],
 })
 export default class ForgotPasswordComponent {
-  cedula: string = '';
-  nuevaClave: string = '';
-  objusuario: any;
+  forgotPasswordForm: FormGroup;
   loading: boolean = false;
+  cedulaVerificada: boolean = false;
 
   private srvAuth = inject(AuthService);
   private srvMensajes = inject(MessageService);
-  private router = inject(Router);
 
-  recuperarClave() {
-    this.objusuario = {
-      cedula: this.cedula,
-      nueva_clave: this.nuevaClave
-    };
-    console.log('Función recuperarClave() ejecutada');
-    console.log('Cédula:', this.cedula);
-    console.log('Nueva Contraseña:', this.nuevaClave);
+  constructor(private fb: FormBuilder) {
+    this.forgotPasswordForm = this.fb.group({
+      cedula: ['', Validators.required],
+      nueva_clave: ['', Validators.required],
+      confirmar_clave: ['', Validators.required],
+    }, { validator: this.passwordMatchValidator });
+  }
 
+  passwordMatchValidator(form: FormGroup) {
+    return form.get('nueva_clave')!.value === form.get('confirmar_clave')!.value 
+      ? null : { mismatch: true };
+  }
+
+  verifyCedula() {
+    const cedula = this.forgotPasswordForm.get('cedula')!.value;
+
+    if (cedula) {
+      this.srvAuth.verifyCedula(cedula).subscribe((res: any) => {
+        if (res.retorno === 1) {
+          this.cedulaVerificada = true;
+          this.srvMensajes.add({
+            severity: 'success',
+            summary: 'Verificación de Cédula',
+            detail: res.mensaje,
+          });
+        } else {
+          this.cedulaVerificada = false;
+          this.srvMensajes.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: res.mensaje,
+          });
+        }
+      });
+    } else {
+      this.srvMensajes.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Debe ingresar una cédula',
+      });
+    }
+  }
+
+  resetPassword() {
     this.loading = true;
-    this.srvAuth.recuperarContraseña(this.objusuario).subscribe({
-      next: (res: any) => {
+
+    if (this.forgotPasswordForm.valid && this.cedulaVerificada) {
+      const data = this.forgotPasswordForm.value;
+
+      this.srvAuth.resetPassword(data).subscribe((res: any) => {
+        this.loading = false;
+
         if (res.retorno == 1) {
           console.log(res.mensaje);
           this.srvMensajes.add({
             severity: 'success',
-            summary: 'Recuperación Exitosa',
-            detail: 'La contraseña ha sido actualizada correctamente.',
+            summary: 'Recuperar Clave',
+            detail: res.mensaje,
           });
-          history.back(); // Regresar a la página anterior después de la recuperación exitosa
         } else {
           console.log(res.mensaje);
           this.srvMensajes.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Ocurrió un error al intentar recuperar la contraseña.',
+            detail: res.mensaje,
           });
-          console.error('Error al recuperar contraseña:', res.mensaje);
         }
-      },
-      error: (err) => {
-        this.loading = false;
-        console.error('Error al recuperar contraseña:', err);
-        this.srvMensajes.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Ocurrió un error al intentar recuperar la contraseña.',
-        });
-      },
-      complete: () => {
-        this.loading = false;
-      }
-    });
-  }
-
-  cancelarRecuperacion() {
-    // Implementa la lógica para cancelar la recuperación de contraseña si es necesario
-    this.router.navigate(['auth']);
+      });
+    } else {
+      this.loading = false;
+      this.srvMensajes.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Datos no introducidos correctamente o cédula no verificada',
+      });
+    }
   }
 }

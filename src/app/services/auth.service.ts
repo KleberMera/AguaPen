@@ -21,6 +21,25 @@ export class AuthService {
     );
   }
 
+  resetPassword(objUsuario: any) {
+    let url = 'recuperarClave';
+    return this.http.post(
+      this.environment + url,
+      this.srvG.objectToFormData(objUsuario)
+    );
+  
+  
+  }
+
+  verifyCedula(cedula: string) {
+    let url = 'verificarCedula';
+    return this.http.post(
+      this.environment + url,
+      this.srvG.objectToFormData({ cedula })
+    );
+  }
+  
+
 
 
   private nombresSubject = new BehaviorSubject<string | null>(this.getStoredNombres());
@@ -61,17 +80,6 @@ export class AuthService {
   }
 
 
-  recuperarContraseña(objUsuario: any) {
-    let url = 'recuperarClave';
-    return this.http.post(
-      this.environment + url,
-      this.srvG.objectToFormData({
-        cedula:objUsuario.cedula,
-        nueva_clave:objUsuario.nueva_clave
-  })
-    );
   
-  
-  }
   
 }
