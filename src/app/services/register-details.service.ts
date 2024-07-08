@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { GeneralService } from './general.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -16,19 +17,41 @@ export class RegisterDetailsService {
   private http = inject(HttpClient);
   private srvG = inject(GeneralService);
 
-  
-   // Registrar Registro con Detalles
-   postRegisterRegistro(registro: any, detalles: any[]) {
+  // Ver registros
+  getViewRegistros() {
+    let url = 'viewRegistros';
+    return this.http.get(this.environment + url);
+  }
+
+  // Registrar registro
+  postRegisterRegistro(objRegistro: any) {
     let url = 'registerRegistro';
     return this.http.post(
       this.environment + url,
       this.srvG.objectToFormData({
-        id_usuario: registro.id_usuario,
-        fecha_registro: registro.fecha_registro,
-        hora_registro: registro.hora_registro,
-        observacion: registro.observacion,
-        detalles: JSON.stringify(detalles)  // Convertir detalles a JSON string
+        id_usuario: objRegistro.id_usuario,
+        observacion: objRegistro.observacion,
       })
     );
   }
+
+  // Registrar detalles del registro
+  postRegisterRegistroDetalle(objDetalle: any): Observable<any> {
+    let url = 'registerRegistroDetalle';
+    return this.http.post(
+      this.environment + url,
+      this.srvG.objectToFormData({
+        id_registro: objDetalle.id_registro,
+        id_producto: objDetalle.id_producto,
+        cantidad: objDetalle.cantidad,
+      })
+    );
+  }
+
+  // Ver detalles de registro
+  getViewRegistroDetalles() {
+    let url = 'viewRegistroDetalles';
+    return this.http.get(this.environment + url);
+  }
+
 }

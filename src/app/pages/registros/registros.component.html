@@ -3,7 +3,7 @@
     <div class="field">
       <label for="searchInput" class="p-sr-only">Buscar por Cédula:</label>
       <p-iconField iconPosition="left">
-        <p-inputIcon styleClass="pi pi-search" />
+        <p-inputIcon icon="pi pi-search" />
         <input
           id="searchInput"
           type="text"
@@ -11,15 +11,16 @@
           placeholder="Buscar por Cédula"
           [(ngModel)]="searchQuery"
         />
-        @if (this.searchQuery) {
-        <button
-          type="button"
-          class="p-icon p-component p-button p-button-icon-only p-button-rounded p-button-text"
-          (click)="clearSearch()"
-        >
-          <span class="pi pi-times"></span>
-        </button>
-        }
+     @if (searchQuery) {
+      <button
+     
+      type="button"
+      class="p-button p-button-icon-only p-button-rounded p-button-text"
+      (click)="clearSearch()"
+    >
+      <span class="pi pi-times"></span>
+    </button>
+     }
       </p-iconField>
     </div>
     <div class="field">
@@ -34,7 +35,7 @@
     <div class="field">
       <label for="dropdown" class="p-sr-only">Seleccionar Usuario:</label>
       <p-iconField iconPosition="left">
-        <p-inputIcon styleClass="pi pi-user" />
+        <p-inputIcon icon="pi pi-user" />
         <p-dropdown
           id="dropdown"
           [options]="dropdownOptions"
@@ -56,24 +57,103 @@
     </div>
   </div>
 
-  <p-table [value]="filteredUsers">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Nombre</th>
-        <th>Cédula</th>
-        <th>Acciones</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-user>
-      <tr>
-        <td>{{ user.tx_nombre }}</td>
-        <td>{{ user.tx_cedula }}</td>
-        <td>
-          <!-- Aquí puedes agregar acciones adicionales para cada usuario -->
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+  @if (selectedUser) {
+    <ng-container >
+      <p-card class="user-card" [style]="{ width: '360px' }">
+        <ng-template pTemplate="header">
+          <div class="header-content">
+            <span class="pi pi-user card-icon"></span>
+            <span>Trabajador</span>
+            &nbsp;
+            <button
+              pButton
+              type="button"
+              icon="pi pi-plus"
+              label="Asignar Productos"
+              (click)="toggleProducts()"
+            ></button>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div class="field">
+            <label>Nombre:</label>
+            <span>{{ selectedUser.tx_nombre }}</span>
+          </div>
+          <div class="field">
+            <label>Cédula:</label>
+            <span>{{ selectedUser.tx_cedula }}</span>
+          </div>
+          <div class="field">
+            <label>Área:</label>
+            <span>{{ selectedUser.tx_area }}</span>
+          </div>
+          <div class="field">
+            <label>Cargo:</label>
+            <span>{{ selectedUser.tx_cargo }}</span>
+          </div>
+          <div class="field">
+            <label>Vehículo:</label>
+            <span>{{ selectedUser.tx_vehiculo ? 'Tiene' : 'No Tiene' }}</span>
+          </div>
+          @if (selectedUser.tx_vehiculo) {
+            <ng-container >
+              <div class="field">
+                <label>Placa:</label>
+                <span>{{ selectedUser.tx_vehiculo }}</span>
+              </div>
+              <div class="field">
+                <label>Tipo:</label>
+                <span>{{ selectedUser.tx_vehiculo_descripcion }}</span>
+              </div>
+            </ng-container>
+          }
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <button
+            pButton
+            type="button"
+            label="Realizar Registro"
+            (click)="register()"
+          ></button>
+        </ng-template>
+      </p-card>
+    </ng-container>
+  }
+
+  @if (showProductsTable) {
+    <div >
+      <p-table [value]="ListProductos">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Nombre del Producto</th>
+            <th>Stock</th>
+            <th>Acción</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-producto>
+          <tr>
+            <td>{{ producto.nombre_producto }}</td>
+            <td>{{ producto.stock_producto }}</td>
+            <td>
+              <input
+                type="number"
+                pInputText
+                [(ngModel)]="producto.cantidad"
+                min="1"
+                style="width: 60px; margin-right: 8px;"
+              />
+              <button
+                pButton
+                type="button"
+                icon="pi pi-plus"
+                (click)="addProduct(producto)"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  }
 </p-fieldset>
 
 <p-toast
