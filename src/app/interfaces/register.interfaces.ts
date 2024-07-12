@@ -1,14 +1,28 @@
-export interface InterfaceRegistro {
-    id_registro?: number; // El ID podría ser opcional si se asigna automáticamente en la base de datos
-    id_usuario: number;
-    fecha_registro: string; // Considerando que la fecha se almacena como string en formato adecuado (ej. 'YYYY-MM-DD')
-    hora_registro: string; // Hora en formato adecuado (ej. 'HH:MM:SS')
-    observacion: string;
-    detalles: InterfaceDetalleRegistro[];
-  }
-  
-  export interface InterfaceDetalleRegistro {
-    id_producto: number;
-    cantidad: number;
-  }
-  
+// interfaces.ts
+export interface User {
+  id_usuario: number;
+  tx_nombre: string;
+  tx_cedula: string;
+  tx_area: string;
+  tx_cargo: string;
+  tx_vehiculo?: string;
+  tx_vehiculo_descripcion?: string;
+}
+
+export interface Product {
+  id: number;
+  nombre_producto: string;
+  stock_producto: number;
+  cantidad: number;
+}
+
+export interface Registro {
+  id_usuario: number;
+  observacion: string;
+}
+
+export interface DetalleRegistro {
+  id_registro: number;
+  id_producto: number;
+  cantidad: number;
+}

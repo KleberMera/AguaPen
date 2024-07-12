@@ -13,7 +13,15 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { IconFieldModule } from 'primeng/iconfield';
 import { DropdownModule } from 'primeng/dropdown';
 import { CardModule } from 'primeng/card';
-
+import { BlockUIModule } from 'primeng/blockui';
+import { SpinnerModule } from 'primeng/spinner';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import {
+  DetalleRegistro,
+  Product,
+  Registro,
+  User,
+} from '../../interfaces/register.interfaces';
 const PRIMEMG_MODULES = [
   FieldsetModule,
   TableModule,
@@ -26,6 +34,9 @@ const PRIMEMG_MODULES = [
   IconFieldModule,
   DropdownModule,
   CardModule,
+  BlockUIModule,
+  SpinnerModule,
+  ProgressSpinnerModule,
 ];
 
 @Component({
@@ -37,20 +48,20 @@ const PRIMEMG_MODULES = [
   providers: [MessageService, ConfirmationService],
 })
 export default class RegistrosComponent implements OnInit {
-  ListUsers: any[] = [];
-  ListProductos: any[] = [];
-  filteredUsers: any[] = [];
+  ListUsers: User[] = [];
+  ListProductos: Product[] = [];
+  filteredUsers: User[] = [];
   searchQuery: string = '';
-  selectedUser: any = null;
-  dropdownOptions: any[] = [];
+  selectedUser: User | null = null;
+  dropdownOptions: User[] = [];
   showProductsTable: boolean = false;
-  selectedProducts: any[] = []; // Arreglo para almacenar los productos seleccionados con cantidad
+  selectedProducts: Product[] = [];
+  loading: boolean = false; // Estado de carga
 
-  constructor(
-    private srvRegDet: RegisterDetailsService,
-    private srvList: ListService,
-    private messageService: MessageService
-  ) {}
+  constructor() {}
+  private srvRegDet = inject(RegisterDetailsService);
+  private srvList = inject(ListService);
+  private messageService = inject(MessageService);
 
   ngOnInit(): void {
     this.getListUsuarios();
@@ -67,7 +78,10 @@ export default class RegistrosComponent implements OnInit {
 
   getListProductos() {
     this.srvList.getListProductos().subscribe((res: any) => {
-      this.ListProductos = res.data;
+      this.ListProductos = res.data.map((product: Product) => ({
+        ...product,
+        cantidad: 1, // Inicializar cantidad a 1
+      }));
       console.log('Listado de productos:', this.ListProductos);
     });
   }
@@ -128,46 +142,46 @@ export default class RegistrosComponent implements OnInit {
     this.showProductsTable = !this.showProductsTable;
   }
 
-  addProduct(producto: any) {
+  increment(product: Product) {
+    if (product.cantidad < product.stock_producto) {
+      product.cantidad++;
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No puedes agregar más de la cantidad en stock',
+      });
+    }
+  }
+
+  decrement(product: Product) {
+    if (product.cantidad > 1) {
+      product.cantidad--;
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'La cantidad no puede ser menor a 1',
+      });
+    }
+  }
+
+  addProduct(producto: Product) {
     const foundProduct = this.selectedProducts.find(
-      (p) => p.id_producto === producto.id_producto
+      (p) => p.id === producto.id
     );
 
     if (foundProduct) {
-      // Si el producto ya está en la lista, actualiza la cantidad
-      foundProduct.cantidad += producto.cantidad;
+      foundProduct.cantidad! += producto.cantidad!;
     } else {
-      // Si no está en la lista, agrégalo con su cantidad
-      this.selectedProducts.push({
-        id_producto: producto.id,
-        cantidad: producto.cantidad,
-      });
+      this.selectedProducts.push({ ...producto, cantidad: producto.cantidad });
     }
-
-    // Reiniciar la cantidad del producto agregado
-    producto.cantidad = 1;
-    console.log('Producto añadido:', producto);
 
     this.messageService.add({
       severity: 'success',
       summary: 'Producto agregado',
       detail: `${producto.nombre_producto} agregado con éxito`,
     });
-  }
-
-  removeProduct(producto: any) {
-    const index = this.selectedProducts.findIndex(
-      (p) => p.id_producto === producto.id_producto
-    );
-
-    if (index !== -1) {
-      this.selectedProducts.splice(index, 1);
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Producto eliminado',
-        detail: `${producto.nombre_producto} eliminado`,
-      });
-    }
   }
 
   register() {
@@ -180,9 +194,10 @@ export default class RegistrosComponent implements OnInit {
       return;
     }
 
-    // Primero registramos el registro principal
-    const registro = {
-      id_usuario: this.selectedUser.id_usuario,
+    this.loading = true; // Mostrar pantalla de carga
+
+    const registro: Registro = {
+      id_usuario: this.selectedUser!.id_usuario,
       observacion: '', // Puedes agregar la observación si la tienes disponible
     };
 
@@ -191,15 +206,18 @@ export default class RegistrosComponent implements OnInit {
     this.srvRegDet.postRegisterRegistro(registro).subscribe((res: any) => {
       if (res.id) {
         const id_registro = res.id;
-        const detallesRegistro = this.selectedProducts.map((prod) => ({
-          id_registro: id_registro,
-          id_producto: prod.id_producto,
-          cantidad: prod.cantidad,
-        }));
+        const detallesRegistro: DetalleRegistro[] = this.selectedProducts.map(
+          (prod) => ({
+            id_registro: id_registro,
+            id_producto: prod.id,
+            cantidad: prod.cantidad!,
+          })
+        );
 
         console.log('Detalles del registro:', detallesRegistro);
         this.guardarDetallesRegistro(detallesRegistro);
       } else {
+        this.loading = false; // Ocultar pantalla de carga
         this.messageService.add({
           severity: 'error',
           summary: 'Error de registro',
@@ -209,19 +227,27 @@ export default class RegistrosComponent implements OnInit {
     });
   }
 
-  guardarDetallesRegistro(detalleRegistro: any[]) {
+  guardarDetallesRegistro(detalleRegistro: DetalleRegistro[]) {
     console.log('Detalles del registro:', detalleRegistro);
 
-    detalleRegistro.forEach((destalle) => {
+    let completedRequests = 0;
+
+    detalleRegistro.forEach((detalle) => {
       this.srvRegDet
-        .postRegisterRegistroDetalle(destalle)
+        .postRegisterRegistroDetalle(detalle)
         .subscribe((res: any) => {
-          if (res.retorno == 1) {
+          completedRequests++;
+
+          if (completedRequests === detalleRegistro.length) {
+            this.loading = false; // Ocultar pantalla de carga
+
             this.messageService.add({
               severity: 'success',
               summary: 'Registro exitoso',
-              detail: res.mensaje,
+              detail: 'Todos los registros fueron registrados exitosamente',
             });
+
+            this.getListProductos();
           }
         });
     });
