@@ -22,6 +22,7 @@ import {
   Registro,
   User,
 } from '../../interfaces/register.interfaces';
+import { CommonModule } from '@angular/common';
 const PRIMEMG_MODULES = [
   FieldsetModule,
   TableModule,
@@ -58,6 +59,12 @@ export default class RegistrosComponent implements OnInit {
   selectedProducts: Product[] = [];
   loading: boolean = false; // Estado de carga
 
+  // Properties for product search and selection
+  productSearchQuery: string = '';
+  filteredProducts: Product[] = [];
+  productDropdownOptions: Product[] = [];
+  selectedProduct: Product | null = null;
+
   constructor() {}
   private srvRegDet = inject(RegisterDetailsService);
   private srvList = inject(ListService);
@@ -66,6 +73,58 @@ export default class RegistrosComponent implements OnInit {
   ngOnInit(): void {
     this.getListUsuarios();
     this.getListProductos();
+  }
+
+  searchProduct() {
+    if (this.productSearchQuery.trim() === '') {
+      this.filteredProducts = this.ListProductos;
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Búsqueda vacía',
+        detail: 'Mostrando todos los productos',
+      });
+      return;
+    }
+
+    this.filteredProducts = this.ListProductos.filter(
+      (product) =>
+        product.nombre_producto &&
+        product.nombre_producto.toLowerCase().includes(this.productSearchQuery.toLowerCase())
+    );
+
+    if (this.filteredProducts.length > 0) {
+      this.selectedProduct = this.filteredProducts[0];
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Producto encontrado',
+        detail: `Se encontraron ${this.filteredProducts.length} producto(s)`,
+      });
+    } else {
+      this.selectedProduct = null;
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Producto no encontrado',
+        detail: 'No se encontraron productos con ese criterio de búsqueda',
+      });
+    }
+  }
+
+  clearProductSearch() {
+    this.productSearchQuery = '';
+    this.filteredProducts = this.ListProductos;
+    this.selectedProduct = null;
+  }
+
+  selectProduct(event: any) {
+    const product = event.value;
+    if (product) {
+      this.selectedProduct = product;
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Producto seleccionado',
+        detail: `Has seleccionado ${product.nombre_producto}`,
+      });
+    }
   }
 
   getListUsuarios() {
@@ -194,6 +253,15 @@ export default class RegistrosComponent implements OnInit {
       return;
     }
 
+    if (!this.selectedProducts.length) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error de registro',
+        detail: 'Debe agregar al menos un producto para registrar',
+      });
+      return;
+    }
+
     this.loading = true; // Mostrar pantalla de carga
 
     const registro: Registro = {
@@ -239,6 +307,7 @@ export default class RegistrosComponent implements OnInit {
           completedRequests++;
 
           if (completedRequests === detalleRegistro.length) {
+            this.clearForm();
             this.loading = false; // Ocultar pantalla de carga
 
             this.messageService.add({
@@ -251,5 +320,25 @@ export default class RegistrosComponent implements OnInit {
           }
         });
     });
+  }
+  revertProduct(product: Product) {
+    const index = this.selectedProducts.findIndex((p) => p.id === product.id);
+    if (index !== -1) {
+      this.selectedProducts.splice(index, 1);
+      product.cantidad = 0;
+    }
+  }
+
+  clearForm() {
+    this.selectedUser = null;
+    this.selectedProducts = [];
+    this.showProductsTable = false;
+    this.ListProductos.forEach((product) => {
+      product.cantidad = 0;
+    });
+  }
+
+  isProductSelected(product: Product): boolean {
+    return this.selectedProducts.some((p) => p.id === product.id);
   }
 }
