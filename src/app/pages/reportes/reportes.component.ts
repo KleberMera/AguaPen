@@ -15,6 +15,7 @@ import { CardModule } from 'primeng/card';
 import { BlockUIModule } from 'primeng/blockui';
 import { SpinnerModule } from 'primeng/spinner';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ConfirmationService, MessageService } from 'primeng/api';
 const PRIMEMG_MODULES = [
   TableModule,
   FieldsetModule,
@@ -37,22 +38,89 @@ const PRIMEMG_MODULES = [
   imports: [PRIMEMG_MODULES],
   templateUrl: './reportes.component.html',
   styleUrl: './reportes.component.scss',
+  providers: [MessageService, ConfirmationService],
 })
 export default class ReportesComponent implements OnInit {
-  listReports: any[] = []; //Esta lista trae id_registro, fecha, nombre, nombre_producto, cantidad, total_cantidades, cedula
+  listReports: any[] = []; //Esta lista trae id_registro, fecha, nombre, nombre_producto, cantidad, total_cantidades, cedula, observacion
+  filteredReports: any[] = [];
+  uniqueUsers: any[] = [];
+  searchQuery: string = '';
+  selectedUser: any | null = null;
+  listUniqueUsers: any[] = [];
 
   private srvList = inject(ListService);
+  private srvMessage = inject(MessageService);
 
   ngOnInit(): void {
     this.viewListReports();
   }
 
-  //Listado de Reportes
   viewListReports() {
     this.srvList.getviewRegistroAll().subscribe((res: any) => {
-      console.log('Listado de Reportes:', res.data);
       this.listReports = res.data;
+      this.filteredReports = res.data;
+      this.uniqueUsers = this.getUniqueUsers(res.data);
       console.log('Listado de Reportes:', this.listReports);
     });
+  }
+
+  getUniqueUsers(reports: any[]): any[] {
+    const usersSet = new Set();
+    const uniqueUsers = this.listUniqueUsers;
+
+    reports.forEach(report => {
+      if (!usersSet.has(report.nombre)) {
+        usersSet.add(report.nombre);
+        uniqueUsers.push(report);
+      }
+    });
+
+    return uniqueUsers;
+  }
+
+  searchReport() {
+    if (this.searchQuery.trim() === '') {
+      this.filteredReports = this.listReports;
+      return;
+    }
+
+    this.filteredReports = this.listReports.filter(
+      (report) =>
+        report.cedula &&
+        report.cedula.toLowerCase().includes(this.searchQuery.toLowerCase())
+    );
+
+    if (this.filteredReports.length > 0) {
+      this.selectedUser = this.filteredReports[0];
+      this.srvMessage.add({
+        severity: 'success',
+        summary: 'Usuario encontrado',
+        detail: `Se encontraron ${this.filteredReports.length} datos de reportes`,
+      });
+    } else {
+      this.selectedUser = null;
+      this.srvMessage.add({
+        severity: 'error',
+        summary: 'Usuario no encontrado',
+        detail: 'No se encontraron usuarios con ese criterio de búsqueda',
+      });
+    }
+  }
+
+  clearSearch() {
+    this.searchQuery = '';
+    this.filteredReports = this.listReports;
+  }
+
+  filterReportsByName() {
+    if (this.selectedUser) {
+      this.filteredReports = this.listReports.filter((report) =>
+        report.nombre
+          .toLowerCase()
+          .includes(this.selectedUser.nombre.toLowerCase())
+      );
+    } else {
+      this.filteredReports = this.listReports;
+    }
   }
 }
