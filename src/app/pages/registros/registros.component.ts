@@ -22,7 +22,7 @@ import {
   Registro,
   User,
 } from '../../interfaces/register.interfaces';
-import { CommonModule } from '@angular/common';
+import { formatDate } from '@angular/common';
 const PRIMEMG_MODULES = [
   FieldsetModule,
   TableModule,
@@ -58,6 +58,9 @@ export default class RegistrosComponent implements OnInit {
   showProductsTable: boolean = false;
   selectedProducts: Product[] = [];
   loading: boolean = false; // Estado de carga
+  searchTerm: string = '';
+  observacion: string = '';
+  loadingMessage: string = '';
 
   // Properties for product search and selection
   productSearchQuery: string = '';
@@ -75,46 +78,6 @@ export default class RegistrosComponent implements OnInit {
     this.getListProductos();
   }
 
-  searchProduct() {
-    if (this.productSearchQuery.trim() === '') {
-      this.filteredProducts = this.ListProductos;
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Búsqueda vacía',
-        detail: 'Mostrando todos los productos',
-      });
-      return;
-    }
-
-    this.filteredProducts = this.ListProductos.filter(
-      (product) =>
-        product.nombre_producto &&
-        product.nombre_producto.toLowerCase().includes(this.productSearchQuery.toLowerCase())
-    );
-
-    if (this.filteredProducts.length > 0) {
-      this.selectedProduct = this.filteredProducts[0];
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Producto encontrado',
-        detail: `Se encontraron ${this.filteredProducts.length} producto(s)`,
-      });
-    } else {
-      this.selectedProduct = null;
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Producto no encontrado',
-        detail: 'No se encontraron productos con ese criterio de búsqueda',
-      });
-    }
-  }
-
-  clearProductSearch() {
-    this.productSearchQuery = '';
-    this.filteredProducts = this.ListProductos;
-    this.selectedProduct = null;
-  }
-
   selectProduct(event: any) {
     const product = event.value;
     if (product) {
@@ -127,21 +90,35 @@ export default class RegistrosComponent implements OnInit {
     }
   }
 
-  getListUsuarios() {
-    this.srvList.getListUsuarios().subscribe((res: any) => {
+  filterProducts(query: string) {
+    const lowerQuery = query.toLowerCase();
+    return this.ListProductos.filter((product) =>
+      product.nombre_producto.toLowerCase().includes(lowerQuery)
+    );
+  }
+
+  async getListUsuarios() {
+    this.loading = true; // Mostrar pantalla de carga
+    this.loadingMessage = 'Cargando usuarios...';
+
+    await this.srvList.getListUsuarios().subscribe((res: any) => {
       this.ListUsers = res.data;
       this.filteredUsers = this.ListUsers;
       this.dropdownOptions = this.ListUsers;
+      this.loading = false; // Ocultar pantalla de carga
     });
   }
 
-  getListProductos() {
-    this.srvList.getListProductos().subscribe((res: any) => {
+  async getListProductos() {
+    this.loading = true; // Mostrar pantalla de carga
+    this.loadingMessage = 'Cargando productos...';
+    await this.srvList.getListProductos().subscribe((res: any) => {
       this.ListProductos = res.data.map((product: Product) => ({
         ...product,
         cantidad: 1, // Inicializar cantidad a 1
       }));
       console.log('Listado de productos:', this.ListProductos);
+      this.loading = false; // Ocultar pantalla de carga
     });
   }
 
@@ -263,10 +240,12 @@ export default class RegistrosComponent implements OnInit {
     }
 
     this.loading = true; // Mostrar pantalla de carga
+    this.loadingMessage = 'Registrando Datos, espere un momento...';
 
     const registro: Registro = {
       id_usuario: this.selectedUser!.id_usuario,
-      observacion: '', // Puedes agregar la observación si la tienes disponible
+
+      observacion: this.observacion,
     };
 
     console.log('Registro a realizar:', registro);

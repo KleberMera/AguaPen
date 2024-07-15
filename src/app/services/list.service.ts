@@ -27,4 +27,10 @@ export class ListService {
     let url = 'viewUsuariosTrabajadores';
     return this.http.get<any>(this.environment + url);
   }
+
+
+  getviewRegistroAll() {
+    let url = 'viewRegistroAll';
+    return this.http.get<any>(this.environment + url);
+  }
 }

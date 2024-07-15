@@ -63,7 +63,6 @@
         <div class="header-content">
           <span class="pi pi-user card-icon"></span>
           <span>Trabajador</span>
-
         </div>
       </ng-template>
       <ng-template pTemplate="content">
@@ -123,8 +122,32 @@
   </div>
   } @if (showProductsTable) { &nbsp;
   <div>
+    <div class="card flex flex-wrap justify-content-center gap-3">
+      <p-iconField iconPosition="left">
+        <p-inputIcon styleClass="pi pi-book" />
+
+        <input
+          type="text"
+          pInputText
+          placeholder="Agregar Nota"
+          [(ngModel)]="observacion"
+        />
+      </p-iconField>
+
+      <p-iconField iconPosition="left">
+        <p-inputIcon styleClass="pi pi-search" />
+
+        <input
+          type="text"
+          pInputText
+          placeholder="Buscar por nombre"
+          [(ngModel)]="searchTerm"
+        />
+      </p-iconField>
+    </div>
     <div>
-      <p-table [value]="ListProductos">
+      &nbsp;
+      <p-table [value]="filterProducts(searchTerm)">
         <ng-template pTemplate="header">
           <tr>
             <th>Nombre del Producto</th>
@@ -200,7 +223,11 @@
     <div
       class="loading-container p-d-flex p-jc-center p-ai-center p-flex-column"
     >
-      <p>Registrando Datos, espere un momento...</p>
+      <p
+      [(ngModel)]="loadingMessage"
+      >
+
+      </p>
       <p-progressSpinner
         ariaLabel="loading"
         styleClass="w-4rem h-4rem"
