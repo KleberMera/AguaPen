@@ -11,16 +11,15 @@
             placeholder="Buscar por Cédula"
             [(ngModel)]="searchQuery"
           />
-         @if (searchQuery) {
-            <button
+          @if(searchQuery) {
+          <button
             type="button"
             class="p-button p-button-icon-only p-button-rounded p-button-text"
             (click)="clearSearch()"
-          
           >
             <span class="pi pi-times"></span>
           </button>
-         }
+          }
         </p-iconField>
       </div>
       <div class="field">
@@ -53,6 +52,41 @@
             </ng-template>
           </p-dropdown>
         </p-iconField>
+      </div>
+      <div class="field">
+        <label for="startDate" class="p-sr-only">Fecha Inicio:</label>
+        <p-calendar
+          id="startDate"
+          [(ngModel)]="startDate"
+          placeholder="Fecha Inicio"
+          dateFormat="dd/mm/yy"
+          showIcon="true"
+        ></p-calendar>
+      </div>
+      <div class="field">
+        <label for="endDate" class="p-sr-only">Fecha Fin:</label>
+        <p-calendar
+          id="endDate"
+          [(ngModel)]="endDate"
+          placeholder="Fecha Fin"
+          dateFormat="dd/mm/yy"
+          showIcon="true"
+        ></p-calendar>
+      </div>
+      <div class="field">
+        <button
+          pButton
+          type="button"
+          label="Filtrar por Fecha"
+          (click)="filterReportsByDate()"
+        ></button>
+        <button
+          pButton
+          type="button"
+          label="Limpiar Filtros de Fecha"
+          (click)="clearDateFilter()"
+          class="p-ml-2"
+        ></button>
       </div>
     </div>
   

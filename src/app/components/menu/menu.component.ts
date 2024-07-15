@@ -53,6 +53,11 @@ export class MenuComponent implements OnInit {
             icon: 'pi pi-th-large',
             routerLink: '/home/reportes',
           },
+          {
+            label: 'R - Usuarios',
+            icon: 'pi pi-id-card',
+            routerLink: '/home/reportes-usuarios',
+          }
         ],
       },
     ];

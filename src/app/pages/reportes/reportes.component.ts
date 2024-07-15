@@ -16,6 +16,7 @@ import { BlockUIModule } from 'primeng/blockui';
 import { SpinnerModule } from 'primeng/spinner';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { CalendarModule } from 'primeng/calendar';
 const PRIMEMG_MODULES = [
   TableModule,
   FieldsetModule,
@@ -31,6 +32,7 @@ const PRIMEMG_MODULES = [
   BlockUIModule,
   SpinnerModule,
   ProgressSpinnerModule,
+  CalendarModule,
 ];
 @Component({
   selector: 'app-reportes',
@@ -47,6 +49,8 @@ export default class ReportesComponent implements OnInit {
   searchQuery: string = '';
   selectedUser: any | null = null;
   listUniqueUsers: any[] = [];
+  startDate: Date | null = null;
+  endDate: Date | null = null;
 
   private srvList = inject(ListService);
   private srvMessage = inject(MessageService);
@@ -68,7 +72,7 @@ export default class ReportesComponent implements OnInit {
     const usersSet = new Set();
     const uniqueUsers = this.listUniqueUsers;
 
-    reports.forEach(report => {
+    reports.forEach((report) => {
       if (!usersSet.has(report.nombre)) {
         usersSet.add(report.nombre);
         uniqueUsers.push(report);
@@ -122,5 +126,23 @@ export default class ReportesComponent implements OnInit {
     } else {
       this.filteredReports = this.listReports;
     }
+  }
+
+  filterReportsByDate() {
+    if (this.startDate !== null && this.endDate !== null) {
+      this.filteredReports = this.listReports.filter((report) => {
+        const reportDate = new Date(report.fecha_registro);
+        return reportDate >= this.startDate! && reportDate <= this.endDate!;
+      });
+    } else {
+      this.filteredReports = this.listReports;
+    }
+  }
+  
+  
+  clearDateFilter() {
+    this.startDate = null;
+    this.endDate = null;
+    this.filteredReports = this.listReports;
   }
 }
