@@ -51,6 +51,7 @@ export default class ReportesComponent implements OnInit {
   listUniqueUsers: any[] = [];
   startDate: Date | null = null;
   endDate: Date | null = null;
+  loading: boolean = false; // Estado de carga
 
   private srvList = inject(ListService);
   private srvMessage = inject(MessageService);
@@ -60,11 +61,13 @@ export default class ReportesComponent implements OnInit {
   }
 
   viewListReports() {
+    this.loading = true; // Mostrar pantalla de carga
     this.srvList.getviewRegistroAll().subscribe((res: any) => {
       this.listReports = res.data;
       this.filteredReports = res.data;
       this.uniqueUsers = this.getUniqueUsers(res.data);
       console.log('Listado de Reportes:', this.listReports);
+      this.loading = false; // Ocultar pantalla de carga
     });
   }
 
@@ -130,16 +133,29 @@ export default class ReportesComponent implements OnInit {
 
   filterReportsByDate() {
     if (this.startDate !== null && this.endDate !== null) {
+      const startDate = new Date(this.startDate);
+      const endDate = new Date(this.endDate);
+
       this.filteredReports = this.listReports.filter((report) => {
         const reportDate = new Date(report.fecha_registro);
-        return reportDate >= this.startDate! && reportDate <= this.endDate!;
+        return (
+          this.compareDates(reportDate, startDate) >= 0 &&
+          this.compareDates(reportDate, endDate) <= 0
+        );
       });
     } else {
       this.filteredReports = this.listReports;
     }
   }
-  
-  
+
+  compareDates(date1: Date, date2: Date): number {
+    const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+    const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+    if (d1 < d2) return -1;
+    if (d1 > d2) return 1;
+    return 0;
+  }
+
   clearDateFilter() {
     this.startDate = null;
     this.endDate = null;

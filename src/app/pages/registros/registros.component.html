@@ -223,17 +223,15 @@
     <div
       class="loading-container p-d-flex p-jc-center p-ai-center p-flex-column"
     >
-      <p
-      [(ngModel)]="loadingMessage"
-      >
+      <p [(ngModel)]="loadingMessage"></p>
 
-      </p>
       <p-progressSpinner
         ariaLabel="loading"
         styleClass="w-4rem h-4rem"
         strokeWidth="8"
         fill="var(--surface-ground)"
-      ></p-progressSpinner>
+      >
+      </p-progressSpinner>
     </div>
   </p-blockUI>
 </p-fieldset>

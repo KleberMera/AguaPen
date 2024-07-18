@@ -25,7 +25,7 @@ export class MenuComponent implements OnInit {
         ],
       },
       {
-        label: 'Listados',
+        label: 'Opciones',
         items: [
           {
             label: 'Productos',
@@ -38,26 +38,27 @@ export class MenuComponent implements OnInit {
             icon: 'pi pi-users',
             routerLink: '/home/usuarios-trabajadores',
           },
-        ],
-      },
-      {
-        label: 'Opciones',
-        items: [
           {
-            label: 'Registros',
+            label: 'Registrar',
             icon: 'pi pi-table',
             routerLink: '/home/registros',
           },
+        ],
+      },
+
+      {
+        label: 'Reportes',
+        items: [
           {
-            label: 'Reportes',
+            label: 'General',
             icon: 'pi pi-th-large',
             routerLink: '/home/reportes',
           },
           {
-            label: 'R - Usuarios',
+            label: 'Detalles',
             icon: 'pi pi-id-card',
             routerLink: '/home/reportes-usuarios',
-          }
+          },
         ],
       },
     ];
