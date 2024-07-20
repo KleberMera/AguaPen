@@ -91,6 +91,7 @@
     [rows]="20"
     [rowsPerPageOptions]="[20, 30, 40, 50]"
   >
+    @if (filterUsers(searchTerm, selectedArea, selectedCargo).length > 0) {
     <ng-template pTemplate="header">
       <tr>
         <th>ID</th>
@@ -124,6 +125,11 @@
         </td>
       </tr>
     </ng-template>
+    } @else {
+
+    <p>No hay trabajadores para mostrar</p>
+
+    }
   </p-table>
   }
 
@@ -197,8 +203,7 @@
         &nbsp;
         <p-checkbox [(ngModel)]="checked" [binary]="true"></p-checkbox>
 
-        @if (checked) {
-          &nbsp;
+        @if (checked) { &nbsp;
         <div class="p-field">
           <label for="tx_vehiculo">Placa</label>
           <input
