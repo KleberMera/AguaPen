@@ -58,8 +58,6 @@
           (click)="clearSelectedCargo()"
         ></button>
       </p-iconField>
-
-    
     </div>
 
     <div class="field">
@@ -133,8 +131,8 @@
     header="Trabajador"
     [(visible)]="dialogVisible"
     modal="modal"
-    [style]="{ width: '50vw' }"
-    [closable]="false"
+    [style]="{ width: '30rem' }"
+    [responsive]="true"
     #userDialog
   >
     <div class="p-fluid">
@@ -174,8 +172,9 @@
           [(ngModel)]="currentUser.tx_cargo"
         />
       </div>
+      @if (currentUser.tx_vehiculo && currentUser.tx_vehiculo_descripcion ) {
       <div class="p-field">
-        <label for="tx_vehiculo">Vehículo</label>
+        <label for="tx_vehiculo">Placa</label>
         <input
           id="tx_vehiculo"
           type="text"
@@ -192,21 +191,55 @@
           [(ngModel)]="currentUser.tx_vehiculo_descripcion"
         />
       </div>
+      } @else {
+      <div class="p-field">
+        <label>Desea agregar un vehículo?</label>
+        &nbsp;
+        <p-checkbox [(ngModel)]="checked" [binary]="true"></p-checkbox>
+
+        @if (checked) {
+          &nbsp;
+        <div class="p-field">
+          <label for="tx_vehiculo">Placa</label>
+          <input
+            id="tx_vehiculo"
+            type="text"
+            pInputText
+            [(ngModel)]="currentUser.tx_vehiculo"
+          />
+        </div>
+        <div class="p-field">
+          <label for="tx_vehiculo_descripcion">Descripción del Vehículo</label>
+          <input
+            id="tx_vehiculo_descripcion"
+            type="text"
+            pInputText
+            [(ngModel)]="currentUser.tx_vehiculo_descripcion"
+          />
+        </div>
+
+        }
+      </div>
+
+      }
     </div>
     <p-footer>
-      <button
-        pButton
-        icon="pi pi-check"
-        label="Guardar"
-        (click)="saveUser()"
-        [disabled]="loadingSave"
-      ></button>
-      <button
-        pButton
-        icon="pi pi-times"
-        label="Cancelar"
-        (click)="dialogVisible = false"
-      ></button>
+      <div>
+        <button
+          pButton
+          icon="pi pi-times"
+          class="p-button-text"
+          label="Cancelar"
+          (click)="dialogVisible = false"
+        ></button>
+        <button
+          pButton
+          icon="pi pi-check"
+          label="Guardar"
+          (click)="saveUser()"
+          [loading]="loadingSave"
+        ></button>
+      </div>
     </p-footer>
   </p-dialog>
 </p-fieldset>

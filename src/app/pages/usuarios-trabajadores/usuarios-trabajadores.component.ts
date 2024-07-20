@@ -17,7 +17,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { AvatarModule } from 'primeng/avatar'; // Importar AvatarModule
 import { CommonModule } from '@angular/common'; // Importa CommonModule
 import { RegisterService } from '../../services/register.service';
-
+import { CheckboxModule } from 'primeng/checkbox';
 const PRIMENG_MODULES = [
   FieldsetModule,
   CommonModule,
@@ -32,6 +32,7 @@ const PRIMENG_MODULES = [
   ToastModule,
   DialogModule,
   AvatarModule, // Agregar AvatarModule aquí
+  CheckboxModule,
 ];
 
 @Component({
@@ -45,6 +46,7 @@ const PRIMENG_MODULES = [
 export default class UsuariosTrabajadoresComponent implements OnInit {
   loadingSave: boolean = false;
   dialogVisible: boolean = false;
+  checked: boolean = false;
   @ViewChild('userDialog') userDialog!: Dialog;
 
   ListUsersWorkers: User[] = [];
@@ -168,19 +170,35 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
 
   validateUser(user: User): boolean {
     if (!user.tx_nombre) {
-      this.srvMensajes.add({ severity: 'error', summary: 'Error', detail: 'El nombre es obligatorio.' });
+      this.srvMensajes.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'El nombre es obligatorio.',
+      });
       return false;
     }
     if (!user.tx_cedula) {
-      this.srvMensajes.add({ severity: 'error', summary: 'Error', detail: 'La cédula es obligatoria.' });
+      this.srvMensajes.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'La cédula es obligatoria.',
+      });
       return false;
     }
     if (!user.tx_area) {
-      this.srvMensajes.add({ severity: 'error', summary: 'Error', detail: 'El área es obligatoria.' });
+      this.srvMensajes.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'El área es obligatoria.',
+      });
       return false;
     }
     if (!user.tx_cargo) {
-      this.srvMensajes.add({ severity: 'error', summary: 'Error', detail: 'El cargo es obligatorio.' });
+      this.srvMensajes.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'El cargo es obligatorio.',
+      });
       return false;
     }
     return true;
@@ -192,14 +210,22 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
       next: (response) => {
         this.dialogVisible = false;
         this.getListUsuarios(); // Recarga la lista de usuarios después de crear uno nuevo
-        this.srvMensajes.add({ severity: 'success', summary: 'Creación exitosa', detail: 'El nuevo usuario fue creado correctamente.' });
+        this.srvMensajes.add({
+          severity: 'success',
+          summary: 'Creación exitosa',
+          detail: 'El nuevo usuario fue creado correctamente.',
+        });
         this.loadingSave = false;
       },
       error: (err) => {
         console.error('Error creando usuario:', err);
-        this.srvMensajes.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al crear el usuario.' });
+        this.srvMensajes.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Ocurrió un error al crear el usuario.',
+        });
         this.loadingSave = false;
-      }
+      },
     });
   }
 
@@ -209,25 +235,33 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
       next: (response) => {
         this.dialogVisible = false;
         this.getListUsuarios(); // Recarga la lista de usuarios después de actualizar
-        this.srvMensajes.add({ severity: 'success', summary: 'Actualización exitosa', detail: 'El usuario fue actualizado correctamente.' });
+        this.srvMensajes.add({
+          severity: 'success',
+          summary: 'Actualización exitosa',
+          detail: 'El usuario fue actualizado correctamente.',
+        });
         this.loadingSave = false;
       },
       error: (err) => {
         console.error('Error actualizando usuario:', err);
-        this.srvMensajes.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al actualizar el usuario.' });
+        this.srvMensajes.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Ocurrió un error al actualizar el usuario.',
+        });
         this.loadingSave = false;
-      }
+      },
     });
   }
 
   onAreaChange() {
     if (this.selectedArea) {
-      this.filteredCargoOptions = this.ListUsersWorkers
-        .filter((user) => user.tx_area === this.selectedArea)
-        .map((user) => ({
-          label: user.tx_cargo,
-          value: user.tx_cargo,
-        }));
+      this.filteredCargoOptions = this.ListUsersWorkers.filter(
+        (user) => user.tx_area === this.selectedArea
+      ).map((user) => ({
+        label: user.tx_cargo,
+        value: user.tx_cargo,
+      }));
 
       this.filteredCargoOptions = this.getUniqueOptions(
         this.filteredCargoOptions,
