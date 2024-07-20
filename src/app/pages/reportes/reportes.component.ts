@@ -17,6 +17,7 @@ import { SpinnerModule } from 'primeng/spinner';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { CalendarModule } from 'primeng/calendar';
+import { PrintService } from '../../services/print.service';
 const PRIMEMG_MODULES = [
   TableModule,
   FieldsetModule,
@@ -51,23 +52,21 @@ export default class ReportesComponent implements OnInit {
   listUniqueUsers: any[] = [];
   startDate: Date | null = null;
   endDate: Date | null = null;
-  loading: boolean = false;
 
   private srvList = inject(ListService);
   private srvMessage = inject(MessageService);
+  private srvPrint = inject(PrintService);
 
   ngOnInit(): void {
     this.viewListReports();
   }
 
   viewListReports() {
-    this.loading = true;
     this.srvList.getviewRegistroAll().subscribe((res: any) => {
       this.listReports = res.data;
       this.filteredReports = res.data;
       this.uniqueUsers = this.getUniqueUsers(res.data);
       console.log('Listado de Reportes:', this.listReports);
-      this.loading = false;
     });
   }
 
@@ -133,32 +132,27 @@ export default class ReportesComponent implements OnInit {
 
   filterReportsByDate() {
     if (this.startDate !== null && this.endDate !== null) {
-      const startDate = new Date(this.startDate.setHours(0, 0, 0, 0));
-      const endDate = new Date(this.endDate.setHours(23, 59, 59, 999));
-
-      console.log('Fecha Inicio:', startDate);
-      console.log('Fecha Fin:', endDate);
-
       this.filteredReports = this.listReports.filter((report) => {
         const reportDate = new Date(report.fecha_registro);
-        return reportDate >= startDate && reportDate <= endDate;
+        return reportDate >= this.startDate! && reportDate <= this.endDate!;
       });
-
-      if (this.filteredReports.length === 0) {
-        this.srvMessage.add({
-          severity: 'warn',
-          summary: 'Sin Resultados',
-          detail: 'No se encontraron reportes en el rango de fechas seleccionado',
-        });
-      }
     } else {
       this.filteredReports = this.listReports;
     }
   }
-
+  
+  
   clearDateFilter() {
     this.startDate = null;
     this.endDate = null;
     this.filteredReports = this.listReports;
+  }
+
+  exportToPDF(): void {
+    this.srvPrint.exportToPDF('reportTable', 'Reporte');
+  }
+
+  printTable(): void {
+    this.srvPrint.printElement('reportTable');
   }
 }
