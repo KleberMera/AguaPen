@@ -8,6 +8,7 @@ import { BehaviorSubject } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
+
 export class AuthService {
   private environment = environment.aguapenApi;
   private loggedIn = new BehaviorSubject<boolean>(false);
