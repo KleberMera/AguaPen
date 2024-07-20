@@ -9,6 +9,7 @@ export class PrintService {
 
   constructor() {}
 
+  
   exportToPDF(elementId: string, fileName: string): void {
     const data = document.getElementById(elementId);
     if (data) {
