@@ -1,9 +1,10 @@
 <p-fieldset legend="Reportes">
   <div class="formgroup-inline">
+    <!-- Filtros de búsqueda y selección de usuario -->
     <div class="field">
       <label for="searchInput" class="p-sr-only">Buscar por Cédula:</label>
       <p-iconField iconPosition="left">
-        <p-inputIcon styleClass="pi pi-search" />
+        <p-inputIcon icon="pi pi-search" />
         <input
           id="searchInput"
           type="text"
@@ -11,7 +12,7 @@
           placeholder="Buscar por Cédula"
           [(ngModel)]="searchQuery"
         />
-        @if (searchQuery) {
+        @if(searchQuery) {
         <button
           type="button"
           class="p-button p-button-icon-only p-button-rounded p-button-text"
@@ -53,9 +54,6 @@
         </p-dropdown>
       </p-iconField>
     </div>
-  </div>
-
-  <div class="formgroup-inline">
     <div class="field">
       <label for="startDate" class="p-sr-only">Fecha Inicio:</label>
       <p-calendar
@@ -83,8 +81,6 @@
         label="Filtrar por Fecha"
         (click)="filterReportsByDate()"
       ></button>
-    </div>
-    <div class="field">
       <button
         pButton
         type="button"
@@ -95,40 +91,44 @@
     </div>
   </div>
 
-  @if (loading) {
-  <div class="loading-container p-d-flex p-jc-center p-ai-center p-flex-column">
-    <p>Cargando Reportes...</p>
-    <p-progressSpinner
-      ariaLabel="loading"
-      styleClass="w-4rem h-4rem"
-      strokeWidth="8"
-      fill="var(--surface-ground)"
-    ></p-progressSpinner>
+  <!-- Botón de ícono para imprimir -->
+  <div class="print-icon">
+    <button
+      pButton
+      type="button"
+      icon="pi pi-print"
+      (click)="printTable()"
+      class="p-button-rounded p-button-secondary"
+      aria-label="Imprimir"
+      position="right"
+    ></button>
   </div>
-  } @else {
-  <p-table [value]="filteredReports">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>ID</th>
-        <th>Fecha</th>
-        <th>Nombre</th>
-        <th>Producto</th>
-        <th>Cantidad</th>
-        <th>Total Cantidades</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-report>
-      <tr>
-        <td>{{ report.id_registro }}</td>
-        <td>{{ report.fecha_registro }}</td>
-        <td>{{ report.nombre }}</td>
-        <td>{{ report.nombre_producto }}</td>
-        <td>{{ report.cantidad }}</td>
-        <td>{{ report.total_cantidades }}</td>
-      </tr>
-    </ng-template>
-  </p-table>
-  }
+
+  <!-- Tabla de reportes -->
+  <div id="reportTable">
+    <p-table [value]="filteredReports">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>ID</th>
+          <th>Fecha</th>
+          <th>Nombre</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Total Cantidades</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-report>
+        <tr>
+          <td>{{ report.id_registro }}</td>
+          <td>{{ report.fecha_registro }}</td>
+          <td>{{ report.nombre }}</td>
+          <td>{{ report.nombre_producto }}</td>
+          <td>{{ report.cantidad }}</td>
+          <td>{{ report.total_cantidades }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 </p-fieldset>
 
 <p-toast

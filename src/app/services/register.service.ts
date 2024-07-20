@@ -54,5 +54,36 @@ export class RegisterService {
     );
   }
 
-  
+
+
+  postRegisterUsers(objUser: any) {
+    let url = 'newUsuarioTrabajador';
+    return this.http.post(
+      this.environment + url,
+      this.srvG.objectToFormData({
+        tx_nombre: objUser.tx_nombre,
+        tx_cedula: objUser.tx_cedula,
+        tx_area: objUser.tx_area,
+        tx_cargo: objUser.tx_cargo,
+        tx_vehiculo: objUser.tx_vehiculo,
+        tx_vehiculo_descripcion: objUser.tx_vehiculo_descripcion,
+      })
+    );
+}
+
+postEditUsers(objUser: any) {
+  let url = 'editUsuarioTrabajador';
+  return this.http.post(
+    this.environment + url,
+    this.srvG.objectToFormData({
+      id_usuario: objUser.id_usuario,
+      tx_nombre: objUser.tx_nombre,
+      tx_cedula: objUser.tx_cedula,
+      tx_area: objUser.tx_area,
+      tx_cargo: objUser.tx_cargo,
+      tx_vehiculo: objUser.tx_vehiculo,
+      tx_vehiculo_descripcion: objUser.tx_vehiculo_descripcion,
+    })
+  );
+}
 }
