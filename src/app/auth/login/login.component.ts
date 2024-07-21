@@ -67,6 +67,7 @@ export default class LoginComponent {
           // Guardar datos en BehaviorSubject y localStorage
           this.srvAuth.setNombres(res.nombres);
           this.srvAuth.setUsuarioId(res.usuario_id);
+          this.srvAuth.setApellidos(res.apellidos);
           this.srvAuth.setLoggedIn(true);
 
           // Redirigir al usuario a la página de inicio

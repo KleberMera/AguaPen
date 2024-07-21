@@ -1,86 +1,77 @@
-<p-fieldset>
+<div class="card flex flex-wrap justify-content-center gap-3">
+  <p-iconField iconPosition="left">
+    <p-inputIcon styleClass="pi pi-search" />
+
+    <input
+      type="text"
+      pInputText
+      placeholder="Buscar por nombre"
+      [(ngModel)]="searchTerm"
+    />
+  </p-iconField>
+  <p-iconField iconPosition="right">
+    <button
+      pButton
+      label="Nuevo"
+      icon="pi pi-plus"
+      class="p-button-success p-mt-2 p-mt-md-0"
+      (click)="openAddProductDialog()"
+    ></button>
+  </p-iconField>
+</div>
+
+@if (loading) {
+<div class="loading-container p-d-flex p-jc-center p-ai-center p-flex-column">
+  <p>Cargando productos...</p>
+  <p-progressSpinner
+    ariaLabel="loading"
+    styleClass="w-4rem h-4rem"
+    strokeWidth="8"
+    fill="var(--surface-ground)"
+  ></p-progressSpinner>
+</div>
+} @else { &nbsp;
+<p-table
+  [value]="filterProducts(searchTerm)"
+  [tableStyle]=""
+  [paginator]="true"
+  [rows]="20"
+  [rowsPerPageOptions]="[20, 30, 40, 50]"
+>
   <ng-template pTemplate="header">
-    <div>
-      <i class="pi pi-shop mr-2"></i>
-      <span class="font-bold">Productos</span>
-    </div>
+    <tr>
+      <th>Nombre del Producto</th>
+      <th pSortableColumn="stock_producto">
+        Stock
+        <p-sortIcon field="stock_producto"></p-sortIcon>
+      </th>
+      <th>Acción</th>
+    </tr>
   </ng-template>
-
-  <div class="card flex flex-wrap justify-content-center gap-3">
-    <p-iconField iconPosition="left">
-      <p-inputIcon styleClass="pi pi-search" />
-
-      <input
-        type="text"
-        pInputText
-        placeholder="Buscar por nombre"
-        [(ngModel)]="searchTerm"
-      />
-    </p-iconField>
-    <p-iconField iconPosition="right">
-      <button
-        pButton
-        label="Nuevo"
-        icon="pi pi-plus"
-        class="p-button-success p-mt-2 p-mt-md-0"
-        (click)="openAddProductDialog()"
-      ></button>
-    </p-iconField>
-  </div>
-
-  @if (loading) {
-  <div class="loading-container p-d-flex p-jc-center p-ai-center p-flex-column">
-    <p>Cargando productos...</p>
-    <p-progressSpinner
-      ariaLabel="loading"
-      styleClass="w-4rem h-4rem"
-      strokeWidth="8"
-      fill="var(--surface-ground)"
-    ></p-progressSpinner>
-  </div>
-  } @else { &nbsp;
-  <p-table
-    [value]="filterProducts(searchTerm)"
-    [tableStyle]=""
-    [paginator]="true"
-    [rows]="20"
-    [rowsPerPageOptions]="[20, 30, 40, 50]"
-  >
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Nombre del Producto</th>
-        <th pSortableColumn="stock_producto">
-          Stock
-          <p-sortIcon field="stock_producto"></p-sortIcon>
-        </th>
-        <th>Acción</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-product>
-      <tr>
-        <td>{{ product.nombre_producto }}</td>
-        <td>{{ product.stock_producto }}</td>
-        <td>
-          <button
-            pButton
-            type="button"
-            icon="pi pi-pencil"
-            class="p-button-rounded p-button-primary p-mr-2"
-            (click)="openEditProductDialog(product)"
-          ></button>
-          <button
-            pButton
-            type="button"
-            icon="pi pi-trash"
-            class="p-button-rounded p-button-danger p-mr-2"
-            (click)="deleteProduct(product)"
-          ></button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-  }
-</p-fieldset>
+  <ng-template pTemplate="body" let-product>
+    <tr>
+      <td>{{ product.nombre_producto }}</td>
+      <td>{{ product.stock_producto }}</td>
+      <td>
+        <button
+          pButton
+          type="button"
+          icon="pi pi-pencil"
+          class="p-button-rounded p-button-primary p-mr-2"
+          (click)="openEditProductDialog(product)"
+        ></button>
+        <button
+          pButton
+          type="button"
+          icon="pi pi-trash"
+          class="p-button-rounded p-button-danger p-mr-2"
+          (click)="deleteProduct(product)"
+        ></button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+}
 
 <p-dialog
   [(visible)]="dialogVisible"

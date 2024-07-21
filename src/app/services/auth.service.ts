@@ -44,9 +44,11 @@ export class AuthService {
 
   private nombresSubject = new BehaviorSubject<string | null>(this.getStoredNombres());
   private usuarioIdSubject = new BehaviorSubject<string | null>(this.getStoredUsuarioId());
+  private apellidosSubject = new BehaviorSubject<string | null>(this.getStoredApellidos());
 
   nombres$ = this.nombresSubject.asObservable();
   usuarioId$ = this.usuarioIdSubject.asObservable();
+  apellidos$ = this.apellidosSubject.asObservable();
 
   private getStoredNombres(): string | null {
     return localStorage.getItem('nombres');
@@ -54,6 +56,10 @@ export class AuthService {
 
   private getStoredUsuarioId(): string | null {
     return localStorage.getItem('usuario_id');
+  }
+
+  private getStoredApellidos(): string | null {
+    return localStorage.getItem('apellidos');
   }
 
   setNombres(nombres: string) {
@@ -66,11 +72,18 @@ export class AuthService {
     localStorage.setItem('usuario_id', usuario_id);
   }
 
+  setApellidos(apellidos: string) {
+    this.apellidosSubject.next(apellidos);
+    localStorage.setItem('apellidos', apellidos);
+  }
+
   clearAuthData() {
     this.nombresSubject.next(null);
     this.usuarioIdSubject.next(null);
+    this.apellidosSubject.next(null);
     localStorage.removeItem('nombres');
     localStorage.removeItem('usuario_id');
+    localStorage.removeItem('apellidos');
   }
   isLoggedIn(): boolean {
     return this.loggedIn.value;

@@ -37,11 +37,9 @@ export class ToolbarComponent {
   menuVisible: boolean = true;
 
   //iNJECT
-  private confirmationService = inject(ConfirmationService);
-  private messageService = inject(MessageService);
+
   private sidebarService = inject(SidebarService);
-  private router = inject(Router);
-  private srvAuth = inject(AuthService);
+
 
   ngOnInit() {}
 
@@ -49,36 +47,5 @@ export class ToolbarComponent {
     this.sidebarService.toggleSidebar();
   }
 
-  logout(event: Event) {
-    this.confirmationService.confirm({
-      target: event.target as EventTarget,
-      message: '¿Estás seguro que deseas cerrar sesión?',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Salir',
-      rejectLabel: 'Cancelar',
-      accept: () => {
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Confirmado',
-          detail: 'Se ha cerrado la sesión',
-          life: 3000,
-        });
-
-        this.signOut();
-      },
-      reject: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Denegado',
-          detail: 'Cancelado',
-          life: 3000,
-        });
-      },
-    });
-  }
-
-  signOut() {
-    this.srvAuth.clearAuthData();
-    this.router.navigate(['/auth']);
-  }
+ 
 }
