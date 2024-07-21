@@ -1,11 +1,17 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { AvatarModule } from 'primeng/avatar';
 import { StyleClassModule } from 'primeng/styleclass';
 import { Sidebar } from 'primeng/sidebar';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { SidebarService } from '../../services/sidebar.service';
 import { CommonModule } from '@angular/common';
 import { ImageModule } from 'primeng/image';
@@ -13,6 +19,7 @@ import { AuthService } from '../../services/auth.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { filter } from 'rxjs';
 const PRIME_MODULES = [
   SidebarModule,
   ButtonModule,
@@ -35,14 +42,12 @@ const PRIME_MODULES = [
 export class SidebarComponent implements OnInit {
   @ViewChild('sidebarRef') sidebarRef!: Sidebar;
 
-  private router = inject(Router);
-
   sidebarVisible: boolean = false;
   nombres: string | null = '';
   usuario_id: string | null = '';
   apellidos: string | null = '';
 
-  //injector
+  private router = inject(Router);
   private srvAuth = inject(AuthService);
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
@@ -51,7 +56,12 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit() {
     this.sidebarService.sidebarVisible$.subscribe(
-      (visible) => (this.sidebarVisible = visible)
+      (visible) => {
+        this.sidebarVisible = visible;
+        if (this.sidebarRef) {
+          this.sidebarRef.visible = visible;
+        }
+      }
     );
 
     this.srvAuth.nombres$.subscribe((nombres) => {
@@ -66,17 +76,21 @@ export class SidebarComponent implements OnInit {
       this.apellidos = apellidos;
     });
 
-    console.log('Nombre del usuario:', this.nombres);
-    console.log('ID del usuario:', this.usuario_id);
-    console.log('Apellidos del usuario:', this.apellidos);
+    // Cerrar el sidebar al navegar a una nueva página
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.sidebarService.setSidebarVisible(false);
+      });
   }
 
   closeCallback(e: any): void {
-    this.sidebarService.toggleSidebar();
+    this.sidebarService.setSidebarVisible(false);
   }
 
   navigateTo(route: string): void {
     this.router.navigate([route]);
+    this.sidebarService.setSidebarVisible(false);
   }
 
   menuItems = [
@@ -97,7 +111,6 @@ export class SidebarComponent implements OnInit {
           label: 'Productos',
           icon: 'pi pi-shop',
           routerLink: '/home/productos',
-          routerActive: 'active',
         },
         {
           label: 'Trabajadores',

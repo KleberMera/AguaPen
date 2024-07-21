@@ -33,15 +33,7 @@ const PRIMEMG_MODULES = [
   providers: [ConfirmationService, MessageService],
 })
 export class ToolbarComponent {
-  @Output() menuVisibilityChange = new EventEmitter<boolean>();
-  menuVisible: boolean = true;
-
-  //iNJECT
-
-  private sidebarService = inject(SidebarService);
-
-
-  ngOnInit() {}
+  constructor(private sidebarService: SidebarService) {}
 
   toggleSidebar() {
     this.sidebarService.toggleSidebar();

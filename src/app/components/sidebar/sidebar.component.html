@@ -27,7 +27,8 @@
         </div>
         <div class="overflow-y-auto">
           <ul class="list-none p-3 m-0">
-            <ng-container *ngFor="let group of menuItems">
+            @for (menu of menuItems; track $index) {
+            <ng-container>
               <li>
                 <div
                   pRipple
@@ -35,14 +36,14 @@
                   enterClass="hidden"
                   enterActiveClass="slidedown"
                   leaveToClass="hidden"
-                  leaveActiveClass="slideup"
+                  leaveActw-2Class="slideup"
                   class="p-3 flex align-items-center justify-content-between text-600 cursor-pointer p-ripple"
                 >
-                  <span class="font-medium">{{ group.label }}</span>
+                  <span class="font-medium">{{ menu.label }}</span>
                   <i class="pi pi-chevron-down"></i>
                 </div>
                 <ul class="list-none p-0 m-0 overflow-hidden">
-                  <ng-container *ngFor="let item of group.items">
+                  <ng-container *ngFor="let item of menu.items">
                     <li (click)="navigateTo(item.routerLink)">
                       <a
                         pRipple
@@ -56,6 +57,7 @@
                 </ul>
               </li>
             </ng-container>
+            }
           </ul>
         </div>
         <div class="mt-auto flex">
