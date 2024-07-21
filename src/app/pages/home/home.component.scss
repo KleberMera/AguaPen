@@ -1,20 +1,10 @@
-.layout {
-  .main-content {
-    margin-top: 60px; // Ajusta según la altura del toolbar
-    display: flex;
-  }
+.fixed-toolbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000; /* Asegúrate de que tenga un z-index alto para que esté por encima del contenido */
+}
 
-  app-toolbar {
-    z-index: 1000; /* Ajusta según tus necesidades */
-  }
-
-  .content {
-    padding: 30px; // Ajusta según tus necesidades
-    transition: margin-left 0.3s ease;
-    overflow: auto; // Asegúrate de que el contenido sea desplazable
-    height: calc(
-      100vh - 60px
-    ); /* Altura del contenido menos la altura del toolbar */
-    position: relative;
-  }
+.content {
+  margin-top: 60px; /* Ajusta esto según la altura de tu toolbar */
 }

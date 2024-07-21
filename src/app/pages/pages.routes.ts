@@ -35,6 +35,10 @@ export const routes: Routes = [
         loadComponent: () => import('./reportes-usuarios/reportes-usuarios.component'),
       },
       {
+        path: 'estaciones',
+        loadComponent: () => import('./estaciones/estaciones.component'),
+      },
+      {
         path: '**',
         redirectTo: '/home/dashboard',
       }
