@@ -13,6 +13,7 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { SidebarService } from '../../services/sidebar.service';
 const PRIMEMG_MODULES = [
   ToolbarModule,
   ButtonModule,
@@ -38,14 +39,14 @@ export class ToolbarComponent {
   //iNJECT
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
+  private sidebarService = inject(SidebarService);
   private router = inject(Router);
   private srvAuth = inject(AuthService);
 
   ngOnInit() {}
 
-  toggleMenu() {
-    this.menuVisible = !this.menuVisible;
-    this.menuVisibilityChange.emit(this.menuVisible);
+  toggleSidebar() {
+    this.sidebarService.toggleSidebar();
   }
 
   logout(event: Event) {

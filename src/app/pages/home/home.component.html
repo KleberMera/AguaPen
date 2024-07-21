@@ -10,7 +10,7 @@
    
     [ngClass]="{ 'menu-open': menuVisible, 'menu-closed': !menuVisible }"
   >
-    <app-menu *ngIf="menuVisible" class="menu p-fixed" ></app-menu>
+   <app-sidebar></app-sidebar>
     <div class="content flex-1 p-4">
       <router-outlet></router-outlet>
     </div>
