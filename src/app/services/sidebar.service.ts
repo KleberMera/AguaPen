@@ -17,4 +17,11 @@ export class SidebarService {
     console.log(visible);
     
   }
+
+  private titleSubject = new BehaviorSubject<string>('SG - Industrial');
+  title$ = this.titleSubject.asObservable();
+
+  setTitle(title: string) {
+    this.titleSubject.next(title);
+  }
 }

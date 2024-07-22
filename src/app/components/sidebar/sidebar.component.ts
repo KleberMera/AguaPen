@@ -10,7 +10,7 @@ import { SidebarService } from '../../services/sidebar.service';
 import { CommonModule } from '@angular/common';
 import { ImageModule } from 'primeng/image';
 import { AuthService } from '../../services/auth.service';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService, MenuItem } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { filter } from 'rxjs';
@@ -69,7 +69,6 @@ export class SidebarComponent implements OnInit {
       if (!e.target.matches('.sidebarOpen')) {
         if (this.sidebarVisible === false) {
           this.sidebarService.setSidebarVisible(false);
-         
         }
       }
     });
@@ -80,7 +79,23 @@ export class SidebarComponent implements OnInit {
   }
 
   navigateTo(route: string): void {
-    this.router.navigate([route]);
+    const menuItem = this.findMenuItemByRoute(route);
+    if (menuItem) {
+      this.sidebarService.setTitle(menuItem.label);
+      this.router.navigate([route]);
+    }
+ 
+  }
+
+  findMenuItemByRoute(route: string) {
+    for (const menu of this.menuItems) {
+      for (const item of menu.items) {
+        if (item.routerLink === route) {
+          return item;
+        }
+      }
+    }
+    return null;
   }
 
   menuItems = [
@@ -92,6 +107,11 @@ export class SidebarComponent implements OnInit {
           icon: 'pi pi-home',
           routerLink: '/home/dashboard',
         },
+        {
+          label: 'Roles',
+          icon: 'pi pi-user',
+          routerLink: '/home/usuarios-roles',
+        }
       ],
     },
     {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ToolbarComponent } from '../../components/toolbar/toolbar.component';
 
@@ -17,14 +17,4 @@ const COMPONENTS = [ToolbarComponent, SidebarComponent];
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
-export default class HomeComponent implements OnInit {
-  menuVisible: boolean = true;
-
-  constructor() {}
-
-  ngOnInit() {}
-
-  onMenuVisibilityChange(visible: boolean) {
-    this.menuVisible = visible;
-  }
-}
+export default class HomeComponent {}
