@@ -4,11 +4,11 @@ import { ToolbarComponent } from '../../components/toolbar/toolbar.component';
 
 import { CommonModule } from '@angular/common';
 import { SplitterModule } from 'primeng/splitter';
-import { MenuComponent } from '../../components/menu/menu.component';
+
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 
 const PRIMEMG_MODULES = [SplitterModule];
-const COMPONENTS = [ToolbarComponent, MenuComponent, SidebarComponent];
+const COMPONENTS = [ToolbarComponent, SidebarComponent];
 
 @Component({
   selector: 'app-home',

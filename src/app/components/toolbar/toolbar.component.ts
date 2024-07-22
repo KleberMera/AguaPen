@@ -38,6 +38,4 @@ export class ToolbarComponent {
   toggleSidebar() {
     this.sidebarService.toggleSidebar();
   }
-
- 
 }

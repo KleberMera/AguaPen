@@ -55,14 +55,12 @@ export class SidebarComponent implements OnInit {
   constructor(private sidebarService: SidebarService) {}
 
   ngOnInit() {
-    this.sidebarService.sidebarVisible$.subscribe(
-      (visible) => {
-        this.sidebarVisible = visible;
-        if (this.sidebarRef) {
-          this.sidebarRef.visible = visible;
-        }
+    this.sidebarService.sidebarVisible$.subscribe((visible) => {
+      this.sidebarVisible = visible;
+      if (this.sidebarRef) {
+        this.sidebarRef.visible = visible;
       }
-    );
+    });
 
     this.srvAuth.nombres$.subscribe((nombres) => {
       this.nombres = nombres;
@@ -92,9 +90,6 @@ export class SidebarComponent implements OnInit {
     this.router.navigate([route]);
     this.sidebarService.setSidebarVisible(false);
   }
-
-
-
 
   menuItems = [
     {
