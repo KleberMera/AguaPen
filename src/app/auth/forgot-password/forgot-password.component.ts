@@ -28,7 +28,9 @@ const PRIMENG_MODULES = [
 export default class ForgotPasswordComponent {
   forgotPasswordForm: FormGroup;
   loading: boolean = false;
+  loadingCheck: boolean = false;
   cedulaVerificada: boolean = false;
+
 
   private srvAuth = inject(AuthService);
   private srvMensajes = inject(MessageService);
@@ -47,6 +49,7 @@ export default class ForgotPasswordComponent {
   }
 
   verifyCedula() {
+    this.loadingCheck = true;
     const cedula = this.forgotPasswordForm.get('cedula')!.value;
 
     if (cedula) {
@@ -58,6 +61,7 @@ export default class ForgotPasswordComponent {
             summary: 'Verificación de Cédula',
             detail: res.mensaje,
           });
+          this.loadingCheck = false;
         } else {
           this.cedulaVerificada = false;
           this.srvMensajes.add({
@@ -65,6 +69,7 @@ export default class ForgotPasswordComponent {
             summary: 'Error',
             detail: res.mensaje,
           });
+          this.loadingCheck = false;
         }
       });
     } else {
@@ -73,6 +78,7 @@ export default class ForgotPasswordComponent {
         summary: 'Error',
         detail: 'Debe ingresar una cédula',
       });
+      this.loadingCheck = false;
     }
   }
 
