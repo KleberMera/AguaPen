@@ -14,5 +14,7 @@ export class SidebarService {
 
   setSidebarVisible(visible: boolean) {
     this.sidebarVisible.next(visible);
+    console.log(visible);
+    
   }
 }

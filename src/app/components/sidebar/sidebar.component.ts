@@ -1,10 +1,4 @@
-import {
-  Component,
-  HostListener,
-  inject,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
@@ -20,6 +14,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { filter } from 'rxjs';
+
 const PRIME_MODULES = [
   SidebarModule,
   ButtonModule,
@@ -61,18 +56,7 @@ export class SidebarComponent implements OnInit {
         this.sidebarRef.visible = visible;
       }
     });
-
-    this.srvAuth.nombres$.subscribe((nombres) => {
-      this.nombres = nombres;
-    });
-
-    this.srvAuth.usuarioId$.subscribe((usuario_id) => {
-      this.usuario_id = usuario_id;
-    });
-
-    this.srvAuth.apellidos$.subscribe((apellidos) => {
-      this.apellidos = apellidos;
-    });
+    this.authDates();
 
     // Cerrar el sidebar al navegar a una nueva página
     this.router.events
@@ -80,6 +64,15 @@ export class SidebarComponent implements OnInit {
       .subscribe(() => {
         this.sidebarService.setSidebarVisible(false);
       });
+
+    document.addEventListener('click', (e: any) => {
+      if (!e.target.matches('.sidebarOpen')) {
+        if (this.sidebarVisible === false) {
+          this.sidebarService.setSidebarVisible(false);
+         
+        }
+      }
+    });
   }
 
   closeCallback(e: any): void {
@@ -88,7 +81,6 @@ export class SidebarComponent implements OnInit {
 
   navigateTo(route: string): void {
     this.router.navigate([route]);
-    this.sidebarService.setSidebarVisible(false);
   }
 
   menuItems = [
@@ -175,6 +167,19 @@ export class SidebarComponent implements OnInit {
   signOut() {
     this.srvAuth.clearAuthData();
     this.router.navigate(['/auth']);
-   // this.sidebarService.setSidebarVisible(false);
+  }
+
+  authDates() {
+    this.srvAuth.nombres$.subscribe((nombres) => {
+      this.nombres = nombres;
+    });
+
+    this.srvAuth.usuarioId$.subscribe((usuario_id) => {
+      this.usuario_id = usuario_id;
+    });
+
+    this.srvAuth.apellidos$.subscribe((apellidos) => {
+      this.apellidos = apellidos;
+    });
   }
 }
