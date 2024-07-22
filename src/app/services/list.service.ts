@@ -33,4 +33,9 @@ export class ListService {
     let url = 'viewRegistroAll';
     return this.http.get<any>(this.environment + url);
   }
+
+  getviewEstaciones(){
+    let url = 'viewSeasons';
+    return this.http.get<any>(this.environment + url);
+  }
 }

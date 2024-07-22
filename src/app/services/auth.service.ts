@@ -7,7 +7,6 @@ import { BehaviorSubject } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-
 export class AuthService {
   private environment = environment.aguapenApi;
   private loggedIn = new BehaviorSubject<boolean>(false);
@@ -27,8 +26,6 @@ export class AuthService {
       this.environment + url,
       this.srvG.objectToFormData(objUsuario)
     );
-  
-  
   }
 
   verifyCedula(cedula: string) {
@@ -38,13 +35,16 @@ export class AuthService {
       this.srvG.objectToFormData({ cedula })
     );
   }
-  
 
-
-
-  private nombresSubject = new BehaviorSubject<string | null>(this.getStoredNombres());
-  private usuarioIdSubject = new BehaviorSubject<string | null>(this.getStoredUsuarioId());
-  private apellidosSubject = new BehaviorSubject<string | null>(this.getStoredApellidos());
+  private nombresSubject = new BehaviorSubject<string | null>(
+    this.getStoredNombres()
+  );
+  private usuarioIdSubject = new BehaviorSubject<string | null>(
+    this.getStoredUsuarioId()
+  );
+  private apellidosSubject = new BehaviorSubject<string | null>(
+    this.getStoredApellidos()
+  );
 
   nombres$ = this.nombresSubject.asObservable();
   usuarioId$ = this.usuarioIdSubject.asObservable();
@@ -91,8 +91,4 @@ export class AuthService {
   setLoggedIn(value: boolean) {
     this.loggedIn.next(value);
   }
-
-
-  
-  
 }
