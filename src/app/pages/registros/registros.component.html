@@ -12,12 +12,7 @@
           [(ngModel)]="searchQuery"
         />
         @if (searchQuery) {
-        <button
-          pButton
-          type="button"
-       
-          (click)="clearSearch()"
-        >
+        <button pButton type="button" (click)="clearSearch()">
           <span class="pi pi-times"></span>
         </button>
         }
@@ -224,7 +219,7 @@
     <div
       class="loading-container p-d-flex p-jc-center p-ai-center p-flex-column"
     >
-      <p [(ngModel)]="loadingMessage"></p>
+      <p>{{ loadingMessage }}</p>
 
       <p-progressSpinner
         ariaLabel="loading"

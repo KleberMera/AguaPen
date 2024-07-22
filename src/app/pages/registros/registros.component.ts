@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RegisterDetailsService } from '../../services/register-details.service';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { FieldsetModule } from 'primeng/fieldset';
 import { ListService } from '../../services/list.service';
 import { FormsModule } from '@angular/forms';
@@ -22,7 +22,7 @@ import {
   Registro,
   User,
 } from '../../interfaces/register.interfaces';
-import { formatDate } from '@angular/common';
+
 const PRIMEMG_MODULES = [
   FieldsetModule,
   TableModule,
@@ -46,7 +46,7 @@ const PRIMEMG_MODULES = [
   imports: [PRIMEMG_MODULES],
   templateUrl: './registros.component.html',
   styleUrl: './registros.component.scss',
-  providers: [MessageService, ConfirmationService],
+  providers: [MessageService],
 })
 export default class RegistrosComponent implements OnInit {
   ListUsers: User[] = [];
@@ -68,7 +68,6 @@ export default class RegistrosComponent implements OnInit {
   productDropdownOptions: Product[] = [];
   selectedProduct: Product | null = null;
 
-  constructor() {}
   private srvRegDet = inject(RegisterDetailsService);
   private srvList = inject(ListService);
   private messageService = inject(MessageService);
@@ -97,22 +96,23 @@ export default class RegistrosComponent implements OnInit {
     );
   }
 
-  async getListUsuarios() {
+  getListUsuarios() {
     this.loading = true; // Mostrar pantalla de carga
     this.loadingMessage = 'Cargando usuarios...';
 
-    await this.srvList.getListUsuarios().subscribe((res: any) => {
+    this.srvList.getListUsuarios().subscribe((res: any) => {
       this.ListUsers = res.data;
       this.filteredUsers = this.ListUsers;
       this.dropdownOptions = this.ListUsers;
       this.loading = false; // Ocultar pantalla de carga
+      console.log('Listado de usuarios:', this.ListUsers);
     });
   }
 
-  async getListProductos() {
+  getListProductos() {
     this.loading = true; // Mostrar pantalla de carga
-    this.loadingMessage = 'Cargando productos...';
-    await this.srvList.getListProductos().subscribe((res: any) => {
+    this.loadingMessage = 'Cargando Datos...';
+    this.srvList.getListProductos().subscribe((res: any) => {
       this.ListProductos = res.data.map((product: Product) => ({
         ...product,
         cantidad: 1, // Inicializar cantidad a 1
