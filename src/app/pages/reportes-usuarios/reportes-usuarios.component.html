@@ -1,110 +1,120 @@
+<div class="formgroup-inline">
+  <div class="field">
+    <label for="searchInput" class="p-sr-only">Buscar por Cédula:</label>
+    <p-iconField iconPosition="left">
+      <p-inputIcon styleClass="pi pi-search" />
+      <input
+        id="searchInput"
+        type="text"
+        pInputText
+        placeholder="Buscar por Cédula"
+        [(ngModel)]="searchQuery"
+      />
+      @if (searchQuery) {
+      <button
+        type="button"
+        class="p-button p-button-icon-only p-button-rounded p-button-text"
+        (click)="clearSearch()"
+      >
+        <span class="pi pi-times"></span>
+      </button>
+      }
+    </p-iconField>
+  </div>
+  <div class="field">
+    <button
+      pButton
+      type="button"
+      label="Buscar"
+      (click)="searchReport()"
+    ></button>
+  </div>
+  <div class="field">
+    <label for="dropdown" class="p-sr-only">Seleccionar Usuario:</label>
+    <p-iconField iconPosition="left">
+      <p-inputIcon icon="pi pi-user" />
+      <p-dropdown
+        id="dropdown"
+        [options]="uniqueUsers"
+        [(ngModel)]="selectedUser"
+        optionLabel="nombre"
+        [filter]="true"
+        filterBy="nombre"
+        [showClear]="true"
+        placeholder="Seleccionar o escribir Usuario"
+        (onChange)="filterReportsByName()"
+      >
+        <ng-template let-user pTemplate="item">
+          <div class="flex align-items-center gap-2">
+            <div>{{ user.nombre }} ({{ user.cedula }})</div>
+          </div>
+        </ng-template>
+      </p-dropdown>
+    </p-iconField>
+  </div>
+</div>
 
-    <div class="formgroup-inline">
-      <div class="field">
-        <label for="searchInput" class="p-sr-only">Buscar por Cédula:</label>
-        <p-iconField iconPosition="left">
-          <p-inputIcon styleClass="pi pi-search" />
-          <input
-            id="searchInput"
-            type="text"
-            pInputText
-            placeholder="Buscar por Cédula"
-            [(ngModel)]="searchQuery"
-          />
-          @if (searchQuery) {
-          <button
-            type="button"
-            class="p-button p-button-icon-only p-button-rounded p-button-text"
-            (click)="clearSearch()"
-          >
-            <span class="pi pi-times"></span>
-          </button>
-          }
-        </p-iconField>
-      </div>
-      <div class="field">
-        <button
-          pButton
-          type="button"
-          label="Buscar"
-          (click)="searchReport()"
-        ></button>
-      </div>
-      <div class="field">
-        <label for="dropdown" class="p-sr-only">Seleccionar Usuario:</label>
-        <p-iconField iconPosition="left">
-          <p-inputIcon icon="pi pi-user" />
-          <p-dropdown
-            id="dropdown"
-            [options]="uniqueUsers"
-            [(ngModel)]="selectedUser"
-            optionLabel="nombre"
-            [filter]="true"
-            filterBy="nombre"
-            [showClear]="true"
-            placeholder="Seleccionar o escribir Usuario"
-            (onChange)="filterReportsByName()"
-          >
-            <ng-template let-user pTemplate="item">
-              <div class="flex align-items-center gap-2">
-                <div>{{ user.nombre }} ({{ user.cedula }})</div>
-              </div>
-            </ng-template>
-          </p-dropdown>
-        </p-iconField>
-      </div>
-    </div>
+@if (selectedUser) {
+<div class="formgroup-inline">
+  <div class="field">
+    <label for="userName">Nombre:</label>
+    <input
+      id="userName"
+      type="text"
+      pInputText
+      [(ngModel)]="selectedUser.nombre"
+      readonly
+    />
+  </div>
   
-    @if (selectedUser) {
-    <div class="formgroup-inline">
-      <div class="field">
-        <label for="userName">Nombre:</label>
-        <input
-          id="userName"
-          type="text"
-          pInputText
-          [(ngModel)]="selectedUser.nombre"
-          readonly
-        />
-      </div>
-      <div class="field">
-        <label for="userCedula">Cédula:</label>
-        <input
-          id="userCedula"
-          type="text"
-          pInputText
-          [(ngModel)]="selectedUser.cedula"
-          readonly
-        />
-      </div>
-      <div class="field">
-        <label for="availableDates">Fechas disponibles:</label>
-        <p-dropdown
-          id="availableDates"
-          [options]="availableDates"
-          [(ngModel)]="selectedDate"
-          optionLabel="fecha"
-          placeholder="Seleccionar Fecha"
-          [showClear]="true"
-          (onChange)="filterReportsByDate()"
-        ></p-dropdown>
-      </div>
-    </div>
-    }
-  
-    @if (loading) {
-    <div class="loading-container p-d-flex p-jc-center p-ai-center p-flex-column">
-      <p>Cargando Reportes...</p>
-      <p-progressSpinner
-        ariaLabel="loading"
-        styleClass="w-4rem h-4rem"
-        strokeWidth="8"
-        fill="var(--surface-ground)"
-      ></p-progressSpinner>
-    </div>
-    }
-  
-    @else if (filteredReports.length > 0) {
+  <div class="field">
+    <label for="userCedula">Cédula:</label>
+    <input
+      id="userCedula"
+      type="text"
+      pInputText
+      [(ngModel)]="selectedUser.cedula"
+      readonly
+    />
+  </div>
+  <div class="field">
+    <label for="availableDates">Fechas disponibles:</label>
+    <p-dropdown
+      id="availableDates"
+      [options]="availableDates"
+      [(ngModel)]="selectedDate"
+      optionLabel="fecha"
+      placeholder="Seleccionar Fecha"
+      [showClear]="true"
+      (onChange)="filterReportsByDate()"
+    ></p-dropdown>
+  </div>
+</div>
+}
+<div class="field">
+  <button
+    pButton
+    type="button"
+    icon="pi pi-print"
+    (click)="printTable()"
+    class="p-button-rounded p-button-secondary"
+    aria-label="Imprimir"
+    position="right"
+  ></button>
+</div>
+@if (loading) {
+<div class="loading-container p-d-flex p-jc-center p-ai-center p-flex-column">
+  <p>Cargando Reportes...</p>
+  <p-progressSpinner
+    ariaLabel="loading"
+    styleClass="w-4rem h-4rem"
+    strokeWidth="8"
+    fill="var(--surface-ground)"
+  ></p-progressSpinner>
+</div>
+}
+@else if (filteredReports.length > 0) {
+  <div id="reportTable">
     @if (selectedDate) {
     <p-table [value]="filteredReports">
       <ng-template pTemplate="header">
@@ -150,14 +160,12 @@
       </ng-template>
     </p-table>
     }
-    }
-  
-    @else {
-    <div>No se encontraron reportes para la fecha seleccionada.</div>
-    }
+  </div>
+}
+@else {
+<div>No se encontraron reportes para la fecha seleccionada.</div>
+}
 
-  
-  <p-toast
-    [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
-  ></p-toast>
-  
+<p-toast
+  [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
+></p-toast>

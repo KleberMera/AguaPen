@@ -16,6 +16,7 @@ import { SpinnerModule } from 'primeng/spinner';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { CalendarModule } from 'primeng/calendar';
+import { PrintService } from '../../services/print.service';
 const PRIMEMG_MODULES = [
   TableModule,
   FieldsetModule,
@@ -54,7 +55,7 @@ export default class ReportesUsuariosComponent implements OnInit {
 
   private srvList = inject(ListService);
   private srvMessage = inject(MessageService);
-
+  private srvPrint = inject(PrintService);
   ngOnInit(): void {
     this.viewListReports();
   }
@@ -182,5 +183,8 @@ export default class ReportesUsuariosComponent implements OnInit {
     return this.filteredReports.reduce((total, report) => total + report.cantidad, 0);
   }
   
-  
+  printTable(): void {
+    this.srvPrint.printElement('reportTable');
+  }
+
 }

@@ -20,6 +20,22 @@ export class AuthService {
     );
   }
 
+  verDatosUsuario(objUsuario : any) {
+    let url = 'viewDatosUsersSesion';
+    return this.http.post(
+      this.environment + url,
+      this.srvG.objectToFormData(objUsuario)
+    );
+  }
+
+
+updateUser(objUsuario: any) {
+    let url = 'editarUsuario';
+    return this.http.post(
+      this.environment + url,
+      this.srvG.objectToFormData(objUsuario)
+    );
+  }
   resetPassword(objUsuario: any) {
     let url = 'recuperarClave';
     return this.http.post(

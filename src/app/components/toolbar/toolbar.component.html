@@ -11,7 +11,11 @@
       <span class="font-bold text-2xl text-primary">{{ pageTitle }}</span>
     </div>
     <div class="p-toolbar-group-end">
-      <p-button icon="pi pi-user" class="mr-2"></p-button>
+      <p-button 
+        icon="pi pi-user" 
+        class="mr-2"
+        (click)="openUserDialog()"
+      ></p-button>
     </div>
   </p-toolbar>
 </div>
@@ -20,3 +24,47 @@
   [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
 ></p-toast>
 <p-confirmPopup />
+<p-dialog [(visible)]="visible" header="Detalles del Usuario" [modal]="true" [style]="{ width: '50vw' }" (onHide)="closeDialog()">
+  <div class="p-fluid">
+    <div class="p-field">
+      <label for="cedula">Cédula</label>
+      <input id="cedula" type="text" pInputText [(ngModel)]="user.cedula" disabled />
+    </div>
+    <div class="p-field">
+      <label for="telefono">Teléfono</label>
+      <input id="telefono" type="text" pInputText [(ngModel)]="user.telefono" />
+    </div>
+    <div class="p-field">
+      <label for="nombres">Nombres</label>
+      <input id="nombres" type="text" pInputText [(ngModel)]="user.nombres" />
+    </div>
+    <div class="p-field">
+      <label for="apellidos">Apellidos</label>
+      <input id="apellidos" type="text" pInputText [(ngModel)]="user.apellidos" />
+    </div>
+    <div class="p-field">
+      <label for="correo">Correo</label>
+      <input id="correo" type="email" pInputText [(ngModel)]="user.correo" />
+    </div>
+    <div class="p-field">
+      <label for="usuario">Usuario</label>
+      <input id="usuario" type="text" pInputText [(ngModel)]="user.usuario" />
+    </div>
+    <div class="p-field">
+      <label for="clave">Clave</label>
+      <p-password 
+        id="clave"
+        [(ngModel)]="user.clave"
+        [toggleMask]="true"
+        [feedback]="false"
+      ></p-password>
+    </div>
+  </div>
+  <p-footer>
+    <p-button label="Actualizar" (click)="updateUser()" icon="pi pi-check"></p-button>
+    <p-button label="Cancelar" icon="pi pi-times" (click)="closeDialog()"></p-button>
+  </p-footer>
+</p-dialog>
+<p-toast
+  [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
+></p-toast>
