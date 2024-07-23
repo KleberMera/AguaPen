@@ -20,7 +20,7 @@ export class AuthService {
     );
   }
 
-  verDatosUsuario(objUsuario : any) {
+  verDatosUsuario(objUsuario: any) {
     let url = 'viewDatosUsersSesion';
     return this.http.post(
       this.environment + url,
@@ -28,8 +28,7 @@ export class AuthService {
     );
   }
 
-
-updateUser(objUsuario: any) {
+  updateUser(objUsuario: any) {
     let url = 'editarUsuario';
     return this.http.post(
       this.environment + url,

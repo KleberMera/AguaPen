@@ -15,7 +15,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { SidebarService } from '../../services/sidebar.service';
 import { filter } from 'rxjs';
-
+import { CheckboxModule } from 'primeng/checkbox';
 const PRIMENG_MODULES = [
   ToolbarModule,
   ButtonModule,
@@ -26,7 +26,8 @@ const PRIMENG_MODULES = [
   ConfirmPopupModule,
   ToastModule,
   DialogModule,
-  PasswordModule
+  PasswordModule,
+  CheckboxModule,
 ];
 
 @Component({
@@ -46,101 +47,71 @@ export class ToolbarComponent implements OnInit {
   private confirmationService = inject(ConfirmationService); // Inyección del servicio de confirmación
   visible: boolean = false;
   user: any = {}; // Initialize user object
-  originalUser: any = {}; // To store the original user data
+
+  loadingUpdate: boolean = false;
+  checked: boolean = false;
 
   ngOnInit(): void {
-    this.sidebarService.title$.subscribe(title => {
+    this.sidebarService.title$.subscribe((title) => {
       this.pageTitle = title;
     });
 
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe(() => {
-      // Additional logic if needed
-    });
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        // Additional logic if needed
+      });
+
+    this.datesUser();
   }
 
   toggleSidebar() {
     this.sidebarService.toggleSidebar();
   }
 
-  openUserDialog() {
+  datesUser() {
     // Get user ID from localStorage
     const userId = localStorage.getItem('usuario_id');
-    
-    if (userId) {
-      this.authService.verDatosUsuario({ id: userId }).subscribe(response => {
-        console.log('Datos del usuario recibidos:', response);
-        
-        // Type assertion to handle response structure
-        const responseData = response as { usuario?: any };
-        
-        if (responseData && responseData.usuario) {
-          this.originalUser = { ...responseData.usuario }; // Store the original data
-          this.user = responseData.usuario; // Load nested usuario data
-          this.visible = true; // Show dialog
-        } else {
-          console.error('Datos de usuario no encontrados en la respuesta');
-        }
-      });
-    } else {
-      console.error('ID de usuario no encontrado en localStorage');
-    }
+
+    this.authService.verDatosUsuario({ id: userId }).subscribe((res: any) => {
+      this.user = res.usuario;
+    });
   }
 
-  updateUser() {
-    // Verify that all required fields are filled
-    if (!this.user.telefono || !this.user.nombres || !this.user.apellidos || !this.user.correo || !this.user.usuario) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Campos Vacíos',
-        detail: 'Por favor, complete todos los campos antes de actualizar.'
-      });
-      return;
-    }
+  updateUser(event: Event) {
+    setTimeout(() => {
+      this.loadingUpdate = false;
+    }, 2000);
 
-    // Confirm update action
     this.confirmationService.confirm({
+      target: event.target as EventTarget,
       message: '¿Está seguro de que desea actualizar los datos del usuario?',
       header: 'Confirmación de Actualización',
       icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Aceptar',
+      rejectLabel: 'No',
       accept: () => {
-        // Check if the password field has been changed
         const updatedUser = { ...this.user };
-        
-        if (this.user.clave === this.originalUser.clave) {
-          delete updatedUser.clave; // Remove password if it hasn't been changed
-        }
 
-        this.authService.updateUser(updatedUser).subscribe(response => {
+        this.authService.updateUser(updatedUser).subscribe((res: any) => {
           // Show success message
           this.messageService.add({
             severity: 'success',
             summary: 'Actualización Exitosa',
-            detail: 'Los datos del usuario han sido actualizados correctamente.'
+            detail: res.mensaje,
           });
+
           this.visible = false; // Close dialog
-        }, error => {
-          // Show error message
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'No se pudo actualizar los datos del usuario. Inténtalo nuevamente.'
-          });
+          this.loadingUpdate = false;
         });
       },
       reject: () => {
-        // Action when user rejects the confirmation
         this.messageService.add({
           severity: 'info',
           summary: 'Actualización Cancelada',
-          detail: 'La actualización de los datos ha sido cancelada.'
+          detail: 'La actualización de los datos ha sido cancelada.',
         });
-      }
+      },
     });
-  }
-
-  closeDialog() {
-    this.visible = false; // Close dialog
   }
 }
