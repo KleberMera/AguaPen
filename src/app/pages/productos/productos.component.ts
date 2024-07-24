@@ -46,15 +46,12 @@ const PRIMEMG_MODULES = [
   providers: [MessageService, ConfirmationService],
 })
 export default class ProductosComponent implements OnInit {
-  listProduct: any[] = [];
+  listProduct: interfaceProducts[] = [];
   searchTerm: string = '';
   loading: boolean = true;
   loadingSave: boolean = false;
-  filteredProductsSearch: any[] = [];
-  filteredProducts: any[] = []; // Nueva propiedad para productos filtrados
-  interfaceProduct: interfaceProducts[] = [];
   dialogVisible: boolean = false;
-  selectedProduct: interfaceProducts | any = null;
+  selectedProduct: interfaceProducts | null = null;
 
   private srvList = inject(ListService);
   private srvReg = inject(RegisterService);
@@ -65,25 +62,21 @@ export default class ProductosComponent implements OnInit {
     this.getListProductos();
   }
 
-  private handleError(error: any, message: string): void {
-    console.error(message, error);
-    this.loading = false;
+  private async getListProductos() {
+    this.loading = true;
+    try {
+      const res = await this.srvList.getListProductos().toPromise();
+      this.listProduct = res.data;
+    } catch (error) {
+      this.handleError(error, 'Error al cargar productos:');
+    } finally {
+      this.loading = false;
+    }
   }
 
-  getListProductos() {
-    this.srvList.getListProductos().subscribe(
-      (res: any) => {
-        this.listProduct = res.data;
-        this.loading = false;
-        this.filteredProducts = res.data;
-      },
-      (error) => this.handleError(error, 'Error al cargar productos:')
-    );
-  }
-
-  filterProducts(query: string) {
+  filterProducts(query: string): interfaceProducts[] {
     const lowerQuery = query.toLowerCase();
-    return this.listProduct.filter((product) =>
+    return this.listProduct.filter(product =>
       product.nombre_producto.toLowerCase().includes(lowerQuery)
     );
   }
@@ -95,40 +88,41 @@ export default class ProductosComponent implements OnInit {
 
   openEditProductDialog(product: interfaceProducts) {
     this.selectedProduct = { ...product };
-    this.selectedProduct.hora_producto = formatDate(
-      new Date(),
-      'HH:mm',
-      'en-US'
-    ); // Asigna la hora actual del sistema
     this.dialogVisible = true;
   }
 
-  saveProduct() {
+  async saveProduct() {
+    if (!this.selectedProduct) return;
+
     this.loadingSave = true;
-    setTimeout(() => {
+    try {
+      this.selectedProduct.id === 0 ? await this.addProduct() : await this.editProduct();
+      this.dialogVisible = false;
+      await this.getListProductos();
+    } catch (error) {
+      this.handleError(error, 'Error al guardar el producto');
+    } finally {
       this.loadingSave = false;
-    }, 2000);
-
-    this.selectedProduct!.id === 0 ? this.addProduct() : this.editProduct();
-  }
-
-  private addProduct() {
-    if (this.validateProduct()) {
-      this.srvReg.postRegisterProducts(this.selectedProduct).subscribe(
-        (res: any) =>
-          this.handleResponse(res, 'Agregado', 'Error al agregar producto'),
-        (error) => this.handleError(error, 'Error al agregar producto')
-      );
     }
   }
 
-  private editProduct() {
-    if (this.validateProduct()) {
-      this.srvReg.postEditProducts(this.selectedProduct).subscribe(
-        (res: any) =>
-          this.handleResponse(res, 'Editado', 'Error al editar producto'),
-        (error) => this.handleError(error, 'Error al editar producto')
-      );
+  private async addProduct() {
+    if (!this.validateProduct()) return;
+    try {
+      const res = await this.srvReg.postRegisterProducts(this.selectedProduct!).toPromise();
+      this.handleResponse(res, 'Agregado');
+    } catch (error) {
+      this.handleError(error, 'Error al agregar producto');
+    }
+  }
+
+  private async editProduct() {
+    if (!this.validateProduct()) return;
+    try {
+      const res = await this.srvReg.postEditProducts(this.selectedProduct!).toPromise();
+      this.handleResponse(res, 'Editado');
+    } catch (error) {
+      this.handleError(error, 'Error al editar producto');
     }
   }
 
@@ -138,23 +132,19 @@ export default class ProductosComponent implements OnInit {
       header: 'Confirmación',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Eliminar',
-      accept: () => {
-        this.srvReg.postDeleteProducts(product.id).subscribe(
-          (res: any) =>
-            this.handleResponse(res, 'Eliminado', 'Error al eliminar producto'),
-          (error) => this.handleError(error, 'Error al eliminar producto')
-        );
+      accept: async () => {
+        try {
+          const res = await this.srvReg.postDeleteProducts(product.id).toPromise();
+          this.handleResponse(res, 'Eliminado');
+        } catch (error) {
+          this.handleError(error, 'Error al eliminar producto');
+        }
       },
     });
   }
 
-  private handleResponse(
-    res: any,
-    successMessage: string,
-    errorMessage: string
-  ) {
-    if (res.retorno == 1) {
-      this.getListProductos();
+  private handleResponse(res: any, successMessage: string) {
+    if (res.retorno === 1) {
       this.srvMensajes.add({
         severity: 'success',
         summary: successMessage,
@@ -167,11 +157,10 @@ export default class ProductosComponent implements OnInit {
         detail: res.mensaje,
       });
     }
-    this.dialogVisible = false;
   }
 
   private validateProduct(): boolean {
-    if (this.selectedProduct.stock_producto < 0) {
+    if (this.selectedProduct!.stock_producto < 0) {
       this.srvMensajes.add({
         severity: 'error',
         summary: 'Error',
@@ -180,7 +169,7 @@ export default class ProductosComponent implements OnInit {
       return false;
     }
 
-    if (this.selectedProduct.nombre_producto.trim() === '') {
+    if (this.selectedProduct!.nombre_producto.trim() === '') {
       this.srvMensajes.add({
         severity: 'error',
         summary: 'Error',
@@ -200,5 +189,16 @@ export default class ProductosComponent implements OnInit {
       hora_producto: formatDate(new Date(), 'HH:mm', 'en-US'),
       stock_producto: 0,
     };
+  }
+
+  private handleError(error: any, message: string): void {
+    console.error(message, error);
+    this.srvMensajes.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Ocurrió un error al procesar la solicitud',
+    });
+    this.loading = false;
+    this.loadingSave = false;
   }
 }

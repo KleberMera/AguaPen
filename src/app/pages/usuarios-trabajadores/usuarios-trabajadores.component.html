@@ -1,178 +1,199 @@
-
-
-  <div class="formgroup-inline">
-    <div class="field">
-      <label for="searchTerm" class="p-sr-only"
-        >Buscar por nombre o cédula</label
-      >
-      <p-iconField iconPosition="left">
-        <p-inputIcon styleClass="pi pi-search" />
-        <input
-          id="searchTerm"
-          type="text"
-          pInputText
-          placeholder="Buscar por nombre o cédula"
-          [(ngModel)]="searchTerm"
-        />
-      </p-iconField>
-    </div>
-
-    <div class="field">
-      <label for="selectedArea" class="p-sr-only">Filtrar por área</label>
-      <p-iconField iconPosition="left">
-        <p-dropdown
-          id="selectedArea"
-          [options]="areaOptions"
-          [(ngModel)]="selectedArea"
-          (onChange)="onAreaChange()"
-          placeholder="Filtrar por área"
-        ></p-dropdown>
-        <button
-          pButton
-          type="button"
-          icon="pi pi-times"
-          (click)="clearSelectedArea()"
-        ></button>
-      </p-iconField>
-    </div>
-
-    <div class="field">
-      <label for="selectedCargo" class="p-sr-only">Filtrar por cargo</label>
-      <p-iconField iconPosition="left">
-        <p-dropdown
-          id="selectedCargo"
-          [options]="filteredCargoOptions"
-          [(ngModel)]="selectedCargo"
-          placeholder="Filtrar por cargo"
-        ></p-dropdown>
-        <button
-          type="button"
-          pButton
-          icon="pi pi-times"
-          (click)="clearSelectedCargo()"
-        ></button>
-      </p-iconField>
-    </div>
-
-    <div class="field">
-      <p-iconField iconPosition="right">
-        <button
-          pButton
-          label="Nuevo"
-          icon="pi pi-plus"
-          class="p-button-success p-mt-2 p-mt-md-0 nuevo-boton"
-          (click)="showDialog(null)"
-        ></button>
-      </p-iconField>
-    </div>
+<div class="formgroup-inline">
+  <div class="field">
+    <label for="searchTerm" class="p-sr-only">Buscar por nombre o cédula</label>
+    <p-iconField iconPosition="left">
+      <p-inputIcon styleClass="pi pi-search" />
+      <input
+        id="searchTerm"
+        type="text"
+        pInputText
+        placeholder="Buscar por nombre o cédula"
+        [(ngModel)]="searchTerm"
+      />
+    </p-iconField>
   </div>
 
-  @if (loading) {
-  <div class="loading-container p-d-flex p-jc-center p-ai-center p-flex-column">
-    <p>Cargando usuarios...</p>
-    <p-progressSpinner
-      ariaLabel="loading"
-      styleClass="w-4rem h-4rem"
-      strokeWidth="8"
-      fill="var(--surface-ground)"
-    ></p-progressSpinner>
+  <div class="field">
+    <label for="selectedArea" class="p-sr-only">Filtrar por área</label>
+    <p-iconField iconPosition="left">
+      <p-dropdown
+        id="selectedArea"
+        [options]="areaOptions"
+        [(ngModel)]="selectedArea"
+        (onChange)="onAreaChange()"
+        placeholder="Filtrar por área"
+      ></p-dropdown>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-times"
+        (click)="clearSelectedArea()"
+      ></button>
+    </p-iconField>
   </div>
+
+  <div class="field">
+    <label for="selectedCargo" class="p-sr-only">Filtrar por cargo</label>
+    <p-iconField iconPosition="left">
+      <p-dropdown
+        id="selectedCargo"
+        [options]="filteredCargoOptions"
+        [(ngModel)]="selectedCargo"
+        placeholder="Filtrar por cargo"
+      ></p-dropdown>
+      <button
+        type="button"
+        pButton
+        icon="pi pi-times"
+        (click)="clearSelectedCargo()"
+      ></button>
+    </p-iconField>
+  </div>
+
+  <div class="field">
+    <p-iconField iconPosition="right">
+      <button
+        pButton
+        label="Nuevo"
+        icon="pi pi-plus"
+        class="p-button-success p-mt-2 p-mt-md-0 nuevo-boton"
+        (click)="showDialog(null)"
+      ></button>
+    </p-iconField>
+  </div>
+</div>
+
+@if (loading) {
+<div class="loading-container p-d-flex p-jc-center p-ai-center p-flex-column">
+  <p>Cargando usuarios...</p>
+  <p-progressSpinner
+    ariaLabel="loading"
+    styleClass="w-4rem h-4rem"
+    strokeWidth="8"
+    fill="var(--surface-ground)"
+  ></p-progressSpinner>
+</div>
+} @else {
+<p-table
+  [value]="filterUsers(searchTerm, selectedArea, selectedCargo)"
+  [tableStyle]=""
+  [paginator]="true"
+  [rows]="20"
+  [rowsPerPageOptions]="[20, 30, 40, 50]"
+>
+  @if (filterUsers(searchTerm, selectedArea, selectedCargo).length > 0) {
+  <ng-template pTemplate="header">
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Cédula</th>
+      <th>Área</th>
+      <th>Cargo</th>
+      <th>Vehículo</th>
+      <th>Acción</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-user>
+    <tr>
+      <td>{{ user.id_usuario }}</td>
+      <td>{{ user.tx_nombre }}</td>
+      <td>{{ user.tx_cedula }}</td>
+      <td>{{ user.tx_area }}</td>
+      <td>{{ user.tx_cargo }}</td>
+      @if (user.tx_vehiculo) {
+      <td>{{ user.tx_vehiculo }}</td>
+      } @else {
+      <td>No tiene</td>
+      }
+      <td>
+        <button
+          pButton
+          icon="pi pi-pencil"
+          class="p-button-rounded p-button mr-2"
+          (click)="showDialog(user)"
+        ></button>
+      </td>
+    </tr>
+  </ng-template>
   } @else {
-  <p-table
-    [value]="filterUsers(searchTerm, selectedArea, selectedCargo)"
-    [tableStyle]=""
-    [paginator]="true"
-    [rows]="20"
-    [rowsPerPageOptions]="[20, 30, 40, 50]"
-  >
-    @if (filterUsers(searchTerm, selectedArea, selectedCargo).length > 0) {
-    <ng-template pTemplate="header">
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Cédula</th>
-        <th>Área</th>
-        <th>Cargo</th>
-        <th>Vehículo</th>
-        <th>Acción</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-user>
-      <tr>
-        <td>{{ user.id_usuario }}</td>
-        <td>{{ user.tx_nombre }}</td>
-        <td>{{ user.tx_cedula }}</td>
-        <td>{{ user.tx_area }}</td>
-        <td>{{ user.tx_cargo }}</td>
-        @if (user.tx_vehiculo) {
-        <td>{{ user.tx_vehiculo }}</td>
-        } @else {
-        <td>No tiene</td>
-        }
-        <td>
-          <button
-            pButton
-            icon="pi pi-pencil"
-            class="p-button-rounded p-button mr-2"
-            (click)="showDialog(user)"
-          ></button>
-        </td>
-      </tr>
-    </ng-template>
-    } @else {
 
-    <p>No hay trabajadores para mostrar</p>
+  <p>No hay trabajadores para mostrar</p>
 
-    }
-  </p-table>
   }
+</p-table>
+}
 
-  <p-dialog
-    header="Trabajador"
-    [(visible)]="dialogVisible"
-    modal="modal"
-    [style]="{ width: '30rem' }"
-    [responsive]="true"
-    #userDialog
-  >
-    <div class="p-fluid">
-      <div class="p-field">
-        <label for="tx_nombre">Nombre</label>
-        <input
-          id="tx_nombre"
-          type="text"
-          pInputText
-          [(ngModel)]="currentUser.tx_nombre"
-        />
-      </div>
-      <div class="p-field">
-        <label for="tx_cedula">Cédula</label>
-        <input
-          id="tx_cedula"
-          type="text"
-          pInputText
-          [(ngModel)]="currentUser.tx_cedula"
-        />
-      </div>
-      <div class="p-field">
-        <label for="tx_area">Área</label>
-        <input
-          id="tx_area"
-          type="text"
-          pInputText
-          [(ngModel)]="currentUser.tx_area"
-        />
-      </div>
-      <div class="p-field">
-        <label for="tx_cargo">Cargo</label>
-        <input
-          id="tx_cargo"
-          type="text"
-          pInputText
-          [(ngModel)]="currentUser.tx_cargo"
-        />
-      </div>
-      @if (currentUser.tx_vehiculo && currentUser.tx_vehiculo_descripcion ) {
+<p-dialog
+  header="Trabajador"
+  [(visible)]="dialogVisible"
+  modal="modal"
+  [style]="{ width: '30rem' }"
+  [responsive]="true"
+  #userDialog
+>
+  <div class="p-fluid">
+    <div class="p-field">
+      <label for="tx_nombre">Nombre</label>
+      <input
+        id="tx_nombre"
+        type="text"
+        pInputText
+        [(ngModel)]="currentUser.tx_nombre"
+      />
+    </div>
+    <div class="p-field">
+      <label for="tx_cedula">Cédula</label>
+      <input
+        id="tx_cedula"
+        type="text"
+        pInputText
+        [(ngModel)]="currentUser.tx_cedula"
+      />
+    </div>
+    <div class="p-field">
+      <label for="tx_area">Área</label>
+      <input
+        id="tx_area"
+        type="text"
+        pInputText
+        [(ngModel)]="currentUser.tx_area"
+      />
+    </div>
+    <div class="p-field">
+      <label for="tx_cargo">Cargo</label>
+      <input
+        id="tx_cargo"
+        type="text"
+        pInputText
+        [(ngModel)]="currentUser.tx_cargo"
+      />
+    </div>
+    @if (currentUser.tx_vehiculo && currentUser.tx_vehiculo_descripcion ) {
+    <div class="p-field">
+      <label for="tx_vehiculo">Placa</label>
+      <input
+        id="tx_vehiculo"
+        type="text"
+        pInputText
+        [(ngModel)]="currentUser.tx_vehiculo"
+      />
+    </div>
+    <div class="p-field">
+      <label for="tx_vehiculo_descripcion">Descripción del Vehículo</label>
+      <input
+        id="tx_vehiculo_descripcion"
+        type="text"
+        pInputText
+        [(ngModel)]="currentUser.tx_vehiculo_descripcion"
+      />
+    </div>
+    } @else {
+    <div class="p-field">
+      <label>Desea agregar un vehículo?</label>
+      &nbsp;
+      <p-checkbox [(ngModel)]="checked" [binary]="true"></p-checkbox>
+
+      @if (checked) { &nbsp;
       <div class="p-field">
         <label for="tx_vehiculo">Placa</label>
         <input
@@ -191,56 +212,32 @@
           [(ngModel)]="currentUser.tx_vehiculo_descripcion"
         />
       </div>
-      } @else {
-      <div class="p-field">
-        <label>Desea agregar un vehículo?</label>
-        &nbsp;
-        <p-checkbox [(ngModel)]="checked" [binary]="true"></p-checkbox>
-
-        @if (checked) { &nbsp;
-        <div class="p-field">
-          <label for="tx_vehiculo">Placa</label>
-          <input
-            id="tx_vehiculo"
-            type="text"
-            pInputText
-            [(ngModel)]="currentUser.tx_vehiculo"
-          />
-        </div>
-        <div class="p-field">
-          <label for="tx_vehiculo_descripcion">Descripción del Vehículo</label>
-          <input
-            id="tx_vehiculo_descripcion"
-            type="text"
-            pInputText
-            [(ngModel)]="currentUser.tx_vehiculo_descripcion"
-          />
-        </div>
-
-        }
-      </div>
 
       }
     </div>
-    <p-footer>
-      <div>
-        <button
-          pButton
-          icon="pi pi-times"
-          class="p-button-text"
-          label="Cancelar"
-          (click)="dialogVisible = false"
-        ></button>
-        <button
-          pButton
-          icon="pi pi-check"
-          label="Guardar"
-          (click)="saveUser()"
-          [loading]="loadingSave"
-        ></button>
-      </div>
-    </p-footer>
-  </p-dialog>
+
+    }
+  </div>
+  <p-footer>
+    <div>
+      <button
+        pButton
+        icon="pi pi-times"
+        class="p-button-text"
+        label="Cancelar"
+        (click)="dialogVisible = false"
+      ></button>
+      <button
+        pButton
+    
+      
+        label="Guardar"
+        (click)="saveUser()"
+        [loading]="loadingSave"
+      ></button>
+    </div>
+  </p-footer>
+</p-dialog>
 
 <p-toast
   [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"

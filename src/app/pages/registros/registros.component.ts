@@ -57,125 +57,175 @@ export default class RegistrosComponent implements OnInit {
   dropdownOptions: User[] = [];
   showProductsTable: boolean = false;
   selectedProducts: Product[] = [];
-  loading: boolean = false; // Estado de carga
+  loading: boolean = false;
   searchTerm: string = '';
   observacion: string = '';
   loadingMessage: string = '';
-
-  // Properties for product search and selection
-  productSearchQuery: string = '';
-  filteredProducts: Product[] = [];
-  productDropdownOptions: Product[] = [];
-  selectedProduct: Product | null = null;
 
   private srvRegDet = inject(RegisterDetailsService);
   private srvList = inject(ListService);
   private messageService = inject(MessageService);
 
-  ngOnInit(): void {
-    this.getListUsuarios();
-    this.getListProductos();
+  async ngOnInit(): Promise<void> {
+    await this.loadInitialData();
   }
 
-  selectProduct(event: any) {
-    const product = event.value;
-    if (product) {
-      this.selectedProduct = product;
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Producto seleccionado',
-        detail: `Has seleccionado ${product.nombre_producto}`,
-      });
+  async loadInitialData(): Promise<void> {
+    try {
+      this.loading = true;
+      this.loadingMessage = 'Cargando datos...';
+      await Promise.all([this.getListUsuarios(), this.getListProductos()]);
+    } finally {
+      this.loading = false;
     }
   }
 
-  filterProducts(query: string) {
-    const lowerQuery = query.toLowerCase();
-    return this.ListProductos.filter((product) =>
-      product.nombre_producto.toLowerCase().includes(lowerQuery)
-    );
-  }
-
-  getListUsuarios() {
-    this.loading = true; // Mostrar pantalla de carga
-    this.loadingMessage = 'Cargando usuarios...';
-
-    this.srvList.getListUsuarios().subscribe((res: any) => {
+  async getListUsuarios(): Promise<void> {
+    try {
+      const res = await this.srvList.getListUsuarios().toPromise();
       this.ListUsers = res.data;
       this.filteredUsers = this.ListUsers;
       this.dropdownOptions = this.ListUsers;
-      this.loading = false; // Ocultar pantalla de carga
-      console.log('Listado de usuarios:', this.ListUsers);
-    });
-  }
-
-  getListProductos() {
-    this.loading = true; // Mostrar pantalla de carga
-    this.loadingMessage = 'Cargando Datos...';
-    this.srvList.getListProductos().subscribe((res: any) => {
-      this.ListProductos = res.data.map((product: Product) => ({
-        ...product,
-        cantidad: 1, // Inicializar cantidad a 1
-      }));
-      console.log('Listado de productos:', this.ListProductos);
-      this.loading = false; // Ocultar pantalla de carga
-    });
-  }
-
-  searchUser() {
-    if (this.searchQuery.trim() === '') {
-      this.filteredUsers = this.ListUsers;
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Búsqueda vacía',
-        detail: 'Mostrando todos los usuarios',
-      });
-      return;
-    }
-
-    this.filteredUsers = this.ListUsers.filter(
-      (user) =>
-        user.tx_cedula &&
-        user.tx_cedula.toLowerCase().includes(this.searchQuery.toLowerCase())
-    );
-
-    if (this.filteredUsers.length > 0) {
-      this.selectedUser = this.filteredUsers[0];
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Usuario encontrado',
-        detail: `Se encontraron ${this.filteredUsers.length} usuario(s)`,
-      });
-    } else {
-      this.selectedUser = null;
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Usuario no encontrado',
-        detail: 'No se encontraron usuarios con ese criterio de búsqueda',
-      });
+    } catch (error) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al cargar usuarios' });
     }
   }
 
-  clearSearch() {
+  async getListProductos(): Promise<void> {
+    try {
+      const res = await this.srvList.getListProductos().toPromise();
+      this.ListProductos = res.data.map((product: Product) => ({ ...product, cantidad: 1 }));
+    } catch (error) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al cargar productos' });
+    }
+  }
+
+  searchUser(): void {
+    this.filteredUsers = this.searchQuery.trim()
+      ? this.ListUsers.filter(user =>
+          user.tx_cedula?.toLowerCase().includes(this.searchQuery.toLowerCase())
+        )
+      : this.ListUsers;
+
+    this.messageService.add({
+      severity: this.filteredUsers.length ? 'success' : 'error',
+      summary: this.filteredUsers.length ? 'Usuario encontrado' : 'Usuario no encontrado',
+      detail: this.filteredUsers.length
+        ? `Se encontraron ${this.filteredUsers.length} usuario(s)`
+        : 'No se encontraron usuarios con ese criterio de búsqueda',
+    });
+
+    this.selectedUser = this.filteredUsers[0] || null;
+  }
+
+  clearSearch(): void {
     this.searchQuery = '';
     this.filteredUsers = this.ListUsers;
     this.selectedUser = null;
   }
 
-  selectUser(event: any) {
+  selectUser(event: any): void {
     const user = event.value;
     if (user) {
       this.selectedUser = user;
+      this.messageService.add({ severity: 'info', summary: 'Usuario seleccionado', detail: `Has seleccionado a ${user.tx_nombre}` });
+    }
+  }
+
+  toggleProducts(): void {
+    this.showProductsTable = !this.showProductsTable;
+  }
+
+  updateProductQuantity(product: Product, increment: boolean): void {
+    const newQuantity = increment ? product.cantidad + 1 : product.cantidad - 1;
+
+    if (newQuantity <= product.stock_producto && newQuantity > 0) {
+      product.cantidad = newQuantity;
+    } else {
       this.messageService.add({
-        severity: 'info',
-        summary: 'Usuario seleccionado',
-        detail: `Has seleccionado a ${user.tx_nombre}`,
+        severity: 'error',
+        summary: 'Error',
+        detail: increment ? 'No puedes agregar más de la cantidad en stock' : 'La cantidad no puede ser menor a 1',
       });
     }
   }
 
-  toggleProducts() {
-    this.showProductsTable = !this.showProductsTable;
+  addProduct(producto: Product): void {
+    const foundProduct = this.selectedProducts.find(p => p.id === producto.id);
+
+    if (foundProduct) {
+      foundProduct.cantidad! += producto.cantidad!;
+    } else {
+      this.selectedProducts.push({ ...producto, cantidad: producto.cantidad });
+    }
+
+    this.messageService.add({ severity: 'success', summary: 'Producto agregado', detail: `${producto.nombre_producto} agregado con éxito` });
+  }
+
+  async register(): Promise<void> {
+    if (!this.selectedUser) {
+      this.messageService.add({ severity: 'error', summary: 'Error de registro', detail: 'Debe seleccionar un usuario antes de registrar' });
+      return;
+    }
+
+    if (!this.selectedProducts.length) {
+      this.messageService.add({ severity: 'error', summary: 'Error de registro', detail: 'Debe agregar al menos un producto para registrar' });
+      return;
+    }
+
+    this.loading = true;
+    this.loadingMessage = 'Registrando Datos, espere un momento...';
+
+    try {
+      const registro: Registro = {
+        id_usuario: this.selectedUser.id_usuario,
+        observacion: this.observacion,
+      };
+
+      const res : any = await this.srvRegDet.postRegisterRegistro(registro).toPromise();
+      if (res.id) {
+        await this.guardarDetallesRegistro(res.id);
+        this.clearForm();
+        this.messageService.add({ severity: 'success', summary: 'Registro exitoso', detail: 'Todos los registros fueron registrados exitosamente' });
+        await this.getListProductos();
+      } else {
+        this.messageService.add({ severity: 'error', summary: 'Error de registro', detail: res.mensaje || 'Error al registrar el usuario' });
+      }
+    } catch (error) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al realizar el registro' });
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  async guardarDetallesRegistro(id_registro: number): Promise<void> {
+    const detallesRegistro: DetalleRegistro[] = this.selectedProducts.map(prod => ({
+      id_registro: id_registro,
+      id_producto: prod.id,
+      cantidad: prod.cantidad!,
+    }));
+
+    const requests = detallesRegistro.map(detalle => this.srvRegDet.postRegisterRegistroDetalle(detalle).toPromise());
+    await Promise.all(requests);
+  }
+
+  revertProduct(product: Product): void {
+    const index = this.selectedProducts.findIndex(p => p.id === product.id);
+    if (index !== -1) {
+      this.selectedProducts.splice(index, 1);
+      product.cantidad = 0;
+    }
+  }
+
+  clearForm(): void {
+    this.selectedUser = null;
+    this.selectedProducts = [];
+    this.showProductsTable = false;
+    this.ListProductos.forEach(product => (product.cantidad = 1));
+  }
+
+  isProductSelected(product: Product): boolean {
+    return this.selectedProducts.some(p => p.id === product.id);
   }
 
   increment(product: Product) {
@@ -202,122 +252,11 @@ export default class RegistrosComponent implements OnInit {
     }
   }
 
-  addProduct(producto: Product) {
-    const foundProduct = this.selectedProducts.find(
-      (p) => p.id === producto.id
+  filterProducts(query: string) {
+    const lowerQuery = query.toLowerCase();
+    return this.ListProductos.filter((product) =>
+      product.nombre_producto.toLowerCase().includes(lowerQuery)
     );
-
-    if (foundProduct) {
-      foundProduct.cantidad! += producto.cantidad!;
-    } else {
-      this.selectedProducts.push({ ...producto, cantidad: producto.cantidad });
-    }
-
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Producto agregado',
-      detail: `${producto.nombre_producto} agregado con éxito`,
-    });
   }
 
-  register() {
-    if (!this.selectedUser) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error de registro',
-        detail: 'Debe seleccionar un usuario antes de registrar',
-      });
-      return;
-    }
-
-    if (!this.selectedProducts.length) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error de registro',
-        detail: 'Debe agregar al menos un producto para registrar',
-      });
-      return;
-    }
-
-    this.loading = true; // Mostrar pantalla de carga
-    this.loadingMessage = 'Registrando Datos, espere un momento...';
-
-    const registro: Registro = {
-      id_usuario: this.selectedUser!.id_usuario,
-
-      observacion: this.observacion,
-    };
-
-    console.log('Registro a realizar:', registro);
-
-    this.srvRegDet.postRegisterRegistro(registro).subscribe((res: any) => {
-      if (res.id) {
-        const id_registro = res.id;
-        const detallesRegistro: DetalleRegistro[] = this.selectedProducts.map(
-          (prod) => ({
-            id_registro: id_registro,
-            id_producto: prod.id,
-            cantidad: prod.cantidad!,
-          })
-        );
-
-        console.log('Detalles del registro:', detallesRegistro);
-        this.guardarDetallesRegistro(detallesRegistro);
-      } else {
-        this.loading = false; // Ocultar pantalla de carga
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error de registro',
-          detail: res.mensaje || 'Error al registrar el usuario',
-        });
-      }
-    });
-  }
-
-  guardarDetallesRegistro(detalleRegistro: DetalleRegistro[]) {
-    console.log('Detalles del registro:', detalleRegistro);
-
-    let completedRequests = 0;
-
-    detalleRegistro.forEach((detalle) => {
-      this.srvRegDet
-        .postRegisterRegistroDetalle(detalle)
-        .subscribe((res: any) => {
-          completedRequests++;
-
-          if (completedRequests === detalleRegistro.length) {
-            this.clearForm();
-            this.loading = false; // Ocultar pantalla de carga
-
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Registro exitoso',
-              detail: 'Todos los registros fueron registrados exitosamente',
-            });
-
-            this.getListProductos();
-          }
-        });
-    });
-  }
-  revertProduct(product: Product) {
-    const index = this.selectedProducts.findIndex((p) => p.id === product.id);
-    if (index !== -1) {
-      this.selectedProducts.splice(index, 1);
-      product.cantidad = 0;
-    }
-  }
-
-  clearForm() {
-    this.selectedUser = null;
-    this.selectedProducts = [];
-    this.showProductsTable = false;
-    this.ListProductos.forEach((product) => {
-      product.cantidad = 0;
-    });
-  }
-
-  isProductSelected(product: Product): boolean {
-    return this.selectedProducts.some((p) => p.id === product.id);
-  }
 }

@@ -18,6 +18,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { CalendarModule } from 'primeng/calendar';
 import { PrintService } from '../../services/print.service';
+import { Subscription } from 'rxjs';
 const PRIMEMG_MODULES = [
   TableModule,
   FieldsetModule,
@@ -44,47 +45,59 @@ const PRIMEMG_MODULES = [
   providers: [MessageService, ConfirmationService],
 })
 export default class ReportesComponent implements OnInit {
-  listReports: any[] = []; //Esta lista trae id_registro, fecha, nombre, nombre_producto, cantidad, total_cantidades, cedula, observacion
-  filteredReports: any[] = [];
-  uniqueUsers: any[] = [];
-  searchQuery: string = '';
-  selectedUser: any | null = null;
-  listUniqueUsers: any[] = [];
-  startDate: string | null = null;
-  endDate: string | null = null;
-  
+  listReports: any[] = []; // Lista completa de reportes
+  filteredReports: any[] = []; // Lista filtrada de reportes
+  uniqueUsers: any[] = []; // Lista de usuarios únicos
+  searchQuery: string = ''; // Consulta de búsqueda
+  selectedUser: any | null = null; // Usuario seleccionado
+  startDate: string | null = null; // Fecha de inicio para el filtrado por fecha
+  endDate: string | null = null; // Fecha de fin para el filtrado por fecha+
+  loading: boolean = true;// Indica si se está cargando datos
 
-  private srvList = inject(ListService);
-  private srvMessage = inject(MessageService);
-  private srvPrint = inject(PrintService);
+  private subscriptions: Subscription = new Subscription(); // Manejo de suscripciones
+
+  constructor(
+    private srvList: ListService,
+    private srvMessage: MessageService,
+    private srvPrint: PrintService
+  ) {}
 
   ngOnInit(): void {
-    this.viewListReports();
+    this.loadReports();
   }
 
-  viewListReports() {
-    this.srvList.getviewRegistroAll().subscribe((res: any) => {
-      this.listReports = res.data;
-      this.filteredReports = res.data;
-      this.uniqueUsers = this.getUniqueUsers(res.data);
-      console.log('Listado de Reportes:', this.listReports);
-    });
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe(); // Cancela todas las suscripciones al destruir el componente
   }
 
-  getUniqueUsers(reports: any[]): any[] {
-    const usersSet = new Set();
-    const uniqueUsers = this.listUniqueUsers;
+  // Cargar la lista de reportes desde el servicio
+  loadReports() {
 
+    const reportSubscription = this.srvList
+      .getviewRegistroAll()
+      .subscribe((res: any) => {
+        this.listReports = res.data;
+        this.filteredReports = res.data;
+        this.uniqueUsers = this.extractUniqueUsers(res.data);
+        console.log('Listado de Reportes:', this.listReports);
+        this.loading = false;
+      });
+
+    this.subscriptions.add(reportSubscription); // Agregar suscripción al manejador de suscripciones
+  }
+
+  // Extraer usuarios únicos de la lista de reportes
+  extractUniqueUsers(reports: any[]): any[] {
+    const usersMap = new Map();
     reports.forEach((report) => {
-      if (!usersSet.has(report.nombre)) {
-        usersSet.add(report.nombre);
-        uniqueUsers.push(report);
+      if (!usersMap.has(report.nombre)) {
+        usersMap.set(report.nombre, report);
       }
     });
-
-    return uniqueUsers;
+    return Array.from(usersMap.values());
   }
 
+  // Buscar reportes por cédula
   searchReport() {
     if (this.searchQuery.trim() === '') {
       this.filteredReports = this.listReports;
@@ -114,11 +127,13 @@ export default class ReportesComponent implements OnInit {
     }
   }
 
+  // Limpiar búsqueda por cédula
   clearSearch() {
     this.searchQuery = '';
     this.filteredReports = this.listReports;
   }
 
+  // Filtrar reportes por nombre de usuario seleccionado
   filterReportsByName() {
     if (this.selectedUser) {
       this.filteredReports = this.listReports.filter((report) =>
@@ -131,6 +146,7 @@ export default class ReportesComponent implements OnInit {
     }
   }
 
+  // Filtrar reportes por rango de fechas
   filterReportsByDate() {
     if (this.startDate && this.endDate) {
       const start = new Date(this.startDate);
@@ -143,18 +159,20 @@ export default class ReportesComponent implements OnInit {
       this.filteredReports = this.listReports;
     }
   }
-  
-  
+
+  // Limpiar filtro de fechas
   clearDateFilter() {
     this.startDate = null;
     this.endDate = null;
     this.filteredReports = this.listReports;
   }
 
+  // Exportar la tabla de reportes a PDF
   exportToPDF(): void {
     this.srvPrint.exportToPDF('reportTable', 'Reporte');
   }
 
+  // Imprimir la tabla de reportes
   printTable(): void {
     this.srvPrint.printElement('reportTable');
   }

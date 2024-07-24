@@ -48,7 +48,6 @@ export default class ReportesUsuariosComponent implements OnInit {
   uniqueUsers: any[] = [];
   searchQuery: string = '';
   selectedUser: any | null = null;
-  listUniqueUsers: any[] = [];
   selectedDate: any | null = null;
   availableDates: any[] = [];
   loading: boolean = false;
@@ -56,44 +55,46 @@ export default class ReportesUsuariosComponent implements OnInit {
   private srvList = inject(ListService);
   private srvMessage = inject(MessageService);
   private srvPrint = inject(PrintService);
-  ngOnInit(): void {
-    this.viewListReports();
+
+  async ngOnInit(): Promise<void> {
+    await this.viewListReports();
   }
 
-  viewListReports() {
+  async viewListReports(): Promise<void> {
     this.loading = true;
-    this.srvList.getviewRegistroAll().subscribe((res: any) => {
+    try {
+      const res = await this.srvList.getviewRegistroAll().toPromise();
       this.listReports = res.data;
       this.filteredReports = res.data;
       this.uniqueUsers = this.getUniqueUsers(res.data);
+      console.log('Listado de Reportes:', this.listReports);
+      
+    } catch (error) {
+      console.error('Error fetching report data:', error);
+    } finally {
       this.loading = false;
-    });
+    }
   }
 
   getUniqueUsers(reports: any[]): any[] {
-    const usersSet = new Set();
-    const uniqueUsers = this.listUniqueUsers;
-
-    reports.forEach((report) => {
+    const usersSet = new Set<string>();
+    return reports.filter((report) => {
       if (!usersSet.has(report.nombre)) {
         usersSet.add(report.nombre);
-        uniqueUsers.push(report);
+        return true;
       }
+      return false;
     });
-
-    return uniqueUsers;
   }
 
-  searchReport() {
+  searchReport(): void {
     if (this.searchQuery.trim() === '') {
       this.filteredReports = this.listReports;
       return;
     }
 
     this.filteredReports = this.listReports.filter(
-      (report) =>
-        report.cedula &&
-        report.cedula.toLowerCase().includes(this.searchQuery.toLowerCase())
+      (report) => report.cedula && report.cedula.toLowerCase().includes(this.searchQuery.toLowerCase())
     );
 
     if (this.filteredReports.length > 0) {
@@ -114,14 +115,14 @@ export default class ReportesUsuariosComponent implements OnInit {
     }
   }
 
-  clearSearch() {
+  clearSearch(): void {
     this.searchQuery = '';
     this.filteredReports = this.listReports;
   }
 
-  filterReportsByName() {
+  filterReportsByName(): void {
     if (this.selectedUser) {
-      this.selectedDate = null; // Reiniciar la fecha seleccionada
+      this.selectedDate = null;
       this.filteredReports = this.listReports.filter((report) =>
         report.nombre.toLowerCase().includes(this.selectedUser.nombre.toLowerCase())
       );
@@ -132,49 +133,28 @@ export default class ReportesUsuariosComponent implements OnInit {
     }
   }
 
-  setAvailableDates(reports: any[]) {
+  setAvailableDates(reports: any[]): void {
     const datesSet = new Set<string>();
-    console.log('Datos del usuario', reports);
-
     this.availableDates = reports
       .map((report) => {
-        const fecha = new Date(report.fecha_registro)
-          .toISOString()
-          .split('T')[0]; // Formato AAAA-MM-DD
+        const fecha = new Date(report.fecha_registro).toISOString().split('T')[0];
         if (!datesSet.has(fecha)) {
           datesSet.add(fecha);
-          console.log('Fecha disponible', fecha);
           return { fecha };
         }
         return null;
       })
       .filter((date) => date !== null);
-
-    console.log('Fechas disponibles', datesSet);
   }
 
-  filterReportsByDate() {
+  filterReportsByDate(): void {
     if (this.selectedDate && this.selectedUser) {
       const selectedDateStr = this.selectedDate.fecha;
-      console.log('Fecha seleccionada:', selectedDateStr);
-
       this.filteredReports = this.listReports.filter((report) => {
         const reportDateStr = new Date(report.fecha_registro).toISOString().split('T')[0];
         return reportDateStr === selectedDateStr && report.nombre === this.selectedUser.nombre;
       });
-
-      if (this.filteredReports.length > 0) {
-        console.log('Datos retornados:', this.filteredReports);
-      } else {
-        console.log('No se retornaron datos para la fecha seleccionada.');
-      }
     } else {
-      if (!this.selectedUser) {
-        console.log('No se seleccionó ningún usuario.');
-      }
-      if (!this.selectedDate) {
-        console.log('No se seleccionó ninguna fecha.');
-      }
       this.filteredReports = this.listReports;
     }
   }
@@ -182,9 +162,8 @@ export default class ReportesUsuariosComponent implements OnInit {
   getTotalCantidad(): number {
     return this.filteredReports.reduce((total, report) => total + report.cantidad, 0);
   }
-  
+
   printTable(): void {
     this.srvPrint.printElement('reportTable');
   }
-
 }
