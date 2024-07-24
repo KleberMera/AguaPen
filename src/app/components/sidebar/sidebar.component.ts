@@ -128,8 +128,8 @@ export class SidebarComponent implements OnInit {
           routerLink: '/home/usuarios-trabajadores',
         },
         {
-          label: 'Registrar',
-          icon: 'pi pi-table',
+          label: 'Asignaciones',
+          icon: 'pi pi-list-check',
           routerLink: '/home/registros',
         },
       ],

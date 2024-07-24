@@ -1,6 +1,25 @@
 <p-card>
-  <div>
-    <h2 class="welcome-title">¡Bienvenido!</h2>
-    <p class="welcome-message">{{ nombres }} {{ apellidos }}</p>
+  <div class="welcome-container">
+    <div>
+      <h2 class="welcome-title">¡Bienvenido!</h2>
+      <p class="welcome-message">{{ nombres }} {{ apellidos }}</p>
+    </div>
+    <p-button
+      type="button"
+      label="Asignaciones"
+      icon="pi pi-list-check"
+  
+      class="p-button-raised p-button-rounded welcome-button"
+      (click)="navigateTo($event)"
+    />
+
+    <p-button
+    type="button"
+    label="Productos"
+    icon="pi pi-shop"
+
+    class="p-button-raised p-button-rounded welcome-button"
+    (click)="navigateTo($event)"
+  />
   </div>
 </p-card>
