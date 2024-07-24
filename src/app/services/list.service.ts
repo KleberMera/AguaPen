@@ -34,8 +34,8 @@ export class ListService {
     return this.http.get<any>(this.environment + url);
   }
 
-  getviewEstaciones(){
-    let url = 'viewSeasons';
+  getviewAreas(){
+    let url = 'viewAreas';
     return this.http.get<any>(this.environment + url);
   }
 }

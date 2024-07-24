@@ -138,9 +138,9 @@ export class SidebarComponent implements OnInit {
       label: 'Reportes',
       items: [
         {
-          label: 'Estaciones',
+          label: 'Areas',
           icon: 'pi pi-map-marker',
-          routerLink: '/home/estaciones',
+          routerLink: '/home/areas',
         },
         {
           label: 'General',
