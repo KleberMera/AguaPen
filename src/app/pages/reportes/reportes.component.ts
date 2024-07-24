@@ -50,8 +50,9 @@ export default class ReportesComponent implements OnInit {
   searchQuery: string = '';
   selectedUser: any | null = null;
   listUniqueUsers: any[] = [];
-  startDate: Date | null = null;
-  endDate: Date | null = null;
+  startDate: string | null = null;
+  endDate: string | null = null;
+  
 
   private srvList = inject(ListService);
   private srvMessage = inject(MessageService);
@@ -131,10 +132,12 @@ export default class ReportesComponent implements OnInit {
   }
 
   filterReportsByDate() {
-    if (this.startDate !== null && this.endDate !== null) {
+    if (this.startDate && this.endDate) {
+      const start = new Date(this.startDate);
+      const end = new Date(this.endDate);
       this.filteredReports = this.listReports.filter((report) => {
         const reportDate = new Date(report.fecha_registro);
-        return reportDate >= this.startDate! && reportDate <= this.endDate!;
+        return reportDate >= start && reportDate <= end;
       });
     } else {
       this.filteredReports = this.listReports;

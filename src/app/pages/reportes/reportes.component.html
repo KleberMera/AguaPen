@@ -70,24 +70,25 @@
   <div class="formgroup-inline">
     <div class="field">
       <label for="startDate" class="p-sr-only">Fecha Inicio:</label>
-      <p-calendar
+      <input
         id="startDate"
+        type="date"
         [(ngModel)]="startDate"
+        class="p-inputtext"
         placeholder="Fecha Inicio"
-        dateFormat="dd/mm/yy"
-        showIcon="true"
-      ></p-calendar>
+      />
     </div>
     <div class="field">
       <label for="endDate" class="p-sr-only">Fecha Fin:</label>
-      <p-calendar
+      <input
         id="endDate"
+        type="date"
         [(ngModel)]="endDate"
+        class="p-inputtext"
         placeholder="Fecha Fin"
-        dateFormat="dd/mm/yy"
-        showIcon="true"
-      ></p-calendar>
+      />
     </div>
+    
     <div class="field">
       <button
         pButton
