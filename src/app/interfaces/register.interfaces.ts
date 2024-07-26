@@ -26,3 +26,33 @@ export interface DetalleRegistro {
   id_producto: number;
   cantidad: number;
 }
+
+export interface Registro_Area {
+  id_area: number;
+  observacion: string;
+}
+
+
+export interface AREAS {
+  id: number;
+  nombre_area: string;
+}
+export interface DetalleRegistrode_AREA {
+  id_registro_a: number;
+  id_producto: number;
+  cantidad: number;
+}
+
+
+export interface usuariologin  {
+  id: number;
+  cedula: string;
+  telefono: string;
+  nombres: string;
+  apellidos: string;
+  correo: string;
+  usuario: string;
+  clave: string;
+  rol_id: number;
+}
+

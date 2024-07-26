@@ -48,6 +48,32 @@ export class RegisterDetailsService {
     );
   }
 
+RegArea(objRegistro : any){
+  let url = 'registrarRegistrode_Area';
+  return this.http.post(
+    this.environment + url,
+    this.srvG.objectToFormData({
+      id_area: objRegistro.id_area,
+      observacion: objRegistro.observacion,
+    })
+  );
+}
+
+RegDetalleAreas(objDetalle : any){
+
+  let url = 'RegDetalles_areas';
+  return this.http.post(
+    this.environment + url,
+    this.srvG.objectToFormData({
+      id_registro_a: objDetalle.id_registro_a,
+      id_producto: objDetalle.id_producto,
+      cantidad: objDetalle.cantidad,
+    })
+  );
+}
+
+
+
   // Ver detalles de registro
   getViewRegistroDetalles() {
     let url = 'viewRegistroDetalles';

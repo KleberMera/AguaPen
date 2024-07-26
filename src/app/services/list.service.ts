@@ -38,4 +38,13 @@ export class ListService {
     let url = 'viewAreas';
     return this.http.get<any>(this.environment + url);
   }
+
+
+  
+
+
+  viewReportesDeAREAS(){
+    let url = 'viewRegxAreas';
+    return this.http.get<any>(this.environment + url);
+  }
 }

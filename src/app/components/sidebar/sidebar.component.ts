@@ -132,6 +132,11 @@ export class SidebarComponent implements OnInit {
           icon: 'pi pi-list-check',
           routerLink: '/home/registros',
         },
+        {
+          label: 'Asignaciones por Area ',
+          icon: 'pi pi-list-check',
+          routerLink: '/home/regx-area',
+        },
       ],
     },
     {
