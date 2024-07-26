@@ -48,40 +48,46 @@ export default class LoginComponent {
   getLogin() {
     this.loading = true;
 
-    setTimeout(() => {
-      this.loading = false;
-    }, 2000);
-
     if (this.loginForm.valid) {
       const dataLogin = this.loginForm.value;
 
-      this.srvAuth.login(dataLogin).subscribe((res: any) => {
-        if (res.retorno == 1) {
-          console.log(res.mensaje);
-          this.srvMensajes.add({
-            severity: 'success',
-            summary: 'Login',
-            detail: res.mensaje,
-          });
+      this.srvAuth.login(dataLogin).subscribe({
+        next: (res: any) => {
+          this.loading = false;
+          if (res && res.usuario) {
+            this.srvMensajes.add({
+              severity: 'success',
+              summary: 'Login',
+              detail: 'Inicio de sesión exitoso',
+            });
 
-          // Guardar datos en BehaviorSubject y localStorage
-          this.srvAuth.setNombres(res.nombres);
-          this.srvAuth.setUsuarioId(res.usuario_id);
-          this.srvAuth.setApellidos(res.apellidos);
-          this.srvAuth.setLoggedIn(true);
+            // Guardar datos en BehaviorSubject y localStorage
+            this.srvAuth.setNombres(res.usuario.nombres);
+            this.srvAuth.setUsuarioId(res.usuario.id.toString());
+            this.srvAuth.setApellidos(res.usuario.apellidos);
+            this.srvAuth.setLoggedIn(true);
 
-          // Redirigir al usuario a la página de inicio
-          this.router.navigate(['home']);
-        } else {
-          console.log(res.mensaje);
+            // Redirigir al usuario a la página de inicio
+            this.router.navigate(['home']);
+          } else {
+            this.srvMensajes.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: res.mensaje || 'Error al iniciar sesión',
+            });
+          }
+        },
+        error: (err) => {
+          this.loading = false;
           this.srvMensajes.add({
             severity: 'error',
             summary: 'Error',
-            detail: res.mensaje,
+            detail: err.error.mensaje || 'Error al iniciar sesión',
           });
         }
       });
     } else {
+      this.loading = false;
       this.srvMensajes.add({
         severity: 'error',
         summary: 'Error',

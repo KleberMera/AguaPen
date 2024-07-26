@@ -27,6 +27,7 @@ import {
   DetalleRegistrode_AREA,
   
 } from '../../interfaces/register.interfaces';
+import { formatDate } from '@angular/common';
 const PRIMEMG_MODULES = [
   FieldsetModule,
   TableModule,
@@ -135,7 +136,7 @@ export default class RegxAreaComponent {
     const user = event.value;
     if (user) {
       this.selectedArea = user;
-      this.messageService.add({ severity: 'info', summary: 'Usuario seleccionado', detail: `Has seleccionado a ${user.tx_nombre}` });
+      this.messageService.add({ severity: 'info', summary: 'Usuario seleccionado', detail: `Has seleccionado a ${user.nombre_area}` });
     }
   }
 
@@ -185,12 +186,14 @@ export default class RegxAreaComponent {
     try {
       const registro: Registro_Area = {
         id_area: this.selectedArea.id,
+        fecha_registro: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
+        hora_registro: formatDate(new Date(), 'HH:mm', 'en-US'),
         observacion: this.observacion,
       };
 
-      const res : any = await this.srvRegDet.RegArea(registro).toPromise();
-      if (res.id) {
-        await this.guardarDetallesRegistro(res.id);
+      const res : any = await this.srvRegDet.postRegisterArea(registro).toPromise();
+      if (res) {
+        await this.guardarDetallesRegistro();
         this.clearForm();
         this.messageService.add({ severity: 'success', summary: 'Registro exitoso', detail: 'Todos los registros fueron registrados exitosamente' });
         await this.getListProductos();
@@ -204,15 +207,27 @@ export default class RegxAreaComponent {
     }
   }
 
-  async guardarDetallesRegistro(id_registro_a: number): Promise<void> {
-    const detallesRegistro: DetalleRegistrode_AREA[] = this.selectedProducts.map(prod => ({
-      id_registro_a: id_registro_a,
-      id_producto: prod.id,
-      cantidad: prod.cantidad!,
-    }));
+  async guardarDetallesRegistro(): Promise<void> {
+    try {
+      const res: any = await this.srvRegDet.getidlastregistroarea().toPromise();
+      const lastRegistroId = res.id_registro_area;
 
-    const requests = detallesRegistro.map(detalle => this.srvRegDet.RegDetalleAreas(detalle).toPromise());
-    await Promise.all(requests);
+      const detallesRegistro: DetalleRegistrode_AREA[] = this.selectedProducts.map(prod => ({
+        id_registro_area: lastRegistroId,
+        id_producto: prod.id,
+        cantidad: prod.cantidad!,
+      }));
+  
+      const requests = detallesRegistro.map(detalle => this.srvRegDet.postRegisterDetalleAreas(detalle).toPromise());
+      await Promise.all(requests);
+
+      // Actualizar el stock de los productos
+      await this.actualizarStockProductos();
+
+    } catch (error) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al registrar los detalles' });
+
+    }
   }
 
 
@@ -265,6 +280,27 @@ increment(product: Product) {
       summary: 'Error',
       detail: 'No puedes agregar más de la cantidad en stock',
     });
+  }
+}
+
+async actualizarStockProductos(): Promise<void> {
+  try {
+    const updateRequests = this.selectedProducts.map(prod => {
+      const newStock = prod.stock_producto - prod.cantidad!;
+      return this.srvRegDet.postEditProductos({
+        id: prod.id,
+        nombre_producto: prod.nombre_producto,
+        fecha_producto: prod.fecha_producto,
+        hora_producto: prod.hora_producto,
+        stock_producto: newStock,
+      }).toPromise();
+    });
+
+    await Promise.all(updateRequests);
+
+   
+  } catch (error) {
+    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al actualizar el stock de los productos' });
   }
 }
 

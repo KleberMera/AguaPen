@@ -71,7 +71,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
 
   createEmptyUser(): User {
     return {
-      id_usuario: 0,
+      id: 0,
       tx_nombre: '',
       tx_cedula: '',
       tx_area: '',
@@ -142,7 +142,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     if (this.validateUser(this.currentUser)) {
       this.loadingSave = true;
       try {
-        if (this.currentUser.id_usuario > 0) {
+        if (this.currentUser.id > 0) {
           await this.updateUser(this.currentUser);
         } else {
           await this.createUser(this.currentUser);
@@ -150,8 +150,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
         this.dialogVisible = false;
         this.getListUsuarios();
       } catch (error) {
-        console.error('Error guardando usuario:', error);
-        this.srvMensajes.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al guardar el usuario.' });
+        this.handleError(error, 'Error al guardar usuario');
       } finally {
         this.loadingSave = false;
       }
@@ -174,14 +173,24 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   }
 
   async createUser(user: User) {
-    await this.srvReg.postRegisterUsers(user).toPromise();
-    this.srvMensajes.add({ severity: 'success', summary: 'Creación exitosa', detail: 'El nuevo usuario fue creado correctamente.' });
+    try {
+      const res = await this.srvReg.postRegisterUsers(user).toPromise();
+      this.handleResponse(res, 'Creación');
+    } catch (error) {
+      this.handleError(error, 'Error al crear usuario');
+    }
   }
+   
 
   async updateUser(user: User) {
-    await this.srvReg.postEditUsers(user).toPromise();
-    this.srvMensajes.add({ severity: 'success', summary: 'Actualización exitosa', detail: 'El usuario fue actualizado correctamente.' });
+    try {
+      const res = await this.srvReg.postEditUsers(user).toPromise();
+      this.handleResponse(res, 'Actualización');
+    } catch (error) {
+      this.handleError(error, 'Error al actualizar usuario');
+    }
   }
+    
 
   onAreaChange() {
     if (this.selectedArea) {
@@ -196,6 +205,34 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
       this.filteredCargoOptions = this.cargoOptions;
     }
     this.selectedCargo = '';
+  }
+
+  handleResponse(res: any, successMessage: string) {
+    console.log(res);
+    
+    if (
+      (res.created && res.created.length > 0) ||
+      (res.updated && res.updated.length > 0) ||
+      (res.data && res.data.length >= 0)
+
+    ) {
+      this.srvMensajes.add({
+        severity: 'success',
+        summary: successMessage,
+        detail: `${successMessage} exitosamente.`,
+      });
+    }
+  }
+
+  handleError(error: any, message: string): void {
+    console.error(message, error);
+    this.srvMensajes.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Ocurrió un error al procesar la solicitud',
+    });
+    this.loading = false;
+    this.loadingSave = false;
   }
 
 }

@@ -22,6 +22,7 @@ import {
   Registro,
   User,
 } from '../../interfaces/register.interfaces';
+import { formatDate } from '@angular/common';
 
 const PRIMEMG_MODULES = [
   FieldsetModule,
@@ -61,6 +62,7 @@ export default class RegistrosComponent implements OnInit {
   searchTerm: string = '';
   observacion: string = '';
   loadingMessage: string = '';
+
 
   private srvRegDet = inject(RegisterDetailsService);
   private srvList = inject(ListService);
@@ -176,17 +178,23 @@ export default class RegistrosComponent implements OnInit {
     this.loading = true;
     this.loadingMessage = 'Registrando Datos, espere un momento...';
 
+    
     try {
+   
       const registro: Registro = {
-        id_usuario: this.selectedUser.id_usuario,
+        id_usuario: this.selectedUser.id,
+        fecha_registro: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
+        hora_registro: formatDate(new Date(), 'HH:mm', 'en-US'),
         observacion: this.observacion,
       };
 
+  
+
       const res : any = await this.srvRegDet.postRegisterRegistro(registro).toPromise();
-      if (res.id) {
-        await this.guardarDetallesRegistro(res.id);
+      if (res) {
+        await this.guardarDetallesRegistro();
         this.clearForm();
-        this.messageService.add({ severity: 'success', summary: 'Registro exitoso', detail: 'Todos los registros fueron registrados exitosamente' });
+        this.messageService.add({ severity: 'success', summary: 'Registro exitoso', detail: 'Se  registraron los detalles con éxito' });
         await this.getListProductos();
       } else {
         this.messageService.add({ severity: 'error', summary: 'Error de registro', detail: res.mensaje || 'Error al registrar el usuario' });
@@ -198,16 +206,28 @@ export default class RegistrosComponent implements OnInit {
     }
   }
 
-  async guardarDetallesRegistro(id_registro: number): Promise<void> {
-    const detallesRegistro: DetalleRegistro[] = this.selectedProducts.map(prod => ({
-      id_registro: id_registro,
-      id_producto: prod.id,
-      cantidad: prod.cantidad!,
-    }));
+  async guardarDetallesRegistro(): Promise<void> {
+    try {
+      const res: any = await this.srvRegDet.getidlasregistro().toPromise();
+      const lastRegistroId = res.id_registro;
+  
+      const detallesRegistro: DetalleRegistro[] = this.selectedProducts.map(prod => ({
+        id_registro: lastRegistroId,
+        id_producto: prod.id,
+        cantidad: prod.cantidad!,
+      }));
+  
+      // Registrar todos los detalles del registro
+      await Promise.all(detallesRegistro.map(detalle => this.srvRegDet.postRegisterRegistroDetalle(detalle).toPromise()));
+  
+       // Actualizar el stock de los productos
+       await this.actualizarStockProductos();
+    } catch (error) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al registrar los detalles' });
+    }
 
-    const requests = detallesRegistro.map(detalle => this.srvRegDet.postRegisterRegistroDetalle(detalle).toPromise());
-    await Promise.all(requests);
   }
+  
 
   revertProduct(product: Product): void {
     const index = this.selectedProducts.findIndex(p => p.id === product.id);
@@ -257,6 +277,27 @@ export default class RegistrosComponent implements OnInit {
     return this.ListProductos.filter((product) =>
       product.nombre_producto.toLowerCase().includes(lowerQuery)
     );
+  }
+
+  async actualizarStockProductos(): Promise<void> {
+    try {
+      const updateRequests = this.selectedProducts.map(prod => {
+        const newStock = prod.stock_producto - prod.cantidad!;
+        return this.srvRegDet.postEditProductos({
+          id: prod.id,
+          nombre_producto: prod.nombre_producto,
+          fecha_producto: prod.fecha_producto,
+          hora_producto: prod.hora_producto,
+          stock_producto: newStock,
+        }).toPromise();
+      });
+  
+      await Promise.all(updateRequests);
+  
+     
+    } catch (error) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al actualizar el stock de los productos' });
+    }
   }
 
 }

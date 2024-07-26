@@ -3,48 +3,41 @@ import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { GeneralService } from './general.service';
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ListService {
   private environment = environment.aguapenApi;
 
   //injector
-  private http= inject(HttpClient);
-  private srvG = inject(GeneralService);
+  private http = inject(HttpClient);
 
-  constructor() { }
+  constructor() {}
 
   //Listado de Productos
   getListProductos() {
-    let url = 'viewProducts';
-    return this.http.get<any>(this.environment + url);
+    const url = `${this.environment}productos/search`;
+    return this.http.post<any>(url, {});
   }
 
   //Listado de Usuarios-Trabajadores
   getListUsuarios() {
-    let url = 'viewUsuariosTrabajadores';
-    return this.http.get<any>(this.environment + url);
+    const url = `${this.environment}usuariostrabajadores/search`;
+    return this.http.post<any>(url, {});
   }
-
 
   getviewRegistroAll() {
-    let url = 'viewRegistroAll';
-    return this.http.get<any>(this.environment + url);
+    const url = `${this.environment}obtenerRegistrosConDetalles`;
+    return this.http.get(url);
   }
 
-  getviewAreas(){
-    let url = 'viewAreas';
-    return this.http.get<any>(this.environment + url);
+  getviewAreas() {
+    const url = `${this.environment}areas/search`;
+    return this.http.post<any>(url, {});
   }
 
-
-  
-
-
-  viewReportesDeAREAS(){
-    let url = 'viewRegxAreas';
-    return this.http.get<any>(this.environment + url);
+  viewReportesDeAREAS() {
+    const url = `${this.environment}obtenerRegistrosConDetallesArea`;
+    return this.http.get(url);
   }
 }

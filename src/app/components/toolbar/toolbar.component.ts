@@ -72,11 +72,28 @@ export class ToolbarComponent implements OnInit {
   datesUser() {
     // Get user ID from localStorage
     const userId = localStorage.getItem('usuario_id');
-
-    this.authService.verDatosUsuario({ id: userId }).subscribe((res: any) => {
-      this.user = res.usuario;
-    });
+  
+    if (userId) {
+      this.authService.verDatosUsuario(userId).subscribe((res: any) => {
+        if (res && res.usuario) {
+          this.user = res.usuario;
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo obtener la información del usuario.',
+          });
+        }
+      });
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Usuario no identificado.',
+      });
+    }
   }
+  
 
   updateUser(event: Event) {
     setTimeout(() => {
@@ -97,8 +114,8 @@ export class ToolbarComponent implements OnInit {
           // Show success message
           this.messageService.add({
             severity: 'success',
-            summary: 'Actualización Exitosa',
-            detail: res.mensaje,
+            summary: 'Actualización',
+            detail: 'Cambios guardados.',
           });
 
           this.visible = false; // Close dialog
@@ -108,8 +125,8 @@ export class ToolbarComponent implements OnInit {
       reject: () => {
         this.messageService.add({
           severity: 'info',
-          summary: 'Actualización Cancelada',
-          detail: 'La actualización de los datos ha sido cancelada.',
+          summary: 'Cancelad0',
+          detail: 'Actualización cancelada.',
         });
       },
     });

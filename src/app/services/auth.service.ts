@@ -2,7 +2,7 @@ import { environment } from './../../environments/environment.development';
 import { Injectable } from '@angular/core';
 import { GeneralService } from './general.service';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -10,46 +10,70 @@ import { BehaviorSubject } from 'rxjs';
 export class AuthService {
   private environment = environment.aguapenApi;
   private loggedIn = new BehaviorSubject<boolean>(false);
+
   constructor(private http: HttpClient, private srvG: GeneralService) {}
 
-  login(objLogin: any) {
-    let url = 'login';
-    return this.http.post(
-      this.environment + url,
-      this.srvG.objectToFormData(objLogin)
-    );
+  login(objLogin: any): Observable<any> {
+    const url = `${this.environment}login`;
+    return this.http
+      .post(url, {
+        usuario: objLogin.usuario,
+        password: objLogin.clave,
+      })
+      .pipe(
+        tap((response: any) => {
+          if (response && response.usuario) {
+            this.setUsuarioId(response.usuario.id.toString());
+            this.setNombres(response.usuario.nombres);
+            this.setApellidos(response.usuario.apellidos);
+            this.setLoggedIn(true);
+          }
+        })
+      );
   }
 
-  verDatosUsuario(objUsuario: any) {
-    let url = 'viewDatosUsersSesion';
-    return this.http.post(
-      this.environment + url,
-      this.srvG.objectToFormData(objUsuario)
-    );
+  verDatosUsuario(usuarioId: string): Observable<any> {
+    const url = `${this.environment}usuarios/${usuarioId}`;
+    return this.http.get(url);
   }
 
-  updateUser(objUsuario: any) {
-    let url = 'editarUsuario';
-    return this.http.post(
-      this.environment + url,
-      this.srvG.objectToFormData(objUsuario)
-    );
+  updateUser(objUser: any) {
+    const url = `${this.environment}usuarios/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'update',
+          key: objUser.id,
+          attributes: {
+            cedula: objUser.cedula,
+            telefono: objUser.telefono,
+            nombres: objUser.nombres,
+            apellidos: objUser.apellidos,
+            correo: objUser.correo,
+            usuario: objUser.usuario,
+            clave: objUser.clave,
+            rol_id: objUser.rol_id,
+          },
+        },
+      ],
+    });
   }
-  resetPassword(objUsuario: any) {
-    let url = 'recuperarClave';
-    return this.http.post(
-      this.environment + url,
-      this.srvG.objectToFormData(objUsuario)
-    );
-  }
+  
 
   verifyCedula(cedula: string) {
-    let url = 'verificarCedula';
-    return this.http.post(
-      this.environment + url,
-      this.srvG.objectToFormData({ cedula })
-    );
+    const url = `${this.environment}verifycedula`;
+    return this.http.post(url, { cedula });
   }
+  
+  resetPasswordByCedula(cedula: string, newPassword: string, newPasswordConfirmation: string) {
+    const url = `${this.environment}resetpassword`;
+    return this.http.post(url, {
+      cedula: cedula,
+      new_password: newPassword,
+      new_password_confirmation: newPasswordConfirmation,
+    });
+  }
+  
 
   private nombresSubject = new BehaviorSubject<string | null>(
     this.getStoredNombres()
@@ -99,11 +123,16 @@ export class AuthService {
     localStorage.removeItem('nombres');
     localStorage.removeItem('usuario_id');
     localStorage.removeItem('apellidos');
+    this.setLoggedIn(false);
   }
+
   isLoggedIn(): boolean {
     return this.loggedIn.value;
   }
+
   setLoggedIn(value: boolean) {
     this.loggedIn.next(value);
   }
 }
+
+

@@ -1,5 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
@@ -7,7 +12,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { DividerModule } from 'primeng/divider';
-
+import { Router } from '@angular/router';
 
 const PRIMENG_MODULES = [
   ToastModule,
@@ -31,22 +36,22 @@ export default class ForgotPasswordComponent {
   loadingCheck: boolean = false;
   cedulaVerificada: boolean = false;
 
-
   private srvAuth = inject(AuthService);
   private srvMensajes = inject(MessageService);
+  private router = inject(Router);
 
   constructor(private fb: FormBuilder) {
-    this.forgotPasswordForm = this.fb.group({
-      cedula: ['', Validators.required],
-      nueva_clave: ['', Validators.required],
-      confirmar_clave: ['', Validators.required],
-    }, { validator: this.passwordMatchValidator });
+    this.forgotPasswordForm = this.fb.group(
+      {
+        cedula: ['', Validators.required],
+        nueva_clave: ['', Validators.required],
+        confirmar_clave: ['', Validators.required],
+      },
+    
+    );
   }
 
-  passwordMatchValidator(form: FormGroup) {
-    return form.get('nueva_clave')!.value === form.get('confirmar_clave')!.value 
-      ? null : { mismatch: true };
-  }
+
 
   verifyCedula() {
     this.loadingCheck = true;
@@ -54,66 +59,70 @@ export default class ForgotPasswordComponent {
 
     if (cedula) {
       this.srvAuth.verifyCedula(cedula).subscribe((res: any) => {
-        if (res.retorno === 1) {
+
+        if (res.status === "1") {
           this.cedulaVerificada = true;
+          this.loadingCheck = false;
           this.srvMensajes.add({
             severity: 'success',
             summary: 'Verificación de Cédula',
-            detail: res.mensaje,
+            detail: res.message,
           });
-          this.loadingCheck = false;
         } else {
+          this.loadingCheck = false;
           this.cedulaVerificada = false;
           this.srvMensajes.add({
             severity: 'error',
             summary: 'Error',
-            detail: res.mensaje,
+            detail: res.message,
           });
-          this.loadingCheck = false;
         }
+       
       });
-    } else {
-      this.srvMensajes.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Debe ingresar una cédula',
-      });
-      this.loadingCheck = false;
     }
   }
 
   resetPassword() {
     this.loading = true;
 
-    if (this.forgotPasswordForm.valid && this.cedulaVerificada) {
-      const data = this.forgotPasswordForm.value;
-
-      this.srvAuth.resetPassword(data).subscribe((res: any) => {
-        this.loading = false;
-
-        if (res.retorno == 1) {
-          console.log(res.mensaje);
-          this.srvMensajes.add({
-            severity: 'success',
-            summary: 'Recuperar Clave',
-            detail: res.mensaje,
-          });
-        } else {
-          console.log(res.mensaje);
-          this.srvMensajes.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: res.mensaje,
-          });
-        }
-      });
-    } else {
-      this.loading = false;
+    //Verificar si las claves son iguales
+    if (this.forgotPasswordForm.get('nueva_clave')!.value !== this.forgotPasswordForm.get('confirmar_clave')!.value) {
       this.srvMensajes.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Datos no introducidos correctamente o cédula no verificada',
+        detail: 'Las claves no coinciden',
       });
+
+      this.loading = false;
+      return;
+    }
+
+    if (this.forgotPasswordForm.valid && this.cedulaVerificada) {
+      const { cedula, nueva_clave, confirmar_clave } =
+        this.forgotPasswordForm.value;
+
+      this.srvAuth
+        .resetPasswordByCedula(cedula, nueva_clave, confirmar_clave)
+        .subscribe((res: any) => {
+          if (res.status == "1") {
+            this.srvMensajes.add({
+              severity: 'success',
+              summary: 'Recuperar Clave',
+              detail: res.message,
+            });
+            this.loading = false;
+            // Redirigir al usuario a la página de inicio
+            this.router.navigate(['auth']);
+
+          } else {
+            this.srvMensajes.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: res.message,
+            });
+          }
+        });
     }
   }
+
 }

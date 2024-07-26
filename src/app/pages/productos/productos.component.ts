@@ -76,7 +76,7 @@ export default class ProductosComponent implements OnInit {
 
   filterProducts(query: string): interfaceProducts[] {
     const lowerQuery = query.toLowerCase();
-    return this.listProduct.filter(product =>
+    return this.listProduct.filter((product) =>
       product.nombre_producto.toLowerCase().includes(lowerQuery)
     );
   }
@@ -96,7 +96,9 @@ export default class ProductosComponent implements OnInit {
 
     this.loadingSave = true;
     try {
-      this.selectedProduct.id === 0 ? await this.addProduct() : await this.editProduct();
+      this.selectedProduct.id === 0
+        ? await this.addProduct()
+        : await this.editProduct();
       this.dialogVisible = false;
       await this.getListProductos();
     } catch (error) {
@@ -109,7 +111,9 @@ export default class ProductosComponent implements OnInit {
   private async addProduct() {
     if (!this.validateProduct()) return;
     try {
-      const res = await this.srvReg.postRegisterProducts(this.selectedProduct!).toPromise();
+      const res = await this.srvReg
+        .postRegisterProducts(this.selectedProduct!)
+        .toPromise();
       this.handleResponse(res, 'Agregado');
     } catch (error) {
       this.handleError(error, 'Error al agregar producto');
@@ -119,7 +123,9 @@ export default class ProductosComponent implements OnInit {
   private async editProduct() {
     if (!this.validateProduct()) return;
     try {
-      const res = await this.srvReg.postEditProducts(this.selectedProduct!).toPromise();
+      const res = await this.srvReg
+        .postEditProducts(this.selectedProduct!)
+        .toPromise();
       this.handleResponse(res, 'Editado');
     } catch (error) {
       this.handleError(error, 'Error al editar producto');
@@ -127,6 +133,8 @@ export default class ProductosComponent implements OnInit {
   }
 
   deleteProduct(product: interfaceProducts) {
+    console.log(product.id);
+    
     this.srvConfirm.confirm({
       message: '¿Está seguro de eliminar el producto?',
       header: 'Confirmación',
@@ -134,8 +142,13 @@ export default class ProductosComponent implements OnInit {
       acceptLabel: 'Eliminar',
       accept: async () => {
         try {
-          const res = await this.srvReg.postDeleteProducts(product.id).toPromise();
+          const res = await this.srvReg
+            .requestdeleteProducts(product.id)
+            .toPromise();
           this.handleResponse(res, 'Eliminado');
+          console.log(res);
+          await this.getListProductos();
+          
         } catch (error) {
           this.handleError(error, 'Error al eliminar producto');
         }
@@ -144,17 +157,16 @@ export default class ProductosComponent implements OnInit {
   }
 
   private handleResponse(res: any, successMessage: string) {
-    if (res.retorno === 1) {
+    if (
+      (res.created && res.created.length > 0) ||
+      (res.updated && res.updated.length > 0) ||
+      (res.data && res.data.length >= 0)
+
+    ) {
       this.srvMensajes.add({
         severity: 'success',
         summary: successMessage,
-        detail: res.mensaje,
-      });
-    } else {
-      this.srvMensajes.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: res.mensaje,
+        detail: `${successMessage} exitosamente.`,
       });
     }
   }

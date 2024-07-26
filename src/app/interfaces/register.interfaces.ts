@@ -1,6 +1,6 @@
 // interfaces.ts
 export interface User {
-  id_usuario: number;
+  id: number;
   tx_nombre: string;
   tx_cedula: string;
   tx_area: string;
@@ -12,12 +12,16 @@ export interface User {
 export interface Product {
   id: number;
   nombre_producto: string;
+  fecha_producto: string;
+  hora_producto: string;
   stock_producto: number;
   cantidad: number;
 }
 
 export interface Registro {
   id_usuario: number;
+  fecha_registro: string;
+  hora_registro: string;
   observacion: string;
 }
 
@@ -29,6 +33,8 @@ export interface DetalleRegistro {
 
 export interface Registro_Area {
   id_area: number;
+  fecha_registro: string;
+  hora_registro: string;
   observacion: string;
 }
 
@@ -38,7 +44,7 @@ export interface AREAS {
   nombre_area: string;
 }
 export interface DetalleRegistrode_AREA {
-  id_registro_a: number;
+  id_registro_area: number;
   id_producto: number;
   cantidad: number;
 }
