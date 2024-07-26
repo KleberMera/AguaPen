@@ -43,7 +43,6 @@ export const routes: Routes = [
         path: 'regx-area',
         loadComponent: () => import('./regx-area/regx-area.component'),
         
-        
       },
       {
         path: '**',
