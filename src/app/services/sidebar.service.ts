@@ -18,7 +18,7 @@ export class SidebarService {
     
   }
 
-  private titleSubject = new BehaviorSubject<string>('SG - Industrial');
+  private titleSubject = new BehaviorSubject<string>('Sistema de Gestión');
   title$ = this.titleSubject.asObservable();
 
   setTitle(title: string) {

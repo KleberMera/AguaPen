@@ -39,7 +39,7 @@ const PRIMENG_MODULES = [
   providers: [ConfirmationService, MessageService],
 })
 export class ToolbarComponent implements OnInit {
-  pageTitle: string = 'Sistema de Gestión';
+  pageTitle: string = '';
   private sidebarService = inject(SidebarService);
   private router = inject(Router);
   private authService = inject(AuthService);

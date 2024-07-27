@@ -14,6 +14,7 @@ import { ConfirmationService, MessageService, MenuItem } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { filter } from 'rxjs';
+import { MenuModule } from 'primeng/menu';
 
 const PRIME_MODULES = [
   SidebarModule,
@@ -24,6 +25,7 @@ const PRIME_MODULES = [
   ImageModule,
   ConfirmPopupModule,
   ToastModule,
+  MenuModule,
 ];
 
 @Component({
@@ -207,4 +209,6 @@ export class SidebarComponent implements OnInit {
       this.apellidos = apellidos;
     });
   }
+
+ 
 }

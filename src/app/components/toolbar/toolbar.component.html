@@ -1,21 +1,26 @@
 <div class="card">
-  <p-toolbar>
+  <p-toolbar styleClass="bg-blue-500 fixed z-10 w-full">
     <div class="p-toolbar-group-start">
       <p-button
+    
+        (onClick)="toggleSidebar()"
         icon="pi pi-bars"
-        class="mr-2"
-        (click)="toggleSidebar()"
+        rounded="true"
+        
+        styleClass="h-2rem w-2rem"
       ></p-button>
     </div>
     <div class="p-toolbar-group-center">
-      <span class="font-bold text-2xl text-primary">{{ pageTitle }}</span>
+      <span class="font-bold text-2xl text-indigo-50">{{ pageTitle }}</span>
     </div>
     <div class="p-toolbar-group-end">
       <p-button
         icon="pi pi-user"
         class="mr-2"
+        rounded="true"
+        
+        styleClass="h-2rem w-2rem bg-primary"
         (click)="visible = true"
-      
       ></p-button>
     </div>
   </p-toolbar>
@@ -27,6 +32,7 @@
   [responsive]="true"
   header="Datos del Usuario"
   [style]="{ width: '25rem' }"
+
 >
   <div class="p-fluid">
     <div class="p-field">
@@ -64,7 +70,6 @@
       <label for="usuario">Usuario</label>
       <input id="usuario" type="text" pInputText [(ngModel)]="user.usuario" />
     </div>
-    
   </div>
   <p-footer>
     <div>

@@ -36,6 +36,11 @@ export class ListService {
     return this.http.post<any>(url, {});
   }
 
+  getListRegistros() {
+    const url = `${this.environment}registros/search`;
+    return this.http.post<any>(url, {});
+  }
+
   viewReportesDeAREAS() {
     const url = `${this.environment}obtenerRegistrosConDetallesArea`;
     return this.http.get(url);
