@@ -13,10 +13,13 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { formatDate } from '@angular/common';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { InputTextModule } from 'primeng/inputtext'
 
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
-import { InputTextModule } from 'primeng/inputtext';
+
 
 import {
   AutoCompleteCompleteEvent,
@@ -35,6 +38,8 @@ const PRIMEMG_MODULES = [
   IconFieldModule,
   InputIconModule,
   AutoCompleteModule,
+  InputGroupModule,
+  InputGroupAddonModule,
 ];
 
 @Component({

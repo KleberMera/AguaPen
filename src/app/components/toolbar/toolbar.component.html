@@ -1,38 +1,52 @@
-<div class="card">
-  <p-toolbar styleClass="bg-blue-500 fixed z-10 w-full">
-    <div class="p-toolbar-group-start">
-      <p-button
-    
-        (onClick)="toggleSidebar()"
-        icon="pi pi-bars"
-        rounded="true"
-        
-        styleClass="h-2rem w-2rem"
-      ></p-button>
-    </div>
-    <div class="p-toolbar-group-center">
-      <span class="font-bold text-2xl text-indigo-50">{{ pageTitle }}</span>
-    </div>
-    <div class="p-toolbar-group-end">
-      <p-button
-        icon="pi pi-user"
-        class="mr-2"
-        rounded="true"
-        
-        styleClass="h-2rem w-2rem bg-primary"
-        (click)="visible = true"
-      ></p-button>
-    </div>
-  </p-toolbar>
-</div>
+<div class="layout-topbar">
+  <a class="layout-topbar-logo">
+    <p-image src= {{imgUrl}} alt="Image" />
+    <span class="font-semibold text-2xl text-primary">Aguapen App</span>
+  </a>
 
+  <button
+    #menubutton
+    pRipple
+    class="p-link layout-menu-button layout-topbar-button"
+    (click)="layoutService.onMenuToggle()"
+  >
+    <i class="pi pi-bars"></i>
+  </button>
+
+  <button
+    #topbarmenubutton
+    class="p-link layout-topbar-menu-button layout-topbar-button"
+    (click)="layoutService.showProfileSidebar()"
+  >
+    <i class="pi pi-ellipsis-v"></i>
+  </button>
+
+  <div
+    #topbarmenu
+    class="layout-topbar-menu"
+    [ngClass]="{
+      'layout-topbar-menu-mobile-active':
+        layoutService.state.profileSidebarVisible
+    }"
+  >
+    <app-themes
+      (click)="accionThemes()"
+    ></app-themes>
+    <button class="p-link layout-topbar-button" (click)="visible = true">
+      <i class="pi pi-user"></i>
+      <span>Usuario</span>
+    </button>
+    <button class="p-link layout-topbar-button" (click)="logout($event)">
+      <i class="pi pi-sign-out"></i>
+      <span>Cerrar Sesión</span>
+    </button>
+  </div>
+</div>
 <p-dialog
   [(visible)]="visible"
   [modal]="true"
-  [responsive]="true"
   header="Datos del Usuario"
-  [style]="{ width: '25rem' }"
-
+  [style]="{ width: '30rem' }"
 >
   <div class="p-fluid">
     <div class="p-field">
@@ -92,6 +106,6 @@
 </p-dialog>
 
 <p-toast
-  [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
+class="p-toast-top-center"
 ></p-toast>
 <p-confirmPopup />

@@ -1,10 +1,16 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { ToolbarModule } from 'primeng/toolbar';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { InputTextModule } from 'primeng/inputtext';
 import { AvatarModule } from 'primeng/avatar';
 import { SidebarModule } from 'primeng/sidebar';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService, MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
@@ -16,6 +22,14 @@ import { AuthService } from '../../services/auth.service';
 import { SidebarService } from '../../services/sidebar.service';
 import { filter } from 'rxjs';
 import { CheckboxModule } from 'primeng/checkbox';
+import { LayoutService } from '../../services/layout.service';
+import { ImageModule } from 'primeng/image';
+import { MenuModule } from 'primeng/menu';
+import { CommonModule } from '@angular/common';
+import { ThemesComponent } from '../themes/themes.component';
+import { RippleModule } from 'primeng/ripple';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+
 const PRIMENG_MODULES = [
   ToolbarModule,
   ButtonModule,
@@ -28,55 +42,86 @@ const PRIMENG_MODULES = [
   DialogModule,
   PasswordModule,
   CheckboxModule,
+  ImageModule,
+  RippleModule,
+  ConfirmDialogModule,
 ];
 
 @Component({
   selector: 'app-toolbar',
   standalone: true,
-  imports: [PRIMENG_MODULES, FormsModule],
+  imports: [PRIMENG_MODULES, FormsModule, CommonModule, ThemesComponent],
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss'],
   providers: [ConfirmationService, MessageService],
 })
 export class ToolbarComponent implements OnInit {
-  pageTitle: string = '';
-  private sidebarService = inject(SidebarService);
-  private router = inject(Router);
-  private authService = inject(AuthService);
-  private messageService = inject(MessageService); // Inyección del servicio de mensajes
-  private confirmationService = inject(ConfirmationService); // Inyección del servicio de confirmación
   visible: boolean = false;
-  user: any = {}; // Initialize user object
-
   loadingUpdate: boolean = false;
+  user: any = {}; // Initialize user object
   checked: boolean = false;
+  items!: MenuItem[];
+  imgUrl: string = 'assets/ICONO-AGUAPEN.webp';
+
+  @ViewChild('menubutton') menuButton!: ElementRef;
+
+  @ViewChild('topbarmenubutton') topbarMenuButton!: ElementRef;
+
+  @ViewChild('topbarmenu') menu!: ElementRef;
+
+  private router = inject(Router);
+  private srvAuth = inject(AuthService);
+  private confirmationService = inject(ConfirmationService);
+  private messageService = inject(MessageService);
+
+  public layoutService = inject(LayoutService);
 
   ngOnInit(): void {
-    this.sidebarService.title$.subscribe((title) => {
-      this.pageTitle = title;
-    });
-
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        // Additional logic if needed
-      });
-
     this.datesUser();
   }
 
-  toggleSidebar() {
-    this.sidebarService.toggleSidebar();
+  logout(event: Event) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: '¿Estás seguro que deseas cerrar sesión?',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Salir',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Confirmado',
+          detail: 'Se ha cerrado la sesión',
+          life: 3000,
+        });
+
+        this.signOut();
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Denegado',
+          detail: 'Cancelado',
+          life: 3000,
+        });
+      },
+    });
+  }
+
+  signOut() {
+    this.srvAuth.clearAuthData();
+    this.router.navigate(['/auth']);
   }
 
   datesUser() {
     // Get user ID from localStorage
     const userId = localStorage.getItem('usuario_id');
-  
+
     if (userId) {
-      this.authService.verDatosUsuario(userId).subscribe((res: any) => {
+      this.srvAuth.verDatosUsuario(userId).subscribe((res: any) => {
         if (res && res.usuario) {
           this.user = res.usuario;
+          console.log(this.user);
         } else {
           this.messageService.add({
             severity: 'error',
@@ -93,7 +138,6 @@ export class ToolbarComponent implements OnInit {
       });
     }
   }
-  
 
   updateUser(event: Event) {
     setTimeout(() => {
@@ -110,7 +154,7 @@ export class ToolbarComponent implements OnInit {
       accept: () => {
         const updatedUser = { ...this.user };
 
-        this.authService.updateUser(updatedUser).subscribe((res: any) => {
+        this.srvAuth.updateUser(updatedUser).subscribe((res: any) => {
           // Show success message
           this.messageService.add({
             severity: 'success',
@@ -129,6 +173,15 @@ export class ToolbarComponent implements OnInit {
           detail: 'Actualización cancelada.',
         });
       },
+    });
+  }
+
+  accionThemes(){
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Confirmado',
+      detail: 'Se ha cambiado el tema',
+      life: 3000,
     });
   }
 }

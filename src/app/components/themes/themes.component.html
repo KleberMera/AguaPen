@@ -1,0 +1,8 @@
+<button
+    pRipple
+    class="p-link layout-topbar-button"
+    (click)="toggleTheme()"
+>
+    <i class="pi" [class]="{'pi-sun': !isDarkTheme, 'pi-moon': isDarkTheme}"></i>
+    <span>Tema</span>
+</button>
