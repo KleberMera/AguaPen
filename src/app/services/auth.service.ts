@@ -1,5 +1,5 @@
 import { environment } from './../../environments/environment.development';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { GeneralService } from './general.service';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
@@ -9,28 +9,28 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 })
 export class AuthService {
   private environment = environment.aguapenApi;
-  private loggedIn = new BehaviorSubject<boolean>(false);
   private userSubject = new BehaviorSubject<any>(this.getStoredUser());
   private tokenKey = 'auth_token';
   user$ = this.userSubject.asObservable();
-  constructor(private http: HttpClient, private srvG: GeneralService) {}
 
- 
+  private http = inject(HttpClient);
+
+
   login(objLogin: any): Observable<any> {
     const url = `${this.environment}login`;
-    return this.http.post(url, 
-      {
+    return this.http
+      .post(url, {
         usuario: objLogin.usuario,
         password: objLogin.clave,
-      }
-    ).pipe(
-      tap((response: any) => {
-        if (response && response.usuario) {
-          this.setUser(response.usuario);
-          this.setToken(response.token);
-        }
       })
-    );
+      .pipe(
+        tap((response: any) => {
+          if (response && response.usuario) {
+            this.setUser(response.usuario);
+            this.setToken(response.token);
+          }
+        })
+      );
   }
 
   verDatosUsuario(usuarioId: string): Observable<any> {
@@ -59,14 +59,17 @@ export class AuthService {
       ],
     });
   }
-  
 
   verifyCedula(cedula: string) {
     const url = `${this.environment}verifycedula`;
     return this.http.post(url, { cedula });
   }
-  
-  resetPasswordByCedula(cedula: string, newPassword: string, newPasswordConfirmation: string) {
+
+  resetPasswordByCedula(
+    cedula: string,
+    newPassword: string,
+    newPasswordConfirmation: string
+  ) {
     const url = `${this.environment}resetpassword`;
     return this.http.post(url, {
       cedula: cedula,
@@ -74,23 +77,22 @@ export class AuthService {
       new_password_confirmation: newPasswordConfirmation,
     });
   }
-  
 
   private getStoredUser(): any {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   }
 
-   setUser(user: any) {
+  setUser(user: any) {
     this.userSubject.next(user);
     localStorage.setItem('user', JSON.stringify(user));
   }
 
-   getToken(): string | null {
+  getToken(): string | null {
     return localStorage.getItem(this.tokenKey);
   }
 
-   setToken(token: string) {
+  setToken(token: string) {
     localStorage.setItem(this.tokenKey, token);
   }
 
@@ -103,10 +105,4 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
-
-  setLoggedIn(value: boolean) {
-    this.loggedIn.next(value);
-  }
 }
-
-
