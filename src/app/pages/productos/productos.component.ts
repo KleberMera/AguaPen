@@ -1,51 +1,19 @@
+// Imports for Angular
 import { Component, OnInit, inject } from '@angular/core';
-import { FieldsetModule } from 'primeng/fieldset';
-import { ListService } from '../../services/list.service';
-import { TableModule } from 'primeng/table';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { formatDate } from '@angular/common';
 import { RegisterService } from '../../services/register.service';
 import { interfaceProducts } from '../../interfaces/productos.interfaces';
-import { DialogModule } from 'primeng/dialog';
-import { ToastModule } from 'primeng/toast';
+import { ListService } from '../../services/list.service';
+
+// Imports for PrimeNG
+import { PRIMENG_MODULES } from './productos.import';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { formatDate } from '@angular/common';
-import { InputGroupModule } from 'primeng/inputgroup';
-import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { InputTextModule } from 'primeng/inputtext'
-
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
-
-
-import {
-  AutoCompleteCompleteEvent,
-  AutoCompleteModule,
-} from 'primeng/autocomplete';
-const PRIMEMG_MODULES = [
-  FieldsetModule,
-  TableModule,
-  CardModule,
-  ButtonModule,
-  ProgressSpinnerModule,
-  DialogModule,
-  ToastModule,
-  ConfirmDialogModule,
-  InputTextModule,
-  IconFieldModule,
-  InputIconModule,
-  AutoCompleteModule,
-  InputGroupModule,
-  InputGroupAddonModule,
-];
 
 @Component({
   selector: 'app-productos',
   standalone: true,
-  imports: [FormsModule, PRIMEMG_MODULES],
+  imports: [FormsModule, PRIMENG_MODULES],
   templateUrl: './productos.component.html',
   styleUrl: './productos.component.scss',
   providers: [MessageService, ConfirmationService],
@@ -73,7 +41,6 @@ export default class ProductosComponent implements OnInit {
       const res = await this.srvList.getListProductos().toPromise();
       this.listProduct = res.data;
       console.log(res);
-      
     } catch (error) {
       this.handleError(error, 'Error al cargar productos:');
     } finally {
@@ -141,7 +108,7 @@ export default class ProductosComponent implements OnInit {
 
   deleteProduct(product: interfaceProducts) {
     console.log(product.id);
-    
+
     this.srvConfirm.confirm({
       message: '¿Está seguro de eliminar el producto?',
       header: 'Confirmación',
@@ -155,7 +122,6 @@ export default class ProductosComponent implements OnInit {
           this.handleResponse(res, 'Eliminado');
           console.log(res);
           await this.getListProductos();
-          
         } catch (error) {
           this.handleError(error, 'Error al eliminar producto');
         }
@@ -168,7 +134,6 @@ export default class ProductosComponent implements OnInit {
       (res.created && res.created.length > 0) ||
       (res.updated && res.updated.length > 0) ||
       (res.data && res.data.length >= 0)
-
     ) {
       this.srvMensajes.add({
         severity: 'success',
