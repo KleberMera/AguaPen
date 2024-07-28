@@ -47,7 +47,7 @@ export class MenuComponent {
                 {
                   label: 'Trabajadores',
                   icon: 'pi pi-users',
-                  routerLink: '/home/usuarios-trabajadores',
+                  routerLink: '/home/trabajadores',
                 },
                 {
                   label: 'Asignaciones',

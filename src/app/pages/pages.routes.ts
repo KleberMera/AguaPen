@@ -14,8 +14,8 @@ export const routes: Routes = [
         loadComponent: () => import('./productos/productos.component'),
       },
       {
-        path: 'usuarios-trabajadores',
-        loadComponent: () => import('./usuarios-trabajadores/usuarios-trabajadores.component'),
+        path: 'trabajadores',
+        loadComponent: () => import('./trabajadores/trabajadores.component'),
       },
       {
         path: 'usuarios-roles',

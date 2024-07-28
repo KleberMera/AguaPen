@@ -1,55 +1,26 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { ListService } from '../../services/list.service';
-import { FieldsetModule } from 'primeng/fieldset';
-import { TableModule } from 'primeng/table';
 import { FormsModule } from '@angular/forms';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
-import { InputTextModule } from 'primeng/inputtext';
-import { DropdownModule } from 'primeng/dropdown';
-import { ButtonModule } from 'primeng/button';
+import { ListService } from '../../services/list.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { User } from './../../interfaces/register.interfaces';
-import { DialogModule, Dialog } from 'primeng/dialog';
-import { ToastModule } from 'primeng/toast';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { InputGroupModule } from 'primeng/inputgroup';
-import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { User } from '../../interfaces/register.interfaces';
 import { RegisterService } from '../../services/register.service';
-import { CheckboxModule } from 'primeng/checkbox';
-const PRIMENG_MODULES = [
-  FieldsetModule,
+import { PRIMENG_MODULES } from './usuariost.import';
 
-  TableModule,
-  ProgressSpinnerModule,
-  InputTextModule,
-  IconFieldModule,
-  InputIconModule,
-  DropdownModule,
-  ButtonModule,
-  ConfirmDialogModule,
-  ToastModule,
-  DialogModule,
 
-  CheckboxModule,
-  InputGroupModule,
-  InputGroupAddonModule,
-];
 
 @Component({
   selector: 'app-usuarios-trabajadores',
   standalone: true,
   imports: [PRIMENG_MODULES, FormsModule],
-  templateUrl: './usuarios-trabajadores.component.html',
-  styleUrls: ['./usuarios-trabajadores.component.scss'],
+  templateUrl: './trabajadores.component.html',
+  styleUrls: ['./trabajadores.component.scss'],
   providers: [MessageService, ConfirmationService],
 })
 export default class UsuariosTrabajadoresComponent implements OnInit {
   loadingSave: boolean = false;
   dialogVisible: boolean = false;
   checked: boolean = false;
-  @ViewChild('userDialog') userDialog!: Dialog;
+
 
   ListUsersWorkers: User[] = [];
   searchTerm: string = '';
