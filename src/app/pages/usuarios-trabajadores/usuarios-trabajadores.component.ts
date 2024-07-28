@@ -14,7 +14,8 @@ import { User } from './../../interfaces/register.interfaces';
 import { DialogModule, Dialog } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { RegisterService } from '../../services/register.service';
 import { CheckboxModule } from 'primeng/checkbox';
 const PRIMENG_MODULES = [
@@ -32,6 +33,8 @@ const PRIMENG_MODULES = [
   DialogModule,
 
   CheckboxModule,
+  InputGroupModule,
+  InputGroupAddonModule,
 ];
 
 @Component({

@@ -51,8 +51,8 @@ const PRIMEMG_MODULES = [
   selector: 'app-regx-area',
   standalone: true,
   imports: [PRIMEMG_MODULES],
-  templateUrl: './regx-area.component.html',
-  styleUrl: './regx-area.component.scss',
+  templateUrl: './registros-areas.component.html',
+  styleUrl: './registros-areas.component.scss',
   providers: [MessageService],
 })
 export default class RegxAreaComponent {
