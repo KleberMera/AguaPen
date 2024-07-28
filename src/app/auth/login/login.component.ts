@@ -32,7 +32,7 @@ const PRIMEMG_MODULES = [
 })
 export default class LoginComponent {
   loginForm: FormGroup;
-  loading: boolean = false;
+  loading = false;
 
   private srvAuth = inject(AuthService);
   private srvMensajes = inject(MessageService);
@@ -60,13 +60,6 @@ export default class LoginComponent {
               summary: 'Login',
               detail: 'Inicio de sesión exitoso',
             });
-
-            // Guardar datos en BehaviorSubject y localStorage
-            this.srvAuth.setNombres(res.usuario.nombres);
-            this.srvAuth.setUsuarioId(res.usuario.id.toString());
-            this.srvAuth.setApellidos(res.usuario.apellidos);
-            this.srvAuth.setLoggedIn(true);
-
             // Redirigir al usuario a la página de inicio
             this.router.navigate(['home']);
           } else {

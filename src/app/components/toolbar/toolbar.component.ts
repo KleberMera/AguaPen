@@ -20,7 +20,7 @@ import { FormsModule } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { SidebarService } from '../../services/sidebar.service';
-import { filter } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { CheckboxModule } from 'primeng/checkbox';
 import { LayoutService } from '../../services/layout.service';
 import { ImageModule } from 'primeng/image';
@@ -63,6 +63,7 @@ export class ToolbarComponent implements OnInit {
   items!: MenuItem[];
   imgUrl: string = 'assets/ICONO-AGUAPEN.webp';
 
+
   @ViewChild('menubutton') menuButton!: ElementRef;
 
   @ViewChild('topbarmenubutton') topbarMenuButton!: ElementRef;
@@ -75,7 +76,7 @@ export class ToolbarComponent implements OnInit {
   private messageService = inject(MessageService);
 
   public layoutService = inject(LayoutService);
-
+  public userSubscription: Subscription = new Subscription();
   ngOnInit(): void {
     this.datesUser();
   }
@@ -114,29 +115,31 @@ export class ToolbarComponent implements OnInit {
   }
 
   datesUser() {
-    // Get user ID from localStorage
-    const userId = localStorage.getItem('usuario_id');
-
-    if (userId) {
-      this.srvAuth.verDatosUsuario(userId).subscribe((res: any) => {
-        if (res && res.usuario) {
-          this.user = res.usuario;
-          console.log(this.user);
-        } else {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'No se pudo obtener la información del usuario.',
-          });
-        }
-      });
-    } else {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Usuario no identificado.',
-      });
-    }
+   
+    this.userSubscription = this.srvAuth.user$.subscribe((user) => {
+      if (user) {
+        const userId = user.id;
+        this.srvAuth.verDatosUsuario(userId).subscribe((res: any) => {
+          if (res && res.usuario) {
+            this.user = res.usuario;
+            console.log(this.user);
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'No se pudo obtener la información del usuario.',
+            });
+          }
+        });
+      } else {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Usuario no identificado.',
+        });
+      }
+    });
+   
   }
 
   updateUser(event: Event) {

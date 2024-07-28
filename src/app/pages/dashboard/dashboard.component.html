@@ -1,13 +1,24 @@
-<h1
-class=" text-4xl font-bold text-primary"
->Bienvenido, {{nombres}} {{apellidos}}</h1>
-<div class="grid">
+@if (loading) {
+<div class="loading-container p-d-flex p-jc-center p-ai-center p-flex-column">
+  <p>Cargando Dashboard...</p>
+  <p-progressSpinner
+    ariaLabel="loading"
+    styleClass="w-4rem h-4rem p-mb-4"
+    strokeWidth="8"
+    fill="var(--surface-ground)"
+  ></p-progressSpinner>
+</div>
 
+} @else {
+<h1 class="text-4xl font-bold text-primary">
+  Hola, {{ nombres }} {{ apellidos }}
+</h1>
+<div class="grid">
   <div class="col-12 lg:col-6 xl:col-3">
     <div class="card mb-0">
       <div class="flex justify-content-between mb-3">
         <div>
-          <span class="block text-500 font-medium mb-3">Registrar</span>
+          <span class="block text-500 font-medium mb-3">Asignaciones</span>
           <div class="text-800 font-medium">¿Que desea registrar?</div>
         </div>
         <div
@@ -20,10 +31,10 @@ class=" text-4xl font-bold text-primary"
 
       <div>
         <div class="flex align-items-center justify-content">
-          <div class="font-bold flex align-items-center justify-content-center">
+          <div class="font-bold ">
             <span> <p-button pRipple label="Productos" /> </span>
           </div>
-          <div class="font-bold flex align-items-center justify-content-center">
+          <div class="font-bold flex  ">
             &nbsp;
             <span>
               <p-button pRipple label="Extintores" outlined="true" />
@@ -105,8 +116,34 @@ class=" text-4xl font-bold text-primary"
   </div>
 
   <div class="col-12 xl:col-6">
+    <h3>Listado de Áreas</h3>
     <div class="card">
-      <h3>Registro Del Mes de: </h3>
+     
+      <p-table [value]="areas" [paginator]="true" [rows]="4" [rowsPerPageOptions]="[4, 5, 6]">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Áreas</th>
+            <th>Productos</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-area>
+          <tr>
+            <td>{{ area.nombre_area }}</td>
+            <td>{{ area.nombre_producto }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
     </div>
   </div>
+
+  <div class="col-12 xl:col-6">
+    <h3>Productos con mas stock</h3>
+    <div class="card flex flex-column align-items-center">
+    
+      <p-chart type="doughnut" [data]="chartData"></p-chart>
+  </div>
+  </div>
+  
 </div>
+
+}

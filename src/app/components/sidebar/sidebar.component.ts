@@ -202,17 +202,8 @@ export class SidebarComponent implements OnInit {
   }
 
   authDates() {
-    this.srvAuth.nombres$.subscribe((nombres) => {
-      this.nombres = nombres;
-    });
-
-    this.srvAuth.usuarioId$.subscribe((usuario_id) => {
-      this.usuario_id = usuario_id;
-    });
-
-    this.srvAuth.apellidos$.subscribe((apellidos) => {
-      this.apellidos = apellidos;
-    });
+    
+    
   }
 
  

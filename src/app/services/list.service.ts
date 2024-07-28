@@ -28,7 +28,7 @@ export class ListService {
 
   getviewRegistroAll() {
     const url = `${this.environment}obtenerRegistrosConDetalles`;
-    return this.http.get(url);
+    return this.http.get<any>(url);
   }
 
   getviewAreas() {
@@ -43,6 +43,11 @@ export class ListService {
 
   viewReportesDeAREAS() {
     const url = `${this.environment}obtenerRegistrosConDetallesArea`;
-    return this.http.get(url);
+    return this.http.get<any>(url);
+  }
+
+  countusers() {
+    const url = `${this.environment}countusersdata`;
+    return this.http.get<any>(url);
   }
 }

@@ -10,26 +10,27 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 export class AuthService {
   private environment = environment.aguapenApi;
   private loggedIn = new BehaviorSubject<boolean>(false);
-
+  private userSubject = new BehaviorSubject<any>(this.getStoredUser());
+  private tokenKey = 'auth_token';
+  user$ = this.userSubject.asObservable();
   constructor(private http: HttpClient, private srvG: GeneralService) {}
 
+ 
   login(objLogin: any): Observable<any> {
     const url = `${this.environment}login`;
-    return this.http
-      .post(url, {
+    return this.http.post(url, 
+      {
         usuario: objLogin.usuario,
         password: objLogin.clave,
+      }
+    ).pipe(
+      tap((response: any) => {
+        if (response && response.usuario) {
+          this.setUser(response.usuario);
+          this.setToken(response.token);
+        }
       })
-      .pipe(
-        tap((response: any) => {
-          if (response && response.usuario) {
-            this.setUsuarioId(response.usuario.id.toString());
-            this.setNombres(response.usuario.nombres);
-            this.setApellidos(response.usuario.apellidos);
-            this.setLoggedIn(true);
-          }
-        })
-      );
+    );
   }
 
   verDatosUsuario(usuarioId: string): Observable<any> {
@@ -75,59 +76,32 @@ export class AuthService {
   }
   
 
-  private nombresSubject = new BehaviorSubject<string | null>(
-    this.getStoredNombres()
-  );
-  private usuarioIdSubject = new BehaviorSubject<string | null>(
-    this.getStoredUsuarioId()
-  );
-  private apellidosSubject = new BehaviorSubject<string | null>(
-    this.getStoredApellidos()
-  );
-
-  nombres$ = this.nombresSubject.asObservable();
-  usuarioId$ = this.usuarioIdSubject.asObservable();
-  apellidos$ = this.apellidosSubject.asObservable();
-
-  private getStoredNombres(): string | null {
-    return localStorage.getItem('nombres');
+  private getStoredUser(): any {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
   }
 
-  private getStoredUsuarioId(): string | null {
-    return localStorage.getItem('usuario_id');
+   setUser(user: any) {
+    this.userSubject.next(user);
+    localStorage.setItem('user', JSON.stringify(user));
   }
 
-  private getStoredApellidos(): string | null {
-    return localStorage.getItem('apellidos');
+   getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
   }
 
-  setNombres(nombres: string) {
-    this.nombresSubject.next(nombres);
-    localStorage.setItem('nombres', nombres);
-  }
-
-  setUsuarioId(usuario_id: string) {
-    this.usuarioIdSubject.next(usuario_id);
-    localStorage.setItem('usuario_id', usuario_id);
-  }
-
-  setApellidos(apellidos: string) {
-    this.apellidosSubject.next(apellidos);
-    localStorage.setItem('apellidos', apellidos);
+   setToken(token: string) {
+    localStorage.setItem(this.tokenKey, token);
   }
 
   clearAuthData() {
-    this.nombresSubject.next(null);
-    this.usuarioIdSubject.next(null);
-    this.apellidosSubject.next(null);
-    localStorage.removeItem('nombres');
-    localStorage.removeItem('usuario_id');
-    localStorage.removeItem('apellidos');
-    this.setLoggedIn(false);
+    this.userSubject.next(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem(this.tokenKey);
   }
 
   isLoggedIn(): boolean {
-    return this.loggedIn.value;
+    return !!this.getToken();
   }
 
   setLoggedIn(value: boolean) {

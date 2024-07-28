@@ -8,7 +8,20 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { ToastModule } from 'primeng/toast';
 import { MenuItem, MessageService } from 'primeng/api';
 import { RippleModule } from 'primeng/ripple';
-const PRIMENG_MODULES = [CardModule, ButtonModule, SplitButtonModule, ToastModule, RippleModule];
+import { Subscription } from 'rxjs';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TableModule } from 'primeng/table';
+import { ChartModule } from 'primeng/chart';
+const PRIMENG_MODULES = [
+  CardModule,
+  ButtonModule,
+  SplitButtonModule,
+  ToastModule,
+  RippleModule,
+  ProgressSpinnerModule,
+  TableModule,
+  ChartModule,
+];
 
 @Component({
   selector: 'app-dashboard',
@@ -24,94 +37,75 @@ export default class DashboardComponent implements OnInit {
   apellidos: string | null = '';
 
   totalProductos: string = '';
-  listUsuarios: any = [];
   totalUsuarios: string = '';
-  listAreas: any = [];
   totalAreas: string = '';
-  listRegistros: any = [];
   totalRegistros: string = '';
   items: MenuItem[] = [];
-  //injector
+  loading: boolean = true;
+  areas: any[] = [];
+  chartData: any; // Data for the chart
+
   private srvAuth = inject(AuthService);
   private router = inject(Router);
   private srvList = inject(ListService);
-  private srvMessage = inject(MessageService);
+  private userSubscription!: Subscription;
+  private dataSubscriptions: Subscription[] = [];
+  private dataSubscription!: Subscription;
 
   ngOnInit(): void {
-    this.items = [
-      {
-          label: 'Ver',
-          command: () => {
-              this.update();
-          }
-      },
-      {
-          label: 'Registrar',
-          command: () => {
-              this.delete();
-          }
-      },
-
-      { label: 'Upload', routerLink: ['/home/productos'] },
-  ];
-    this.getListProductos();
-    this.getListUsuarios();
-    this.getListAreas();
-    this.getListRegistros();
-    this.srvAuth.nombres$.subscribe((nombres) => {
-      this.nombres = nombres;
+    this.userSubscription = this.srvAuth.user$.subscribe((user) => {
+      if (user) {
+        this.nombres = user.nombres;
+        this.usuario_id = user.id;
+        this.apellidos = user.apellidos;
+      }
     });
-
-    this.srvAuth.usuarioId$.subscribe((usuario_id) => {
-      this.usuario_id = usuario_id;
-    });
-
-    this.srvAuth.apellidos$.subscribe((apellidos) => {
-      this.apellidos = apellidos;
-    });
-
-    console.log('Nombre del usuario:', this.nombres);
-    console.log('ID del usuario:', this.usuario_id);
-    console.log('Apellidos del usuario:', this.apellidos);
+    this.fetchData();
+    this.fetchAreas();
   }
 
-  navigateTo(event: Event) {
+  ngOnDestroy(): void {
+    this.userSubscription.unsubscribe();
+    this.dataSubscriptions.forEach((sub) => sub.unsubscribe());
+  }
+
+  async fetchData(): Promise<void> {
+    const res = await this.srvList.getListProductos().toPromise();
+    this.totalProductos = res.total;
+
+    const topProducts = res.data
+      .sort((a: any, b: any) => b.stock_producto - a.stock_producto)
+      .slice(0, 5);
+
+    this.chartData = {
+      labels: topProducts.map((product: any) => product.nombre_producto),
+      datasets: [
+        {
+          data: topProducts.map((product: any) => product.stock_producto),
+          backgroundColor: ['#FF3284', '#36A2EB', '#FFCE56', '#FF9F40', '#FF6384'],
+        },
+      ],
+    };
+
+    const res2 = await this.srvList.countusers().toPromise();
+    this.totalUsuarios = res2.data;
+
+    const res3 = await this.srvList.getviewAreas().toPromise();
+    this.totalAreas = res3.total;
+
+    this.loading = false;
+  }
+
+  navigateTo(event: Event): void {
     this.router.navigate(['/home/registros']);
   }
 
-  async getListProductos() {
-    const res = await this.srvList.getListProductos().toPromise();
-
-    this.totalProductos = res.total;
+  fetchAreas(): void {
+    this.dataSubscription = this.srvList.viewReportesDeAREAS().subscribe((res) => {
+      this.areas = res.data;
+      console.log(this.areas);
+      
+      this.loading = false;
+    });
   }
-
-  async getListUsuarios() {
-    const res = await this.srvList.getListUsuarios().toPromise();
-
-    this.totalUsuarios = res.total;
-  }
-
-  async getListAreas() {
-    const res = await this.srvList.getviewAreas().toPromise();
-
-    this.totalAreas = res.total;
-  }
-
-  async getListRegistros() {
-    const res = await this.srvList.getListRegistros().toPromise();
-
-    this.totalRegistros = res.total;
-  }
-
-  save(severity: string) {
-    this.srvMessage.add({ severity: severity, summary: 'Success', detail: 'Data Saved' });
-}
-
-update() {
-    this.srvMessage.add({ severity: 'success', summary: 'Success', detail: 'Data Updated' });
-}
-
-delete() {
-    this.srvMessage.add({ severity: 'success', summary: 'Success', detail: 'Data Deleted' });
-}
 }
