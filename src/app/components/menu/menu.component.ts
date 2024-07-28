@@ -29,16 +29,17 @@ export class MenuComponent {
                   icon: 'pi pi-home',
                   routerLink: '/home/dashboard',
                 },
-                {
-                  label: 'Roles',
-                  icon: 'pi pi-user',
-                  routerLink: '/home/usuarios-roles',
-                }
+               
               ],
             },
             {
               label: 'Opciones',
               items: [
+                {
+                  label: 'Roles',
+                  icon: 'pi pi-user',
+                  routerLink: '/home/usuarios-roles',
+                },
                 {
                   label: 'Productos',
                   icon: 'pi pi-shop',
@@ -48,14 +49,20 @@ export class MenuComponent {
                   label: 'Trabajadores',
                   icon: 'pi pi-users',
                   routerLink: '/home/trabajadores',
-                },
+                }
+                
+              ],
+            },
+            {
+              label: 'Asignaciones',
+              items: [
                 {
-                  label: 'Asignaciones',
+                  label: 'A. Productos',
                   icon: 'pi pi-list-check',
                   routerLink: '/home/registros',
                 },
                 {
-                  label: 'Asignaciones por Area ',
+                  label: 'A. Areas ',
                   icon: 'pi pi-list-check',
                   routerLink: '/home/regx-area',
                 },
@@ -67,7 +74,7 @@ export class MenuComponent {
                 {
                   label: 'Areas',
                   icon: 'pi pi-map-marker',
-                  routerLink: '/home/areas',
+                  routerLink: '/home/reportes-areas',
                 },
                 {
                   label: 'General',

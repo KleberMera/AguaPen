@@ -35,8 +35,8 @@ export const routes: Routes = [
         loadComponent: () => import('./reportes-usuarios/reportes-usuarios.component'),
       },
       {
-        path: 'areas',
-        loadComponent: () => import('./areas/areas.component'),
+        path: 'reportes-areas',
+        loadComponent: () => import('./reportes-areas/reportes-areas.component'),
         
       },
       {

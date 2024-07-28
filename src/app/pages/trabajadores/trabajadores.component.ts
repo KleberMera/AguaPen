@@ -4,7 +4,7 @@ import { ListService } from '../../services/list.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { User } from '../../interfaces/register.interfaces';
 import { RegisterService } from '../../services/register.service';
-import { PRIMENG_MODULES } from './usuariost.import';
+import { PRIMENG_MODULES } from './trabajadores.import';
 
 
 

@@ -41,8 +41,9 @@ const PRIMEMG_MODULES = [
   selector: 'app-areas',
   standalone: true,
   imports: [PRIMEMG_MODULES],
-  templateUrl: './areas.component.html',
-  styleUrls: ['./areas.component.scss'],
+  templateUrl: './reportes-areas.component.html',
+  styleUrls: ['./reportes-areas.component.scss'],
+
   providers: [MessageService, ConfirmationService],
 })
 export default class AreasComponent implements OnInit, OnDestroy {
@@ -69,13 +70,15 @@ export default class AreasComponent implements OnInit, OnDestroy {
   }
 
   loadReports() {
-    const reportSubscription = this.SrvList.getReportsAreas().subscribe((res: any) => {
-      this.listReports = res.data;
-      this.filteredReports = res.data;
-      this.uniqueAreas = this.extractUniqueAreas(res.data);
-      console.log('Listado de Reportes:', this.listReports);
-      this.loading = false;
-    });
+    const reportSubscription = this.SrvList.getReportsAreas().subscribe(
+      (res: any) => {
+        this.listReports = res.data;
+        this.filteredReports = res.data;
+        this.uniqueAreas = this.extractUniqueAreas(res.data);
+        console.log('Listado de Reportes:', this.listReports);
+        this.loading = false;
+      }
+    );
 
     this.subscriptions.add(reportSubscription); // Agregar suscripción al manejador de suscripciones
   }
@@ -99,8 +102,10 @@ export default class AreasComponent implements OnInit, OnDestroy {
   filterReportsByNameAREA() {
     if (this.selectedArea && this.selectedArea.nombre_area) {
       const selectedAreaName = this.selectedArea.nombre_area.toLowerCase();
-      this.filteredReports = this.listReports.filter((report) => 
-        report.nombre_area && report.nombre_area.toLowerCase().includes(selectedAreaName)
+      this.filteredReports = this.listReports.filter(
+        (report) =>
+          report.nombre_area &&
+          report.nombre_area.toLowerCase().includes(selectedAreaName)
       );
     } else {
       this.filteredReports = this.listReports;
