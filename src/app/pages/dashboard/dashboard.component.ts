@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TableModule } from 'primeng/table';
 import { ChartModule } from 'primeng/chart';
+import { CountdataService } from '../../services/countdata.service';
 const PRIMENG_MODULES = [
   CardModule,
   ButtonModule,
@@ -48,9 +49,10 @@ export default class DashboardComponent implements OnInit {
   private srvAuth = inject(AuthService);
   private router = inject(Router);
   private srvList = inject(ListService);
+  private srvCount = inject(CountdataService);
   private userSubscription!: Subscription;
   private dataSubscriptions: Subscription[] = [];
-  private dataSubscription!: Subscription;
+  public dataSubscription!: Subscription;
 
   ngOnInit(): void {
     this.userSubscription = this.srvAuth.user$.subscribe((user) => {
@@ -70,9 +72,9 @@ export default class DashboardComponent implements OnInit {
   }
 
   async fetchData(): Promise<void> {
-    const res = await this.srvList.listProducts().toPromise();
-    this.totalProductos = res.total;
-
+    const resc = await this.srvCount.countProducts().toPromise();
+    this.totalProductos = resc.data;
+    const res = await this.srvList.getlistProducts().toPromise();
     const topProducts = res.data
       .sort((a: any, b: any) => b.stock_producto - a.stock_producto)
       .slice(0, 5);
@@ -87,11 +89,11 @@ export default class DashboardComponent implements OnInit {
       ],
     };
 
-    const res2 = await this.srvList.countusers().toPromise();
+    const res2 = await this.srvCount.countUsers().toPromise();
     this.totalUsuarios = res2.data;
 
-    const res3 = await this.srvList.getviewAreas().toPromise();
-    this.totalAreas = res3.total;
+    const res3 = await this.srvCount.countAreas().toPromise();
+    this.totalAreas = res3.data;
 
     this.loading = false;
   }
@@ -101,7 +103,7 @@ export default class DashboardComponent implements OnInit {
   }
 
   fetchAreas(): void {
-    this.dataSubscription = this.srvList.viewReportesDeAREAS().subscribe((res) => {
+    this.dataSubscription = this.srvList.getReportsAreas().subscribe((res) => {
       this.areas = res.data;
       console.log(this.areas);
       

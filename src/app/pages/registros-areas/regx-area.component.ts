@@ -98,7 +98,7 @@ export default class RegxAreaComponent {
   }
   async getListProductos(): Promise<void> {
     try {
-      const res = await this.srvList.listProducts().toPromise();
+      const res = await this.srvList.getlistProducts().toPromise();
       this.ListProductos = res.data.map((product: Product) => ({ ...product, cantidad: 1 }));
     } catch (error) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al cargar productos' });

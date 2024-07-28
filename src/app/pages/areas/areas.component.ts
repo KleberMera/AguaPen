@@ -69,7 +69,7 @@ export default class AreasComponent implements OnInit, OnDestroy {
   }
 
   loadReports() {
-    const reportSubscription = this.SrvList.viewReportesDeAREAS().subscribe((res: any) => {
+    const reportSubscription = this.SrvList.getReportsAreas().subscribe((res: any) => {
       this.listReports = res.data;
       this.filteredReports = res.data;
       this.uniqueAreas = this.extractUniqueAreas(res.data);

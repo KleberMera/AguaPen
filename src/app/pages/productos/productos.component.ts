@@ -38,13 +38,13 @@ export default class ProductosComponent implements OnInit {
   private srvConfirm = inject(ConfirmationService);
 
   ngOnInit(): void {
-    this.getListProductos();
+    this.listProductos();
   }
 
-  private async getListProductos() {
+  private async listProductos() {
     this.loading = true;
     try {
-      const res = await this.srvList.listProducts().toPromise();
+      const res = await this.srvList.getlistProducts().toPromise();
       this.listProduct = res.data;
     } catch (error) {
       this.handleError(error, 'Error al cargar productos:');
@@ -124,7 +124,7 @@ export default class ProductosComponent implements OnInit {
             .toPromise();
           this.handleResponse(res, 'Eliminado');
           console.log(res);
-          await this.getListProductos();
+          await this.listProductos();
         } catch (error) {
           this.handleError(error, 'Error al eliminar producto');
         }
@@ -141,7 +141,7 @@ export default class ProductosComponent implements OnInit {
         ? await this.addProduct()
         : await this.editProduct();
       this.dialogVisible = false;
-      await this.getListProductos();
+      await this.listProductos();
     } catch (error) {
       this.handleError(error, 'Error al guardar el producto');
     } finally {

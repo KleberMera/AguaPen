@@ -15,15 +15,15 @@ export class ListService {
   constructor() {}
 
   //Listado de Productos
-  listProducts() {
-    const url = `${this.environment}productos/search`;
-    return this.http.post<any>(url, {});
+  getlistProducts() {
+    const url = `${this.environment}allproducts`;
+    return this.http.get<any>(url);
   }
 
   //Listado de Usuarios-Trabajadores
   getListUsuarios() {
-    const url = `${this.environment}usuariostrabajadores/search`;
-    return this.http.post<any>(url, {});
+    const url = `${this.environment}allusersworkers`;
+    return this.http.get<any>(url);
   }
 
   getviewRegistroAll() {
@@ -32,8 +32,8 @@ export class ListService {
   }
 
   getviewAreas() {
-    const url = `${this.environment}areas/search`;
-    return this.http.post<any>(url, {});
+    const url = `${this.environment}allareas`;
+    return this.http.get<any>(url);
   }
 
   getListRegistros() {
@@ -41,13 +41,10 @@ export class ListService {
     return this.http.post<any>(url, {});
   }
 
-  viewReportesDeAREAS() {
+  getReportsAreas() {
     const url = `${this.environment}obtenerRegistrosConDetallesArea`;
     return this.http.get<any>(url);
   }
 
-  countusers() {
-    const url = `${this.environment}countusersdata`;
-    return this.http.get<any>(url);
-  }
+  
 }
