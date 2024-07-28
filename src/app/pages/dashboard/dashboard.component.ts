@@ -70,7 +70,7 @@ export default class DashboardComponent implements OnInit {
   }
 
   async fetchData(): Promise<void> {
-    const res = await this.srvList.getListProductos().toPromise();
+    const res = await this.srvList.listProducts().toPromise();
     this.totalProductos = res.total;
 
     const topProducts = res.data

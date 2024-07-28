@@ -15,7 +15,7 @@ export class ListService {
   constructor() {}
 
   //Listado de Productos
-  getListProductos() {
+  listProducts() {
     const url = `${this.environment}productos/search`;
     return this.http.post<any>(url, {});
   }

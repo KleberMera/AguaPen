@@ -2,12 +2,15 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { formatDate } from '@angular/common';
+
+// Services and interfaces for the app
 import { RegisterService } from '../../services/register.service';
 import { interfaceProducts } from '../../interfaces/productos.interfaces';
 import { ListService } from '../../services/list.service';
 
 // Imports for PrimeNG
 import { PRIMENG_MODULES } from './productos.import';
+// Providers for PrimeNG
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
@@ -19,13 +22,16 @@ import { ConfirmationService, MessageService } from 'primeng/api';
   providers: [MessageService, ConfirmationService],
 })
 export default class ProductosComponent implements OnInit {
+  // List of products
   listProduct: interfaceProducts[] = [];
   searchTerm: string = '';
+  selectedProduct: interfaceProducts | null = null;
+  // Loading state
   loading: boolean = true;
   loadingSave: boolean = false;
   dialogVisible: boolean = false;
-  selectedProduct: interfaceProducts | null = null;
 
+  // Services injected
   private srvList = inject(ListService);
   private srvReg = inject(RegisterService);
   private srvMensajes = inject(MessageService);
@@ -38,9 +44,8 @@ export default class ProductosComponent implements OnInit {
   private async getListProductos() {
     this.loading = true;
     try {
-      const res = await this.srvList.getListProductos().toPromise();
+      const res = await this.srvList.listProducts().toPromise();
       this.listProduct = res.data;
-      console.log(res);
     } catch (error) {
       this.handleError(error, 'Error al cargar productos:');
     } finally {
@@ -62,24 +67,22 @@ export default class ProductosComponent implements OnInit {
 
   openEditProductDialog(product: interfaceProducts) {
     this.selectedProduct = { ...product };
+    this.selectedProduct.hora_producto = formatDate(
+      new Date(),
+      'HH:mm',
+      'en-US'
+    );
     this.dialogVisible = true;
   }
 
-  async saveProduct() {
-    if (!this.selectedProduct) return;
-
-    this.loadingSave = true;
-    try {
-      this.selectedProduct.id === 0
-        ? await this.addProduct()
-        : await this.editProduct();
-      this.dialogVisible = false;
-      await this.getListProductos();
-    } catch (error) {
-      this.handleError(error, 'Error al guardar el producto');
-    } finally {
-      this.loadingSave = false;
-    }
+  private createNewProduct(): interfaceProducts {
+    return {
+      id: 0,
+      nombre_producto: '',
+      fecha_producto: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
+      hora_producto: formatDate(new Date(), 'HH:mm', 'en-US'),
+      stock_producto: 0,
+    };
   }
 
   private async addProduct() {
@@ -129,6 +132,23 @@ export default class ProductosComponent implements OnInit {
     });
   }
 
+  async saveProduct() {
+    if (!this.selectedProduct) return;
+
+    this.loadingSave = true;
+    try {
+      this.selectedProduct.id === 0
+        ? await this.addProduct()
+        : await this.editProduct();
+      this.dialogVisible = false;
+      await this.getListProductos();
+    } catch (error) {
+      this.handleError(error, 'Error al guardar el producto');
+    } finally {
+      this.loadingSave = false;
+    }
+  }
+
   private handleResponse(res: any, successMessage: string) {
     if (
       (res.created && res.created.length > 0) ||
@@ -163,16 +183,6 @@ export default class ProductosComponent implements OnInit {
     }
 
     return true;
-  }
-
-  private createNewProduct(): interfaceProducts {
-    return {
-      id: 0,
-      nombre_producto: '',
-      fecha_producto: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
-      hora_producto: formatDate(new Date(), 'HH:mm', 'en-US'),
-      stock_producto: 0,
-    };
   }
 
   private handleError(error: any, message: string): void {

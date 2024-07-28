@@ -95,7 +95,7 @@ export default class RegistrosComponent implements OnInit {
 
   async getListProductos(): Promise<void> {
     try {
-      const res = await this.srvList.getListProductos().toPromise();
+      const res = await this.srvList.listProducts().toPromise();
       this.ListProductos = res.data.map((product: Product) => ({ ...product, cantidad: 1 }));
     } catch (error) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al cargar productos' });
