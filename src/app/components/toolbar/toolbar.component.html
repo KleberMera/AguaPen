@@ -1,6 +1,6 @@
 <div class="layout-topbar">
   <a class="layout-topbar-logo">
-    <p-image src= {{imgUrl}} alt="Image" />
+    <p-image src="{{ imgUrl }}" alt="Image" />
     <span class="font-semibold text-2xl text-primary">Aguapen App</span>
   </a>
 
@@ -29,9 +29,7 @@
         layoutService.state.profileSidebarVisible
     }"
   >
-    <app-themes
-      (click)="accionThemes()"
-    ></app-themes>
+    <app-themes (click)="accionThemes()"></app-themes>
     <button class="p-link layout-topbar-button" (click)="visible = true">
       <i class="pi pi-user"></i>
       <span>Usuario</span>
@@ -84,6 +82,37 @@
       <label for="usuario">Usuario</label>
       <input id="usuario" type="text" pInputText [(ngModel)]="user.usuario" />
     </div>
+
+    <div class="p-field">
+      <p-checkbox
+        label="Cambiar Contraseña"
+        [(ngModel)]="changePassword"
+        [binary]="true"
+      ></p-checkbox>
+    </div>
+
+    @if (changePassword) {
+    <div>
+      <div class="p-field">
+        <label for="newPassword">Nueva Contraseña</label>
+        <p-password
+          id="newPassword"
+          [(ngModel)]="password"
+          [feedback]="false"
+          [toggleMask]="true"
+        />
+      </div>
+      <div class="p-field">
+        <label for="confirmPassword">Confirmar Contraseña</label>
+        <p-password
+          id="confirmPassword"
+          [(ngModel)]="confirmPassword"
+          [feedback]="false"
+          [toggleMask]="true"
+        />
+      </div>
+    </div>
+    }
   </div>
   <p-footer>
     <div>
@@ -98,14 +127,11 @@
         pButton
         label="Actualizar"
         (click)="updateUser($event)"
-        icon="pi pi-check"
         [loading]="loadingUpdate"
       ></button>
     </div>
   </p-footer>
 </p-dialog>
 
-<p-toast
-class="p-toast-top-center"
-></p-toast>
+<p-toast class="p-toast-top-center"></p-toast>
 <p-confirmPopup />

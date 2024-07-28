@@ -62,7 +62,9 @@ export class ToolbarComponent implements OnInit {
   checked: boolean = false;
   items!: MenuItem[];
   imgUrl: string = 'assets/ICONO-AGUAPEN.webp';
-
+  changePassword: boolean = false; // Para controlar el checkbox
+  password: string = ''; // Nueva contraseña
+  confirmPassword: string = ''; // Confirmar nueva contraseña
 
   @ViewChild('menubutton') menuButton!: ElementRef;
 
@@ -115,7 +117,6 @@ export class ToolbarComponent implements OnInit {
   }
 
   datesUser() {
-   
     this.userSubscription = this.srvAuth.user$.subscribe((user) => {
       if (user) {
         const userId = user.id;
@@ -139,13 +140,20 @@ export class ToolbarComponent implements OnInit {
         });
       }
     });
-   
   }
 
   updateUser(event: Event) {
-    setTimeout(() => {
+    this.loadingUpdate = true;
+    // Validar si la nueva contraseña coincide
+    if (this.changePassword && this.password !== this.confirmPassword) {
       this.loadingUpdate = false;
-    }, 2000);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Las contraseñas no coinciden.',
+      });
+      return;
+    }
 
     this.confirmationService.confirm({
       target: event.target as EventTarget,
@@ -157,6 +165,10 @@ export class ToolbarComponent implements OnInit {
       accept: () => {
         const updatedUser = { ...this.user };
 
+        if (this.changePassword) {
+          updatedUser.password = this.password;
+        }
+
         this.srvAuth.updateUser(updatedUser).subscribe((res: any) => {
           // Show success message
           this.messageService.add({
@@ -167,6 +179,11 @@ export class ToolbarComponent implements OnInit {
 
           this.visible = false; // Close dialog
           this.loadingUpdate = false;
+
+          // Si se cambió la contraseña, cerrar sesión
+          if (this.changePassword) {
+            this.signOut();
+          }
         });
       },
       reject: () => {
@@ -175,11 +192,12 @@ export class ToolbarComponent implements OnInit {
           summary: 'Cancelad0',
           detail: 'Actualización cancelada.',
         });
+        this.loadingUpdate = false;
       },
     });
   }
 
-  accionThemes(){
+  accionThemes() {
     this.messageService.add({
       severity: 'info',
       summary: 'Confirmado',

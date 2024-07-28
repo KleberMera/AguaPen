@@ -52,7 +52,7 @@ export class AuthService {
             apellidos: objUser.apellidos,
             correo: objUser.correo,
             usuario: objUser.usuario,
-            clave: objUser.clave,
+            password: objUser.password,
             rol_id: objUser.rol_id,
           },
         },

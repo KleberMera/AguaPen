@@ -63,6 +63,7 @@ export default class LoginComponent {
             // Redirigir al usuario a la página de inicio
             this.router.navigate(['home']);
           } else {
+            this.loading = false;
             this.srvMensajes.add({
               severity: 'error',
               summary: 'Error',
@@ -75,9 +76,9 @@ export default class LoginComponent {
           this.srvMensajes.add({
             severity: 'error',
             summary: 'Error',
-            detail: err.error.mensaje || 'Error al iniciar sesión',
+            detail: 'Error al iniciar sesión',
           });
-        }
+        },
       });
     } else {
       this.loading = false;
