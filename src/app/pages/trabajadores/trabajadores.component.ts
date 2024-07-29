@@ -1,12 +1,15 @@
+// Imports of Angular
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ListService } from '../../services/list.service';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { User } from '../../interfaces/register.interfaces';
+
+// Services and interfaces of the app
 import { RegisterService } from '../../services/register.service';
+import { User } from '../../interfaces/users.interfaces';
+
+// Imports of PrimeNG
 import { PRIMENG_MODULES } from './trabajadores.import';
-
-
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-usuarios-trabajadores',
@@ -20,7 +23,6 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   loadingSave: boolean = false;
   dialogVisible: boolean = false;
   checked: boolean = false;
-
 
   ListUsersWorkers: User[] = [];
   searchTerm: string = '';
@@ -65,7 +67,11 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
       this.filteredCargoOptions = this.cargoOptions;
     } catch (error) {
       console.error('Error al cargar usuarios:', error);
-      this.srvMensajes.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al cargar los usuarios.' });
+      this.srvMensajes.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Ocurrió un error al cargar los usuarios.',
+      });
     } finally {
       this.loading = false;
     }
@@ -83,9 +89,9 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   }
 
   getUniqueOptions(data: any[], field: string): any[] {
-    return [...new Set(data.map(item => item[field]))]
-      .filter(value => value != null)
-      .map(value => ({ label: value, value }))
+    return [...new Set(data.map((item) => item[field]))]
+      .filter((value) => value != null)
+      .map((value) => ({ label: value, value }))
       .sort((a, b) => a.label.localeCompare(b.label));
   }
 
@@ -154,7 +160,6 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
       this.handleError(error, 'Error al crear usuario');
     }
   }
-   
 
   async updateUser(user: User) {
     try {
@@ -164,17 +169,19 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
       this.handleError(error, 'Error al actualizar usuario');
     }
   }
-    
 
   onAreaChange() {
     if (this.selectedArea) {
       this.filteredCargoOptions = this.ListUsersWorkers.filter(
-        user => user.tx_area === this.selectedArea
-      ).map(user => ({
+        (user) => user.tx_area === this.selectedArea
+      ).map((user) => ({
         label: user.tx_cargo,
-        value: user.tx_cargo
+        value: user.tx_cargo,
       }));
-      this.filteredCargoOptions = this.getUniqueOptions(this.filteredCargoOptions, 'label');
+      this.filteredCargoOptions = this.getUniqueOptions(
+        this.filteredCargoOptions,
+        'label'
+      );
     } else {
       this.filteredCargoOptions = this.cargoOptions;
     }
@@ -183,12 +190,11 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
 
   handleResponse(res: any, successMessage: string) {
     console.log(res);
-    
+
     if (
       (res.created && res.created.length > 0) ||
       (res.updated && res.updated.length > 0) ||
       (res.data && res.data.length >= 0)
-
     ) {
       this.srvMensajes.add({
         severity: 'success',
@@ -208,5 +214,4 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     this.loading = false;
     this.loadingSave = false;
   }
-
 }

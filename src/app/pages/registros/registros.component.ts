@@ -6,13 +6,14 @@ import { formatDate } from '@angular/common';
 
 import { FormsModule } from '@angular/forms';
 import {
-  DetalleRegistro,
-  Product,
   Registro,
-  User,
-} from '../../interfaces/register.interfaces';
+
+} from '../../interfaces/registers.interfaces';
+import { Product } from '../../interfaces/products.interfaces';
 
 import { PRIMEMG_MODULES } from './registros.imports';
+import { User } from '../../interfaces/users.interfaces';
+import { details } from '../../interfaces/details.interfaces';
 
 @Component({
   selector: 'app-registros',
@@ -127,14 +128,13 @@ export default class RegistrosComponent implements OnInit {
   }
 
   toggleProducts(): void {
-   if (this.showProductsTable) {
-     this.showProductsTable = false;
-     this.isInProgress = false;
-
-   } else {
-     this.showProductsTable = true;
-     this.isInProgress = true;
-   }
+    if (this.showProductsTable) {
+      this.showProductsTable = false;
+      this.isInProgress = false;
+    } else {
+      this.showProductsTable = true;
+      this.isInProgress = true;
+    }
   }
 
   get totalCantidadProductos(): number {
@@ -243,7 +243,7 @@ export default class RegistrosComponent implements OnInit {
       const res: any = await this.srvRegDet.getidlasregistro().toPromise();
       const lastRegistroId = res.id_registro;
 
-      const detallesRegistro: DetalleRegistro[] = this.selectedProducts.map(
+      const detallesRegistro: details[] = this.selectedProducts.map(
         (prod) => ({
           id_registro: lastRegistroId,
           id_producto: prod.id,

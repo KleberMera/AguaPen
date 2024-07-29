@@ -5,13 +5,14 @@ import { formatDate } from '@angular/common';
 
 // Services and interfaces for the app
 import { RegisterService } from '../../services/register.service';
-import { interfaceProducts } from '../../interfaces/productos.interfaces';
+
 import { ListService } from '../../services/list.service';
 
 // Imports for PrimeNG
 import { PRIMENG_MODULES } from './productos.import';
 // Providers for PrimeNG
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { Product } from '../../interfaces/products.interfaces';
 
 @Component({
   selector: 'app-productos',
@@ -23,9 +24,9 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 })
 export default class ProductosComponent implements OnInit {
   // List of products
-  listProduct: interfaceProducts[] = [];
+  listProduct: Product[] = [];
   searchTerm: string = '';
-  selectedProduct: interfaceProducts | null = null;
+  selectedProduct: Product | null = null;
   // Loading state
   loading: boolean = true;
   loadingSave: boolean = false;
@@ -53,7 +54,7 @@ export default class ProductosComponent implements OnInit {
     }
   }
 
-  filterProducts(query: string): interfaceProducts[] {
+  filterProducts(query: string): Product[] {
     const lowerQuery = query.toLowerCase();
     return this.listProduct.filter((product) =>
       product.nombre_producto.toLowerCase().includes(lowerQuery)
@@ -65,7 +66,7 @@ export default class ProductosComponent implements OnInit {
     this.dialogVisible = true;
   }
 
-  openEditProductDialog(product: interfaceProducts) {
+  openEditProductDialog(product: Product) {
     this.selectedProduct = { ...product };
     this.selectedProduct.hora_producto = formatDate(
       new Date(),
@@ -75,13 +76,15 @@ export default class ProductosComponent implements OnInit {
     this.dialogVisible = true;
   }
 
-  private createNewProduct(): interfaceProducts {
+  private createNewProduct(): Product {
     return {
       id: 0,
       nombre_producto: '',
       fecha_producto: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
       hora_producto: formatDate(new Date(), 'HH:mm', 'en-US'),
       stock_producto: 0,
+      cantidad : 0,
+
     };
   }
 
@@ -109,7 +112,7 @@ export default class ProductosComponent implements OnInit {
     }
   }
 
-  deleteProduct(product: interfaceProducts) {
+  deleteProduct(product: Product) {
     console.log(product.id);
 
     this.srvConfirm.confirm({
