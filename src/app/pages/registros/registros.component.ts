@@ -1,50 +1,23 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RegisterDetailsService } from '../../services/register-details.service';
-import { MessageService } from 'primeng/api';
-import { FieldsetModule } from 'primeng/fieldset';
 import { ListService } from '../../services/list.service';
+import { MessageService } from 'primeng/api';
+import { formatDate } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { InputIconModule } from 'primeng/inputicon';
-import { InputTextModule } from 'primeng/inputtext';
-import { ToastModule } from 'primeng/toast';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { IconFieldModule } from 'primeng/iconfield';
-import { DropdownModule } from 'primeng/dropdown';
-import { CardModule } from 'primeng/card';
-import { BlockUIModule } from 'primeng/blockui';
-import { SpinnerModule } from 'primeng/spinner';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import {
   DetalleRegistro,
   Product,
   Registro,
   User,
 } from '../../interfaces/register.interfaces';
-import { formatDate } from '@angular/common';
 
-const PRIMEMG_MODULES = [
-  FieldsetModule,
-  TableModule,
-  ButtonModule,
-  FormsModule,
-  InputIconModule,
-  InputTextModule,
-  ToastModule,
-  AutoCompleteModule,
-  IconFieldModule,
-  DropdownModule,
-  CardModule,
-  BlockUIModule,
-  SpinnerModule,
-  ProgressSpinnerModule,
-];
+import { PRIMEMG_MODULES } from './registros.imports';
 
 @Component({
   selector: 'app-registros',
   standalone: true,
-  imports: [PRIMEMG_MODULES],
+  imports: [PRIMEMG_MODULES, FormsModule],
   templateUrl: './registros.component.html',
   styleUrl: './registros.component.scss',
   providers: [MessageService],
@@ -62,8 +35,15 @@ export default class RegistrosComponent implements OnInit {
   searchTerm: string = '';
   observacion: string = '';
   loadingMessage: string = '';
-
-
+  grid: boolean = false;
+  asignarButtonLabel: string = 'Asignar Productos';
+  isInProgress: boolean = false;
+  get totalCantidadProductos(): number {
+    return this.selectedProducts.reduce(
+      (total, product) => total + product.cantidad,
+      0
+    );
+  }
   private srvRegDet = inject(RegisterDetailsService);
   private srvList = inject(ListService);
   private messageService = inject(MessageService);
@@ -89,29 +69,42 @@ export default class RegistrosComponent implements OnInit {
       this.filteredUsers = this.ListUsers;
       this.dropdownOptions = this.ListUsers;
     } catch (error) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al cargar usuarios' });
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Error al cargar usuarios',
+      });
     }
   }
 
   async getListProductos(): Promise<void> {
     try {
       const res = await this.srvList.getlistProducts().toPromise();
-      this.ListProductos = res.data.map((product: Product) => ({ ...product, cantidad: 1 }));
+      this.ListProductos = res.data.map((product: Product) => ({
+        ...product,
+        cantidad: 1,
+      }));
     } catch (error) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al cargar productos' });
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Error al cargar productos',
+      });
     }
   }
 
   searchUser(): void {
     this.filteredUsers = this.searchQuery.trim()
-      ? this.ListUsers.filter(user =>
+      ? this.ListUsers.filter((user) =>
           user.tx_cedula?.toLowerCase().includes(this.searchQuery.toLowerCase())
         )
       : this.ListUsers;
 
     this.messageService.add({
       severity: this.filteredUsers.length ? 'success' : 'error',
-      summary: this.filteredUsers.length ? 'Usuario encontrado' : 'Usuario no encontrado',
+      summary: this.filteredUsers.length
+        ? 'Usuario encontrado'
+        : 'Usuario no encontrado',
       detail: this.filteredUsers.length
         ? `Se encontraron ${this.filteredUsers.length} usuario(s)`
         : 'No se encontraron usuarios con ese criterio de búsqueda',
@@ -130,12 +123,42 @@ export default class RegistrosComponent implements OnInit {
     const user = event.value;
     if (user) {
       this.selectedUser = user;
-      this.messageService.add({ severity: 'info', summary: 'Usuario seleccionado', detail: `Has seleccionado a ${user.tx_nombre}` });
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Usuario seleccionado',
+        detail: `Has seleccionado a ${user.tx_nombre}`,
+      });
     }
   }
 
   toggleProducts(): void {
-    this.showProductsTable = !this.showProductsTable;
+    if (this.showProductsTable) {
+      // Limpiar la pantalla y restablecer el estado
+
+      this.showProductsTable = false;
+      this.isInProgress = false;
+      this;
+      this.clearScreen();
+    } else {
+      // Cambiar a estado "En Proceso..."
+
+      this.showProductsTable = true;
+      this.isInProgress = true;
+    }
+  }
+  clearScreen() {
+    // Resetear campos de entrada
+    this.searchQuery = '';
+    this.selectedUser = null;
+    this.selectedProducts = [];
+
+    this.observacion = '';
+    this.searchTerm = '';
+
+    // Resetear cualquier otro estado relacionado con la UI
+    this.loading = false;
+    this.loadingMessage = '';
+    this.grid = false;
   }
 
   updateProductQuantity(product: Product, increment: boolean): void {
@@ -147,13 +170,17 @@ export default class RegistrosComponent implements OnInit {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: increment ? 'No puedes agregar más de la cantidad en stock' : 'La cantidad no puede ser menor a 1',
+        detail: increment
+          ? 'No puedes agregar más de la cantidad en stock'
+          : 'La cantidad no puede ser menor a 1',
       });
     }
   }
 
   addProduct(producto: Product): void {
-    const foundProduct = this.selectedProducts.find(p => p.id === producto.id);
+    const foundProduct = this.selectedProducts.find(
+      (p) => p.id === producto.id
+    );
 
     if (foundProduct) {
       foundProduct.cantidad! += producto.cantidad!;
@@ -161,26 +188,36 @@ export default class RegistrosComponent implements OnInit {
       this.selectedProducts.push({ ...producto, cantidad: producto.cantidad });
     }
 
-    this.messageService.add({ severity: 'success', summary: 'Producto agregado', detail: `${producto.nombre_producto} agregado con éxito` });
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Producto agregado',
+      detail: `${producto.nombre_producto} agregado con éxito`,
+    });
   }
 
   async register(): Promise<void> {
     if (!this.selectedUser) {
-      this.messageService.add({ severity: 'error', summary: 'Error de registro', detail: 'Debe seleccionar un usuario antes de registrar' });
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error de registro',
+        detail: 'Debe seleccionar un usuario antes de registrar',
+      });
       return;
     }
 
     if (!this.selectedProducts.length) {
-      this.messageService.add({ severity: 'error', summary: 'Error de registro', detail: 'Debe agregar al menos un producto para registrar' });
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error de registro',
+        detail: 'Debe agregar al menos un producto para registrar',
+      });
       return;
     }
 
     this.loading = true;
     this.loadingMessage = 'Registrando Datos, espere un momento...';
 
-    
     try {
-   
       const registro: Registro = {
         id_usuario: this.selectedUser.id,
         fecha_registro: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
@@ -188,19 +225,31 @@ export default class RegistrosComponent implements OnInit {
         observacion: this.observacion,
       };
 
-  
-
-      const res : any = await this.srvRegDet.postRegisterRegistro(registro).toPromise();
+      const res: any = await this.srvRegDet
+        .postRegisterRegistro(registro)
+        .toPromise();
       if (res) {
         await this.guardarDetallesRegistro();
         this.clearForm();
-        this.messageService.add({ severity: 'success', summary: 'Registro exitoso', detail: 'Se  registraron los detalles con éxito' });
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Registro exitoso',
+          detail: 'Se  registraron los detalles con éxito',
+        });
         await this.getListProductos();
       } else {
-        this.messageService.add({ severity: 'error', summary: 'Error de registro', detail: res.mensaje || 'Error al registrar el usuario' });
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error de registro',
+          detail: res.mensaje || 'Error al registrar el usuario',
+        });
       }
     } catch (error) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al realizar el registro' });
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Error al realizar el registro',
+      });
     } finally {
       this.loading = false;
     }
@@ -210,27 +259,35 @@ export default class RegistrosComponent implements OnInit {
     try {
       const res: any = await this.srvRegDet.getidlasregistro().toPromise();
       const lastRegistroId = res.id_registro;
-  
-      const detallesRegistro: DetalleRegistro[] = this.selectedProducts.map(prod => ({
-        id_registro: lastRegistroId,
-        id_producto: prod.id,
-        cantidad: prod.cantidad!,
-      }));
-  
-      // Registrar todos los detalles del registro
-      await Promise.all(detallesRegistro.map(detalle => this.srvRegDet.postRegisterRegistroDetalle(detalle).toPromise()));
-  
-       // Actualizar el stock de los productos
-       await this.actualizarStockProductos();
-    } catch (error) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al registrar los detalles' });
-    }
 
+      const detallesRegistro: DetalleRegistro[] = this.selectedProducts.map(
+        (prod) => ({
+          id_registro: lastRegistroId,
+          id_producto: prod.id,
+          cantidad: prod.cantidad!,
+        })
+      );
+
+      // Registrar todos los detalles del registro
+      await Promise.all(
+        detallesRegistro.map((detalle) =>
+          this.srvRegDet.postRegisterRegistroDetalle(detalle).toPromise()
+        )
+      );
+
+      // Actualizar el stock de los productos
+      await this.actualizarStockProductos();
+    } catch (error) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Error al registrar los detalles',
+      });
+    }
   }
-  
 
   revertProduct(product: Product): void {
-    const index = this.selectedProducts.findIndex(p => p.id === product.id);
+    const index = this.selectedProducts.findIndex((p) => p.id === product.id);
     if (index !== -1) {
       this.selectedProducts.splice(index, 1);
       product.cantidad = 0;
@@ -241,11 +298,11 @@ export default class RegistrosComponent implements OnInit {
     this.selectedUser = null;
     this.selectedProducts = [];
     this.showProductsTable = false;
-    this.ListProductos.forEach(product => (product.cantidad = 1));
+    this.ListProductos.forEach((product) => (product.cantidad = 1));
   }
 
   isProductSelected(product: Product): boolean {
-    return this.selectedProducts.some(p => p.id === product.id);
+    return this.selectedProducts.some((p) => p.id === product.id);
   }
 
   increment(product: Product) {
@@ -281,23 +338,26 @@ export default class RegistrosComponent implements OnInit {
 
   async actualizarStockProductos(): Promise<void> {
     try {
-      const updateRequests = this.selectedProducts.map(prod => {
+      const updateRequests = this.selectedProducts.map((prod) => {
         const newStock = prod.stock_producto - prod.cantidad!;
-        return this.srvRegDet.postEditProductos({
-          id: prod.id,
-          nombre_producto: prod.nombre_producto,
-          fecha_producto: prod.fecha_producto,
-          hora_producto: prod.hora_producto,
-          stock_producto: newStock,
-        }).toPromise();
+        return this.srvRegDet
+          .postEditProductos({
+            id: prod.id,
+            nombre_producto: prod.nombre_producto,
+            fecha_producto: prod.fecha_producto,
+            hora_producto: prod.hora_producto,
+            stock_producto: newStock,
+          })
+          .toPromise();
       });
-  
+
       await Promise.all(updateRequests);
-  
-     
     } catch (error) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al actualizar el stock de los productos' });
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Error al actualizar el stock de los productos',
+      });
     }
   }
-
 }
