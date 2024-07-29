@@ -22,8 +22,8 @@ export const routes: Routes = [
         loadComponent: () => import('./areas/areas.component'),
       },
       {
-        path: 'usuarios-roles',
-        loadComponent: () => import('./usuarios-roles/usuarios-roles.component'),
+        path: 'roles',
+        loadComponent: () => import('./usuarios-roles/roles.component'),
       },
       {
         path: 'registros',
@@ -51,7 +51,8 @@ export const routes: Routes = [
       {
         path: '**',
         redirectTo: '/home/dashboard',
-      }
+      },
+      
     ]
   },
 

@@ -1,49 +1,16 @@
 import { Component, inject, OnInit } from '@angular/core';
-
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { PrintService } from '../../services/print.service';
+import { Subscription } from 'rxjs';
 import { FieldsetModule } from 'primeng/fieldset';
 import { ListService } from '../../services/list.service';
 import { FormsModule } from '@angular/forms';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { InputIconModule } from 'primeng/inputicon';
-import { InputTextModule } from 'primeng/inputtext';
-import { ToastModule } from 'primeng/toast';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { IconFieldModule } from 'primeng/iconfield';
-import { DropdownModule } from 'primeng/dropdown';
-import { CardModule } from 'primeng/card';
-import { BlockUIModule } from 'primeng/blockui';
-import { SpinnerModule } from 'primeng/spinner';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { CalendarModule } from 'primeng/calendar';
-import { PrintService } from '../../services/print.service';
-import { Subscription } from 'rxjs';
-import { InputGroupModule } from 'primeng/inputgroup';
-import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-const PRIMEMG_MODULES = [
-  TableModule,
-  FieldsetModule,
-  ButtonModule,
-  FormsModule,
-  InputIconModule,
-  InputTextModule,
-  ToastModule,
-  AutoCompleteModule,
-  IconFieldModule,
-  DropdownModule,
-  CardModule,
-  BlockUIModule,
-  SpinnerModule,
-  ProgressSpinnerModule,
-  CalendarModule,
-  InputGroupModule,
-  InputGroupAddonModule,
-];
+import { PRIMEMG_MODULES } from './reportes.imports';
+
 @Component({
   selector: 'app-reportes',
   standalone: true,
-  imports: [PRIMEMG_MODULES],
+  imports: [PRIMEMG_MODULES, FormsModule, FieldsetModule],
   templateUrl: './reportes.component.html',
   styleUrl: './reportes.component.scss',
   providers: [MessageService, ConfirmationService],

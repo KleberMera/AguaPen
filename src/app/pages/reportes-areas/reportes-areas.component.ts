@@ -1,60 +1,28 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { FieldsetModule } from 'primeng/fieldset';
 import { ListService } from '../../services/list.service';
 import { FormsModule } from '@angular/forms';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { InputIconModule } from 'primeng/inputicon';
-import { InputTextModule } from 'primeng/inputtext';
-import { ToastModule } from 'primeng/toast';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { IconFieldModule } from 'primeng/iconfield';
-import { DropdownModule } from 'primeng/dropdown';
-import { CardModule } from 'primeng/card';
-import { BlockUIModule } from 'primeng/blockui';
-import { SpinnerModule } from 'primeng/spinner';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { CalendarModule } from 'primeng/calendar';
 import { PrintService } from '../../services/print.service';
 import { Subscription } from 'rxjs';
-
-const PRIMEMG_MODULES = [
-  TableModule,
-  FieldsetModule,
-  ButtonModule,
-  FormsModule,
-  InputIconModule,
-  InputTextModule,
-  ToastModule,
-  AutoCompleteModule,
-  IconFieldModule,
-  DropdownModule,
-  CardModule,
-  BlockUIModule,
-  SpinnerModule,
-  ProgressSpinnerModule,
-  CalendarModule,
-];
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { PRIMEMG_MODULES } from './reportes-area.import';
 
 @Component({
   selector: 'app-areas',
   standalone: true,
-  imports: [PRIMEMG_MODULES],
+  imports: [PRIMEMG_MODULES, FormsModule],
   templateUrl: './reportes-areas.component.html',
   styleUrls: ['./reportes-areas.component.scss'],
-
   providers: [MessageService, ConfirmationService],
 })
 export default class AreasComponent implements OnInit, OnDestroy {
   listAreas: any[] = [];
-  listReports: any[] = []; // Lista completa de reportes
-  filteredReports: any[] = []; // Lista filtrada de reportes
-  uniqueAreas: any[] = []; // Lista de áreas únicas
-  selectedArea: any | null = null; // Área seleccionada
-  startDate: string | null = null; // Fecha de inicio para el filtrado por fecha
-  endDate: string | null = null; // Fecha de fin para el filtrado por fecha
-  loading: boolean = true; // Indica si se está cargando datos
+  listReports: any[] = [];
+  filteredReports: any[] = [];
+  uniqueAreas: any[] = [];
+  selectedArea: any | null = null;
+  startDate: string | null = null;
+  endDate: string | null = null;
+  loading: boolean = true;
   private subscriptions: Subscription = new Subscription(); // Manejo de suscripciones
   private SrvList = inject(ListService);
   private srvPrint = inject(PrintService);

@@ -10,8 +10,8 @@ import { CommonModule } from '@angular/common';
   selector: 'app-usuarios-roles',
   standalone: true,
   imports: [PRIMENG_MODULES, FormsModule, CommonModule],
-  templateUrl: './usuarios-roles.component.html',
-  styleUrl: './usuarios-roles.component.scss',
+  templateUrl: './roles.component.html',
+  styleUrl: './roles.component.scss',
   providers: [MessageService, ConfirmationService],
 })
 export default class UsuariosRolesComponent implements OnInit {
