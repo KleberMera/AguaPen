@@ -31,10 +31,10 @@
 
       <div>
         <div class="flex align-items-center justify-content">
-          <div class="font-bold ">
+          <div class="font-bold">
             <span> <p-button pRipple label="Productos" /> </span>
           </div>
-          <div class="font-bold flex  ">
+          <div class="font-bold flex">
             &nbsp;
             <span>
               <p-button pRipple label="Extintores" outlined="true" />
@@ -118,8 +118,12 @@
   <div class="col-12 xl:col-6">
     <h3>Listado de Áreas</h3>
     <div class="card">
-     
-      <p-table [value]="areas" [paginator]="true" [rows]="4" [rowsPerPageOptions]="[4, 5, 6]">
+      <p-table
+        [value]="areas"
+        [paginator]="true"
+        [rows]="4"
+        [rowsPerPageOptions]="[4, 5, 6]"
+      >
         <ng-template pTemplate="header">
           <tr>
             <th>Áreas</th>
@@ -139,11 +143,9 @@
   <div class="col-12 xl:col-6">
     <h3>Productos con mas stock</h3>
     <div class="card flex flex-column align-items-center">
-    
       <p-chart type="doughnut" [data]="chartData"></p-chart>
+    </div>
   </div>
-  </div>
-  
 </div>
 
 }

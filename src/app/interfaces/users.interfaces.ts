@@ -16,6 +16,6 @@ export interface usersAdmin {
   apellidos: string;
   correo: string;
   usuario: string;
-  clave: string;
+  password: string;
   rol_id: number;
 }

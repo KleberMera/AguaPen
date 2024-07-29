@@ -19,6 +19,8 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { CalendarModule } from 'primeng/calendar';
 import { PrintService } from '../../services/print.service';
 import { Subscription } from 'rxjs';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 const PRIMEMG_MODULES = [
   TableModule,
   FieldsetModule,
@@ -35,6 +37,8 @@ const PRIMEMG_MODULES = [
   SpinnerModule,
   ProgressSpinnerModule,
   CalendarModule,
+  InputGroupModule,
+  InputGroupAddonModule,
 ];
 @Component({
   selector: 'app-reportes',

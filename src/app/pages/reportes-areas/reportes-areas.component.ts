@@ -134,7 +134,7 @@ export default class AreasComponent implements OnInit, OnDestroy {
   }
 
   getListAreas() {
-    this.SrvList.getviewAreas().subscribe((res) => {
+    this.SrvList.getListAreas().subscribe((res) => {
       this.listAreas = res.data;
       console.log(this.listAreas);
     });

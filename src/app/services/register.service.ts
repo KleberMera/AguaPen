@@ -101,6 +101,47 @@ export class RegisterService {
     });
   }
 
+  // Registar Areas
+  postRegisterAreas(objArea: any) {
+    const url = `${this.environment}areas/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'create',
+          attributes: {
+            nombre_area: objArea.nombre_area,
+          },
+        },
+      ],
+    });
+  }
+  
+  // Editar Areas
+  postEditAreas(objArea: any) {
+    const url = `${this.environment}areas/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'update',
+          key: objArea.id,
+          attributes: {
+            nombre_area: objArea.nombre_area,
+          },
+        },
+      ],
+    });
+  }
+  
+  // Eliminar Areas
+  requestdeleteAreas(id: number) {
+    let url = `${this.environment}areas`;
+    return this.http.request('DELETE', url, {
+      body: {
+        resources: [id],
+      },
+    });
+  }
+
   
 
 

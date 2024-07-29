@@ -39,6 +39,10 @@ export class MenuComponent {
                   label: 'Roles',
                   icon: 'pi pi-user',
                   routerLink: '/home/usuarios-roles',
+                },{
+                  label: 'Areas',
+                  icon: 'pi pi-map-marker',
+                  routerLink: '/home/areas',
                 },
                 {
                   label: 'Productos',

@@ -18,6 +18,10 @@ export const routes: Routes = [
         loadComponent: () => import('./trabajadores/trabajadores.component'),
       },
       {
+        path: 'areas',
+        loadComponent: () => import('./areas/areas.component'),
+      },
+      {
         path: 'usuarios-roles',
         loadComponent: () => import('./usuarios-roles/usuarios-roles.component'),
       },

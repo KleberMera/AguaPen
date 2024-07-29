@@ -20,7 +20,7 @@ export class AuthService {
     return this.http
       .post(url, {
         usuario: objLogin.usuario,
-        password: objLogin.clave,
+        password: objLogin.password,
       })
       .pipe(
         tap((response: any) => {
@@ -60,7 +60,7 @@ export class AuthService {
   }
 
   // Registro de Usuarios Admin
-  postRegisterUsersAdmin(objUser: any) {
+  createUser(objUser: any) {
     const url = `${this.environment}usuarios/mutate`;
     return this.http.post(url, {
       mutate: [
@@ -73,12 +73,27 @@ export class AuthService {
             apellidos: objUser.apellidos,
             correo: objUser.correo,
             usuario: objUser.usuario,
-            clave: objUser.clave,
+            password: objUser.password,
             rol_id: objUser.rol_id,
           },
         },
       ],
     });
+  }
+
+  //Delete Users
+  deleteUser(id: number) {
+    const url = `${this.environment}usuarios`;
+    return this.http.request('DELETE', url, {
+      body: {
+        resources: [id],
+      },
+    });
+  }
+
+  listUsers() {
+    const url = `${this.environment}usuarios/search`;
+    return this.http.post<any>(url, {});
   }
 
   verifyCedula(cedula: string) {

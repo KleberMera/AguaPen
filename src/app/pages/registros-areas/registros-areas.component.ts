@@ -17,7 +17,8 @@ import { PrimeModules } from './registros-areas.import';
 import { MessageService } from 'primeng/api';
 import { Product } from '../../interfaces/products.interfaces';
 import { detailAreas } from '../../interfaces/details.interfaces';
-import { areas } from '../../interfaces/areas.interfaces';
+import { Area } from '../../interfaces/areas.interfaces';
+
 
 @Component({
   selector: 'app-regx-area',
@@ -29,12 +30,12 @@ import { areas } from '../../interfaces/areas.interfaces';
 })
 export default class RegxAreaComponent {
   // List of areas and products for the app
-  ListAreas: areas[] = [];
+  ListAreas: Area[] = [];
   ListProductos: Product[] = [];
-  filteredAreas: areas[] = [];
+  filteredAreas: Area[] = [];
   selectedProducts: Product[] = [];
-  selectedArea: areas | null = null;
-  dropdownOptions: areas[] = [];
+  selectedArea: Area | null = null;
+  dropdownOptions: Area[] = [];
   searchQuery: string = '';
 
   // Loading state
@@ -67,7 +68,7 @@ export default class RegxAreaComponent {
 
   async getListAreas(): Promise<void> {
     try {
-      const res = await this.srvList.getviewAreas().toPromise();
+      const res = await this.srvList.getListAreas().toPromise();
       this.ListAreas = res.data;
       this.filteredAreas = this.ListAreas;
       this.dropdownOptions = this.ListAreas;

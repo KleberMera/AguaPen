@@ -30,7 +30,7 @@ export class ListService {
     return this.http.get<any>(url);
   }
 
-  getviewAreas() {
+  getListAreas() {
     const url = `${this.environment}allareas`;
     return this.http.get<any>(url);
   }
