@@ -4,10 +4,8 @@ export interface detailAreas {
   cantidad: number;
 }
 
-
 export interface details {
-    id_registro: number;
-    id_producto: number;
-    cantidad: number;
-  }
-  
+  id_registro: number;
+  id_producto: number;
+  cantidad: number;
+}

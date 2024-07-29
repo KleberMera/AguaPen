@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
-import { GeneralService } from './general.service';
 
 @Injectable({
   providedIn: 'root',
@@ -45,6 +44,4 @@ export class ListService {
     const url = `${this.environment}obtenerRegistrosConDetallesArea`;
     return this.http.get<any>(url);
   }
-
-  
 }

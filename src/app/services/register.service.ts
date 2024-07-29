@@ -10,7 +10,6 @@ export class RegisterService {
 
   //injector
   private http = inject(HttpClient);
- 
 
   constructor() {}
 
@@ -50,7 +49,8 @@ export class RegisterService {
       ],
     });
   }
-
+  
+  // Eliminacion de Productos
   requestdeleteProducts(id: number) {
     let url = `${this.environment}productos`;
     return this.http.request('DELETE', url, {
@@ -60,6 +60,7 @@ export class RegisterService {
     });
   }
 
+  // Registro de Trabajadores
   postRegisterUsers(objUser: any) {
     const url = `${this.environment}usuariostrabajadores/mutate`;
     return this.http.post(url, {
@@ -79,6 +80,7 @@ export class RegisterService {
     });
   }
 
+  // Edición de Trabajadores
   postEditUsers(objUser: any) {
     const url = `${this.environment}usuariostrabajadores/mutate`;
     return this.http.post(url, {
@@ -99,25 +101,7 @@ export class RegisterService {
     });
   }
 
-  postRegisterUsersAdmin(objUser: any) {
-   
-    const url = `${this.environment}usuarios/mutate`;
-    return this.http.post(url, {
-      mutate: [
-        {
-          operation: 'create',
-          attributes: {
-            cedula: objUser.cedula,
-            telefono: objUser.telefono,
-            nombres: objUser.nombres,
-            apellidos: objUser.apellidos,
-            correo: objUser.correo,
-            usuario: objUser.usuario,
-            clave: objUser.clave,
-            rol_id: objUser.rol_id,
-          },
-        },
-      ],
-    });
-  }
+  
+
+
 }

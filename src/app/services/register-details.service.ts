@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
-import { GeneralService } from './general.service';
+
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -14,7 +14,7 @@ export class RegisterDetailsService {
 
   //injector
   private http = inject(HttpClient);
-  private srvG = inject(GeneralService);
+
 
   // Registrar registro
   postRegisterRegistro(objRegistro: any) {

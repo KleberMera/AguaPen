@@ -1,6 +1,6 @@
 import { environment } from './../../environments/environment.development';
 import { Injectable, inject } from '@angular/core';
-import { GeneralService } from './general.service';
+
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 
@@ -14,7 +14,6 @@ export class AuthService {
   user$ = this.userSubject.asObservable();
 
   private http = inject(HttpClient);
-
 
   login(objLogin: any): Observable<any> {
     const url = `${this.environment}login`;
@@ -53,6 +52,28 @@ export class AuthService {
             correo: objUser.correo,
             usuario: objUser.usuario,
             password: objUser.password,
+            rol_id: objUser.rol_id,
+          },
+        },
+      ],
+    });
+  }
+
+  // Registro de Usuarios Admin
+  postRegisterUsersAdmin(objUser: any) {
+    const url = `${this.environment}usuarios/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'create',
+          attributes: {
+            cedula: objUser.cedula,
+            telefono: objUser.telefono,
+            nombres: objUser.nombres,
+            apellidos: objUser.apellidos,
+            correo: objUser.correo,
+            usuario: objUser.usuario,
+            clave: objUser.clave,
             rol_id: objUser.rol_id,
           },
         },

@@ -64,7 +64,7 @@ export class MenuComponent {
                 {
                   label: 'A. Areas ',
                   icon: 'pi pi-list-check',
-                  routerLink: '/home/regx-area',
+                  routerLink: '/home/registros-areas',
                 },
               ],
             },

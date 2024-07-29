@@ -40,7 +40,7 @@ export const routes: Routes = [
         
       },
       {
-        path: 'regx-area',
+        path: 'registros-areas',
         loadComponent: () => import('./registros-areas/registros-areas.component'),
         
       },

@@ -1,4 +1,4 @@
 export interface areas {
-    id: number;
-    nombre_area: string;
-  }
+  id: number;
+  nombre_area: string;
+}
