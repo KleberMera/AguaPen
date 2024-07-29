@@ -37,7 +37,6 @@ const PRIMEMG_MODULES = [
   CalendarModule,
   InputGroupModule,
   InputGroupAddonModule,
-
 ];
 @Component({
   selector: 'app-reportes-usuarios',
@@ -72,8 +71,6 @@ export default class ReportesUsuariosComponent implements OnInit {
       this.listReports = res.data;
       this.filteredReports = res.data;
       this.uniqueUsers = this.getUniqueUsers(res.data);
-      console.log('Listado de Reportes:', this.listReports);
-      
     } catch (error) {
       console.error('Error fetching report data:', error);
     } finally {
@@ -99,7 +96,9 @@ export default class ReportesUsuariosComponent implements OnInit {
     }
 
     this.filteredReports = this.listReports.filter(
-      (report) => report.cedula && report.cedula.toLowerCase().includes(this.searchQuery.toLowerCase())
+      (report) =>
+        report.cedula &&
+        report.cedula.toLowerCase().includes(this.searchQuery.toLowerCase())
     );
 
     if (this.filteredReports.length > 0) {
@@ -129,7 +128,9 @@ export default class ReportesUsuariosComponent implements OnInit {
     if (this.selectedUser) {
       this.selectedDate = null;
       this.filteredReports = this.listReports.filter((report) =>
-        report.nombre.toLowerCase().includes(this.selectedUser.nombre.toLowerCase())
+        report.nombre
+          .toLowerCase()
+          .includes(this.selectedUser.nombre.toLowerCase())
       );
       this.setAvailableDates(this.filteredReports);
     } else {
@@ -142,7 +143,9 @@ export default class ReportesUsuariosComponent implements OnInit {
     const datesSet = new Set<string>();
     this.availableDates = reports
       .map((report) => {
-        const fecha = new Date(report.fecha_registro).toISOString().split('T')[0];
+        const fecha = new Date(report.fecha_registro)
+          .toISOString()
+          .split('T')[0];
         if (!datesSet.has(fecha)) {
           datesSet.add(fecha);
           return { fecha };
@@ -156,8 +159,13 @@ export default class ReportesUsuariosComponent implements OnInit {
     if (this.selectedDate && this.selectedUser) {
       const selectedDateStr = this.selectedDate.fecha;
       this.filteredReports = this.listReports.filter((report) => {
-        const reportDateStr = new Date(report.fecha_registro).toISOString().split('T')[0];
-        return reportDateStr === selectedDateStr && report.nombre === this.selectedUser.nombre;
+        const reportDateStr = new Date(report.fecha_registro)
+          .toISOString()
+          .split('T')[0];
+        return (
+          reportDateStr === selectedDateStr &&
+          report.nombre === this.selectedUser.nombre
+        );
       });
     } else {
       this.filteredReports = this.listReports;
@@ -165,7 +173,10 @@ export default class ReportesUsuariosComponent implements OnInit {
   }
 
   getTotalCantidad(): number {
-    return this.filteredReports.reduce((total, report) => total + report.cantidad, 0);
+    return this.filteredReports.reduce(
+      (total, report) => total + report.cantidad,
+      0
+    );
   }
 
   printTable(): void {

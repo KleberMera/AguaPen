@@ -123,7 +123,7 @@ export class ToolbarComponent implements OnInit {
         this.srvAuth.verDatosUsuario(userId).subscribe((res: any) => {
           if (res && res.usuario) {
             this.user = res.usuario;
-            console.log(this.user);
+            
           } else {
             this.messageService.add({
               severity: 'error',

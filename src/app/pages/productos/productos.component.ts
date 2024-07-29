@@ -83,8 +83,7 @@ export default class ProductosComponent implements OnInit {
       fecha_producto: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
       hora_producto: formatDate(new Date(), 'HH:mm', 'en-US'),
       stock_producto: 0,
-      cantidad : 0,
-
+      cantidad: 0,
     };
   }
 
@@ -113,8 +112,6 @@ export default class ProductosComponent implements OnInit {
   }
 
   deleteProduct(product: Product) {
-    console.log(product.id);
-
     this.srvConfirm.confirm({
       message: '¿Está seguro de eliminar el producto?',
       header: 'Confirmación',
@@ -126,7 +123,7 @@ export default class ProductosComponent implements OnInit {
             .requestdeleteProducts(product.id)
             .toPromise();
           this.handleResponse(res, 'Eliminado');
-          console.log(res);
+
           await this.listProductos();
         } catch (error) {
           this.handleError(error, 'Error al eliminar producto');

@@ -1,28 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { Router } from '@angular/router';
-import { ListService } from '../../services/list.service';
-import { SplitButtonModule } from 'primeng/splitbutton';
-import { ToastModule } from 'primeng/toast';
-import { MenuItem, MessageService } from 'primeng/api';
-import { RippleModule } from 'primeng/ripple';
-import { Subscription } from 'rxjs';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { TableModule } from 'primeng/table';
-import { ChartModule } from 'primeng/chart';
 import { CountdataService } from '../../services/countdata.service';
-const PRIMENG_MODULES = [
-  CardModule,
-  ButtonModule,
-  SplitButtonModule,
-  ToastModule,
-  RippleModule,
-  ProgressSpinnerModule,
-  TableModule,
-  ChartModule,
-];
+import { ListService } from '../../services/list.service';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { PRIMENG_MODULES } from './dashboard.imports';
+import { MenuItem, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-dashboard',
@@ -104,19 +87,16 @@ export default class DashboardComponent implements OnInit {
     this.loading = false;
   }
 
-
-
   fetchAreas(): void {
     this.dataSubscription = this.srvList.getReportsAreas().subscribe((res) => {
       this.areas = res.data;
-      console.log(this.areas);
 
       this.loading = false;
     });
   }
 
   navigateTo(route: string): void {
-    switch(route) {
+    switch (route) {
       case 'productos':
         this.router.navigate(['/home/registros']);
         break;

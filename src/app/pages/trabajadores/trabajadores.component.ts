@@ -66,7 +66,6 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
       this.cargoOptions = this.getUniqueOptions(res.data, 'tx_cargo');
       this.filteredCargoOptions = this.cargoOptions;
     } catch (error) {
-      console.error('Error al cargar usuarios:', error);
       this.srvMensajes.add({
         severity: 'error',
         summary: 'Error',
@@ -189,8 +188,6 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   }
 
   handleResponse(res: any, successMessage: string) {
-    console.log(res);
-
     if (
       (res.created && res.created.length > 0) ||
       (res.updated && res.updated.length > 0) ||
@@ -205,7 +202,6 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   }
 
   handleError(error: any, message: string): void {
-    console.error(message, error);
     this.srvMensajes.add({
       severity: 'error',
       summary: 'Error',

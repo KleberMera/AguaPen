@@ -19,8 +19,6 @@ export class ThemesComponent {
   public menuService = inject(MenuService);
   private srvMessage = inject(MessageService);
   set theme(val: string) {
-    console.log(val);
-
     this.layoutService.config.update((config) => ({
       ...config,
       theme: val,
@@ -32,13 +30,10 @@ export class ThemesComponent {
   }
 
   set colorScheme(val: string) {
-    console.log(val);
-
     this.layoutService.config.update((config) => ({
       ...config,
       colorScheme: val,
     }));
-    console.log(this.layoutService.config());
   }
 
   get colorScheme(): string {
@@ -53,16 +48,9 @@ export class ThemesComponent {
   toggleTheme() {
     if (this.isDarkTheme) {
       this.changeTheme('lara-light-blue', 'light');
-
-    
-      console.log('claro');
     } else {
       this.changeTheme('bootstrap4-dark-blue', 'dark');
-     
     }
     this.isDarkTheme = !this.isDarkTheme;
   }
-
-
-  
 }

@@ -5,10 +5,7 @@ import { MessageService } from 'primeng/api';
 import { formatDate } from '@angular/common';
 
 import { FormsModule } from '@angular/forms';
-import {
-  Registro,
-
-} from '../../interfaces/registers.interfaces';
+import { Registro } from '../../interfaces/registers.interfaces';
 import { Product } from '../../interfaces/products.interfaces';
 
 import { PRIMEMG_MODULES } from './registros.imports';
@@ -243,13 +240,11 @@ export default class RegistrosComponent implements OnInit {
       const res: any = await this.srvRegDet.getidlasregistro().toPromise();
       const lastRegistroId = res.id_registro;
 
-      const detallesRegistro: details[] = this.selectedProducts.map(
-        (prod) => ({
-          id_registro: lastRegistroId,
-          id_producto: prod.id,
-          cantidad: prod.cantidad!,
-        })
-      );
+      const detallesRegistro: details[] = this.selectedProducts.map((prod) => ({
+        id_registro: lastRegistroId,
+        id_producto: prod.id,
+        cantidad: prod.cantidad!,
+      }));
 
       // Registrar todos los detalles del registro
       await Promise.all(

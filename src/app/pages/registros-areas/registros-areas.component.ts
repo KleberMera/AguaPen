@@ -4,10 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { formatDate } from '@angular/common';
 
 // Services and interfaces of the app
-import {
-  registerArea,
-  
-} from '../../interfaces/registers.interfaces';
+import { registerArea } from '../../interfaces/registers.interfaces';
 import { RegisterDetailsService } from '../../services/register-details.service';
 import { ListService } from '../../services/list.service';
 
@@ -18,7 +15,6 @@ import { MessageService } from 'primeng/api';
 import { Product } from '../../interfaces/products.interfaces';
 import { detailAreas } from '../../interfaces/details.interfaces';
 import { Area } from '../../interfaces/areas.interfaces';
-
 
 @Component({
   selector: 'app-regx-area',

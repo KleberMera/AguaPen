@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
   imports: [PRIMENG_MODULES, FormsModule, CommonModule],
   templateUrl: './usuarios-roles.component.html',
   styleUrl: './usuarios-roles.component.scss',
-  providers: [MessageService, ConfirmationService]
+  providers: [MessageService, ConfirmationService],
 })
 export default class UsuariosRolesComponent implements OnInit {
   users: usersAdmin[] = [];
@@ -43,13 +43,21 @@ export default class UsuariosRolesComponent implements OnInit {
     this.loading = true;
     this.authService.createUser(this.newUser).subscribe(
       (response) => {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Usuario registrado exitosamente' });
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Usuario registrado exitosamente',
+        });
         this.loading = false;
         this.loadUsers(); // Reload the user list
         this.resetForm(); // Reset form after registration
       },
       (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al registrar el usuario' });
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al registrar el usuario',
+        });
         this.loading = false;
       }
     );
@@ -68,20 +76,27 @@ export default class UsuariosRolesComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.deleteUser(userId);
-      }
+      },
     });
   }
 
   deleteUser(userId: number) {
     this.authService.deleteUser(userId).subscribe({
       next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Usuario eliminado correctamente' });
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Usuario eliminado correctamente',
+        });
         this.loadUsers(); // Refresca la lista de usuarios
       },
       error: (err) => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Fallo al eliminar el usuario' });
-        console.error('Error al eliminar usuario:', err);
-      }
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Fallo al eliminar el usuario',
+        });
+      },
     });
   }
 
@@ -98,8 +113,6 @@ export default class UsuariosRolesComponent implements OnInit {
       rol_id: 1, // Default role_id
     };
   }
-
-
 
   getInitial(name: string): string {
     return name ? name.charAt(0).toUpperCase() : '';

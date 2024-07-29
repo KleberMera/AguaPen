@@ -56,7 +56,7 @@ export default class ReportesComponent implements OnInit {
   selectedUser: any | null = null; // Usuario seleccionado
   startDate: string | null = null; // Fecha de inicio para el filtrado por fecha
   endDate: string | null = null; // Fecha de fin para el filtrado por fecha+
-  loading: boolean = true;// Indica si se está cargando datos
+  loading: boolean = true; // Indica si se está cargando datos
 
   private subscriptions: Subscription = new Subscription(); // Manejo de suscripciones
 
@@ -76,14 +76,12 @@ export default class ReportesComponent implements OnInit {
 
   // Cargar la lista de reportes desde el servicio
   loadReports() {
-
     const reportSubscription = this.srvList
       .getviewRegistroAll()
       .subscribe((res: any) => {
         this.listReports = res.data;
         this.filteredReports = res.data;
         this.uniqueUsers = this.extractUniqueUsers(res.data);
-        console.log('Listado de Reportes:', this.listReports);
         this.loading = false;
       });
 
