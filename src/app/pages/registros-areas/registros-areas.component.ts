@@ -15,7 +15,10 @@ import { DropdownModule } from 'primeng/dropdown';
 import { CardModule } from 'primeng/card';
 import { BlockUIModule } from 'primeng/blockui';
 import { SpinnerModule } from 'primeng/spinner';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
 
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import {
   DetalleRegistro,
@@ -23,8 +26,8 @@ import {
   Registro,
   User,
   Registro_Area,
-  AREAS,
-  DetalleRegistrode_AREA,
+  areas,
+  detailAreas,
   
 } from '../../interfaces/register.interfaces';
 import { formatDate } from '@angular/common';
@@ -44,7 +47,10 @@ const PRIMEMG_MODULES = [
   SpinnerModule,
   ProgressSpinnerModule,
   TableModule,
+  ScrollPanelModule,
   ButtonModule,
+    InputGroupModule,
+  InputGroupAddonModule,
 ];
 
 @Component({
@@ -56,12 +62,12 @@ const PRIMEMG_MODULES = [
   providers: [MessageService],
 })
 export default class RegxAreaComponent {
-  ListAreas: AREAS [] = [];
+  ListAreas: areas [] = [];
   ListProductos: Product[] = [];
-  filteredAreas: AREAS[] = [];
+  filteredAreas: areas[] = [];
   searchQuery: string = '';
-  selectedArea: AREAS | null = null;
-  dropdownOptions: AREAS[] = [];
+  selectedArea: areas | null = null;
+  dropdownOptions: areas[] = [];
   showProductsTable: boolean = false;
   selectedProducts: Product[] = [];
   loading: boolean = false;
@@ -74,6 +80,13 @@ export default class RegxAreaComponent {
   private messageService = inject(MessageService);
   async ngOnInit(): Promise<void> {
     await this.loadInitialData();
+  }
+
+  get totalCantidadProductos(): number {
+    return this.selectedProducts.reduce(
+      (total, product) => total + product.cantidad,
+      0
+    );
   }
 
   async loadInitialData(): Promise<void> {
@@ -212,7 +225,7 @@ export default class RegxAreaComponent {
       const res: any = await this.srvRegDet.getidlastregistroarea().toPromise();
       const lastRegistroId = res.id_registro_area;
 
-      const detallesRegistro: DetalleRegistrode_AREA[] = this.selectedProducts.map(prod => ({
+      const detallesRegistro: detailAreas[] = this.selectedProducts.map(prod => ({
         id_registro_area: lastRegistroId,
         id_producto: prod.id,
         cantidad: prod.cantidad!,

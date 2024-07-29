@@ -36,14 +36,9 @@ export default class RegistrosComponent implements OnInit {
   observacion: string = '';
   loadingMessage: string = '';
   grid: boolean = false;
-  asignarButtonLabel: string = 'Asignar Productos';
+
   isInProgress: boolean = false;
-  get totalCantidadProductos(): number {
-    return this.selectedProducts.reduce(
-      (total, product) => total + product.cantidad,
-      0
-    );
-  }
+
   private srvRegDet = inject(RegisterDetailsService);
   private srvList = inject(ListService);
   private messageService = inject(MessageService);
@@ -132,33 +127,21 @@ export default class RegistrosComponent implements OnInit {
   }
 
   toggleProducts(): void {
-    if (this.showProductsTable) {
-      // Limpiar la pantalla y restablecer el estado
+   if (this.showProductsTable) {
+     this.showProductsTable = false;
+     this.isInProgress = false;
 
-      this.showProductsTable = false;
-      this.isInProgress = false;
-      this;
-      this.clearScreen();
-    } else {
-      // Cambiar a estado "En Proceso..."
-
-      this.showProductsTable = true;
-      this.isInProgress = true;
-    }
+   } else {
+     this.showProductsTable = true;
+     this.isInProgress = true;
+   }
   }
-  clearScreen() {
-    // Resetear campos de entrada
-    this.searchQuery = '';
-    this.selectedUser = null;
-    this.selectedProducts = [];
 
-    this.observacion = '';
-    this.searchTerm = '';
-
-    // Resetear cualquier otro estado relacionado con la UI
-    this.loading = false;
-    this.loadingMessage = '';
-    this.grid = false;
+  get totalCantidadProductos(): number {
+    return this.selectedProducts.reduce(
+      (total, product) => total + product.cantidad,
+      0
+    );
   }
 
   updateProductQuantity(product: Product, increment: boolean): void {

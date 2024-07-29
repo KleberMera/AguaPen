@@ -39,11 +39,11 @@ export interface Registro_Area {
 }
 
 
-export interface AREAS {
+export interface areas {
   id: number;
   nombre_area: string;
 }
-export interface DetalleRegistrode_AREA {
+export interface detailAreas {
   id_registro_area: number;
   id_producto: number;
   cantidad: number;
