@@ -46,7 +46,10 @@
     >
     <ng-template pTemplate="header">
       <tr>
-        <th>Nombre del Producto</th>
+        <th pSortableColumn="nombre_producto">
+          Nombre del Producto
+          <p-sortIcon field="nombre_producto"></p-sortIcon>
+        </th>
         <th pSortableColumn="stock_producto">
           Stock
           <p-sortIcon field="stock_producto"></p-sortIcon>

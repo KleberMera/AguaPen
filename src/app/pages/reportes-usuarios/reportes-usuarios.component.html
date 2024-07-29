@@ -1,8 +1,12 @@
-<div class="formgroup-inline">
-  <div class="field">
-    <label for="searchInput" class="p-sr-only">Buscar por Cédula:</label>
-    <p-iconField iconPosition="left">
-      <p-inputIcon styleClass="pi pi-search" />
+<div class="formgrid grid">
+  <div class="field col">
+    <p-inputGroup>
+      <button
+        type="button"
+        pButton
+        icon="pi pi-search"
+        (click)="searchReport()"
+      ></button>
       <input
         id="searchInput"
         type="text"
@@ -10,29 +14,17 @@
         placeholder="Buscar por Cédula"
         [(ngModel)]="searchQuery"
       />
-      @if (searchQuery) {
       <button
         type="button"
-        class="p-button p-button-icon-only p-button-rounded p-button-text"
+        pButton
+        icon="pi pi-times"
+        class="p-button-danger"
         (click)="clearSearch()"
-      >
-        <span class="pi pi-times"></span>
-      </button>
-      }
-    </p-iconField>
+      ></button>
+    </p-inputGroup>
   </div>
-  <div class="field">
-    <button
-      pButton
-      type="button"
-      label="Buscar"
-      (click)="searchReport()"
-    ></button>
-  </div>
-  <div class="field">
-    <label for="dropdown" class="p-sr-only">Seleccionar Usuario:</label>
-    <p-iconField iconPosition="left">
-      <p-inputIcon icon="pi pi-user" />
+
+    <div class="field col">
       <p-dropdown
         id="dropdown"
         [options]="uniqueUsers"
@@ -50,9 +42,9 @@
           </div>
         </ng-template>
       </p-dropdown>
-    </p-iconField>
+
   </div>
-  <div class="field">
+  <div class="field col">
     <button
       pButton
       type="button"
@@ -139,7 +131,10 @@
     <ng-template pTemplate="header">
       <tr>
         <th>ID</th>
-        <th>Fecha</th>
+        <th pSortableColumn="fecha_registro">
+          Fecha
+          <p-sortIcon field="fecha_registro"></p-sortIcon>
+        </th>
         <th>Nombre</th>
         <th>Producto</th>
         <th>Cantidad</th>

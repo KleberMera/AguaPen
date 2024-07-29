@@ -59,18 +59,19 @@
   } @else {
   <p-table
     [value]="filterUsers(searchTerm, selectedArea, selectedCargo)"
-    [tableStyle]=""
+    [tableStyle]="{ 'min-width': '60rem' }"
     [paginator]="true"
     [rows]="20"
     [rowsPerPageOptions]="[20, 30, 40, 50]"
- 
-
   >
     @if (filterUsers(searchTerm, selectedArea, selectedCargo).length > 0) {
     <ng-template pTemplate="header">
       <tr>
         <th>ID</th>
-        <th>Nombre</th>
+        <th pSortableColumn="tx_nombre">
+          Nombre
+          <p-sortIcon field="tx_nombre"></p-sortIcon>
+        </th>
         <th>Cédula</th>
         <th>Área</th>
         <th>Cargo</th>

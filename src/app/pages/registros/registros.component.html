@@ -175,13 +175,14 @@
   </div>
   <p-table
     [value]="filterProducts(searchTerm)"
-    [paginator]="true"
-    [rows]="10"
-    [rowsPerPageOptions]="[10, 20, 30, 40]"
+    [tableStyle]="{ 'min-width': '50rem' }"
   >
     <ng-template pTemplate="header">
       <tr>
-        <th>Nombre del Producto</th>
+        <th pSortableColumn="nombre_producto">
+          Nombre del Producto
+          <p-sortIcon field="nombre_producto"></p-sortIcon>
+        </th>
         <th>Stock</th>
         <th>Acción</th>
       </tr>

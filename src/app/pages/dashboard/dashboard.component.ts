@@ -84,7 +84,13 @@ export default class DashboardComponent implements OnInit {
       datasets: [
         {
           data: topProducts.map((product: any) => product.stock_producto),
-          backgroundColor: ['#FF3284', '#36A2EB', '#FFCE56', '#FF9F40', '#FF6384'],
+          backgroundColor: [
+            '#FF3284',
+            '#36A2EB',
+            '#FFCE56',
+            '#FF9F40',
+            '#FF6384',
+          ],
         },
       ],
     };
@@ -98,16 +104,36 @@ export default class DashboardComponent implements OnInit {
     this.loading = false;
   }
 
-  navigateTo(event: Event): void {
-    this.router.navigate(['/home/registros']);
-  }
+
 
   fetchAreas(): void {
     this.dataSubscription = this.srvList.getReportsAreas().subscribe((res) => {
       this.areas = res.data;
       console.log(this.areas);
-      
+
       this.loading = false;
     });
+  }
+
+  navigateTo(route: string): void {
+    switch(route) {
+      case 'productos':
+        this.router.navigate(['/home/registros']);
+        break;
+      case 'extintores':
+        this.router.navigate(['/home/registros-areas']);
+        break;
+      case 'home/productos':
+        this.router.navigate(['/home/productos']);
+        break;
+      case 'home/areas':
+        this.router.navigate(['/home/areas']);
+        break;
+      case 'home/trabajadores':
+        this.router.navigate(['/home/trabajadores']);
+        break;
+      default:
+        break;
+    }
   }
 }
