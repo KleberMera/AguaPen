@@ -49,7 +49,7 @@ export class ThemesComponent {
     if (this.isDarkTheme) {
       this.changeTheme('lara-light-blue', 'light');
     } else {
-      this.changeTheme('bootstrap4-dark-blue', 'dark');
+      this.changeTheme('md-dark-indigo', 'dark');
     }
     this.isDarkTheme = !this.isDarkTheme;
   }
