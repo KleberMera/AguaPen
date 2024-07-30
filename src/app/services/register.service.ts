@@ -1,7 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-
 import { HttpClient } from '@angular/common/http';
-import { GeneralService } from './general.service';
 import { environment } from '../../environments/environment.development';
 
 @Injectable({
@@ -12,78 +10,191 @@ export class RegisterService {
 
   //injector
   private http = inject(HttpClient);
-  private srvG = inject(GeneralService);
 
   constructor() {}
 
-  //Registro de Productos
+  // Registro de Productos
   postRegisterProducts(objProduct: any) {
-    let url = 'registerProducts';
-    return this.http.post(
-      this.environment + url,
-      this.srvG.objectToFormData({
-        nombre_producto: objProduct.nombre_producto,
-        fecha_producto: objProduct.fecha_producto,
-        hora_producto: objProduct.hora_producto,
-        stock_producto: objProduct.stock_producto,
-      })
-    );
+    const url = `${this.environment}productos/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'create',
+          attributes: {
+            codigo_producto: objProduct.codigo_producto,
+            nombre_producto: objProduct.nombre_producto,
+            fecha_producto: objProduct.fecha_producto,
+            hora_producto: objProduct.hora_producto,
+            stock_producto: objProduct.stock_producto,
+          },
+        },
+      ],
+    });
   }
 
+  // Edición de Productos
   postEditProducts(objProduct: any) {
-    let url = 'editProducts';
-    return this.http.post(
-      this.environment + url,
-      this.srvG.objectToFormData({
-        id: objProduct.id,
-        nombre_producto: objProduct.nombre_producto,
-        fecha_producto: objProduct.fecha_producto,
-        hora_producto: objProduct.hora_producto,
-        stock_producto: objProduct.stock_producto,
-      })
-    );
+    const url = `${this.environment}productos/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'update',
+          key: objProduct.id,
+          attributes: {
+            nombre_producto: objProduct.nombre_producto,
+            fecha_producto: objProduct.fecha_producto,
+            hora_producto: objProduct.hora_producto,
+            stock_producto: objProduct.stock_producto,
+          },
+        },
+      ],
+    });
   }
 
-  postDeleteProducts(id: number) {
-    let url = 'deleteProducts';
-    return this.http.post(
-      this.environment + url,
-      this.srvG.objectToFormData({
-        id: id,
-      })
-    );
+  // Eliminacion de Productos
+  requestdeleteProducts(id: number) {
+    let url = `${this.environment}productos`;
+    return this.http.request('DELETE', url, {
+      body: {
+        resources: [id],
+      },
+    });
   }
 
+  // Eliminacion de Productos
+  requestdeleteTrabajadores(id: number) {
+    let url = `${this.environment}usuariostrabajadores`;
+    return this.http.request('DELETE', url, {
+      body: {
+        resources: [id],
+      },
+    });
+  }
 
-
+  // Registro de Trabajadores
   postRegisterUsers(objUser: any) {
-    let url = 'newUsuarioTrabajador';
-    return this.http.post(
-      this.environment + url,
-      this.srvG.objectToFormData({
-        tx_nombre: objUser.tx_nombre,
-        tx_cedula: objUser.tx_cedula,
-        tx_area: objUser.tx_area,
-        tx_cargo: objUser.tx_cargo,
-        tx_vehiculo: objUser.tx_vehiculo,
-        tx_vehiculo_descripcion: objUser.tx_vehiculo_descripcion,
-      })
-    );
-}
+    const url = `${this.environment}usuariostrabajadores/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'create',
+          attributes: {
+            tx_nombre: objUser.tx_nombre,
+            tx_cedula: objUser.tx_cedula,
+            tx_area: objUser.tx_area,
+            tx_cargo: objUser.tx_cargo,
+            tx_vehiculo: objUser.tx_vehiculo,
+            tx_vehiculo_descripcion: objUser.tx_vehiculo_descripcion,
+          },
+        },
+      ],
+    });
+  }
 
-postEditUsers(objUser: any) {
-  let url = 'editUsuarioTrabajador';
-  return this.http.post(
-    this.environment + url,
-    this.srvG.objectToFormData({
-      id_usuario: objUser.id_usuario,
-      tx_nombre: objUser.tx_nombre,
-      tx_cedula: objUser.tx_cedula,
-      tx_area: objUser.tx_area,
-      tx_cargo: objUser.tx_cargo,
-      tx_vehiculo: objUser.tx_vehiculo,
-      tx_vehiculo_descripcion: objUser.tx_vehiculo_descripcion,
-    })
-  );
-}
+  // Edición de Trabajadores
+  postEditUsers(objUser: any) {
+    const url = `${this.environment}usuariostrabajadores/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'update',
+          key: objUser.id,
+          attributes: {
+            tx_nombre: objUser.tx_nombre,
+            tx_cedula: objUser.tx_cedula,
+            tx_area: objUser.tx_area,
+            tx_cargo: objUser.tx_cargo,
+            tx_vehiculo: objUser.tx_vehiculo,
+            tx_vehiculo_descripcion: objUser.tx_vehiculo_descripcion,
+          },
+        },
+      ],
+    });
+  }
+
+  // Registar Areas
+  postRegisterAreas(objArea: any) {
+    const url = `${this.environment}areas/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'create',
+          attributes: {
+            nombre_area: objArea.nombre_area,
+          },
+        },
+      ],
+    });
+  }
+
+  // Editar Areas
+  postEditAreas(objArea: any) {
+    const url = `${this.environment}areas/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'update',
+          key: objArea.id,
+          attributes: {
+            nombre_area: objArea.nombre_area,
+          },
+        },
+      ],
+    });
+  }
+
+  // Eliminar Areas
+  requestdeleteAreas(id: number) {
+    let url = `${this.environment}areas`;
+    return this.http.request('DELETE', url, {
+      body: {
+        resources: [id],
+      },
+    });
+  }
+
+  //Registrar Vehiculos
+  postRegisterVehiculos(objVehiculo: any) {
+    const url = `${this.environment}vehiculos/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'create',
+          attributes: {
+            placa: objVehiculo.placa,
+            tipo: objVehiculo.tipo,
+            descripcion: objVehiculo.descripcion,
+          },
+        },
+      ],
+    });
+  }
+
+  //Editar Vehiculos
+  postEditVehiculos(objVehiculo: any) {
+    const url = `${this.environment}vehiculos/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'update',
+          key: objVehiculo.id,
+          attributes: {
+            placa: objVehiculo.placa,
+            tipo: objVehiculo.tipo,
+            descripcion: objVehiculo.descripcion,
+          },
+        },
+      ],
+    });
+  }
+
+  //Eliminar Vehiculos
+  requestdeleteVehiculos(id: number) {
+    let url = `${this.environment}vehiculos`;
+    return this.http.request('DELETE', url, {
+      body: {
+        resources: [id],
+      },
+    });
+  }
 }

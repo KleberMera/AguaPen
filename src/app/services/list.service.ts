@@ -1,50 +1,57 @@
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
-import { GeneralService } from './general.service';
-
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ListService {
   private environment = environment.aguapenApi;
 
   //injector
-  private http= inject(HttpClient);
-  private srvG = inject(GeneralService);
+  private http = inject(HttpClient);
 
-  constructor() { }
+  constructor() {}
 
   //Listado de Productos
-  getListProductos() {
-    let url = 'viewProducts';
-    return this.http.get<any>(this.environment + url);
+  getlistProducts() {
+    const url = `${this.environment}allproducts`;
+    return this.http.get<any>(url);
   }
 
   //Listado de Usuarios-Trabajadores
   getListUsuarios() {
-    let url = 'viewUsuariosTrabajadores';
-    return this.http.get<any>(this.environment + url);
+    const url = `${this.environment}allusersworkers`;
+    return this.http.get<any>(url);
   }
-
 
   getviewRegistroAll() {
-    let url = 'viewRegistroAll';
-    return this.http.get<any>(this.environment + url);
+    const url = `${this.environment}obtenerRegistrosConDetalles`;
+    return this.http.get<any>(url);
   }
 
-  getviewAreas(){
-    let url = 'viewAreas';
-    return this.http.get<any>(this.environment + url);
+  getListAreas() {
+    const url = `${this.environment}allareas`;
+    return this.http.get<any>(url);
   }
 
+  getLisrVehiculos() {
+    const url = `${this.environment}allvehiculos`;
+    return this.http.get<any>(url);
+  }
 
-  
+  getListRegistros() {
+    const url = `${this.environment}registros/search`;
+    return this.http.post<any>(url, {});
+  }
 
+  getReportsAreas() {
+    const url = `${this.environment}obtenerRegistrosConDetallesArea`;
+    return this.http.get<any>(url);
+  }
 
-  viewReportesDeAREAS(){
-    let url = 'viewRegxAreas';
-    return this.http.get<any>(this.environment + url);
+  getReportsVehiculos() {
+    const url = `${this.environment}obtenerRegistrosConDetallesVehiculos`;
+    return this.http.get<any>(url);
   }
 }

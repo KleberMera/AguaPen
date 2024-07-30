@@ -14,12 +14,20 @@ export const routes: Routes = [
         loadComponent: () => import('./productos/productos.component'),
       },
       {
-        path: 'usuarios-trabajadores',
-        loadComponent: () => import('./usuarios-trabajadores/usuarios-trabajadores.component'),
+        path: 'vehiculos',
+        loadComponent: () => import('./vehiculos/vehiculos.component'),
       },
       {
-        path: 'usuarios-roles',
-        loadComponent: () => import('./usuarios-roles/usuarios-roles.component'),
+        path: 'trabajadores',
+        loadComponent: () => import('./trabajadores/trabajadores.component'),
+      },
+      {
+        path: 'areas',
+        loadComponent: () => import('./areas/areas.component'),
+      },
+      {
+        path: 'roles',
+        loadComponent: () => import('./roles/roles.component'),
       },
       {
         path: 'registros',
@@ -35,19 +43,28 @@ export const routes: Routes = [
         loadComponent: () => import('./reportes-usuarios/reportes-usuarios.component'),
       },
       {
-        path: 'areas',
-        loadComponent: () => import('./areas/areas.component'),
+        path: 'reportes-areas',
+        loadComponent: () => import('./reportes-areas/reportes-areas.component'),
         
       },
       {
-        path: 'regx-area',
-        loadComponent: () => import('./regx-area/regx-area.component'),
+        path: 'reportes-vehiculos',
+        loadComponent: () => import('./reportes-vehiculos/reportes-vehiculos.component'),
+      },
+      {
+        path: 'registros-areas',
+        loadComponent: () => import('./registros-areas/registros-areas.component'),
         
+      },
+      {
+        path: 'registros-vehiculos',
+        loadComponent: () => import('./registros-vehiculos/registros-vehiculos.component'),
       },
       {
         path: '**',
         redirectTo: '/home/dashboard',
-      }
+      },
+      
     ]
   },
 

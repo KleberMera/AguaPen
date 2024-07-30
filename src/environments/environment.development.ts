@@ -1,5 +1,4 @@
 export const environment = {
-      aguapenApi: 'https://klebermera.000webhostapp.com/api/aguapenapi/',
+  aguapenApi: 'https://aguapenrestapi-arvnq.ondigitalocean.app/api/',
 
- //aguapenApi: 'http://127.0.0.1/aguapenAPI/',
 };

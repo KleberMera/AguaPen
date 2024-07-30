@@ -3,30 +3,28 @@
   padding: 20px;
 }
 
-
 ::ng-deep {
   .p-dialog {
     .p-dialog-header {
-      background-color: var(
-        --primary-color
-      ); // Cambia el color de fondo del encabezado
-      color: rgb(0, 0, 0); // Cambia el color del texto del encabezado
+      background-color: var(--primary-color);
+      color: aliceblue;
+
       font-size: large;
     }
 
     .p-dialog-content {
-      padding: 30px; // Añade padding al contenido del diálogo
+      padding: 30px;
     }
 
     .p-field {
-      margin-bottom: 1.5rem; // Añade un margen inferior a los campos del formulario
+      margin-bottom: 1.5rem;
 
       label {
-        font-weight: bold; // Cambia el estilo de las etiquetas
+        font-weight: bold;
       }
     }
 
-     .p-dialog-footer {
+    .p-dialog-footer {
       display: flex;
       justify-content: flex-end; // Alinea los botones al final del diálogo
       padding-top: 1rem;

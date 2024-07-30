@@ -1,141 +1,170 @@
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { FieldsetModule } from 'primeng/fieldset';
-import { ListService } from '../../services/list.service';
-import { FormsModule } from '@angular/forms';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { InputIconModule } from 'primeng/inputicon';
-import { InputTextModule } from 'primeng/inputtext';
-import { ToastModule } from 'primeng/toast';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { IconFieldModule } from 'primeng/iconfield';
-import { DropdownModule } from 'primeng/dropdown';
-import { CardModule } from 'primeng/card';
-import { BlockUIModule } from 'primeng/blockui';
-import { SpinnerModule } from 'primeng/spinner';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { Component, inject } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { CalendarModule } from 'primeng/calendar';
-import { PrintService } from '../../services/print.service';
-import { Subscription } from 'rxjs';
-
-const PRIMEMG_MODULES = [
-  TableModule,
-  FieldsetModule,
-  ButtonModule,
-  FormsModule,
-  InputIconModule,
-  InputTextModule,
-  ToastModule,
-  AutoCompleteModule,
-  IconFieldModule,
-  DropdownModule,
-  CardModule,
-  BlockUIModule,
-  SpinnerModule,
-  ProgressSpinnerModule,
-  CalendarModule,
-];
+import { Area } from '../../interfaces/areas.interfaces';
+import { RegisterService } from '../../services/register.service';
+import { ListService } from '../../services/list.service';
+import { PRIMENG_MODULES } from './areas.imports';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-areas',
   standalone: true,
-  imports: [PRIMEMG_MODULES],
+  imports: [PRIMENG_MODULES, FormsModule],
   templateUrl: './areas.component.html',
-  styleUrls: ['./areas.component.scss'],
+  styleUrl: './areas.component.scss',
   providers: [MessageService, ConfirmationService],
 })
-export default class AreasComponent implements OnInit, OnDestroy {
-  listAreas: any[] = [];
-  listReports: any[] = []; // Lista completa de reportes
-  filteredReports: any[] = []; // Lista filtrada de reportes
-  uniqueAreas: any[] = []; // Lista de áreas únicas
-  selectedArea: any | null = null; // Área seleccionada
-  startDate: string | null = null; // Fecha de inicio para el filtrado por fecha
-  endDate: string | null = null; // Fecha de fin para el filtrado por fecha
-  loading: boolean = true; // Indica si se está cargando datos
-  private subscriptions: Subscription = new Subscription(); // Manejo de suscripciones
-  private SrvList = inject(ListService);
-  private srvPrint = inject(PrintService);
-  private srvMessage = inject(MessageService);
+export default class AreasComponent {
+  listArea: Area[] = [];
+  searchTerm: string = '';
+  selectedArea: Area | null = null;
+  loading: boolean = true;
+  loadingSave: boolean = false;
+  dialogVisible: boolean = false;
+
+  private srvReg = inject(RegisterService);
+  private srvList = inject(ListService);
+  private srvMensajes = inject(MessageService);
+  private srvConfirm = inject(ConfirmationService);
 
   ngOnInit(): void {
-    this.getListAreas();
-    this.loadReports();
+    this.listAreas();
   }
 
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe(); // Cancela todas las suscripciones al destruir el componente
-  }
-
-  loadReports() {
-    const reportSubscription = this.SrvList.viewReportesDeAREAS().subscribe((res: any) => {
-      this.listReports = res.data;
-      this.filteredReports = res.data;
-      this.uniqueAreas = this.extractUniqueAreas(res.data);
-      console.log('Listado de Reportes:', this.listReports);
+  private async listAreas() {
+    this.loading = true;
+    try {
+      const res = await this.srvList.getListAreas().toPromise();
+      this.listArea = res.data;
+    } catch (error) {
+      this.handleError(error, 'Error al cargar áreas:');
+    } finally {
       this.loading = false;
-    });
-
-    this.subscriptions.add(reportSubscription); // Agregar suscripción al manejador de suscripciones
-  }
-
-  // Extraer áreas únicas de la lista de reportes
-  extractUniqueAreas(reports: any[]): any[] {
-    const areasMap = new Map();
-    reports.forEach((report) => {
-      if (!areasMap.has(report.nombre_area)) {
-        areasMap.set(report.nombre_area, report);
-      }
-    });
-    return Array.from(areasMap.values());
-  }
-
-  clearSearch() {
-    this.selectedArea = null;
-    this.filteredReports = this.listReports;
-  }
-
-  filterReportsByNameAREA() {
-    if (this.selectedArea && this.selectedArea.nombre_area) {
-      const selectedAreaName = this.selectedArea.nombre_area.toLowerCase();
-      this.filteredReports = this.listReports.filter((report) => 
-        report.nombre_area && report.nombre_area.toLowerCase().includes(selectedAreaName)
-      );
-    } else {
-      this.filteredReports = this.listReports;
     }
   }
 
-  // Filtrar reportes por rango de fechas
-  filterReportsByDate() {
-    if (this.startDate && this.endDate) {
-      const start = new Date(this.startDate);
-      const end = new Date(this.endDate);
-      this.filteredReports = this.listReports.filter((report) => {
-        const reportDate = new Date(report.fecha_registro);
-        return reportDate >= start && reportDate <= end;
+  filterAreas(query: string): Area[] {
+    const lowerQuery = query.toLowerCase();
+    return this.listArea.filter((area) =>
+      area.nombre_area.toLowerCase().includes(lowerQuery)
+    );
+  }
+
+  openAddAreaDialog() {
+    this.selectedArea = this.createNewArea();
+    this.dialogVisible = true;
+  }
+
+  openEditAreaDialog(area: Area) {
+    this.selectedArea = { ...area };
+    this.dialogVisible = true;
+  }
+
+  private createNewArea(): Area {
+    return {
+      id: 0,
+      nombre_area: '',
+    };
+  }
+
+  private async addArea() {
+    if (!this.validateArea()) return;
+    try {
+      const res = await this.srvReg
+        .postRegisterAreas(this.selectedArea!)
+        .toPromise();
+      this.handleResponse(res, 'Agregado');
+    } catch (error) {
+      this.handleError(error, 'Error al agregar área');
+    }
+  }
+
+  private async editArea() {
+    if (!this.validateArea()) return;
+    try {
+      const res = await this.srvReg
+        .postEditAreas(this.selectedArea!)
+        .toPromise();
+      this.handleResponse(res, 'Editado');
+    } catch (error) {
+      this.handleError(error, 'Error al editar área');
+    }
+  }
+
+  deleteArea(area: Area) {
+    this.srvConfirm.confirm({
+      message: '¿Está seguro de eliminar el área?',
+      header: 'Confirmación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Eliminar',
+      accept: async () => {
+        try {
+          const res = await this.srvReg
+            .requestdeleteAreas(area.id)
+            .toPromise();
+          this.handleResponse(res, 'Eliminado');
+          await this.listAreas();
+        } catch (error) {
+          this.handleError(error, 'Error al eliminar área');
+        }
+      },
+    });
+  }
+
+  async saveArea() {
+    if (!this.selectedArea) return;
+
+    this.loadingSave = true;
+    try {
+      this.selectedArea.id === 0
+        ? await this.addArea()
+        : await this.editArea();
+      this.dialogVisible = false;
+      await this.listAreas();
+    } catch (error) {
+      this.handleError(error, 'Error al guardar el área');
+    } finally {
+      this.loadingSave = false;
+    }
+  }
+
+  private handleResponse(res: any, successMessage: string) {
+    if (
+      (res.created && res.created.length > 0) ||
+      (res.updated && res.updated.length > 0) ||
+      (res.data && res.data.length >= 0)
+    ) {
+      this.srvMensajes.add({
+        severity: 'success',
+        summary: successMessage,
+        detail: `${successMessage} exitosamente.`,
       });
-    } else {
-      this.filteredReports = this.listReports;
     }
   }
 
-  // Limpiar filtro de fechas
-  clearDateFilter() {
-    this.startDate = null;
-    this.endDate = null;
-    this.filteredReports = this.listReports;
+  private validateArea(): boolean {
+    if (this.selectedArea!.nombre_area.trim() === '') {
+      this.srvMensajes.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'El nombre del área es obligatorio',
+      });
+      return false;
+    }
+
+    return true;
   }
 
-  getListAreas() {
-    this.SrvList.getviewAreas().subscribe((res) => {
-      this.listAreas = res.data;
-      console.log(this.listAreas);
+  private handleError(error: any, message: string): void {
+    console.error(message, error);
+    this.srvMensajes.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Ocurrió un error al procesar la solicitud',
     });
+    this.loading = false;
+    this.loadingSave = false;
   }
 
-  printTable(): void {
-    this.srvPrint.printElement('reportTable');
-  }
 }

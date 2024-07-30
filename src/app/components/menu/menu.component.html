@@ -1,0 +1,10 @@
+<ul class="layout-menu">
+  @for (item of model; track $index) {
+  <ng-container>
+    <app-menuitem [item]="item" [root]="true"></app-menuitem>
+    @if (item.separator) {
+    <li class="menu-separator"></li>
+    }
+  </ng-container>
+  }
+</ul>

@@ -32,7 +32,7 @@ const PRIMEMG_MODULES = [
 })
 export default class LoginComponent {
   loginForm: FormGroup;
-  loading: boolean = false;
+  loading = false;
 
   private srvAuth = inject(AuthService);
   private srvMensajes = inject(MessageService);
@@ -41,47 +41,49 @@ export default class LoginComponent {
   constructor(private fb: FormBuilder) {
     this.loginForm = this.fb.group({
       usuario: ['', Validators.required],
-      clave: ['', Validators.required],
+      password: ['', Validators.required],
     });
   }
 
   getLogin() {
     this.loading = true;
 
-    setTimeout(() => {
-      this.loading = false;
-    }, 2000);
-
     if (this.loginForm.valid) {
       const dataLogin = this.loginForm.value;
 
-      this.srvAuth.login(dataLogin).subscribe((res: any) => {
-        if (res.retorno == 1) {
-          console.log(res.mensaje);
-          this.srvMensajes.add({
-            severity: 'success',
-            summary: 'Login',
-            detail: res.mensaje,
-          });
-
-          // Guardar datos en BehaviorSubject y localStorage
-          this.srvAuth.setNombres(res.nombres);
-          this.srvAuth.setUsuarioId(res.usuario_id);
-          this.srvAuth.setApellidos(res.apellidos);
-          this.srvAuth.setLoggedIn(true);
-
-          // Redirigir al usuario a la página de inicio
-          this.router.navigate(['home']);
-        } else {
-          console.log(res.mensaje);
+      this.srvAuth.login(dataLogin).subscribe({
+        next: (res: any) => {
+          console.log(res);
+          
+          this.loading = false;
+          if (res && res.usuario) {
+            this.srvMensajes.add({
+              severity: 'success',
+              summary: 'Login',
+              detail: 'Inicio de sesión exitoso',
+            });
+            // Redirigir al usuario a la página de inicio
+            this.router.navigate(['home']);
+          } else {
+            this.loading = false;
+            this.srvMensajes.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: res.mensaje || 'Error al iniciar sesión',
+            });
+          }
+        },
+        error: (err) => {
+          this.loading = false;
           this.srvMensajes.add({
             severity: 'error',
             summary: 'Error',
-            detail: res.mensaje,
+            detail: 'Error al iniciar sesión',
           });
-        }
+        },
       });
     } else {
+      this.loading = false;
       this.srvMensajes.add({
         severity: 'error',
         summary: 'Error',

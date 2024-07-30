@@ -1,45 +1,16 @@
 import { Component, inject, OnInit } from '@angular/core';
-
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { PrintService } from '../../services/print.service';
+import { Subscription } from 'rxjs';
 import { FieldsetModule } from 'primeng/fieldset';
 import { ListService } from '../../services/list.service';
 import { FormsModule } from '@angular/forms';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { InputIconModule } from 'primeng/inputicon';
-import { InputTextModule } from 'primeng/inputtext';
-import { ToastModule } from 'primeng/toast';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { IconFieldModule } from 'primeng/iconfield';
-import { DropdownModule } from 'primeng/dropdown';
-import { CardModule } from 'primeng/card';
-import { BlockUIModule } from 'primeng/blockui';
-import { SpinnerModule } from 'primeng/spinner';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { CalendarModule } from 'primeng/calendar';
-import { PrintService } from '../../services/print.service';
-import { Subscription } from 'rxjs';
-const PRIMEMG_MODULES = [
-  TableModule,
-  FieldsetModule,
-  ButtonModule,
-  FormsModule,
-  InputIconModule,
-  InputTextModule,
-  ToastModule,
-  AutoCompleteModule,
-  IconFieldModule,
-  DropdownModule,
-  CardModule,
-  BlockUIModule,
-  SpinnerModule,
-  ProgressSpinnerModule,
-  CalendarModule,
-];
+import { PRIMEMG_MODULES } from './reportes.imports';
+
 @Component({
   selector: 'app-reportes',
   standalone: true,
-  imports: [PRIMEMG_MODULES],
+  imports: [PRIMEMG_MODULES, FormsModule, FieldsetModule],
   templateUrl: './reportes.component.html',
   styleUrl: './reportes.component.scss',
   providers: [MessageService, ConfirmationService],
@@ -52,7 +23,7 @@ export default class ReportesComponent implements OnInit {
   selectedUser: any | null = null; // Usuario seleccionado
   startDate: string | null = null; // Fecha de inicio para el filtrado por fecha
   endDate: string | null = null; // Fecha de fin para el filtrado por fecha+
-  loading: boolean = true;// Indica si se está cargando datos
+  loading: boolean = true; // Indica si se está cargando datos
 
   private subscriptions: Subscription = new Subscription(); // Manejo de suscripciones
 
@@ -72,14 +43,12 @@ export default class ReportesComponent implements OnInit {
 
   // Cargar la lista de reportes desde el servicio
   loadReports() {
-
     const reportSubscription = this.srvList
       .getviewRegistroAll()
       .subscribe((res: any) => {
         this.listReports = res.data;
         this.filteredReports = res.data;
         this.uniqueUsers = this.extractUniqueUsers(res.data);
-        console.log('Listado de Reportes:', this.listReports);
         this.loading = false;
       });
 

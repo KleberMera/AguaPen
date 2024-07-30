@@ -1,109 +1,162 @@
 import { environment } from './../../environments/environment.development';
-import { Injectable } from '@angular/core';
-import { GeneralService } from './general.service';
+import { Injectable, inject } from '@angular/core';
+
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private environment = environment.aguapenApi;
-  private loggedIn = new BehaviorSubject<boolean>(false);
-  constructor(private http: HttpClient, private srvG: GeneralService) {}
+  private userSubject = new BehaviorSubject<any>(this.getStoredUser());
+  private tokenKey = 'auth_token';
+  user$ = this.userSubject.asObservable();
 
-  login(objLogin: any) {
-    let url = 'login';
-    return this.http.post(
-      this.environment + url,
-      this.srvG.objectToFormData(objLogin)
-    );
+  private http = inject(HttpClient);
+
+  login(objLogin: any): Observable<any> {
+    const url = `${this.environment}login`;
+    return this.http
+      .post(url, {
+        usuario: objLogin.usuario,
+        password: objLogin.password,
+      })
+      .pipe(
+        tap((response: any) => {
+          if (response && response.usuario) {
+            this.setUser(response.usuario);
+            this.setToken(response.token);
+          }
+        })
+      );
   }
 
-  verDatosUsuario(objUsuario: any) {
-    let url = 'viewDatosUsersSesion';
-    return this.http.post(
-      this.environment + url,
-      this.srvG.objectToFormData(objUsuario)
-    );
+  verDatosUsuario(usuarioId: string): Observable<any> {
+    const url = `${this.environment}usuarios/${usuarioId}`;
+    return this.http.get(url);
   }
 
-  updateUser(objUsuario: any) {
-    let url = 'editarUsuario';
-    return this.http.post(
-      this.environment + url,
-      this.srvG.objectToFormData(objUsuario)
-    );
+  updateUser(objUser: any) {
+    const url = `${this.environment}usuarios/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'update',
+          key: objUser.id,
+          attributes: {
+            cedula: objUser.cedula,
+            telefono: objUser.telefono,
+            nombres: objUser.nombres,
+            apellidos: objUser.apellidos,
+            correo: objUser.correo,
+            usuario: objUser.usuario,
+            password: objUser.password,
+            rol_id: objUser.rol_id,
+          },
+        },
+      ],
+    });
   }
-  resetPassword(objUsuario: any) {
-    let url = 'recuperarClave';
-    return this.http.post(
-      this.environment + url,
-      this.srvG.objectToFormData(objUsuario)
-    );
+
+  // Registro de Usuarios Admin
+  createUser(objUser: any) {
+    const url = `${this.environment}usuarios/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'create',
+          attributes: {
+            cedula: objUser.cedula,
+            telefono: objUser.telefono,
+            nombres: objUser.nombres,
+            apellidos: objUser.apellidos,
+            correo: objUser.correo,
+            usuario: objUser.usuario,
+            password: objUser.password,
+            rol_id: objUser.rol_id,
+          },
+        },
+      ],
+    });
+  }
+
+  //Delete Users
+  deleteUser(id: number) {
+    const url = `${this.environment}usuarios`;
+    return this.http.request('DELETE', url, {
+      body: {
+        resources: [id],
+      },
+    });
+  }
+
+  listUsers() {
+    const url = `${this.environment}usuarios/search`;
+    return this.http.post<any>(url, {});
   }
 
   verifyCedula(cedula: string) {
-    let url = 'verificarCedula';
-    return this.http.post(
-      this.environment + url,
-      this.srvG.objectToFormData({ cedula })
-    );
+    const url = `${this.environment}verifycedula`;
+    return this.http.post(url, { cedula });
   }
 
-  private nombresSubject = new BehaviorSubject<string | null>(
-    this.getStoredNombres()
-  );
-  private usuarioIdSubject = new BehaviorSubject<string | null>(
-    this.getStoredUsuarioId()
-  );
-  private apellidosSubject = new BehaviorSubject<string | null>(
-    this.getStoredApellidos()
-  );
-
-  nombres$ = this.nombresSubject.asObservable();
-  usuarioId$ = this.usuarioIdSubject.asObservable();
-  apellidos$ = this.apellidosSubject.asObservable();
-
-  private getStoredNombres(): string | null {
-    return localStorage.getItem('nombres');
+  resetPasswordByCedula(
+    cedula: string,
+    newPassword: string,
+    newPasswordConfirmation: string
+  ) {
+    const url = `${this.environment}resetpassword`;
+    return this.http.post(url, {
+      cedula: cedula,
+      new_password: newPassword,
+      new_password_confirmation: newPasswordConfirmation,
+    });
   }
 
-  private getStoredUsuarioId(): string | null {
-    return localStorage.getItem('usuario_id');
+  private getStoredUser(): any {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
   }
 
-  private getStoredApellidos(): string | null {
-    return localStorage.getItem('apellidos');
+  setUser(user: any) {
+    this.userSubject.next(user);
+    localStorage.setItem('user', JSON.stringify(user));
   }
 
-  setNombres(nombres: string) {
-    this.nombresSubject.next(nombres);
-    localStorage.setItem('nombres', nombres);
+  getToken(): any {
+    const token = localStorage.getItem(this.tokenKey);
+    if (token) {
+      try {
+        const parsedToken = JSON.parse(token);
+        // Verificar si el token no es null y no es una cadena incorrecta
+        if (parsedToken !== null &&   parsedToken !== '[object][object]') {
+          return parsedToken;
+        }
+      } catch (error) {
+        // En caso de error al parsear, también removemos el token
+        console.error('Error parsing token:', error);
+      }
+    }
+    // Si el token es null, [object][object] o hay un error, eliminamos el token del localStorage
+    localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem('user');
+    return null;
   }
+  
+  
 
-  setUsuarioId(usuario_id: string) {
-    this.usuarioIdSubject.next(usuario_id);
-    localStorage.setItem('usuario_id', usuario_id);
-  }
-
-  setApellidos(apellidos: string) {
-    this.apellidosSubject.next(apellidos);
-    localStorage.setItem('apellidos', apellidos);
+  setToken(tokenKey: string) {
+    localStorage.setItem(this.tokenKey, JSON.stringify(tokenKey));
   }
 
   clearAuthData() {
-    this.nombresSubject.next(null);
-    this.usuarioIdSubject.next(null);
-    this.apellidosSubject.next(null);
-    localStorage.removeItem('nombres');
-    localStorage.removeItem('usuario_id');
-    localStorage.removeItem('apellidos');
+    this.userSubject.next(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem(this.tokenKey);
   }
+
   isLoggedIn(): boolean {
-    return this.loggedIn.value;
-  }
-  setLoggedIn(value: boolean) {
-    this.loggedIn.next(value);
+    return !!this.getToken();
   }
 }

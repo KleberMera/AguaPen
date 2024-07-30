@@ -1,10 +1,16 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { ToolbarModule } from 'primeng/toolbar';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { InputTextModule } from 'primeng/inputtext';
 import { AvatarModule } from 'primeng/avatar';
 import { SidebarModule } from 'primeng/sidebar';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService, MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
@@ -13,9 +19,17 @@ import { PasswordModule } from 'primeng/password';
 import { FormsModule } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { SidebarService } from '../../services/sidebar.service';
-import { filter } from 'rxjs';
+
+import { filter, Subscription } from 'rxjs';
 import { CheckboxModule } from 'primeng/checkbox';
+import { LayoutService } from '../../services/layout.service';
+import { ImageModule } from 'primeng/image';
+import { MenuModule } from 'primeng/menu';
+import { CommonModule } from '@angular/common';
+import { ThemesComponent } from '../themes/themes.component';
+import { RippleModule } from 'primeng/ripple';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+
 const PRIMENG_MODULES = [
   ToolbarModule,
   ButtonModule,
@@ -28,60 +42,118 @@ const PRIMENG_MODULES = [
   DialogModule,
   PasswordModule,
   CheckboxModule,
+  ImageModule,
+  RippleModule,
+  ConfirmDialogModule,
 ];
 
 @Component({
   selector: 'app-toolbar',
   standalone: true,
-  imports: [PRIMENG_MODULES, FormsModule],
+  imports: [PRIMENG_MODULES, FormsModule, CommonModule, ThemesComponent],
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss'],
   providers: [ConfirmationService, MessageService],
 })
 export class ToolbarComponent implements OnInit {
-  pageTitle: string = 'Sistema de Gestión';
-  private sidebarService = inject(SidebarService);
-  private router = inject(Router);
-  private authService = inject(AuthService);
-  private messageService = inject(MessageService); // Inyección del servicio de mensajes
-  private confirmationService = inject(ConfirmationService); // Inyección del servicio de confirmación
   visible: boolean = false;
-  user: any = {}; // Initialize user object
-
   loadingUpdate: boolean = false;
+  user: any = {}; // Initialize user object
   checked: boolean = false;
+  items!: MenuItem[];
+  imgUrl: string = 'assets/ICONO-AGUAPEN.webp';
+  changePassword: boolean = false; // Para controlar el checkbox
+  password: string = ''; // Nueva contraseña
+  confirmPassword: string = ''; // Confirmar nueva contraseña
 
+  @ViewChild('menubutton') menuButton!: ElementRef;
+
+  @ViewChild('topbarmenubutton') topbarMenuButton!: ElementRef;
+
+  @ViewChild('topbarmenu') menu!: ElementRef;
+
+  private router = inject(Router);
+  private srvAuth = inject(AuthService);
+  private confirmationService = inject(ConfirmationService);
+  private messageService = inject(MessageService);
+
+  public layoutService = inject(LayoutService);
+  public userSubscription: Subscription = new Subscription();
   ngOnInit(): void {
-    this.sidebarService.title$.subscribe((title) => {
-      this.pageTitle = title;
-    });
-
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        // Additional logic if needed
-      });
-
     this.datesUser();
   }
 
-  toggleSidebar() {
-    this.sidebarService.toggleSidebar();
+  logout(event: Event) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: '¿Estás seguro que deseas cerrar sesión?',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Salir',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Confirmado',
+          detail: 'Se ha cerrado la sesión',
+          life: 3000,
+        });
+
+        this.signOut();
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Denegado',
+          detail: 'Cancelado',
+          life: 3000,
+        });
+      },
+    });
+  }
+
+  signOut() {
+    this.srvAuth.clearAuthData();
+    this.router.navigate(['/auth']);
   }
 
   datesUser() {
-    // Get user ID from localStorage
-    const userId = localStorage.getItem('usuario_id');
-
-    this.authService.verDatosUsuario({ id: userId }).subscribe((res: any) => {
-      this.user = res.usuario;
+    this.userSubscription = this.srvAuth.user$.subscribe((user) => {
+      if (user) {
+        const userId = user.id;
+        this.srvAuth.verDatosUsuario(userId).subscribe((res: any) => {
+          if (res && res.usuario) {
+            this.user = res.usuario;
+            
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'No se pudo obtener la información del usuario.',
+            });
+          }
+        });
+      } else {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Usuario no identificado.',
+        });
+      }
     });
   }
 
   updateUser(event: Event) {
-    setTimeout(() => {
+    this.loadingUpdate = true;
+    // Validar si la nueva contraseña coincide
+    if (this.changePassword && this.password !== this.confirmPassword) {
       this.loadingUpdate = false;
-    }, 2000);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Las contraseñas no coinciden.',
+      });
+      return;
+    }
 
     this.confirmationService.confirm({
       target: event.target as EventTarget,
@@ -93,25 +165,44 @@ export class ToolbarComponent implements OnInit {
       accept: () => {
         const updatedUser = { ...this.user };
 
-        this.authService.updateUser(updatedUser).subscribe((res: any) => {
+        if (this.changePassword) {
+          updatedUser.password = this.password;
+        }
+
+        this.srvAuth.updateUser(updatedUser).subscribe((res: any) => {
           // Show success message
           this.messageService.add({
             severity: 'success',
-            summary: 'Actualización Exitosa',
-            detail: res.mensaje,
+            summary: 'Actualización',
+            detail: 'Cambios guardados.',
           });
 
           this.visible = false; // Close dialog
           this.loadingUpdate = false;
+
+          // Si se cambió la contraseña, cerrar sesión
+          if (this.changePassword) {
+            this.signOut();
+          }
         });
       },
       reject: () => {
         this.messageService.add({
           severity: 'info',
-          summary: 'Actualización Cancelada',
-          detail: 'La actualización de los datos ha sido cancelada.',
+          summary: 'Cancelad0',
+          detail: 'Actualización cancelada.',
         });
+        this.loadingUpdate = false;
       },
+    });
+  }
+
+  accionThemes() {
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Confirmado',
+      detail: 'Se ha cambiado el tema',
+      life: 3000,
     });
   }
 }
