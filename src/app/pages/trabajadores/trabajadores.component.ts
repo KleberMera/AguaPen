@@ -211,7 +211,6 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     this.loadingSave = false;
   }
 
-
   deleteUsers(user: User) {
     this.srvConfirm.confirm({
       message: '¿Está seguro de eliminar el trabajador?',
@@ -221,7 +220,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
       accept: async () => {
         try {
           const res = await this.srvReg
-            .requestdeleteProducts(user.id)
+            .requestdeleteTrabajadores(user.id)
             .toPromise();
           this.handleResponse(res, 'Eliminado');
 

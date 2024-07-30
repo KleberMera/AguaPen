@@ -61,6 +61,16 @@ export class RegisterService {
     });
   }
 
+    // Eliminacion de Productos
+    requestdeleteTrabajadores(id: number) {
+      let url = `${this.environment}usuariostrabajadores`;
+      return this.http.request('DELETE', url, {
+        body: {
+          resources: [id],
+        },
+      });
+    }
+
   // Registro de Trabajadores
   postRegisterUsers(objUser: any) {
     const url = `${this.environment}usuariostrabajadores/mutate`;
