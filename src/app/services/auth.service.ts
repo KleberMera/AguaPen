@@ -32,6 +32,22 @@ export class AuthService {
       );
   }
 
+  verifyToken(): Observable<any> {
+    const token = this.getToken();
+
+    if (!token) {
+      throw new Error('Token no encontrado');
+    }
+
+    return this.http.post(
+      `${this.environment}/verify-token`, {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  }
   private getStoredUser(): any {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
@@ -125,7 +141,17 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    const token = localStorage.getItem(this.tokenKey);
+    if (token) {
+      const parsedToken = JSON.parse(token);
+      if (parsedToken && new Date(parsedToken.expiration) > new Date()) {
+        return parsedToken.token;
+      } else {
+        this.clearAuthData();
+        return null;
+      }
+    }
+    return null;
   }
 
   setToken(token: any) {
