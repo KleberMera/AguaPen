@@ -35,6 +35,11 @@ export class ListService {
     return this.http.get<any>(url);
   }
 
+  getLisrVehiculos() {
+    const url = `${this.environment}allvehiculos`;
+    return this.http.get<any>(url);
+  }
+
   getListRegistros() {
     const url = `${this.environment}registros/search`;
     return this.http.post<any>(url, {});

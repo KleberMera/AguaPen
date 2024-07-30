@@ -50,7 +50,7 @@ export class RegisterService {
       ],
     });
   }
-  
+
   // Eliminacion de Productos
   requestdeleteProducts(id: number) {
     let url = `${this.environment}productos`;
@@ -61,15 +61,15 @@ export class RegisterService {
     });
   }
 
-    // Eliminacion de Productos
-    requestdeleteTrabajadores(id: number) {
-      let url = `${this.environment}usuariostrabajadores`;
-      return this.http.request('DELETE', url, {
-        body: {
-          resources: [id],
-        },
-      });
-    }
+  // Eliminacion de Productos
+  requestdeleteTrabajadores(id: number) {
+    let url = `${this.environment}usuariostrabajadores`;
+    return this.http.request('DELETE', url, {
+      body: {
+        resources: [id],
+      },
+    });
+  }
 
   // Registro de Trabajadores
   postRegisterUsers(objUser: any) {
@@ -126,7 +126,7 @@ export class RegisterService {
       ],
     });
   }
-  
+
   // Editar Areas
   postEditAreas(objArea: any) {
     const url = `${this.environment}areas/mutate`;
@@ -142,7 +142,7 @@ export class RegisterService {
       ],
     });
   }
-  
+
   // Eliminar Areas
   requestdeleteAreas(id: number) {
     let url = `${this.environment}areas`;
@@ -153,7 +153,48 @@ export class RegisterService {
     });
   }
 
-  
+  //Registrar Vehiculos
+  postRegisterVehiculos(objVehiculo: any) {
+    const url = `${this.environment}vehiculos/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'create',
+          attributes: {
+            placa: objVehiculo.placa,
+            tipo: objVehiculo.tipo,
+            descripcion: objVehiculo.descripcion,
+          },
+        },
+      ],
+    });
+  }
 
+  //Editar Vehiculos
+  postEditVehiculos(objVehiculo: any) {
+    const url = `${this.environment}vehiculos/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'update',
+          key: objVehiculo.id,
+          attributes: {
+            placa: objVehiculo.placa,
+            tipo: objVehiculo.tipo,
+            descripcion: objVehiculo.descripcion,
+          },
+        },
+      ],
+    });
+  }
 
+  //Eliminar Vehiculos
+  requestdeleteVehiculos(id: number) {
+    let url = `${this.environment}vehiculos`;
+    return this.http.request('DELETE', url, {
+      body: {
+        resources: [id],
+      },
+    });
+  }
 }

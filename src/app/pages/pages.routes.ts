@@ -14,6 +14,10 @@ export const routes: Routes = [
         loadComponent: () => import('./productos/productos.component'),
       },
       {
+        path: 'vehiculos',
+        loadComponent: () => import('./vehiculos/vehiculos.component'),
+      },
+      {
         path: 'trabajadores',
         loadComponent: () => import('./trabajadores/trabajadores.component'),
       },

@@ -50,6 +50,11 @@ export class MenuComponent {
                   routerLink: '/home/productos',
                 },
                 {
+                  label: 'Vehiculos',
+                  icon: 'pi pi-car',
+                  routerLink: '/home/vehiculos',
+                },
+                {
                   label: 'Trabajadores',
                   icon: 'pi pi-users',
                   routerLink: '/home/trabajadores',
