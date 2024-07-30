@@ -94,12 +94,24 @@
         <td>No tiene</td>
         }
         <td>
-          <button
-            pButton
-            icon="pi pi-pencil"
-            class="p-button-rounded p-button mr-2"
-            (click)="showDialog(user)"
-          ></button>
+          <div class="flex md:flex-row">
+            <div>
+              <button
+                pButton
+                icon="pi pi-pencil"
+                class="p-button-rounded p-button mr-2"
+                (click)="showDialog(user)"
+              ></button>
+            </div>
+            <div>
+              <p-button
+                icon="pi pi-trash"
+                [rounded]="true"
+                severity="danger"
+                (click)="deleteUsers(user)"
+              />
+            </div>
+          </div>
         </td>
       </tr>
     </ng-template>
@@ -223,9 +235,8 @@
       </div>
     </p-footer>
   </p-dialog>
-
-  <p-toast
-    [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
-  >
-  </p-toast>
 </div>
+<p-toast [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }">
+</p-toast>
+
+<p-confirmDialog />

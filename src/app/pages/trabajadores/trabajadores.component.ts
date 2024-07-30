@@ -210,4 +210,26 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     this.loading = false;
     this.loadingSave = false;
   }
+
+
+  deleteUsers(user: User) {
+    this.srvConfirm.confirm({
+      message: '¿Está seguro de eliminar el trabajador?',
+      header: 'Confirmación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Eliminar',
+      accept: async () => {
+        try {
+          const res = await this.srvReg
+            .requestdeleteProducts(user.id)
+            .toPromise();
+          this.handleResponse(res, 'Eliminado');
+
+          await this.getListUsuarios();
+        } catch (error) {
+          this.handleError(error, 'Error al eliminar producto');
+        }
+      },
+    });
+  }
 }
