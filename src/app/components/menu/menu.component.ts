@@ -36,7 +36,7 @@ export class MenuComponent {
               label: 'Opciones',
               items: [
                 {
-                  label: 'Roles',
+                  label: 'Usuarios',
                   icon: 'pi pi-user',
                   routerLink: '/home/roles',
                 },{
