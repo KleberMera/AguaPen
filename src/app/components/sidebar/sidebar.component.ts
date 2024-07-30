@@ -6,7 +6,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { StyleClassModule } from 'primeng/styleclass';
 import { Sidebar } from 'primeng/sidebar';
 import { NavigationEnd, Router } from '@angular/router';
-import { SidebarService } from '../../services/sidebar.service';
+
 import { CommonModule } from '@angular/common';
 import { ImageModule } from 'primeng/image';
 import { AuthService } from '../../services/auth.service';
@@ -51,7 +51,7 @@ export class SidebarComponent implements OnInit {
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
 
-  constructor(private sidebarService: SidebarService,
+  constructor(
     public layoutService: LayoutService, public el: ElementRef
   ) {}
 

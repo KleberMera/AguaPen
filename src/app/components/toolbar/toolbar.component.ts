@@ -19,7 +19,7 @@ import { PasswordModule } from 'primeng/password';
 import { FormsModule } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { SidebarService } from '../../services/sidebar.service';
+
 import { filter, Subscription } from 'rxjs';
 import { CheckboxModule } from 'primeng/checkbox';
 import { LayoutService } from '../../services/layout.service';
