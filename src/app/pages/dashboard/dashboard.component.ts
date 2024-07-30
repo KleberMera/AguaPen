@@ -55,18 +55,28 @@ export default class DashboardComponent implements OnInit {
   }
 
   async fetchData(): Promise<void> {
+    // Obtiene el número total de productos
     const resc = await this.srvCount.countProducts().toPromise();
     this.totalProductos = resc.data;
+  
+    // Obtiene la lista de productos
     const res = await this.srvList.getlistProducts().toPromise();
-    const topProducts = res.data
-      .sort((a: any, b: any) => b.stock_producto - a.stock_producto)
+    const allProducts = res.data;
+  
+    // Filtra los productos con stock mayor a 0
+    const productsWithStock = allProducts.filter((product: any) => product.stock_producto > 0);
+  
+    // Ordena los productos por stock ascendente y selecciona los 5 con menor stock
+    const lowStockProducts = productsWithStock
+      .sort((a: any, b: any) => a.stock_producto - b.stock_producto)
       .slice(0, 5);
-
+  
+    // Configura los datos del gráfico
     this.chartData = {
-      labels: topProducts.map((product: any) => product.nombre_producto),
+      labels: lowStockProducts.map((product: any) => product.nombre_producto),
       datasets: [
         {
-          data: topProducts.map((product: any) => product.stock_producto),
+          data: lowStockProducts.map((product: any) => product.stock_producto),
           backgroundColor: [
             '#FF3284',
             '#36A2EB',
@@ -77,15 +87,19 @@ export default class DashboardComponent implements OnInit {
         },
       ],
     };
-
+  
+    // Obtiene el número total de usuarios
     const res2 = await this.srvCount.countUsers().toPromise();
     this.totalUsuarios = res2.data;
-
+  
+    // Obtiene el número total de áreas
     const res3 = await this.srvCount.countAreas().toPromise();
     this.totalAreas = res3.data;
-
+  
+    // Desactiva el indicador de carga
     this.loading = false;
   }
+  
 
   fetchAreas(): void {
     this.dataSubscription = this.srvList.getReportsAreas().subscribe((res) => {

@@ -19,7 +19,7 @@
         <div class="flex justify-content-between mb-3">
           <div>
             <span class="block text-500 font-medium mb-3">Asignaciones</span>
-            <div class="text-800 font-medium">¿Qué desea registrar?</div>
+            <div class="text-800 font-medium">Asignar a:</div>
           </div>
           <div
             class="flex align-items-center justify-content-center bg-blue-100 border-round"
@@ -31,11 +31,11 @@
         <div>
           <div class="flex align-items-center justify-content">
             <div class="font-bold">
-              <span><p-button pRipple label="Productos" (click)="navigateTo('productos')" /></span>
+              <span><p-button pRipple label="Trabajadores" (click)="navigateTo('productos')" /></span>
             </div>
             <div class="font-bold flex">
               &nbsp;
-              <span><p-button pRipple label="Extintores" outlined="true" (click)="navigateTo('extintores')" /></span>
+              <span><p-button pRipple label="Areas" outlined="true" (click)="navigateTo('extintores')" /></span>
             </div>
           </div>
         </div>
@@ -111,7 +111,7 @@
       </div>
     </div>
     <div class="col-12 xl:col-6">
-      <h3>Listado de Áreas</h3>
+      <h3>Asignaciones por Áreas</h3>
       <div class="card">
         <p-table
           [value]="areas"
@@ -135,7 +135,7 @@
       </div>
     </div>
     <div class="col-12 xl:col-6">
-      <h3>Productos con más stock</h3>
+      <h3>Productos con menos stock</h3>
       <div class="card flex flex-column align-items-center">
         <p-chart type="doughnut" [data]="chartData"></p-chart>
       </div>
