@@ -124,18 +124,8 @@ export class AuthService {
     localStorage.setItem('user', JSON.stringify(user));
   }
 
-getToken(): string | null {
-    const token = localStorage.getItem(this.tokenKey);
-    if (token) {
-      const parsedToken = JSON.parse(token);
-      if (parsedToken && new Date(parsedToken.expiration) > new Date()) {
-        return parsedToken.token;
-      } else {
-        this.clearAuthData();
-        return null;
-      }
-    }
-    return null;
+  getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
   }
 
   setToken(token: string) {
