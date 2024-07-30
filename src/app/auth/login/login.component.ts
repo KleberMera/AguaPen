@@ -53,6 +53,8 @@ export default class LoginComponent {
 
       this.srvAuth.login(dataLogin).subscribe({
         next: (res: any) => {
+          console.log(res);
+          
           this.loading = false;
           if (res && res.usuario) {
             this.srvMensajes.add({

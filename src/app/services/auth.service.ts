@@ -124,12 +124,13 @@ export class AuthService {
     localStorage.setItem('user', JSON.stringify(user));
   }
 
-  getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+  getToken():  any  {
+    const tokenKey = localStorage.getItem(this.tokenKey);
+    return tokenKey ? JSON.parse(tokenKey) : null;
   }
 
-  setToken(token: string) {
-    localStorage.setItem(this.tokenKey, token);
+  setToken(tokenKey: string) {
+    localStorage.setItem(this.tokenKey, JSON.stringify(tokenKey));
   }
 
   clearAuthData() {
