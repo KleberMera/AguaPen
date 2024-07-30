@@ -71,14 +71,21 @@
         styleClass="custombar1"
       >
         @if (selectedProducts.length) {
+          
         <div class="flex flex-column">
+          <div class="mb-3">
+            <span class="font-bold">Productos: {{ selectedProducts.length }}</span>
+          </div>
           @for (product of selectedProducts; track $index) {
           <div class="mb-3">
             <div class="flex align-items-center gap-3">
               <span class="font-bold">{{ product.nombre_producto }}</span>
               <span>Cantidad: {{ product.cantidad }}</span>
+            
             </div>
+           
           </div>
+         
           }
         </div>
         } @else {
@@ -116,6 +123,7 @@
   >
     <ng-template pTemplate="header">
       <tr>
+        <th>Codigo</th>
         <th pSortableColumn="nombre_producto">
           Nombre del Producto
           <p-sortIcon field="nombre_producto"></p-sortIcon>
@@ -126,6 +134,7 @@
     </ng-template>
     <ng-template pTemplate="body" let-producto>
       <tr>
+        <td>{{ producto.codigo_producto }}</td>
         <td>{{ producto.nombre_producto }}</td>
         <td>{{ producto.stock_producto }}</td>
         <td>

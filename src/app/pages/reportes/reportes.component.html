@@ -117,11 +117,13 @@
     <ng-template pTemplate="header">
       <tr>
         <th>ID</th>
+        <th>Codigo</th>
         <th pSortableColumn="fecha_registro">
           Fecha
           <p-sortIcon field="fecha_registro"></p-sortIcon>
         </th>
         <th>Nombre</th>
+       
         <th>Producto</th>
         <th>Cantidad</th>
         <th>Total Cantidades</th>
@@ -130,8 +132,10 @@
     <ng-template pTemplate="body" let-report>
       <tr>
         <td>{{ report.id }}</td>
+         <td>{{ report.codigo_producto }}</td>
         <td>{{ report.fecha_registro }}</td>
         <td>{{ report.nombre }}</td>
+       
         <td>{{ report.nombre_producto }}</td>
         <td>{{ report.cantidad }}</td>
         <td>{{ report.total_cantidades }}</td>

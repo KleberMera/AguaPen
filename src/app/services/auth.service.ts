@@ -140,6 +140,7 @@ export class AuthService {
     }
     // Si el token es null, [object][object] o hay un error, eliminamos el token del localStorage
     localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem('user');
     return null;
   }
   

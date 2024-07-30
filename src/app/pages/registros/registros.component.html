@@ -175,10 +175,11 @@
   </div>
   <p-table
     [value]="filterProducts(searchTerm)"
-    [tableStyle]="{ 'min-width': '50rem' }"
+   
   >
     <ng-template pTemplate="header">
       <tr>
+        <th>Codigo</th>
         <th pSortableColumn="nombre_producto">
           Nombre del Producto
           <p-sortIcon field="nombre_producto"></p-sortIcon>
@@ -189,6 +190,7 @@
     </ng-template>
     <ng-template pTemplate="body" let-producto>
       <tr>
+        <td>{{ producto.codigo_producto }}</td>
         <td>{{ producto.nombre_producto }}</td>
         <td>{{ producto.stock_producto }}</td>
         <td>
@@ -206,14 +208,16 @@
           </ng-container>
 
           } @else {
-          <ng-container>
+            <div class="flex md:flex-row">
+           <div>
             <button
-              pButton
-              type="button"
-              icon="pi pi-minus"
-              class="p-button-rounded p-button-secondary p-button-outlined"
-              (click)="decrement(producto)"
-            ></button>
+            pButton
+            type="button"
+            icon="pi pi-minus"
+            class="p-button-rounded p-button-secondary p-button-outlined"
+            (click)="decrement(producto)"
+          ></button>
+           </div>
             <input
               type="number"
               pInputText
@@ -240,7 +244,7 @@
                 producto.cantidad < 1
               "
             ></button>
-          </ng-container>
+          </div>
           }
         </td>
       </tr>
