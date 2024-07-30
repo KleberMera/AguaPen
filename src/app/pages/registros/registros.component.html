@@ -131,6 +131,9 @@
         styleClass="custombar1"
       >
         @if (selectedProducts.length) {
+          <div class="mb-3">
+            <span class="font-bold">Productos: {{ selectedProducts.length }}</span>
+          </div>
         <div class="flex flex-column">
           @for (product of selectedProducts; track $index) {
           <div class="mb-3">
