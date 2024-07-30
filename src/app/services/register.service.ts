@@ -21,6 +21,7 @@ export class RegisterService {
         {
           operation: 'create',
           attributes: {
+            codigo_producto: objProduct.codigo_producto,
             nombre_producto: objProduct.nombre_producto,
             fecha_producto: objProduct.fecha_producto,
             hora_producto: objProduct.hora_producto,

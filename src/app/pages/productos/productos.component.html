@@ -46,6 +46,7 @@
     >
     <ng-template pTemplate="header">
       <tr>
+        <th>Codigo</th>
         <th pSortableColumn="nombre_producto">
           Nombre del Producto
           <p-sortIcon field="nombre_producto"></p-sortIcon>
@@ -59,6 +60,7 @@
     </ng-template>
     <ng-template pTemplate="body" let-product>
       <tr>
+        <td>{{ product.codigo_producto }}</td>
         <td>{{ product.nombre_producto }}</td>
         <td>{{ product.stock_producto }}</td>
         <td>
@@ -100,6 +102,18 @@
   </ng-template>
   @if (selectedProduct) {
   <div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="codigo_producto" class="font-semibold w-6rem">Código:</label>
+      <input
+        id="codigo_producto"
+        pInputText
+        class="flex-auto"
+        [(ngModel)]="selectedProduct.codigo_producto"
+        disabled
+      />
+    </div>
+    
+    
     <div class="flex align-items-center gap-3 mb-3">
       <label for="nombre_producto" class="font-semibold w-6rem"
         >Nombre del Producto:

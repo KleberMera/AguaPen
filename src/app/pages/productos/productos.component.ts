@@ -58,6 +58,7 @@ export default class ProductosComponent implements OnInit {
     const lowerQuery = query.toLowerCase();
     return this.listProduct.filter((product) =>
       product.nombre_producto.toLowerCase().includes(lowerQuery)
+      || product.codigo_producto.toLowerCase().includes(lowerQuery)
     );
   }
 
@@ -77,8 +78,18 @@ export default class ProductosComponent implements OnInit {
   }
 
   private createNewProduct(): Product {
+    // Obtener el último producto ordenando por el campo codigo_producto
+    const lastProduct = this.listProduct.sort((a, b) =>
+      a.codigo_producto > b.codigo_producto ? -1 : 1
+    )[0];
+  
+    // Determinar el último código de producto y calcular el siguiente código
+    const lastCode = lastProduct ? lastProduct.codigo_producto : '000';
+    const nextCode = (parseInt(lastCode, 10) + 1).toString().padStart(3, '0');
+  
     return {
       id: 0,
+      codigo_producto: nextCode, // Asignar el siguiente código
       nombre_producto: '',
       fecha_producto: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
       hora_producto: formatDate(new Date(), 'HH:mm', 'en-US'),
@@ -86,10 +97,12 @@ export default class ProductosComponent implements OnInit {
       cantidad: 0,
     };
   }
+  
 
   private async addProduct() {
     if (!this.validateProduct()) return;
     try {
+      
       const res = await this.srvReg
         .postRegisterProducts(this.selectedProduct!)
         .toPromise();
