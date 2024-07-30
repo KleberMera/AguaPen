@@ -32,11 +32,6 @@ export class AuthService {
       );
   }
 
-  private getStoredUser(): any {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
-  }
-
   verDatosUsuario(usuarioId: string): Observable<any> {
     const url = `${this.environment}usuarios/${usuarioId}`;
     return this.http.get(url);
@@ -119,6 +114,11 @@ export class AuthService {
     });
   }
 
+  private getStoredUser(): any {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+  }
+
   setUser(user: any) {
     this.userSubject.next(user);
     localStorage.setItem('user', JSON.stringify(user));
@@ -138,8 +138,8 @@ getToken(): string | null {
     return null;
   }
 
-  setToken(token: any) {
-    localStorage.setItem(this.tokenKey, JSON.stringify(token));
+  setToken(token: string) {
+    localStorage.setItem(this.tokenKey, token);
   }
 
   clearAuthData() {

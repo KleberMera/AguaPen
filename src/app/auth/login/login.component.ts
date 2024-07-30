@@ -45,7 +45,7 @@ export default class LoginComponent {
     });
   }
 
-getLogin() {
+  getLogin() {
     this.loading = true;
 
     if (this.loginForm.valid) {
@@ -54,25 +54,30 @@ getLogin() {
       this.srvAuth.login(dataLogin).subscribe({
         next: (res: any) => {
           this.loading = false;
-          if (res.usuario) {
+          if (res && res.usuario) {
             this.srvMensajes.add({
               severity: 'success',
               summary: 'Login',
-              detail: res.message,
+              detail: 'Inicio de sesión exitoso',
             });
             // Redirigir al usuario a la página de inicio
             this.router.navigate(['home']);
-          } 
+          } else {
+            this.loading = false;
+            this.srvMensajes.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: res.mensaje || 'Error al iniciar sesión',
+            });
+          }
         },
         error: (err) => {
           this.loading = false;
           this.srvMensajes.add({
             severity: 'error',
             summary: 'Error',
-            detail: err.error.message,
+            detail: 'Error al iniciar sesión',
           });
-          console.log(err.error.message);
-          
         },
       });
     } else {

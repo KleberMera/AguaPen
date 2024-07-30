@@ -23,7 +23,7 @@ export const routes: Routes = [
       },
       {
         path: 'roles',
-        loadComponent: () => import('./roles/roles.component'),
+        loadComponent: () => import('./usuarios-roles/roles.component'),
       },
       {
         path: 'registros',
