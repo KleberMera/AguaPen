@@ -124,10 +124,26 @@ export class AuthService {
     localStorage.setItem('user', JSON.stringify(user));
   }
 
-  getToken():  any  {
-    const tokenKey = localStorage.getItem(this.tokenKey);
-    return tokenKey ? JSON.parse(tokenKey) : null;
+  getToken(): any {
+    const token = localStorage.getItem(this.tokenKey);
+    if (token) {
+      try {
+        const parsedToken = JSON.parse(token);
+        // Verificar si el token no es null y no es una cadena incorrecta
+        if (parsedToken !== null &&   parsedToken !== '[object][object]') {
+          return parsedToken;
+        }
+      } catch (error) {
+        // En caso de error al parsear, también removemos el token
+        console.error('Error parsing token:', error);
+      }
+    }
+    // Si el token es null, [object][object] o hay un error, eliminamos el token del localStorage
+    localStorage.removeItem(this.tokenKey);
+    return null;
   }
+  
+  
 
   setToken(tokenKey: string) {
     localStorage.setItem(this.tokenKey, JSON.stringify(tokenKey));
