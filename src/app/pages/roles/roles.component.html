@@ -103,15 +103,18 @@
   <div class="col-12 xl:col-6">
     <div class="card">
       @if (users.length > 0) {
-        <h2>Listado de Usuarios</h2>
-      <div *ngFor="let user of users" class="flex align-items-center justify-content-between p-2">
+      <h2>Listado de Usuarios</h2>
+      <div
+        *ngFor="let user of users"
+        class="flex align-items-center justify-content-between p-2"
+      >
         <div class="flex align-items-center">
           <p-avatar
-          [label]="getInitial(user.nombres)"
-          styleClass="mr-2"
-          size="xlarge"
-          shape="circle"
-        ></p-avatar>
+            [label]="getInitial(user.nombres)"
+            styleClass="mr-2"
+            size="xlarge"
+            shape="circle"
+          ></p-avatar>
           <div>
             <div>{{ user.nombres }}</div>
             <div>{{ user.apellidos }}</div>
@@ -124,21 +127,19 @@
           (click)="confirmDeleteUser(user.id)"
         ></button>
       </div>
+      } @else { @if (users.length > 0) {
+      <p>No hay usuarios registrados</p>
       } @else {
-        @if (users.length > 0) {
-          <p>No hay usuarios registrados</p>
-        } @else {
-          <div class="loading-container">
-            <p>Cargando Usuarios..</p>
-            <p-progressSpinner
-              ariaLabel="loading"
-              styleClass="w-4rem h-4rem"
-              strokeWidth="8"
-              fill="var(--surface-ground)"
-            ></p-progressSpinner>
-          </div>
-        }
-      }
+      <div class="loading-container">
+        <p>Cargando Usuarios..</p>
+        <p-progressSpinner
+          ariaLabel="loading"
+          styleClass="w-4rem h-4rem"
+          strokeWidth="8"
+          fill="var(--surface-ground)"
+        ></p-progressSpinner>
+      </div>
+      } }
     </div>
   </div>
 </div>

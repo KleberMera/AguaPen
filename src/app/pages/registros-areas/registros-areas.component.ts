@@ -317,9 +317,10 @@ export default class RegxAreaComponent {
 
   filterProducts(query: string) {
     const lowerQuery = query.toLowerCase();
-    return this.ListProductos.filter((product) =>
-      product.nombre_producto.toLowerCase().includes(lowerQuery)
-      || product.codigo_producto.toLowerCase().includes(lowerQuery)
+    return this.ListProductos.filter(
+      (product) =>
+        product.nombre_producto.toLowerCase().includes(lowerQuery) ||
+        product.codigo_producto.toLowerCase().includes(lowerQuery)
     );
   }
 

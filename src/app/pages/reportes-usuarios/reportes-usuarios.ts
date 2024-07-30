@@ -18,7 +18,6 @@ export const PRIMEMG_MODULES = [
   TableModule,
   FieldsetModule,
   ButtonModule,
-
   InputIconModule,
   InputTextModule,
   ToastModule,

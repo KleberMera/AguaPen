@@ -131,9 +131,11 @@
         styleClass="custombar1"
       >
         @if (selectedProducts.length) {
-          <div class="mb-3">
-            <span class="font-bold">Productos: {{ selectedProducts.length }}</span>
-          </div>
+        <div class="mb-3">
+          <span class="font-bold"
+            >Productos: {{ selectedProducts.length }}</span
+          >
+        </div>
         <div class="flex flex-column">
           @for (product of selectedProducts; track $index) {
           <div class="mb-3">
@@ -176,10 +178,7 @@
       </p-inputGroup>
     </div>
   </div>
-  <p-table
-    [value]="filterProducts(searchTerm)"
-   
-  >
+  <p-table [value]="filterProducts(searchTerm)">
     <ng-template pTemplate="header">
       <tr>
         <th>Codigo</th>
@@ -211,16 +210,16 @@
           </ng-container>
 
           } @else {
-            <div class="flex md:flex-row">
-           <div>
-            <button
-            pButton
-            type="button"
-            icon="pi pi-minus"
-            class="p-button-rounded p-button-secondary p-button-outlined"
-            (click)="decrement(producto)"
-          ></button>
-           </div>
+          <div class="flex md:flex-row">
+            <div>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-minus"
+                class="p-button-rounded p-button-secondary p-button-outlined"
+                (click)="decrement(producto)"
+              ></button>
+            </div>
             <input
               type="number"
               pInputText

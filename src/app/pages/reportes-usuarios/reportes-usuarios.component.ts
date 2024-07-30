@@ -5,11 +5,10 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { PRIMEMG_MODULES } from '../registros/registros.imports';
 import { FormsModule } from '@angular/forms';
 
-
 @Component({
   selector: 'app-reportes-usuarios',
   standalone: true,
-  imports: [PRIMEMG_MODULES,FormsModule],
+  imports: [PRIMEMG_MODULES, FormsModule],
   templateUrl: './reportes-usuarios.component.html',
   styleUrl: './reportes-usuarios.component.scss',
   providers: [MessageService, ConfirmationService],
