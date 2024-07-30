@@ -19,7 +19,7 @@ export default class DashboardComponent implements OnInit {
   nombres: string | null = '';
   usuario_id: string | null = '';
   apellidos: string | null = '';
-
+  totalvehiculos: string = '';
   totalProductos: string = '';
   totalUsuarios: string = '';
   totalAreas: string = '';
@@ -47,6 +47,8 @@ export default class DashboardComponent implements OnInit {
     });
     this.fetchData();
     this.fetchAreas();
+    this.fetchVehiculos(); 
+    console.log(this.totalvehiculos);
   }
 
   ngOnDestroy(): void {
@@ -54,6 +56,16 @@ export default class DashboardComponent implements OnInit {
     this.dataSubscriptions.forEach((sub) => sub.unsubscribe());
   }
 
+  fetchVehiculos(): void {
+    // Función para obtener y contar vehículos
+    this.srvList.getLisrVehiculos().subscribe((res) => {
+     
+      this.totalvehiculos = res.data.length.toString(); 
+    });
+   
+  }
+  
+  
   async fetchData(): Promise<void> {
     // Obtiene el número total de productos
     const resc = await this.srvCount.countProducts().toPromise();
@@ -125,6 +137,9 @@ export default class DashboardComponent implements OnInit {
         break;
       case 'home/trabajadores':
         this.router.navigate(['/home/trabajadores']);
+        break;
+      case 'home/vehiculos':
+        this.router.navigate(['/home/vehiculos']);
         break;
       default:
         break;

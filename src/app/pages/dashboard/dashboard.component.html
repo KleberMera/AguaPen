@@ -18,24 +18,20 @@
       <div class="card mb-0">
         <div class="flex justify-content-between mb-3">
           <div>
-            <span class="block text-500 font-medium mb-3">Asignaciones</span>
-            <div class="text-800 font-medium">Asignar a:</div>
+            <span class="block text-500 font-medium mb-3">Vehiculos</span>
+            <div class="text-900 font-medium">{{ totalvehiculos }}</div>          
           </div>
           <div
             class="flex align-items-center justify-content-center bg-blue-100 border-round"
             [style]="{ width: '2.5rem', height: '2.5rem' }"
           >
-            <i class="pi pi-list text-blue-500 text-xl"></i>
+            <i class="pi pi-car text-blue-500 text-xl"></i>
           </div>
         </div>
         <div>
           <div class="flex align-items-center justify-content">
-            <div class="font-bold">
-              <span><p-button pRipple label="Trabajadores" (click)="navigateTo('productos')" /></span>
-            </div>
-            <div class="font-bold flex">
-              &nbsp;
-              <span><p-button pRipple label="Areas" outlined="true" (click)="navigateTo('extintores')" /></span>
+            <div class="font-bold flex align-items-center justify-content-center">
+              <p-button pRipple label="Visualizar" outlined="true" (click)="navigateTo('home/vehiculos')" />
             </div>
           </div>
         </div>
