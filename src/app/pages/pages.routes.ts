@@ -48,9 +48,17 @@ export const routes: Routes = [
         
       },
       {
+        path: 'reportes-vehiculos',
+        loadComponent: () => import('./reportes-vehiculos/reportes-vehiculos.component'),
+      },
+      {
         path: 'registros-areas',
         loadComponent: () => import('./registros-areas/registros-areas.component'),
         
+      },
+      {
+        path: 'registros-vehiculos',
+        loadComponent: () => import('./registros-vehiculos/registros-vehiculos.component'),
       },
       {
         path: '**',

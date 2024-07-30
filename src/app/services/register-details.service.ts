@@ -69,6 +69,43 @@ postRegisterArea(objRegistro : any){
   });
 }
 
+//RegisterVehiculos
+postRegisterVehiculos(objRegistro : any){
+  const url = `${this.environment}registrovehiculos/mutate`;
+  return this.http.post(url, {
+    mutate: [
+      {
+        operation: 'create',
+        attributes: {
+          id_vehiculo: objRegistro.id_vehiculo,
+          fecha_registro: objRegistro.fecha_registro,
+          hora_registro: objRegistro.hora_registro,
+          observacion: objRegistro.observacion,
+        },
+      },
+    ],
+  });
+}
+
+//RegisterDetalleVehiculos
+postRegisterDetalleVehiculos(objRegistro : any){
+  const url = `${this.environment}registrodetallevehiculos/mutate`;
+  return this.http.post(url, {
+    mutate: [
+      {
+        operation: 'create',
+        attributes: {
+          id_registro_vehiculo: objRegistro.id_registro_vehiculo,
+          id_producto: objRegistro.id_producto,
+          cantidad: objRegistro.cantidad,
+        },
+      },
+    ],
+  });
+}
+
+
+
 postRegisterDetalleAreas(objDetalle : any){
   const url = `${this.environment}registrodetalleareas/mutate`;
   return this.http.post(url, {
@@ -104,6 +141,11 @@ postRegisterDetalleAreas(objDetalle : any){
 
   getidlastregistroarea() {
     const url = `${this.environment}idlastregistroarea`;
+    return this.http.get(url);
+  }
+
+  getidlastregistrovehiculos() {
+    const url = `${this.environment}idlastregistrovehiculos`;
     return this.http.get(url);
   }
 

@@ -49,4 +49,9 @@ export class ListService {
     const url = `${this.environment}obtenerRegistrosConDetallesArea`;
     return this.http.get<any>(url);
   }
+
+  getReportsVehiculos() {
+    const url = `${this.environment}obtenerRegistrosConDetallesVehiculos`;
+    return this.http.get<any>(url);
+  }
 }

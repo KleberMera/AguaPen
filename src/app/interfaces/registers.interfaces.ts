@@ -11,3 +11,11 @@ export interface registerArea {
   hora_registro: string;
   observacion: string;
 }
+
+
+export interface registerVehiculos {
+  id_vehiculo: number;
+  fecha_registro: string;
+  hora_registro: string;
+  observacion: string;
+}

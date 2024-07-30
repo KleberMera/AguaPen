@@ -75,6 +75,11 @@ export class MenuComponent {
                   icon: 'pi pi-list-check',
                   routerLink: '/home/registros-areas',
                 },
+                {
+                  label: 'A. Vehiculos',
+                  icon: 'pi pi-list-check',
+                  routerLink: '/home/registros-vehiculos',
+                }
               ],
             },
             {
@@ -84,6 +89,11 @@ export class MenuComponent {
                   label: 'Areas',
                   icon: 'pi pi-map-marker',
                   routerLink: '/home/reportes-areas',
+                },
+                {
+                  label: 'Vehiculos',
+                  icon: 'pi pi-car',
+                  routerLink: '/home/reportes-vehiculos',
                 },
                 {
                   label: 'General',
