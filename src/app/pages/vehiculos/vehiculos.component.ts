@@ -5,12 +5,11 @@ import { RegisterService } from '../../services/register.service';
 import { ListService } from '../../services/list.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-vehiculos',
   standalone: true,
-  imports: [PRIMENG_MODULES,FormsModule,CommonModule],
+  imports: [PRIMENG_MODULES,FormsModule],
   templateUrl: './vehiculos.component.html',
   styleUrl: './vehiculos.component.scss',
   providers: [MessageService, ConfirmationService],
@@ -35,7 +34,7 @@ export default class VehiculosComponent {
   private async listVehiculos() {
     this.loading = true;
     try {
-      const res = await this.srvList.getLisrVehiculos().toPromise();
+      const res = await this.srvList.getListVehiculos().toPromise();
       this.listVehiculo = res.data;
     } catch (error) {
       this.handleError(error, 'Error al cargar vehículos:');

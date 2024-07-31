@@ -58,7 +58,7 @@ export default class DashboardComponent implements OnInit {
 
   fetchVehiculos(): void {
     // Función para obtener y contar vehículos
-    this.srvList.getLisrVehiculos().subscribe((res) => {
+    this.srvList.getListVehiculos().subscribe((res) => {
      
       this.totalvehiculos = res.data.length.toString(); 
     });

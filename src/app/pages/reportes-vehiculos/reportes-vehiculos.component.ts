@@ -103,7 +103,7 @@ export default class ReportesVehiculosComponent {
   }
 
   getListVehiculos() {
-    this.SrvList.getLisrVehiculos().subscribe((res) => {
+    this.SrvList.getListVehiculos().subscribe((res) => {
       this.listVehiculos = res.data;
       console.log(this.listVehiculos);
       

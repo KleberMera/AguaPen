@@ -59,7 +59,7 @@ export default class RegistrosVehiculosComponent {
 
   async getListVehiculos(): Promise<void> {
     try {
-      const res = await this.srvList.getLisrVehiculos().toPromise();
+      const res = await this.srvList.getListVehiculos().toPromise();
       this.ListVehiculos = res.data;
       this.filteredVehiculos = this.ListVehiculos;
       this.dropdownOptions = this.ListVehiculos;

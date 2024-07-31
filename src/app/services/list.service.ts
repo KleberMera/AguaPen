@@ -35,15 +35,11 @@ export class ListService {
     return this.http.get<any>(url);
   }
 
-  getLisrVehiculos() {
+  getListVehiculos() {
     const url = `${this.environment}allvehiculos`;
     return this.http.get<any>(url);
   }
 
-  getListRegistros() {
-    const url = `${this.environment}registros/search`;
-    return this.http.post<any>(url, {});
-  }
 
   getReportsAreas() {
     const url = `${this.environment}obtenerRegistrosConDetallesArea`;
