@@ -5,6 +5,7 @@ import { RegisterService } from '../../services/register.service';
 import { ListService } from '../../services/list.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { FormsModule } from '@angular/forms';
+import { DeleteService } from '../../services/delete.service';
 
 @Component({
   selector: 'app-vehiculos',
@@ -26,6 +27,7 @@ export default class VehiculosComponent {
   private srvList = inject(ListService);
   private srvMensajes = inject(MessageService);
   private srvConfirm = inject(ConfirmationService);
+  private srvDelete = inject(DeleteService);
 
   ngOnInit(): void {
     this.listVehiculos();
@@ -101,7 +103,7 @@ export default class VehiculosComponent {
       acceptLabel: 'Eliminar',
       accept: async () => {
         try {
-          const res = await this.srvReg
+          const res = await this.srvDelete
             .requestdeleteVehiculos(vehiculo.id)
             .toPromise();
           this.handleResponse(res, 'Eliminado');

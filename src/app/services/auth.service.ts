@@ -25,7 +25,7 @@ export class AuthService {
       .pipe(
         tap((response: any) => {
           if (response && response.usuario) {
-            this.setUser(response.usuario);
+            this.setUser(response.usuario, response.token); // Pasar el token
             this.setToken(response.token);
           }
         })
@@ -97,7 +97,7 @@ export class AuthService {
     const url = `${this.environment}allusers`;
     const token = this.getToken();
     const headers = { Authorization: `Bearer ${token}` };
-    return this.http.post<any>(url, {}, { headers });
+    return this.http.get<any>(url,  { headers });
   }
 
   verifyCedula(cedula: string) {
@@ -123,7 +123,8 @@ export class AuthService {
     return user ? JSON.parse(user) : null;
   }
 
-  setUser(user: any) {
+  setUser(user: any, token: string) {
+    user.token = token; // Añadir el token al objeto de usuario
     this.userSubject.next(user);
     localStorage.setItem('user', JSON.stringify(user));
   }
@@ -133,19 +134,24 @@ export class AuthService {
     if (token) {
       try {
         const parsedToken = JSON.parse(token);
-        // Verificar si el token no es null y no es una cadena incorrecta
-        if (parsedToken !== null && parsedToken !== '[object][object]') {
+        const storedUser = this.getStoredUser();
+
+        // Verificar si el token es válido y corresponde al usuario almacenado
+        if (
+          parsedToken &&
+          storedUser &&
+          storedUser.token === parsedToken &&
+          parsedToken !== '[object][object]'
+        ) {
           return parsedToken;
         }
       } catch (error) {
-        // En caso de error al parsear, también removemos el token
         console.error('Error parsing token:', error);
       }
     }
-    // Si el token es null, [object][object] o hay un error, eliminamos el token del localStorage
-    localStorage.removeItem(this.tokenKey);
-    localStorage.removeItem('user');
 
+    // Si el token es inválido, eliminar todo del localStorage y cerrar sesión
+    this.clearAuthData();
     return null;
   }
 
@@ -153,14 +159,13 @@ export class AuthService {
     localStorage.setItem(this.tokenKey, JSON.stringify(tokenKey));
   }
 
+  isLoggedIn(): boolean {
+    return !!this.getToken();
+  }
   clearAuthData() {
     this.userSubject.next(null);
     localStorage.removeItem('user');
     localStorage.removeItem(this.tokenKey);
-  }
-
-  isLoggedIn(): boolean {
-    return !!this.getToken();
   }
 
   logout(): Observable<any> {

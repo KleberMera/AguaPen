@@ -51,25 +51,7 @@ export class RegisterService {
     });
   }
 
-  // Eliminacion de Productos
-  requestdeleteProducts(id: number) {
-    let url = `${this.environment}productos`;
-    return this.http.request('DELETE', url, {
-      body: {
-        resources: [id],
-      },
-    });
-  }
 
-  // Eliminacion de Productos
-  requestdeleteTrabajadores(id: number) {
-    let url = `${this.environment}usuariostrabajadores`;
-    return this.http.request('DELETE', url, {
-      body: {
-        resources: [id],
-      },
-    });
-  }
 
   // Registro de Trabajadores
   postRegisterUsers(objUser: any) {
@@ -143,16 +125,7 @@ export class RegisterService {
     });
   }
 
-  // Eliminar Areas
-  requestdeleteAreas(id: number) {
-    let url = `${this.environment}areas`;
-    return this.http.request('DELETE', url, {
-      body: {
-        resources: [id],
-      },
-    });
-  }
-
+ 
   //Registrar Vehiculos
   postRegisterVehiculos(objVehiculo: any) {
     const url = `${this.environment}vehiculos/mutate`;
@@ -188,13 +161,5 @@ export class RegisterService {
     });
   }
 
-  //Eliminar Vehiculos
-  requestdeleteVehiculos(id: number) {
-    let url = `${this.environment}vehiculos`;
-    return this.http.request('DELETE', url, {
-      body: {
-        resources: [id],
-      },
-    });
-  }
+  
 }

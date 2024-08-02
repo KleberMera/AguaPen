@@ -13,6 +13,7 @@ import { PRIMENG_MODULES } from './productos.import';
 // Providers for PrimeNG
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Product } from '../../interfaces/products.interfaces';
+import { DeleteService } from '../../services/delete.service';
 
 @Component({
   selector: 'app-productos',
@@ -37,6 +38,7 @@ export default class ProductosComponent implements OnInit {
   private srvReg = inject(RegisterService);
   private srvMensajes = inject(MessageService);
   private srvConfirm = inject(ConfirmationService);
+  private srvDelete = inject(DeleteService);
 
   ngOnInit(): void {
     this.listProductos();
@@ -132,7 +134,7 @@ export default class ProductosComponent implements OnInit {
       acceptLabel: 'Eliminar',
       accept: async () => {
         try {
-          const res = await this.srvReg
+          const res = await this.srvDelete
             .requestdeleteProducts(product.id)
             .toPromise();
           this.handleResponse(res, 'Eliminado');

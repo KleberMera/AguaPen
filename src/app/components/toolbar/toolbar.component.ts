@@ -5,47 +5,15 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ToolbarModule } from 'primeng/toolbar';
-import { SplitButtonModule } from 'primeng/splitbutton';
-import { InputTextModule } from 'primeng/inputtext';
-import { AvatarModule } from 'primeng/avatar';
-import { SidebarModule } from 'primeng/sidebar';
 import { ConfirmationService, MessageService, MenuItem } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
-import { ToastModule } from 'primeng/toast';
-import { ConfirmPopupModule } from 'primeng/confirmpopup';
-import { DialogModule } from 'primeng/dialog';
-import { PasswordModule } from 'primeng/password';
 import { FormsModule } from '@angular/forms';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-
-import { filter, Subscription } from 'rxjs';
-import { CheckboxModule } from 'primeng/checkbox';
-import { LayoutService } from '../../services/layout.service';
-import { ImageModule } from 'primeng/image';
-import { MenuModule } from 'primeng/menu';
-import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { ThemesComponent } from '../themes/themes.component';
-import { RippleModule } from 'primeng/ripple';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-
-const PRIMENG_MODULES = [
-  ToolbarModule,
-  ButtonModule,
-  SplitButtonModule,
-  InputTextModule,
-  AvatarModule,
-  SidebarModule,
-  ConfirmPopupModule,
-  ToastModule,
-  DialogModule,
-  PasswordModule,
-  CheckboxModule,
-  ImageModule,
-  RippleModule,
-  ConfirmDialogModule,
-];
+import { CommonModule } from '@angular/common';
+import { PRIMENG_MODULES } from './toolbar.import';
+import { LayoutService } from '../../services/layout.service';
 
 @Component({
   selector: 'app-toolbar',
@@ -103,7 +71,7 @@ export class ToolbarComponent implements OnInit {
       },
     });
   }
-  
+
   signOut() {
     this.srvAuth.logout().subscribe({
       next: () => {
@@ -111,7 +79,6 @@ export class ToolbarComponent implements OnInit {
           severity: 'info',
           summary: 'Confirmado',
           detail: 'Se ha cerrado la sesión',
-          life: 3000,
         });
         this.router.navigate(['/auth']);
       },
@@ -120,12 +87,10 @@ export class ToolbarComponent implements OnInit {
           severity: 'error',
           summary: 'Error',
           detail: 'Error al cerrar la sesión',
-          life: 3000,
         });
-      }
+      },
     });
   }
-  
 
   datesUser() {
     this.userSubscription = this.srvAuth.user$.subscribe((user) => {

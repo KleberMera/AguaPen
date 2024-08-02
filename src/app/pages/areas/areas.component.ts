@@ -6,6 +6,7 @@ import { ListService } from '../../services/list.service';
 import { PRIMENG_MODULES } from './areas.imports';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DeleteService } from '../../services/delete.service';
 
 @Component({
   selector: 'app-areas',
@@ -27,6 +28,7 @@ export default class AreasComponent {
   private srvList = inject(ListService);
   private srvMensajes = inject(MessageService);
   private srvConfirm = inject(ConfirmationService);
+  private srvDelete = inject(DeleteService);
 
   ngOnInit(): void {
     this.listAreas();
@@ -100,7 +102,7 @@ export default class AreasComponent {
       acceptLabel: 'Eliminar',
       accept: async () => {
         try {
-          const res = await this.srvReg
+          const res = await this.srvDelete
             .requestdeleteAreas(area.id)
             .toPromise();
           this.handleResponse(res, 'Eliminado');

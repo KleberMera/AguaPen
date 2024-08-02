@@ -10,6 +10,7 @@ import { User } from '../../interfaces/users.interfaces';
 // Imports of PrimeNG
 import { PRIMENG_MODULES } from './trabajadores.import';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { DeleteService } from '../../services/delete.service';
 
 @Component({
   selector: 'app-usuarios-trabajadores',
@@ -40,6 +41,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   private srvMensajes = inject(MessageService);
   private srvConfirm = inject(ConfirmationService);
   private srvReg = inject(RegisterService);
+  private srvDelete = inject(DeleteService);
 
   ngOnInit(): void {
     this.getListUsuarios();
@@ -219,7 +221,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
       acceptLabel: 'Eliminar',
       accept: async () => {
         try {
-          const res = await this.srvReg
+          const res = await this.srvDelete
             .requestdeleteTrabajadores(user.id)
             .toPromise();
           this.handleResponse(res, 'Eliminado');
