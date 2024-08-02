@@ -11,6 +11,7 @@ import { User } from '../../interfaces/users.interfaces';
 import { PRIMENG_MODULES } from './trabajadores.import';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DeleteService } from '../../services/delete.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-usuarios-trabajadores',
@@ -34,6 +35,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   areaOptions: any[] = [];
   cargoOptions: any[] = [];
   filteredCargoOptions: any[] = [];
+  rol_id: number = 0;
 
   currentUser: User = this.createEmptyUser();
 
@@ -42,9 +44,24 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   private srvConfirm = inject(ConfirmationService);
   private srvReg = inject(RegisterService);
   private srvDelete = inject(DeleteService);
+  private srvAuth = inject(AuthService);
 
   ngOnInit(): void {
-    this.getListUsuarios();
+    this.getUserRole();
+  }
+
+  async getUserRole() {
+    try {
+      const res = await this.srvAuth.viewDataUser().toPromise();
+      this.rol_id = res.data.rol_id;
+      this.getListUsuarios();
+    } catch (error) {
+      this.srvMensajes.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Ocurrió un error al obtener el rol del usuario.',
+      });
+    }
   }
 
   createEmptyUser(): User {
@@ -54,8 +71,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
       tx_cedula: '',
       tx_area: '',
       tx_cargo: '',
-      tx_vehiculo: '',
-      tx_vehiculo_descripcion: '',
+      
     };
   }
 

@@ -65,26 +65,7 @@
           <label class="font-bold">Cargo: </label>
           <span class="flex-auto">{{ selectedUser.tx_cargo }}</span>
         </div>
-        <div class="flex align-items-center gap-3 mb-3">
-          <label class="font-bold">Vehículo: </label>
-          <span class="flex-auto">{{
-            selectedUser.tx_vehiculo ? "Tiene" : "No Tiene"
-          }}</span>
-        </div>
-        @if (selectedUser.tx_vehiculo) {
-        <div>
-          <div class="flex align-items-center gap-3 mb-3">
-            <label class="font-bold">Placa: </label>
-            <span class="flex-auto">{{ selectedUser.tx_vehiculo }}</span>
-          </div>
-          <div class="flex align-items-center gap-3 mb-3">
-            <label class="font-bold">Tipo: </label>
-            <span class="flex-auto">
-              {{ selectedUser.tx_vehiculo_descripcion }}</span
-            >
-          </div>
-        </div>
-        }
+
       </div>
       <div class="footer">
         <div class="flex justify-content-end">

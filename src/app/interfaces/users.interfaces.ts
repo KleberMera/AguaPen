@@ -4,8 +4,7 @@ export interface User {
   tx_cedula: string;
   tx_area: string;
   tx_cargo: string;
-  tx_vehiculo?: string;
-  tx_vehiculo_descripcion?: string;
+
 }
 
 export interface usersAdmin {
@@ -14,7 +13,7 @@ export interface usersAdmin {
   telefono: string;
   nombres: string;
   apellidos: string;
-  correo: string;
+  email: string;
   usuario: string;
   password: string;
   rol_id: number;

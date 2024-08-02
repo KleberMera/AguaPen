@@ -7,11 +7,12 @@ import { MenuitemComponent } from '../menuitem/menuitem.component';
 import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { MessageService } from 'primeng/api';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [MenuComponent, FormsModule, MenuModule, MenuitemComponent],
+  imports: [MenuComponent, FormsModule, MenuModule, MenuitemComponent, ProgressSpinnerModule],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.scss',
   providers: [MessageService],
@@ -20,13 +21,37 @@ export class MenuComponent {
   private srvAuth = inject(AuthService);
   private messageService = inject(MessageService);
   public userSubscription: Subscription = new Subscription();
-  rol_id: string = '';
+  rol_id: number = 0;
   model: any[] = [];
-
+  loading: boolean = true;
   constructor(public layoutService: LayoutService) {}
 
   ngOnInit() {
-    this.datesUser();
+    this.dataUser();
+    
+  }
+
+  dataUser() {
+   this.srvAuth.viewDataUser().subscribe((res: any) => {
+      if (res) {
+        console.log(res.data);
+        
+        this.rol_id = res.data.rol_id;
+        this.initializeMenu();
+        this.loading = false;
+      } else {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo obtener la información del usuario.',
+        });
+      }
+    });
+  }
+
+  initializeMenu() {
+    console.log('el rol_id es', this.rol_id);
+    
     this.model = [
       {
         label: 'Home',
@@ -41,11 +66,14 @@ export class MenuComponent {
       {
         label: 'Opciones',
         items: [
-          {
-            label: 'Usuarios',
-            icon: 'pi pi-user',
-            routerLink: '/home/roles',
-          },
+          // Condicional para mostrar "Usuarios" solo si rol_id es 1
+          ...(this.rol_id === 1 ? [
+            {
+              label: 'Usuarios',
+              icon: 'pi pi-user',
+              routerLink: '/home/roles',
+            },
+          ] : []),
           {
             label: 'Areas',
             icon: 'pi pi-map-marker',
@@ -114,14 +142,5 @@ export class MenuComponent {
         ],
       },
     ];
-  }
-
-  datesUser() {
-    this.userSubscription = this.srvAuth.user$.subscribe((user) => {
-      if (user) {
-        this.rol_id = user.rol_id;
-        console.log(this.rol_id);
-      }
-    });
   }
 }

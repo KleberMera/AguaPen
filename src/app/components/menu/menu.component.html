@@ -1,10 +1,26 @@
-<ul class="layout-menu">
-  @for (item of model; track $index) {
-  <ng-container>
-    <app-menuitem [item]="item" [root]="true"></app-menuitem>
-    @if (item.separator) {
-    <li class="menu-separator"></li>
-    }
-  </ng-container>
+
+
+@if (loading) {
+  <div class="loading-container">
+    <p>Cargando menú...</p>
+    <p-progressSpinner
+      ariaLabel="loading"
+      styleClass="w-4rem h-4rem"
+      strokeWidth="8"
+      fill="var(--surface-ground)"
+    ></p-progressSpinner>
+  </div>
+  } @else {
+    <ul class="layout-menu">
+      @for (item of model; track $index) {
+      <ng-container>
+        <app-menuitem [item]="item" [root]="true"></app-menuitem>
+        @if (item.separator) {
+        <li class="menu-separator"></li>
+        }
+      </ng-container>
+      }
+    </ul>
+    
+
   }
-</ul>

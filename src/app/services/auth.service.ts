@@ -68,7 +68,7 @@ export class AuthService {
             telefono: objUser.telefono,
             nombres: objUser.nombres,
             apellidos: objUser.apellidos,
-            correo: objUser.correo,
+            email: objUser.email,
             usuario: objUser.usuario,
             password: objUser.password,
             rol_id: objUser.rol_id,

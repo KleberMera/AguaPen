@@ -13,6 +13,7 @@
       </p-inputGroup>
     </div>
   </div>
+  @if (rol_id === 1) {
   <div class="flex align-items-center gap-2 mb-3">
     <div class="col-3">
       <div class=" ">
@@ -24,6 +25,7 @@
       </div>
     </div>
   </div>
+  }
 </div>
 
 <div class="p-fluid">
@@ -77,8 +79,10 @@
         <th>Cédula</th>
         <th>Área</th>
         <th>Cargo</th>
-        <th>Vehículo</th>
+
+        @if (rol_id === 1) {
         <th>Acción</th>
+        }
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-user>
@@ -88,11 +92,8 @@
         <td>{{ user.tx_cedula }}</td>
         <td>{{ user.tx_area }}</td>
         <td>{{ user.tx_cargo }}</td>
-        @if (user.tx_vehiculo) {
-        <td>{{ user.tx_vehiculo }}</td>
-        } @else {
-        <td>No tiene</td>
-        }
+
+        @if (rol_id === 1) {
         <td>
           <div class="flex md:flex-row">
             <div>
@@ -113,6 +114,7 @@
             </div>
           </div>
         </td>
+        }
       </tr>
     </ng-template>
     } @else {
@@ -167,55 +169,7 @@
           [(ngModel)]="currentUser.tx_cargo"
         />
       </div>
-      @if (currentUser.tx_vehiculo && currentUser.tx_vehiculo_descripcion ) {
-      <div class="p-field">
-        <label for="tx_vehiculo">Placa</label>
-        <input
-          id="tx_vehiculo"
-          type="text"
-          pInputText
-          [(ngModel)]="currentUser.tx_vehiculo"
-        />
-      </div>
-      <div class="p-field">
-        <label for="tx_vehiculo_descripcion">Descripción del Vehículo</label>
-        <input
-          id="tx_vehiculo_descripcion"
-          type="text"
-          pInputText
-          [(ngModel)]="currentUser.tx_vehiculo_descripcion"
-        />
-      </div>
-      } @else {
-      <div class="p-field">
-        <label>Desea agregar un vehículo?</label>
-        &nbsp;
-        <p-checkbox [(ngModel)]="checked" [binary]="true"></p-checkbox>
 
-        @if (checked) { &nbsp;
-        <div class="p-field">
-          <label for="tx_vehiculo">Placa</label>
-          <input
-            id="tx_vehiculo"
-            type="text"
-            pInputText
-            [(ngModel)]="currentUser.tx_vehiculo"
-          />
-        </div>
-        <div class="p-field">
-          <label for="tx_vehiculo_descripcion">Descripción del Vehículo</label>
-          <input
-            id="tx_vehiculo_descripcion"
-            type="text"
-            pInputText
-            [(ngModel)]="currentUser.tx_vehiculo_descripcion"
-          />
-        </div>
-
-        }
-      </div>
-
-      }
     </div>
     <p-footer>
       <div>

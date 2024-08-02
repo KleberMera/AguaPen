@@ -22,7 +22,7 @@ export default class UsuariosRolesComponent implements OnInit {
     telefono: '',
     nombres: '',
     apellidos: '',
-    correo: '',
+    email: '',
     usuario: '',
     password: '',
     rol_id: 1, // Default role_id
@@ -41,6 +41,8 @@ export default class UsuariosRolesComponent implements OnInit {
 
   registerUser() {
     this.loading = true;
+    console.log(this.newUser);
+    
     this.authService.createUser(this.newUser).subscribe(
       (response) => {
         this.messageService.add({
@@ -107,7 +109,7 @@ export default class UsuariosRolesComponent implements OnInit {
       telefono: '',
       nombres: '',
       apellidos: '',
-      correo: '',
+      email: '',
       usuario: '',
       password: '',
       rol_id: 1, // Default role_id
