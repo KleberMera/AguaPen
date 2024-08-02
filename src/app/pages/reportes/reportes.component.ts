@@ -7,6 +7,7 @@ import { ListService } from '../../services/list.service';
 import { FormsModule } from '@angular/forms';
 import { PRIMEMG_MODULES } from './reportes.imports';
 
+
 @Component({
   selector: 'app-reportes',
   standalone: true,
@@ -138,7 +139,8 @@ export default class ReportesComponent implements OnInit {
 
   // Exportar la tabla de reportes a PDF
   exportToPDF(): void {
-    this.srvPrint.exportToPDF('reportTable', 'Reporte');
+    this.srvPrint.exportToPDF(this.filteredReports);
+    
   }
 
   // Imprimir la tabla de reportes

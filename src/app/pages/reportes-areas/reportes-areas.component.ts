@@ -111,4 +111,8 @@ export default class AreasComponent implements OnInit, OnDestroy {
   printTable(): void {
     this.srvPrint.printElement('reportTable');
   }
+  exportToPDF(): void {
+    this.srvPrint.exportToPDF(this.filteredReports);
+    
+  }
 }

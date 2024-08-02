@@ -23,6 +23,7 @@
       ></button>
     </p-inputGroup>
   </div>
+  
   <div class="field col">
     <p-dropdown
       id="dropdown"
@@ -42,6 +43,30 @@
       </ng-template>
     </p-dropdown>
   </div>
+  
+  <!-- Align buttons next to dropdown -->
+  <div class="field col">
+    <div class="p-d-flex p-ai-center">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-print"
+        (click)="printTable()"
+        class="p-button-rounded p-button-secondary p-mr-2"
+        aria-label="Imprimir"
+      ></button>
+      
+      
+      <button
+        pButton
+        type="button"
+        icon="pi pi-file-pdf"
+        (click)="exportToPDF()"
+        class="p-button-rounded p-button-secondary"
+        aria-label="Exportar a PDF"
+      ></button>
+    </div>
+  </div>
 </div>
 
 <div class="formgroup-inline">
@@ -55,6 +80,7 @@
       placeholder="Fecha Inicio"
     />
   </div>
+  
   <div class="field">
     <label for="endDate">Fecha Final:</label>
     <input
@@ -74,6 +100,7 @@
       (click)="filterReportsByDate()"
     ></button>
   </div>
+
   <div class="field">
     <button
       pButton
@@ -83,61 +110,47 @@
       class="p-ml-2"
     ></button>
   </div>
-  <div class="field">
-    <button
-      pButton
-      type="button"
-      icon="pi pi-print"
-      (click)="printTable()"
-      class="p-button-rounded p-button-secondary"
-      aria-label="Imprimir"
-      position="right"
-    ></button>
-  </div>
 </div>
 
 @if (loading) {
-<div class="loading-container p-d-flex p-jc-center p-ai-center p-flex-column">
-  <p>Cargando reportes...</p>
-  <p-progressSpinner
-    ariaLabel="loading"
-    styleClass="w-4rem h-4rem"
-    strokeWidth="8"
-    fill="var(--surface-ground)"
-  ></p-progressSpinner>
-</div>
-
+  <div class="loading-container p-d-flex p-jc-center p-ai-center p-flex-column">
+    <p>Cargando reportes...</p>
+    <p-progressSpinner
+      ariaLabel="loading"
+      styleClass="w-4rem h-4rem"
+      strokeWidth="8"
+      fill="var(--surface-ground)"
+    ></p-progressSpinner>
+  </div>
 } @else {
-
-<!-- Tabla de reportes -->
-<div id="reportTable">
-  <p-table [value]="filteredReports">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>ID</th>
-        <th>Codigo</th>
-        <th pSortableColumn="fecha_registro">
-          Fecha
-          <p-sortIcon field="fecha_registro"></p-sortIcon>
-        </th>
-        <th>Nombre</th>
-        <th>Producto</th>
-        <th>Cantidad</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-report>
-      <tr>
-        <td>{{ report.id }}</td>
-        <td>{{ report.codigo_producto }}</td>
-        <td>{{ report.fecha_registro }}</td>
-        <td>{{ report.nombre }}</td>
-
-        <td>{{ report.nombre_producto }}</td>
-        <td>{{ report.cantidad }}</td>
-      </tr>
-    </ng-template>
-  </p-table>
-</div>
+  <!-- Tabla de reportes -->
+  <div id="reportTable">
+    <p-table [value]="filteredReports">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>ID</th>
+          <th>Codigo</th>
+          <th pSortableColumn="fecha_registro">
+            Fecha
+            <p-sortIcon field="fecha_registro"></p-sortIcon>
+          </th>
+          <th>Nombre</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-report>
+        <tr>
+          <td>{{ report.id }}</td>
+          <td>{{ report.codigo_producto }}</td>
+          <td>{{ report.fecha_registro }}</td>
+          <td>{{ report.nombre }}</td>
+          <td>{{ report.nombre_producto }}</td>
+          <td>{{ report.cantidad }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 }
 
 <p-toast
