@@ -113,4 +113,8 @@ export default class ReportesVehiculosComponent {
   printTable(): void {
     this.srvPrint.printElement('reportTable');
   }
+  exportToPDF(): void {
+    this.srvPrint.exportToPDF(this.filteredReports);
+    
+  }
 }

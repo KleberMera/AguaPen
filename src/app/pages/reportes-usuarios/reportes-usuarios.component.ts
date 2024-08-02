@@ -149,4 +149,8 @@ export default class ReportesUsuariosComponent implements OnInit {
   printTable(): void {
     this.srvPrint.printElement('reportTable');
   }
+  exportToPDF(): void {
+    this.srvPrint.exportToPDF(this.filteredReports);
+    
+  }
 }
