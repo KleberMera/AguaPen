@@ -38,7 +38,6 @@ export class AuthService {
     const headers = { Authorization: `Bearer ${token}` };
     return this.http.get(url, { headers });
   }
-  
 
   updateUser(objUser: any) {
     const url = `${this.environment}users/mutate`;
@@ -135,7 +134,7 @@ export class AuthService {
       try {
         const parsedToken = JSON.parse(token);
         // Verificar si el token no es null y no es una cadena incorrecta
-        if (parsedToken !== null &&   parsedToken !== '[object][object]') {
+        if (parsedToken !== null && parsedToken !== '[object][object]') {
           return parsedToken;
         }
       } catch (error) {
@@ -146,11 +145,9 @@ export class AuthService {
     // Si el token es null, [object][object] o hay un error, eliminamos el token del localStorage
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem('user');
-    this.logout();
+
     return null;
   }
-  
-  
 
   setToken(tokenKey: string) {
     localStorage.setItem(this.tokenKey, JSON.stringify(tokenKey));
@@ -160,7 +157,6 @@ export class AuthService {
     this.userSubject.next(null);
     localStorage.removeItem('user');
     localStorage.removeItem(this.tokenKey);
-    this.logout();
   }
 
   isLoggedIn(): boolean {
@@ -171,12 +167,11 @@ export class AuthService {
     const url = `${this.environment}logout`;
     const token = this.getToken();
     const headers = { Authorization: `Bearer ${token}` };
-    
+
     return this.http.post(url, {}, { headers }).pipe(
       tap(() => {
         this.clearAuthData();
       })
     );
   }
-  
 }

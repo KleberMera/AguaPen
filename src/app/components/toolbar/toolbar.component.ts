@@ -91,13 +91,6 @@ export class ToolbarComponent implements OnInit {
       acceptLabel: 'Salir',
       rejectLabel: 'Cancelar',
       accept: () => {
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Confirmado',
-          detail: 'Se ha cerrado la sesión',
-          life: 3000,
-        });
-
         this.signOut();
       },
       reject: () => {
@@ -110,11 +103,29 @@ export class ToolbarComponent implements OnInit {
       },
     });
   }
-
+  
   signOut() {
-    this.srvAuth.clearAuthData();
-    this.router.navigate(['/auth']);
+    this.srvAuth.logout().subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Confirmado',
+          detail: 'Se ha cerrado la sesión',
+          life: 3000,
+        });
+        this.router.navigate(['/auth']);
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al cerrar la sesión',
+          life: 3000,
+        });
+      }
+    });
   }
+  
 
   datesUser() {
     this.userSubscription = this.srvAuth.user$.subscribe((user) => {
