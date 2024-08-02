@@ -34,7 +34,7 @@ export class MenuComponent {
   dataUser() {
    this.srvAuth.viewDataUser().subscribe((res: any) => {
       if (res) {
-        console.log(res.data);
+       
         
         this.rol_id = res.data.rol_id;
         this.initializeMenu();
@@ -50,8 +50,7 @@ export class MenuComponent {
   }
 
   initializeMenu() {
-    console.log('el rol_id es', this.rol_id);
-    
+
     this.model = [
       {
         label: 'Home',
