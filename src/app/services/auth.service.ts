@@ -32,13 +32,16 @@ export class AuthService {
       );
   }
 
-  verDatosUsuario(usuarioId: string): Observable<any> {
-    const url = `${this.environment}usuarios/${usuarioId}`;
-    return this.http.get(url);
+  viewDataUser(usuarioId: string): Observable<any> {
+    const url = `${this.environment}users/${usuarioId}`;
+    const token = this.getToken();
+    const headers = { Authorization: `Bearer ${token}` };
+    return this.http.get(url, { headers });
   }
+  
 
   updateUser(objUser: any) {
-    const url = `${this.environment}usuarios/mutate`;
+    const url = `${this.environment}users/mutate`;
     return this.http.post(url, {
       mutate: [
         {
@@ -61,7 +64,7 @@ export class AuthService {
 
   // Registro de Usuarios Admin
   createUser(objUser: any) {
-    const url = `${this.environment}usuarios/mutate`;
+    const url = `${this.environment}users/mutate`;
     return this.http.post(url, {
       mutate: [
         {
@@ -83,7 +86,7 @@ export class AuthService {
 
   //Delete Users
   deleteUser(id: number) {
-    const url = `${this.environment}usuarios`;
+    const url = `${this.environment}users`;
     return this.http.request('DELETE', url, {
       body: {
         resources: [id],
@@ -91,9 +94,11 @@ export class AuthService {
     });
   }
 
-  listUsers() {
-    const url = `${this.environment}usuarios/search`;
-    return this.http.post<any>(url, {});
+  listUsers(): Observable<any> {
+    const url = `${this.environment}allusers`;
+    const token = this.getToken();
+    const headers = { Authorization: `Bearer ${token}` };
+    return this.http.post<any>(url, {}, { headers });
   }
 
   verifyCedula(cedula: string) {
@@ -141,6 +146,7 @@ export class AuthService {
     // Si el token es null, [object][object] o hay un error, eliminamos el token del localStorage
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem('user');
+    this.logout();
     return null;
   }
   
@@ -154,9 +160,23 @@ export class AuthService {
     this.userSubject.next(null);
     localStorage.removeItem('user');
     localStorage.removeItem(this.tokenKey);
+    this.logout();
   }
 
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
+
+  logout(): Observable<any> {
+    const url = `${this.environment}logout`;
+    const token = this.getToken();
+    const headers = { Authorization: `Bearer ${token}` };
+    
+    return this.http.post(url, {}, { headers }).pipe(
+      tap(() => {
+        this.clearAuthData();
+      })
+    );
+  }
+  
 }

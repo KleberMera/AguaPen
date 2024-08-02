@@ -166,4 +166,33 @@ postRegisterDetalleAreas(objDetalle : any){
       ],
     });
   }
+
+   requestdeletedetalleareas(id: number) {
+    let url = `${this.environment}registrodetalleareas`;
+    return this.http.request('DELETE', url, {
+      body: {
+        resources: [id],
+      },
+    });
+  }
+
+  //Eliminar Vehiculos
+  requestdeletedetallevehiculos(id: number) {
+    let url = `${this.environment}registrodetallevehiculos`;
+    return this.http.request('DELETE', url, {
+      body: {
+        resources: [id],
+      },
+    });
+  }
+
+  //Eliminar Vehiculos
+  requestdeletedetalle(id: number) {
+    let url = `${this.environment}registrosdetalle`;
+    return this.http.request('DELETE', url, {
+      body: {
+        resources: [id],
+      },
+    });
+  }
 }

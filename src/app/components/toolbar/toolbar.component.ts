@@ -120,10 +120,10 @@ export class ToolbarComponent implements OnInit {
     this.userSubscription = this.srvAuth.user$.subscribe((user) => {
       if (user) {
         const userId = user.id;
-        this.srvAuth.verDatosUsuario(userId).subscribe((res: any) => {
-          if (res && res.usuario) {
-            this.user = res.usuario;
-            
+
+        this.srvAuth.viewDataUser(userId).subscribe((res: any) => {
+          if (res) {
+            this.user = res.data;
           } else {
             this.messageService.add({
               severity: 'error',
@@ -131,12 +131,6 @@ export class ToolbarComponent implements OnInit {
               detail: 'No se pudo obtener la información del usuario.',
             });
           }
-        });
-      } else {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Usuario no identificado.',
         });
       }
     });
