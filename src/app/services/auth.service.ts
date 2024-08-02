@@ -32,12 +32,7 @@ export class AuthService {
       );
   }
 
-  viewDataUser(usuarioId: string): Observable<any> {
-    const url = `${this.environment}users/${usuarioId}`;
-    const token = this.getToken();
-    const headers = { Authorization: `Bearer ${token}` };
-    return this.http.get(url, { headers });
-  }
+
 
   updateUser(objUser: any) {
     const url = `${this.environment}users/mutate`;
@@ -95,6 +90,13 @@ export class AuthService {
 
   listUsers(): Observable<any> {
     const url = `${this.environment}allusers`;
+    const token = this.getToken();
+    const headers = { Authorization: `Bearer ${token}` };
+    return this.http.get<any>(url,  { headers });
+  }
+
+  viewDataUser(): Observable<any> {
+    const url = `${this.environment}user`;
     const token = this.getToken();
     const headers = { Authorization: `Bearer ${token}` };
     return this.http.get<any>(url,  { headers });

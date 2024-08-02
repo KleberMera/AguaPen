@@ -46,9 +46,9 @@ export class ToolbarComponent implements OnInit {
   private messageService = inject(MessageService);
 
   public layoutService = inject(LayoutService);
-  public userSubscription: Subscription = new Subscription();
+  
   ngOnInit(): void {
-    this.datesUser();
+    
   }
 
   logout(event: Event) {
@@ -73,40 +73,27 @@ export class ToolbarComponent implements OnInit {
   }
 
   signOut() {
-    this.srvAuth.logout().subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Confirmado',
-          detail: 'Se ha cerrado la sesión',
-        });
-        this.router.navigate(['/auth']);
-      },
-      error: (err) => {
+
+    this.srvAuth.logout().subscribe((res) => {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Confirmado',
+        detail: res.message,
+      });
+      this.router.navigate(['/auth']);
+    });
+    
+  }
+
+  dataUser() {
+    this.srvAuth.viewDataUser().subscribe((res: any) => {
+      if (res) {
+        this.user = res.data;
+      } else {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Error al cerrar la sesión',
-        });
-      },
-    });
-  }
-
-  datesUser() {
-    this.userSubscription = this.srvAuth.user$.subscribe((user) => {
-      if (user) {
-        const userId = user.id;
-
-        this.srvAuth.viewDataUser(userId).subscribe((res: any) => {
-          if (res) {
-            this.user = res.data;
-          } else {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'No se pudo obtener la información del usuario.',
-            });
-          }
+          detail: 'No se pudo obtener la información del usuario.',
         });
       }
     });

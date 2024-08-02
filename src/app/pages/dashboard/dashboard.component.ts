@@ -33,28 +33,30 @@ export default class DashboardComponent implements OnInit {
   private router = inject(Router);
   private srvList = inject(ListService);
   private srvCount = inject(CountdataService);
-  private userSubscription!: Subscription;
-  private dataSubscriptions: Subscription[] = [];
+
   public dataSubscription!: Subscription;
 
   ngOnInit(): void {
-    this.userSubscription = this.srvAuth.user$.subscribe((user) => {
-      if (user) {
-        this.nombres = user.nombres;
-        this.usuario_id = user.id;
-        this.apellidos = user.apellidos;
-      }
-    });
+    this.dataUser();
+    
     this.fetchData();
     this.fetchAreas();
     this.fetchVehiculos(); 
     console.log(this.totalvehiculos);
   }
 
-  ngOnDestroy(): void {
-    this.userSubscription.unsubscribe();
-    this.dataSubscriptions.forEach((sub) => sub.unsubscribe());
+  dataUser(){
+    //sacar usuario de local storage
+    const user = localStorage.getItem('user');
+    if (user) {
+      const parsedUser = JSON.parse(user);
+      this.nombres = parsedUser.nombres;
+      this.usuario_id = parsedUser.id;
+      this.apellidos = parsedUser.apellidos;
+    }
   }
+
+
 
   fetchVehiculos(): void {
     // Función para obtener y contar vehículos
