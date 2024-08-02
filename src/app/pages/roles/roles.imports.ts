@@ -16,7 +16,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { RippleModule } from 'primeng/ripple';
 import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
-
+import { DropdownModule } from 'primeng/dropdown';
 export const PRIMENG_MODULES = [
   FieldsetModule,
   TableModule,
@@ -34,6 +34,7 @@ export const PRIMENG_MODULES = [
   InputIconModule,
   RippleModule,
   AvatarModule,
-  BadgeModule
+  BadgeModule,
+  DropdownModule
 
 ];

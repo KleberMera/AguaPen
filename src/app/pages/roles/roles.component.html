@@ -4,6 +4,17 @@
       <h2>Registro de Usuarios</h2>
       <form (ngSubmit)="registerUser()">
         <div class="field">
+          <label for="rol">Roles</label>
+          &nbsp;
+          <p-dropdown
+            [options]="roles"
+            [(ngModel)]="newUser.rol_id"
+            name="rol"
+            placeholder="Selecciona un rol"
+            required
+          ></p-dropdown>
+        </div>
+        <div class="field">
           <label for="nombres">Nombres</label>
           <input
             id="nombres"
@@ -14,6 +25,7 @@
             name="nombres"
             required
           />
+          <div *ngIf="!validateNombres()" class="p-error">Nombres solo pueden contener letras</div>
         </div>
         <div class="field">
           <label for="apellidos">Apellidos</label>
@@ -26,6 +38,7 @@
             name="apellidos"
             required
           />
+          <div *ngIf="!validateApellidos()" class="p-error">Apellidos solo pueden contener letras</div>
         </div>
         <div class="field">
           <label for="cedula">Cédula</label>
@@ -38,6 +51,7 @@
             name="cedula"
             required
           />
+          <div *ngIf="!validateCedula()" class="p-error">Cédula debe tener 10 dígitos</div>
         </div>
         <div class="field">
           <label for="telefono">Teléfono</label>
@@ -50,6 +64,7 @@
             name="telefono"
             required
           />
+          <div *ngIf="!validateTelefono()" class="p-error">Teléfono debe tener 10 dígitos</div>
         </div>
         <div class="field">
           <label for="correo">Email</label>
@@ -62,6 +77,7 @@
             name="email"
             required
           />
+          <div *ngIf="!validateEmail()" class="p-error">Correo electrónico no es válido</div>
         </div>
         <div class="field">
           <label for="usuario">Usuario</label>
@@ -87,12 +103,14 @@
             required
           />
         </div>
+
         <div class="field">
           <button
             pButton
             type="submit"
             label="Registrar"
             class="p-button-success"
+            [disabled]="!validateForm()"
             [loading]="loading"
           ></button>
         </div>
@@ -102,36 +120,31 @@
 
   <div class="col-12 xl:col-6">
     <div class="card">
-      @if (users.length > 0) {
       <h2>Listado de Usuarios</h2>
-      <div
-        *ngFor="let user of users"
-        class="flex align-items-center justify-content-between p-2"
-      >
-        <div class="flex align-items-center">
-          <p-avatar
-            [label]="getInitial(user.nombres)"
-            styleClass="mr-2"
-            size="xlarge"
-            shape="circle"
-          ></p-avatar>
-          <div>
-            <div>{{ user.nombres }}</div>
-            <div>{{ user.apellidos }}</div>
+      <div *ngIf="users.length > 0">
+        <div *ngFor="let user of users" class="flex align-items-center justify-content-between p-2">
+          <div class="flex align-items-center">
+            <p-avatar
+              [label]="getInitial(user.nombres)"
+              styleClass="mr-2"
+              size="xlarge"
+              shape="circle"
+            ></p-avatar>
+            <div>
+              <div>{{ user.nombres }}</div>
+              <div>{{ user.apellidos }}</div>
+            </div>
           </div>
+          <button
+            pButton
+            icon="pi pi-trash"
+            class="p-button-danger"
+            (click)="confirmDeleteUser(user.id)"
+          ></button>
         </div>
-        <button
-          pButton
-          icon="pi pi-trash"
-          class="p-button-danger"
-          (click)="confirmDeleteUser(user.id)"
-        ></button>
       </div>
-      } @else { @if (users.length > 0) {
-      <p>No hay usuarios registrados</p>
-      } @else {
-      <div class="loading-container">
-        <p>Cargando Usuarios..</p>
+      <div *ngIf="users.length === 0" class="loading-container">
+        <p>No hay usuarios registrados</p>
         <p-progressSpinner
           ariaLabel="loading"
           styleClass="w-4rem h-4rem"
@@ -139,7 +152,6 @@
           fill="var(--surface-ground)"
         ></p-progressSpinner>
       </div>
-      } }
     </div>
   </div>
 </div>

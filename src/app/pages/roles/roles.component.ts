@@ -25,8 +25,13 @@ export default class UsuariosRolesComponent implements OnInit {
     email: '',
     usuario: '',
     password: '',
-    rol_id: 1, // Default role_id
+    rol_id: 0, // Default role_id
   };
+
+  roles = [
+    { label: 'Administrador', value: 1 },
+    { label: 'Cliente', value: 2 },
+  ];
   loading: boolean = false;
 
   constructor(
@@ -40,29 +45,29 @@ export default class UsuariosRolesComponent implements OnInit {
   }
 
   registerUser() {
-    this.loading = true;
-    console.log(this.newUser);
-    
-    this.authService.createUser(this.newUser).subscribe(
-      (response) => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Usuario registrado exitosamente',
-        });
-        this.loading = false;
-        this.loadUsers(); // Reload the user list
-        this.resetForm(); // Reset form after registration
-      },
-      (error) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Error al registrar el usuario',
-        });
-        this.loading = false;
-      }
-    );
+    if (this.validateForm()) {
+      this.loading = true;
+      this.authService.createUser(this.newUser).subscribe(
+        (response) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Usuario registrado exitosamente',
+          });
+          this.loading = false;
+          this.loadUsers(); // Reload the user list
+          this.resetForm(); // Reset form after registration
+        },
+        (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al registrar el usuario',
+          });
+          this.loading = false;
+        }
+      );
+    }
   }
 
   loadUsers() {
@@ -70,7 +75,37 @@ export default class UsuariosRolesComponent implements OnInit {
       this.users = response.data; // Adjust based on your API response structure
     });
   }
+  
+  validateForm(): boolean {
+    return this.validateNombres() &&
+           this.validateApellidos() &&
+           this.validateCedula() &&
+           this.validateTelefono() &&
+           this.validateEmail();
+  }
 
+  validateNombres(): boolean {
+    const namePattern = /^[a-zA-Z\s]+$/;
+    return namePattern.test(this.newUser.nombres);
+  }
+
+  validateApellidos(): boolean {
+    const namePattern = /^[a-zA-Z\s]+$/;
+    return namePattern.test(this.newUser.apellidos);
+  }
+
+  validateCedula(): boolean {
+    return this.newUser.cedula.length === 10 && !isNaN(Number(this.newUser.cedula));
+  }
+
+  validateTelefono(): boolean {
+    return this.newUser.telefono.length === 10 && !isNaN(Number(this.newUser.telefono));
+  }
+
+  validateEmail(): boolean {
+    const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
+    return emailPattern.test(this.newUser.email);
+  }
   confirmDeleteUser(userId: number) {
     this.confirmationService.confirm({
       message: '¿Está seguro de eliminar este usuario?',
@@ -112,7 +147,7 @@ export default class UsuariosRolesComponent implements OnInit {
       email: '',
       usuario: '',
       password: '',
-      rol_id: 1, // Default role_id
+      rol_id: 0, // Default role_id
     };
   }
 
