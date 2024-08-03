@@ -6,4 +6,5 @@ export interface Product {
   hora_producto: string;
   stock_producto: number;
   cantidad: number;
+  estado: number;
 }

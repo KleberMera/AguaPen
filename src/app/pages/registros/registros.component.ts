@@ -197,7 +197,7 @@ export default class RegistrosComponent implements OnInit {
       return;
     }
   
-    this.mensajeDeDescarga();
+    this.MsjAntRegist();
   }
   
   
@@ -244,6 +244,8 @@ export default class RegistrosComponent implements OnInit {
     this.selectedProducts = [];
     this.showProductsTable = false;
     this.ListProductos.forEach((product) => (product.cantidad = 1));
+    this.observacion = '';
+
   }
 
   isProductSelected(product: Product): boolean {
@@ -309,7 +311,7 @@ export default class RegistrosComponent implements OnInit {
   }
  
   exportData() {
-    this.PrintService.exportAsignacion(this.selectedUser, this.selectedProducts);
+    this.PrintService.exportAsignacion(this.selectedUser, this.selectedProducts, this.observacion);
   }
 
 private mensajeDeDescarga(): void {
@@ -392,6 +394,18 @@ private async procederConRegistro(): Promise<void> {
   }
 }
 
-
+MsjAntRegist() {
+  this.confirmationService.confirm({
+    message: '¿Deseas registrar esta asignación?',
+    header: 'Confirmación de Registro',
+    icon: 'pi pi-exclamation-triangle',
+    accept: async () => {
+      this.mensajeDeDescarga(); // Llama a la función que maneja la descarga y el registro
+    },
+    reject: () => {
+      // No se hace nada en caso de rechazo
+    }
+  });
+}
 
 }

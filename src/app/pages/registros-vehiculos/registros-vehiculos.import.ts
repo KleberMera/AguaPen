@@ -13,6 +13,7 @@ import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 export const PrimeModules = [
   TableModule,
@@ -32,4 +33,5 @@ export const PrimeModules = [
   ButtonModule,
   InputGroupModule,
   InputGroupAddonModule,
+  ConfirmDialogModule,
 ];

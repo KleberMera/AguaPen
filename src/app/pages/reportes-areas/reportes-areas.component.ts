@@ -105,6 +105,7 @@ export default class AreasComponent implements OnInit, OnDestroy {
     this.SrvList.getListAreas().subscribe((res) => {
       this.listAreas = res.data;
       console.log(this.listAreas);
+      
     });
   }
 
@@ -112,7 +113,7 @@ export default class AreasComponent implements OnInit, OnDestroy {
     this.srvPrint.printElement('reportTable');
   }
   exportToPDF(): void {
-    this.srvPrint.exportToPDF(this.filteredReports);
+    this.srvPrint.exportToPDFAREA(this.filteredReports);
     
   }
 }

@@ -42,6 +42,7 @@ export default class ProductosComponent implements OnInit {
 
   ngOnInit(): void {
     this.listProductos();
+    
   }
 
   private async listProductos() {
@@ -97,14 +98,26 @@ export default class ProductosComponent implements OnInit {
       hora_producto: formatDate(new Date(), 'HH:mm', 'en-US'),
       stock_producto: 0,
       cantidad: 0,
+      estado: 0,
     };
   }
+  
   
 
   private async addProduct() {
     if (!this.validateProduct()) return;
+  
+    // Validar que el stock sea mayor o igual a 1
+    if (this.selectedProduct!.stock_producto < 1) {
+      this.srvMensajes.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'El stock del producto esta en 0',
+      });
+      return;
+    }
+  
     try {
-      
       const res = await this.srvReg
         .postRegisterProducts(this.selectedProduct!)
         .toPromise();
@@ -113,6 +126,7 @@ export default class ProductosComponent implements OnInit {
       this.handleError(error, 'Error al agregar producto');
     }
   }
+  
 
   private async editProduct() {
     if (!this.validateProduct()) return;
