@@ -86,18 +86,40 @@ export class ToolbarComponent implements OnInit {
   }
 
   dataUser() {
-    this.srvAuth.viewDataUser().subscribe((res: any) => {
-      if (res) {
-        this.user = res.data;
-      } else {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'No se pudo obtener la información del usuario.',
-        });
-      }
-    });
+    try {
+      this.srvAuth.viewDataUser().subscribe(
+        (res: any) => {
+          if (res) {
+            this.user = res.data;
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'No se pudo obtener la información del usuario.',
+            });
+          }
+        },
+        (error) => {
+          // Manejo de errores en la suscripción
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Ocurrió un error al obtener la información del usuario.',
+          });
+          this.srvAuth.clearAuthData();
+        }
+      );
+    } catch (error) {
+      // Manejo de errores generales
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Ocurrió un error inesperado.',
+      });
+      this.srvAuth.clearAuthData();
+    }
   }
+  
 
   updateUser(event: Event) {
     this.loadingUpdate = true;
