@@ -87,7 +87,7 @@ export class PrintService {
 
             // Uso de autoTable para agregar la tabla
             (doc as any).autoTable({
-              head: [['ID', 'Codigo', 'Fecha', 'Nombre', 'Producto', 'Cantidad']],
+              head: [['ID', 'Codigo', 'Fecha', 'Nombre', 'Producto', 'Cantidad', 'Firma']],
               body: data.slice(startIndex, startIndex + rowsPerPage).map(report => [
                 report.id,
                 report.codigo_producto,
@@ -138,7 +138,7 @@ export class PrintService {
     }
   }
 
-  exportAsignacion(selectedUser: any, selectedProducts: any[]): void {
+  exportAsignacion(selectedUser: any, selectedProducts: any[], observacion: string): void {
     this.dataUser().then(() => {
       // Asegúrate de que la información del usuario está disponible antes de generar el PDF
       if (!this.user.nombres || !this.user.cedula) {
@@ -228,7 +228,7 @@ export class PrintService {
               // Añadir resumen de usuario en la primera página
               const lastPageY = doc.internal.pageSize.height - marginBottom + 20;
               doc.setFontSize(10);
-
+              doc.text(`Observacion: ${observacion}`, 14, lastPageY - 30);
               // Información del usuario que inició sesión (lado izquierdo)
               const leftMargin = 14;
               doc.text('_________________', leftMargin, lastPageY - 10);
@@ -470,6 +470,190 @@ export class PrintService {
             }
           };
   
+          drawPage(0);
+        };
+      });
+    }).catch((error) => {
+      console.error('Error al cargar datos del usuario:', error);
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+  exportToPDFVEHICULO(data: any[]): void {
+    this.dataUser().then(() => {
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+
+      // Definir márgenes
+      const marginTop = 40;
+      const marginBottom = 30;
+
+      // Obtener la fecha y hora de exportación
+      const exportDate = new Date();
+      const exportDateString = exportDate.toLocaleString();
+
+      // Establecer la fuente a "Times"
+      doc.setFont('Times', 'normal');
+
+      // Cargar la imagen de fondo
+      this.loadImage('assets/fondo.webp').subscribe((imageData) => {
+        const img = new Image();
+        const url = URL.createObjectURL(new Blob([imageData], { type: 'image/webp' }));
+        img.src = url;
+
+        img.onload = () => {
+          let currentPage = 1;
+
+          const addBackgroundAndDate = () => {
+            doc.addImage(img, 'WEBP', 0, 0, pageWidth, pageHeight); 
+            doc.setFontSize(8);
+            doc.text(` ${exportDateString}`, 14, marginTop - 0);
+          };
+
+          const rowsPerPage = 25;
+
+          const drawPage = (startIndex: number) => {
+            if (startIndex >= data.length) return;
+
+            if (currentPage > 1) {
+              doc.addPage();
+            }
+
+            addBackgroundAndDate();
+
+            // Uso de autoTable para agregar la tabla
+            (doc as any).autoTable({
+              head: [['ID', 'Fecha', 'Placa', 'Producto', 'Cantidad','Observacion','Firma']],
+              body: data.slice(startIndex, startIndex + rowsPerPage).map(report => [
+                report.id,
+              
+                report.fecha_registro,
+                report.placa,
+                report.nombre_producto,
+                report.cantidad,
+                report.observacion
+              ]),
+              startY: marginTop + 10, 
+              margin: { top: marginTop, bottom: marginBottom },
+              didDrawPage: () => {
+                // Añadir número de página
+                doc.setFontSize(10);
+                doc.text(`Página ${currentPage}`, pageWidth - 30, pageHeight - 10);
+                currentPage++;
+              },
+              styles: {
+                font: 'Times', // Asegúrate de que la fuente se aplique aquí
+                fontSize: 10,
+              }
+            });
+
+            if (startIndex + rowsPerPage < data.length) {
+              drawPage(startIndex + rowsPerPage);
+            } else {
+              doc.save(`Reporte_${exportDateString.replace(/[/, :]/g, '_')}.pdf`);
+            }
+          };
+
+          drawPage(0);
+        };
+      });
+    }).catch((error) => {
+      console.error('Error al cargar datos del usuario:', error);
+    });
+  }
+
+
+
+
+
+
+
+
+
+  exportToPDFAREA(data: any[]): void {
+    this.dataUser().then(() => {
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+
+      // Definir márgenes
+      const marginTop = 40;
+      const marginBottom = 30;
+
+      // Obtener la fecha y hora de exportación
+      const exportDate = new Date();
+      const exportDateString = exportDate.toLocaleString();
+
+      // Establecer la fuente a "Times"
+      doc.setFont('Times', 'normal');
+
+      // Cargar la imagen de fondo
+      this.loadImage('assets/fondo.webp').subscribe((imageData) => {
+        const img = new Image();
+        const url = URL.createObjectURL(new Blob([imageData], { type: 'image/webp' }));
+        img.src = url;
+
+        img.onload = () => {
+          let currentPage = 1;
+
+          const addBackgroundAndDate = () => {
+            doc.addImage(img, 'WEBP', 0, 0, pageWidth, pageHeight); 
+            doc.setFontSize(8);
+            doc.text(` ${exportDateString}`, 14, marginTop - 0);
+          };
+
+          const rowsPerPage = 25;
+
+          const drawPage = (startIndex: number) => {
+            if (startIndex >= data.length) return;
+
+            if (currentPage > 1) {
+              doc.addPage();
+            }
+
+            addBackgroundAndDate();
+
+            // Uso de autoTable para agregar la tabla
+            (doc as any).autoTable({
+              head: [['ID', 'Fecha', 'Area', 'Producto', 'Cantidad','Observacion','Firma']],
+              body: data.slice(startIndex, startIndex + rowsPerPage).map(report => [
+                report.id,
+                report.fecha_registro,
+                report.nombre_area,
+                report.nombre_producto,
+                report.cantidad,
+                report.observacion
+              ]),
+              startY: marginTop + 10, 
+              margin: { top: marginTop, bottom: marginBottom },
+              didDrawPage: () => {
+                // Añadir número de página
+                doc.setFontSize(10);
+                doc.text(`Página ${currentPage}`, pageWidth - 30, pageHeight - 10);
+                currentPage++;
+              },
+              styles: {
+                font: 'Times', // Asegúrate de que la fuente se aplique aquí
+                fontSize: 10,
+              }
+            });
+
+            if (startIndex + rowsPerPage < data.length) {
+              drawPage(startIndex + rowsPerPage);
+            } else {
+              doc.save(`Reporte_${exportDateString.replace(/[/, :]/g, '_')}.pdf`);
+            }
+          };
+
           drawPage(0);
         };
       });
