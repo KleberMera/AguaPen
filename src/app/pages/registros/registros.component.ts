@@ -2,7 +2,7 @@ import { PrintService } from './../../services/print.service';
 import { Component, inject, OnInit } from '@angular/core';
 import { RegisterDetailsService } from '../../services/register-details.service';
 import { ListService } from '../../services/list.service';
-import { MessageService } from 'primeng/api';
+import {  ConfirmationService, MessageService } from 'primeng/api';
 import { formatDate } from '@angular/common';
 
 import { FormsModule } from '@angular/forms';
@@ -19,7 +19,7 @@ import { details } from '../../interfaces/details.interfaces';
   imports: [PRIMEMG_MODULES, FormsModule],
   templateUrl: './registros.component.html',
   styleUrl: './registros.component.scss',
-  providers: [MessageService],
+  providers: [MessageService,ConfirmationService],
 })
 export default class RegistrosComponent implements OnInit {
   ListUsers: User[] = [];
@@ -42,6 +42,7 @@ export default class RegistrosComponent implements OnInit {
   private srvList = inject(ListService);
   private PrintService = inject(PrintService);
   private messageService = inject(MessageService);
+  private confirmationService = inject(ConfirmationService);
 
   async ngOnInit(): Promise<void> {
     await this.loadInitialData();
@@ -186,7 +187,7 @@ export default class RegistrosComponent implements OnInit {
       });
       return;
     }
-
+  
     if (!this.selectedProducts.length) {
       this.messageService.add({
         severity: 'error',
@@ -195,49 +196,11 @@ export default class RegistrosComponent implements OnInit {
       });
       return;
     }
-
-    this.loading = true;
-    this.loadingMessage = 'Registrando Datos, espere un momento...';
-
-    try {
-      const registro: Registro = {
-        id_usuario: this.selectedUser.id,
-        fecha_registro: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
-        hora_registro: formatDate(new Date(), 'HH:mm', 'en-US'),
-        observacion: this.observacion,
-      };
-
-      const res: any = await this.srvRegDet
-        .postRegisterRegistro(registro)
-        .toPromise();
-      if (res) {
-        await this.guardarDetallesRegistro();
-        this.exportData();
-
-        this.clearForm();
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Registro exitoso',
-          detail: 'Se  registraron los detalles con éxito',
-        });
-        await this.getListProductos();
-      } else {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error de registro',
-          detail: res.mensaje || 'Error al registrar el usuario',
-        });
-      }
-    } catch (error) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Error al realizar el registro',
-      });
-    } finally {
-      this.loading = false;
-    }
+  
+    this.mensajeDeDescarga();
   }
+  
+  
 
   async guardarDetallesRegistro(): Promise<void> {
     try {
@@ -348,5 +311,87 @@ export default class RegistrosComponent implements OnInit {
   exportData() {
     this.PrintService.exportAsignacion(this.selectedUser, this.selectedProducts);
   }
+
+private mensajeDeDescarga(): void {
+  if (!this.selectedProducts.length) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error de exportación',
+      detail: 'No hay productos seleccionados para exportar.',
+    });
+    return;
+  }
+
+  this.confirmationService.confirm({
+    message: '¿Deseas exportar los datos a PDF?',
+    header: 'Confirmación',
+    icon: 'pi pi-exclamation-triangle',
+    accept: async () => {
+      // Llama a la función para exportar los datos
+      await this.exportData();
+
+      // Procede con el registro después de la exportación
+      this.procederConRegistro();
+    },
+    reject: () => {
+      this.procederConRegistro();
+    }
+  });
+}
+private async procederConRegistro(): Promise<void> {
+  if (!this.selectedUser) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error de registro',
+      detail: 'No hay usuario seleccionado para el registro.',
+    });
+    return;
+  }
+
+  this.loading = true;
+  this.loadingMessage = 'Registrando Datos, espere un momento...';
+
+  try {
+    // Asegúrate de que selectedUser no sea null antes de acceder a sus propiedades
+    const registro: Registro = {
+      id_usuario: this.selectedUser.id,  // Aquí `id_usuario` está asegurado de no ser `null`
+      fecha_registro: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
+      hora_registro: formatDate(new Date(), 'HH:mm', 'en-US'),
+      observacion: this.observacion,
+    };
+
+    const res: any = await this.srvRegDet
+      .postRegisterRegistro(registro)
+      .toPromise();
+
+    if (res) {
+      await this.guardarDetallesRegistro();
+
+      this.clearForm();
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Registro exitoso',
+        detail: 'Se registraron los detalles con éxito',
+      });
+      await this.getListProductos();
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error de registro',
+        detail: res.mensaje || 'Error al registrar el usuario',
+      });
+    }
+  } catch (error) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Error al realizar el registro',
+    });
+  } finally {
+    this.loading = false;
+  }
+}
+
+
 
 }
