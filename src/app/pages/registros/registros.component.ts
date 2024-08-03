@@ -1,3 +1,4 @@
+import { PrintService } from './../../services/print.service';
 import { Component, inject, OnInit } from '@angular/core';
 import { RegisterDetailsService } from '../../services/register-details.service';
 import { ListService } from '../../services/list.service';
@@ -39,6 +40,7 @@ export default class RegistrosComponent implements OnInit {
 
   private srvRegDet = inject(RegisterDetailsService);
   private srvList = inject(ListService);
+  private PrintService = inject(PrintService);
   private messageService = inject(MessageService);
 
   async ngOnInit(): Promise<void> {
@@ -210,6 +212,8 @@ export default class RegistrosComponent implements OnInit {
         .toPromise();
       if (res) {
         await this.guardarDetallesRegistro();
+        this.exportData();
+
         this.clearForm();
         this.messageService.add({
           severity: 'success',
@@ -340,4 +344,9 @@ export default class RegistrosComponent implements OnInit {
       });
     }
   }
+ 
+  exportData() {
+    this.PrintService.exportAsignacion(this.selectedUser, this.selectedProducts);
+  }
+
 }

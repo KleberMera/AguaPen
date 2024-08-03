@@ -1,3 +1,4 @@
+import { PrintService } from './../../services/print.service';
 import { Component, inject } from '@angular/core';
 import { PrimeModules } from './registros-vehiculos.import';
 import { MessageService } from 'primeng/api';
@@ -42,6 +43,7 @@ export default class RegistrosVehiculosComponent {
   private srvRegDet = inject(RegisterDetailsService);
   private srvList = inject(ListService);
   private messageService = inject(MessageService);
+  private PrintService = inject(PrintService);
 
   async ngOnInit(): Promise<void> {
     await this.loadInitialData();
@@ -248,11 +250,14 @@ export default class RegistrosVehiculosComponent {
         .toPromise();
       if (res) {
         await this.guardarDetallesRegistro();
+        this.exportData();
         this.clearForm();
         this.messageService.add({
           severity: 'success',
           summary: 'Registro exitoso',
           detail: 'Todos los registros fueron registrados exitosamente',
+          
+        
         });
         await this.getListProductos();
       } else {
@@ -348,4 +353,10 @@ export default class RegistrosVehiculosComponent {
       });
     }
   }
+
+
+  exportData() {
+    this.PrintService.exportAsigVehicle(this.selectedVehiculo, this.selectedProducts);
+  }
+
 }
