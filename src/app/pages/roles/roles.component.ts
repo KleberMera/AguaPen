@@ -16,6 +16,8 @@ import { CommonModule } from '@angular/common';
 })
 export default class UsuariosRolesComponent implements OnInit {
   users: usersAdmin[] = [];
+  loadingMessage: string = '';
+  loading: boolean = false;
   newUser: usersAdmin = {
     id: 0,
     cedula: '',
@@ -32,7 +34,7 @@ export default class UsuariosRolesComponent implements OnInit {
     { label: 'Administrador', value: 1 },
     { label: 'Cliente', value: 2 },
   ];
-  loading: boolean = false;
+
 
   constructor(
     private authService: AuthService,
@@ -41,6 +43,7 @@ export default class UsuariosRolesComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loadingMessage = 'Cargando datos...';
     this.loadUsers();
   }
 
@@ -72,7 +75,9 @@ export default class UsuariosRolesComponent implements OnInit {
 
   loadUsers() {
     this.authService.listUsers().subscribe((response) => {
+
       this.users = response.data; // Adjust based on your API response structure
+    
     });
   }
   

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { rolGuard } from '../guards/rol.guard';
 
 export const routes: Routes = [
   {
@@ -28,6 +29,7 @@ export const routes: Routes = [
       {
         path: 'roles',
         loadComponent: () => import('./roles/roles.component'),
+        canActivate: [rolGuard],
       },
       {
         path: 'registros',
