@@ -8,6 +8,7 @@ import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-menu',
@@ -20,6 +21,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 export class MenuComponent {
   private srvAuth = inject(AuthService);
   private messageService = inject(MessageService);
+  private router = inject(Router);
   public userSubscription: Subscription = new Subscription();
   rol_id: number = 0;
   model: any[] = [];
@@ -40,13 +42,28 @@ export class MenuComponent {
         this.initializeMenu();
         this.loading = false;
       } else {
+        this.signOut();
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'No se pudo obtener la información del usuario.',
         });
+        
       }
     });
+  }
+
+  signOut() {
+
+    this.srvAuth.logout().subscribe((res) => {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Confirmado',
+        detail: res.message,
+      });
+      this.router.navigate(['/auth']);
+    });
+    
   }
 
   initializeMenu() {
