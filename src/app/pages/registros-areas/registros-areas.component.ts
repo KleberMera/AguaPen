@@ -243,8 +243,7 @@ export default class RegxAreaComponent {
       return;
     }
   
-    this.mensajeDeDescarga();
-  }
+    this.MsjAntRegist();  }
 
   async guardarDetallesRegistro(): Promise<void> {
     try {
@@ -412,6 +411,22 @@ private async procederConRegistro(): Promise<void> {
   } finally {
     this.loading = false;
   }
+}
+
+
+
+MsjAntRegist() {
+  this.ConfirmationService.confirm({
+    message: '¿Deseas registrar esta asignación?',
+    header: 'Confirmación de Registro',
+    icon: 'pi pi-exclamation-triangle',
+    accept: async () => {
+      this.mensajeDeDescarga(); // Llama a la función que maneja la descarga y el registro
+    },
+    reject: () => {
+      // No se hace nada en caso de rechazo
+    }
+  });
 }
 }
 
