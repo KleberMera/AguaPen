@@ -4,6 +4,7 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { formatDate } from '@angular/common';
 
+
 // Services and interfaces of the app
 import { registerArea } from '../../interfaces/registers.interfaces';
 import { RegisterDetailsService } from '../../services/register-details.service';
@@ -12,10 +13,11 @@ import { ListService } from '../../services/list.service';
 // Imports of PrimeNG
 import { PrimeModules } from './registros-areas.import';
 // Providers of PrimeNG
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { Product } from '../../interfaces/products.interfaces';
 import { detailAreas } from '../../interfaces/details.interfaces';
 import { Area } from '../../interfaces/areas.interfaces';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-regx-area',
@@ -23,7 +25,7 @@ import { Area } from '../../interfaces/areas.interfaces';
   imports: [PrimeModules, FormsModule],
   templateUrl: './registros-areas.component.html',
   styleUrl: './registros-areas.component.scss',
-  providers: [MessageService],
+  providers: [MessageService,ConfirmationService],
 })
 export default class RegxAreaComponent {
   // List of areas and products for the app
@@ -48,7 +50,8 @@ export default class RegxAreaComponent {
   private srvRegDet = inject(RegisterDetailsService);
   private srvList = inject(ListService);
   private messageService = inject(MessageService);
-    private PrintService = inject(PrintService);
+  private PrintService = inject(PrintService);
+  private ConfirmationService = inject(ConfirmationService);
 
   async ngOnInit(): Promise<void> {
     await this.loadInitialData();
@@ -226,11 +229,11 @@ export default class RegxAreaComponent {
       this.messageService.add({
         severity: 'error',
         summary: 'Error de registro',
-        detail: 'Debe seleccionar el Area antes de registrar',
+        detail: 'Debe seleccionar una area antes de registrar',
       });
       return;
     }
-
+  
     if (!this.selectedProducts.length) {
       this.messageService.add({
         severity: 'error',
@@ -239,47 +242,8 @@ export default class RegxAreaComponent {
       });
       return;
     }
-
-    this.loading = true;
-    this.loadingMessage = 'Registrando Datos, espere un momento...';
-
-    try {
-      const registro: registerArea = {
-        id_area: this.selectedArea.id,
-        fecha_registro: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
-        hora_registro: formatDate(new Date(), 'HH:mm', 'en-US'),
-        observacion: this.observacion,
-      };
-
-      const res: any = await this.srvRegDet
-        .postRegisterArea(registro)
-        .toPromise();
-      if (res) {
-        await this.guardarDetallesRegistro();
-        this.exportData();
-        this.clearForm();
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Registro exitoso',
-          detail: 'Todos los registros fueron registrados exitosamente',
-        });
-        await this.getListProductos();
-      } else {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error de registro',
-          detail: res.mensaje || 'Error al registrar el usuario',
-        });
-      }
-    } catch (error) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Error al realizar el registro',
-      });
-    } finally {
-      this.loading = false;
-    }
+  
+    this.mensajeDeDescarga();
   }
 
   async guardarDetallesRegistro(): Promise<void> {
@@ -316,6 +280,7 @@ export default class RegxAreaComponent {
     this.selectedProducts = [];
     this.showProductsTable = false;
     this.ListProductos.forEach((product) => (product.cantidad = 1));
+    this.observacion = '';
   }
 
   filterProducts(query: string) {
@@ -357,6 +322,96 @@ export default class RegxAreaComponent {
   }
 
   exportData() {
-    this.PrintService.exportAsigAreas(this.selectedArea, this.selectedProducts);
+    this.PrintService.exportAsigAreas(this.selectedArea, this.selectedProducts, this.observacion);
   }
+
+private mensajeDeDescarga(): void {
+  if (!this.selectedProducts.length) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error de exportación',
+      detail: 'No hay productos seleccionados para exportar.',
+    });
+    return;
+  }
+
+  this.ConfirmationService.confirm({
+    message: '¿Deseas exportar los datos a PDF?',
+    header: 'Confirmación',
+    icon: 'pi pi-exclamation-triangle',
+    accept: async () => {
+      // Llama a la función para exportar los datos
+      await this.exportData();
+
+      // Procede con el registro después de la exportación
+      this.procederConRegistro();
+    },
+    reject: () => {
+      this.procederConRegistro();
+    }
+  });
 }
+
+
+
+
+
+
+
+
+
+private async procederConRegistro(): Promise<void> {
+  if (!this.selectedArea) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error de registro',
+      detail: 'No hay usuario seleccionado para el registro.',
+    });
+    return;
+  }
+
+  this.loading = true;
+  this.loadingMessage = 'Registrando Datos, espere un momento...';
+
+  try {
+    // Asegúrate de que selectedUser no sea null antes de acceder a sus propiedades
+    const registro: registerArea = {
+      id_area: this.selectedArea.id,
+      fecha_registro: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
+      hora_registro: formatDate(new Date(), 'HH:mm', 'en-US'),
+      observacion: this.observacion,
+    };
+
+    const res: any = await this.srvRegDet
+      .postRegisterArea(registro)
+      .toPromise();
+
+    if (res) {
+      await this.guardarDetallesRegistro();
+
+      this.clearForm();
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Registro exitoso',
+        detail: 'Se registraron los detalles con éxito',
+      });
+      await this.getListProductos();
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error de registro',
+        detail: res.mensaje || 'Error al registrar el usuario',
+      });
+    }
+  } catch (error) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Error al realizar el registro',
+    });
+  } finally {
+    this.loading = false;
+  }
+}
+}
+

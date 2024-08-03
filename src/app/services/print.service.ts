@@ -255,7 +255,7 @@ export class PrintService {
     });
   }
 
-  exportAsigVehicle(selectedVehiculo: any, selectedProducts: any[]): void {
+  exportAsigVehicle(selectedVehiculo: any, selectedProducts: any[], observacion: string): void {
     this.dataUser().then(() => {
       if (!this.user.nombres || !this.user.cedula) {
         console.error('Información del usuario no disponible.');
@@ -312,7 +312,7 @@ export class PrintService {
             const title = 'Productos';
             const titleWidth = doc.getTextWidth(title);
             const titleX = (pageWidth - titleWidth) / 2;
-            doc.text(title, titleX, marginTop + 45);
+            doc.text(title, titleX, marginTop + 35);
   
             (doc as any).autoTable({
               head: [['Codigo', 'Nombre', 'Cantidad']],
@@ -321,7 +321,7 @@ export class PrintService {
                 product.nombre_producto,
                 product.cantidad
               ]),
-              startY: marginTop + 50,
+              startY: marginTop + 40,
               margin: { top: marginTop, bottom: marginBottom },
               styles: {
                 font: 'Times',
@@ -345,7 +345,7 @@ export class PrintService {
             } else {
               const lastPageY = doc.internal.pageSize.height - marginBottom + 20;
               doc.setFontSize(10);
-  
+              doc.text(`Observacion: ${observacion}`, 14, lastPageY - 30);
               const leftMargin = 14;
               doc.text('_________________', leftMargin, lastPageY - 10);
               doc.text('Firma', leftMargin, lastPageY - 5);
@@ -368,7 +368,7 @@ export class PrintService {
     });
   }
   
-  exportAsigAreas(selectedArea: any, selectedProducts: any[]): void {
+  exportAsigAreas(selectedArea: any, selectedProducts: any[], observacion: string): void {
     this.dataUser().then(() => {
       if (!this.user.nombres || !this.user.cedula) {
         console.error('Información del usuario no disponible.');
@@ -416,14 +416,13 @@ export class PrintService {
               doc.setFontSize(12);
               doc.setFontSize(10);
               doc.text(` Area: ${selectedArea.nombre_area}`, 14, marginTop + 15);
-              
             }
   
             doc.setFontSize(12);
             const title = 'Productos';
             const titleWidth = doc.getTextWidth(title);
             const titleX = (pageWidth - titleWidth) / 2;
-            doc.text(title, titleX, marginTop + 45);
+            doc.text(title, titleX, marginTop + 20);
   
             (doc as any).autoTable({
               head: [['Codigo', 'Nombre', 'Cantidad']],
@@ -432,7 +431,7 @@ export class PrintService {
                 product.nombre_producto,
                 product.cantidad
               ]),
-              startY: marginTop + 50,
+              startY: marginTop + 25,
               margin: { top: marginTop, bottom: marginBottom },
               styles: {
                 font: 'Times',
@@ -456,7 +455,7 @@ export class PrintService {
             } else {
               const lastPageY = doc.internal.pageSize.height - marginBottom + 20;
               doc.setFontSize(10);
-  
+              doc.text(`Observacion: ${observacion}`, 14, lastPageY - 30);
               const leftMargin = 14;
               doc.text('_________________', leftMargin, lastPageY - 10);
               doc.text('Firma', leftMargin, lastPageY - 5);

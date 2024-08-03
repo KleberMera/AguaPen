@@ -244,6 +244,8 @@ export default class RegistrosComponent implements OnInit {
     this.selectedProducts = [];
     this.showProductsTable = false;
     this.ListProductos.forEach((product) => (product.cantidad = 1));
+    this.observacion = '';
+
   }
 
   isProductSelected(product: Product): boolean {
