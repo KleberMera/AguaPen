@@ -12,7 +12,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { ImageModule } from 'primeng/image';
 import { RippleModule } from 'primeng/ripple';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 export const PRIMENG_MODULES = [
   ToolbarModule,
   ButtonModule,
@@ -28,4 +28,5 @@ export const PRIMENG_MODULES = [
   ImageModule,
   RippleModule,
   ConfirmDialogModule,
+  ProgressSpinnerModule,
 ];

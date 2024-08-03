@@ -33,6 +33,7 @@ export class ToolbarComponent implements OnInit {
   changePassword: boolean = false; // Para controlar el checkbox
   password: string = ''; // Nueva contraseña
   confirmPassword: string = ''; // Confirmar nueva contraseña
+  loading: boolean = true;
 
   @ViewChild('menubutton') menuButton!: ElementRef;
 
@@ -89,6 +90,7 @@ export class ToolbarComponent implements OnInit {
     this.srvAuth.viewDataUser().subscribe((res: any) => {
       if (res) {
         this.user = res.data;
+        this.loading = false;
       } else {
         this.messageService.add({
           severity: 'error',
