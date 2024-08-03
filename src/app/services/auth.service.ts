@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +13,7 @@ export class AuthService {
   private userSubject = new BehaviorSubject<any>(this.getStoredUser());
   private tokenKey = 'auth_token';
   user$ = this.userSubject.asObservable();
+  private router = inject(Router);
 
   private http = inject(HttpClient);
 
@@ -99,8 +101,31 @@ export class AuthService {
     const url = `${this.environment}user`;
     const token = this.getToken();
     const headers = { Authorization: `Bearer ${token}` };
-    return this.http.get<any>(url,  { headers });
+  
+    return new Observable((observer) => {
+      try {
+        this.http.get<any>(url, { headers }).subscribe({
+          next: (res) => {
+            observer.next(res);
+            observer.complete();
+          },
+          error: (err) => {
+            this.clearAuthData(); // Limpiar localStorage en caso de error
+            observer.error(err);
+            console.log(err.message);
+            this.router.navigate(['/auth']);
+            
+          }
+        });
+      } catch (error : any) {
+        this.clearAuthData(); // Limpiar localStorage en caso de excepción
+        observer.error(error);
+        console.log(error.message);
+        this.router.navigate(['/auth']);
+      }
+    });
   }
+  
 
   verifyCedula(cedula: string) {
     const url = `${this.environment}verifycedula`;

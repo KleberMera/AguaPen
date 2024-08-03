@@ -96,7 +96,8 @@ export class ToolbarComponent implements OnInit {
           detail: 'No se pudo obtener la información del usuario.',
         });
       }
-    });
+    }
+  );
   }
 
   updateUser(event: Event) {
