@@ -43,6 +43,7 @@ export class MenuComponent {
         this.loading = false;
       } else {
         this.signOut();
+        this.loading = false;
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
