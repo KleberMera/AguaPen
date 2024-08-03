@@ -99,8 +99,26 @@ export class AuthService {
     const url = `${this.environment}user`;
     const token = this.getToken();
     const headers = { Authorization: `Bearer ${token}` };
-    return this.http.get<any>(url,  { headers });
+  
+    return new Observable((observer) => {
+      try {
+        this.http.get<any>(url, { headers }).subscribe({
+          next: (res) => {
+            observer.next(res);
+            observer.complete();
+          },
+          error: (err) => {
+            this.clearAuthData(); // Limpiar localStorage en caso de error
+            observer.error(err);
+          }
+        });
+      } catch (error) {
+        this.clearAuthData(); // Limpiar localStorage en caso de excepción
+        observer.error(error);
+      }
+    });
   }
+  
 
   verifyCedula(cedula: string) {
     const url = `${this.environment}verifycedula`;
