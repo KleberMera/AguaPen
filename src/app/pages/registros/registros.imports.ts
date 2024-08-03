@@ -14,12 +14,13 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 export const  PRIMEMG_MODULES = [
 
   TableModule,
   ButtonModule,
-
+  ConfirmDialogModule,
   InputIconModule,
   InputTextModule,
   ToastModule,

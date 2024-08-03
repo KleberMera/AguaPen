@@ -1,3 +1,4 @@
+import { PrintService } from './../../services/print.service';
 // Imports of Angular
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -47,6 +48,7 @@ export default class RegxAreaComponent {
   private srvRegDet = inject(RegisterDetailsService);
   private srvList = inject(ListService);
   private messageService = inject(MessageService);
+    private PrintService = inject(PrintService);
 
   async ngOnInit(): Promise<void> {
     await this.loadInitialData();
@@ -254,6 +256,7 @@ export default class RegxAreaComponent {
         .toPromise();
       if (res) {
         await this.guardarDetallesRegistro();
+        this.exportData();
         this.clearForm();
         this.messageService.add({
           severity: 'success',
@@ -352,4 +355,8 @@ export default class RegxAreaComponent {
       });
     }
   }
+
+  exportData() {
+    this.PrintService.exportAsigAreas(this.selectedArea, this.selectedProducts);
+  }
 }
