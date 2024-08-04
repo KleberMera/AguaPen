@@ -45,9 +45,11 @@ export default class ReportesComponent implements OnInit {
   // Cargar la lista de reportes desde el servicio
   loadReports() {
     const reportSubscription = this.srvList
-      .getviewRegistroAll()
+      .getReportsTrabajadores()
       .subscribe((res: any) => {
         this.listReports = res.data;
+        console.log(res.data);
+        
         this.filteredReports = res.data;
         this.uniqueUsers = this.extractUniqueUsers(res.data);
         this.loading = false;

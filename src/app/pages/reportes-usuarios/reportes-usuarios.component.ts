@@ -34,7 +34,7 @@ export default class ReportesUsuariosComponent implements OnInit {
   async viewListReports(): Promise<void> {
     this.loading = true;
     try {
-      const res: any = await this.srvList.getviewRegistroAll().toPromise();
+      const res: any = await this.srvList.getReportsTrabajadores().toPromise();
       this.listReports = res.data;
       this.filteredReports = res.data;
       this.uniqueUsers = this.getUniqueUsers(res.data);

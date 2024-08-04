@@ -1,1 +1,38 @@
-<p>edit-delete works!</p>
+<!-- edit-delete.component.html -->
+<div class="formgroup-inline">
+    <div class="field">
+      <p-dropdown
+        [options]="reportOptions"
+        [(ngModel)]="selectedReport"
+        placeholder="Seleccionar el tipo de reporte"
+        (onChange)="onReportChange($event)"
+      >
+      </p-dropdown>
+    </div>
+  
+    @if (trabajadoresOptions.length > 0) {
+    <div class="field">
+      <p-dropdown
+        [options]="trabajadoresOptions"
+        [(ngModel)]="selectedTrabajador"
+        placeholder="Seleccionar o escribir el trabajador"
+        [filter]="true"
+        filterBy="label,value"
+        (onChange)="onTrabajadorChange($event)"
+      >
+      </p-dropdown>
+    </div>
+    }
+  
+    @if (idRegistrosOptions.length > 0) {
+    <div class="field">
+      <p-dropdown
+        [options]="idRegistrosOptions"
+        [(ngModel)]="selectedIdRegistro"
+        placeholder="Seleccionar ID de Registro"
+      >
+      </p-dropdown>
+    </div>
+    }
+  </div>
+  
