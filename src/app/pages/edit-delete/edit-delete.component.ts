@@ -29,54 +29,40 @@ export default class EditDeleteComponent implements OnInit {
   selectedIdRegistro: string | undefined;
   registroDetalles: any[] = [];
   selectedProduct: any = null;
-  ListProductos: Product[] = [];
-  searchTerm: string = '';
-  selectedProducts: Product[] = [];
+
+  productosOptions: any[] = [];
+  selectedNewProduct: any = null;
+  newProductQuantity: number = 0;
 
   private srvList = inject(ListService);
   private messageService = inject(MessageService);
 
-  async ngOnInit(): Promise<void> {
-    await this.loadInitialData();
-  }
-  async getListProductos(): Promise<void> {
-    try {
-      const res = await this.srvList.getlistProducts().toPromise();
-      //Trare los productos activos
-      this.ListProductos = res.data
-        .filter(
-          (product: Product) =>
-            product.estado_producto === 1 && product.stock_producto > 0
-        )
-        .map((product: Product) => ({
-          ...product,
-          cantidad: 1,
-        }));
-    } catch (error) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Error al cargar productos',
-      });
-    }
-  }
 
-  filterProducts(query: string) {
-    const lowerQuery = query.toLowerCase();
-    return this.ListProductos.filter(
-      (product) =>
-        product.nombre_producto.toLowerCase().includes(lowerQuery) ||
-        product.codigo_producto.toLowerCase().includes(lowerQuery)
+  ngOnInit() {
+    this.srvList.getlistProducts().subscribe(
+      (res) => {
+        this.productosOptions = res.data
+          .filter((product: any) => product.stock_producto > 0 && product.estado_producto === 1)
+          .map((product: any) => ({
+            label: `${product.nombre_producto} (Código: ${product.codigo_producto})`,
+            value: product,
+          }));
+      },
+      (error) => console.error('Error fetching Productos:', error)
     );
   }
 
-  async loadInitialData(): Promise<void> {
-    try {
-      //   this.loading = true;
-      //  this.loadingMessage = 'Cargando datos...';
-      await Promise.all([this.getListProductos()]);
-    } finally {
-      // this.loading = false;
+  onNewProductChange(event: any) {
+    this.selectedNewProduct = event.value;
+    this.newProductQuantity = 0; // Reset quantity when a new product is selected
+  }
+
+  onReplaceProduct() {
+    if (this.selectedNewProduct && this.newProductQuantity > 0) {
+      console.log('Reemplazar producto con:', this.selectedNewProduct, 'Cantidad:', this.newProductQuantity);
+      // Implement the logic to replace the product in your service or component logic
+    } else {
+      this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: 'Selecciona un producto y cantidad válida' });
     }
   }
 
@@ -161,59 +147,5 @@ export default class EditDeleteComponent implements OnInit {
 
   onEditProduct(product: any) {
     this.selectedProduct = product;
-  }
-
-  isProductSelected(product: Product): boolean {
-    return this.selectedProducts.some((p) => p.id === product.id);
-  }
-
-  increment(product: Product) {
-    if (product.cantidad < product.stock_producto) {
-      product.cantidad++;
-    } else {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'No puedes agregar más de la cantidad en stock',
-      });
-    }
-  }
-
-  decrement(product: Product) {
-    if (product.cantidad > 1) {
-      product.cantidad--;
-    } else {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'La cantidad no puede ser menor a 1',
-      });
-    }
-  }
-
-  revertProduct(product: Product): void {
-    const index = this.selectedProducts.findIndex((p) => p.id === product.id);
-    if (index !== -1) {
-      this.selectedProducts.splice(index, 1);
-      product.cantidad = 0;
-    }
-  }
-
-  addProduct(producto: Product): void {
-    const foundProduct = this.selectedProducts.find(
-      (p) => p.id === producto.id
-    );
-
-    if (foundProduct) {
-      foundProduct.cantidad! += producto.cantidad!;
-    } else {
-      this.selectedProducts.push({ ...producto, cantidad: producto.cantidad });
-    }
-
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Producto agregado',
-      detail: `${producto.nombre_producto} agregado con éxito`,
-    });
   }
 }
