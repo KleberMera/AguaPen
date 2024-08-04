@@ -2,11 +2,12 @@ import { Component, inject } from '@angular/core';
 import { PRIMEMG_MODULES } from './edit-delete.imports';
 import { ListService } from '../../services/list.service';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-edit-delete',
   standalone: true,
-  imports: [PRIMEMG_MODULES, FormsModule],
+  imports: [PRIMEMG_MODULES, FormsModule, CommonModule],
   templateUrl: './edit-delete.component.html',
   styleUrl: './edit-delete.component.scss'
 })
@@ -23,6 +24,7 @@ export default class EditDeleteComponent {
   selectedReport: string | undefined;
   selectedTrabajador: string | undefined;
   selectedIdRegistro: string | undefined;
+  registroDetalles: any[] = [];
 
   private srvList = inject(ListService);
 
@@ -50,6 +52,7 @@ export default class EditDeleteComponent {
       this.selectedTrabajador = undefined;
       this.idRegistrosOptions = [];
       this.selectedIdRegistro = undefined;
+      this.registroDetalles = [];
     }
   }
 
@@ -60,7 +63,7 @@ export default class EditDeleteComponent {
         const registros = res.data.filter((item: any) => item.cedula === selectedTrabajadorCedula);
         const uniqueRegistros = new Set<number>();
         const uniqueIdRegistrosOptions: { label: string, value: number }[] = [];
-  
+
         registros.forEach((item: any) => {
           if (!uniqueRegistros.has(item.id_tbl_registros)) {
             uniqueRegistros.add(item.id_tbl_registros);
@@ -70,13 +73,32 @@ export default class EditDeleteComponent {
             });
           }
         });
-  
+
         this.idRegistrosOptions = uniqueIdRegistrosOptions;
         console.log('ID Registros Options:', this.idRegistrosOptions);
       },
       error => console.error('Error fetching ID Registros:', error)
     );
   }
-  
+
+  onIdRegistroChange(event: any) {
+    const selectedIdRegistro = event.value;
+    this.srvList.getReportsTrabajadores().subscribe(
+      res => {
+        const detalles = res.data.filter((item: any) => item.id_tbl_registros === selectedIdRegistro);
+        console.log('Detalles:', detalles);
+        
+        this.registroDetalles = detalles.map((item: any) => ({
+          id_tbl_registro_detalles: item.id_tbl_registro_detalles,
+          codigo_producto: item.codigo_producto,
+          id_tbl_productos: item.id_tbl_productos,
+          nombre_producto: item.nombre_producto,
+          cantidad: item.cantidad
+        }));
+        console.log('Registro Detalles:', this.registroDetalles);
+      },
+      error => console.error('Error fetching Registro Detalles:', error)
+    );
+  }
   
 }

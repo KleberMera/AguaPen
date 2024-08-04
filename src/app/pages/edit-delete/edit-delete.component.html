@@ -1,38 +1,81 @@
 <!-- edit-delete.component.html -->
 <div class="formgroup-inline">
-    <div class="field">
-      <p-dropdown
-        [options]="reportOptions"
-        [(ngModel)]="selectedReport"
-        placeholder="Seleccionar el tipo de reporte"
-        (onChange)="onReportChange($event)"
-      >
-      </p-dropdown>
-    </div>
-  
-    @if (trabajadoresOptions.length > 0) {
-    <div class="field">
-      <p-dropdown
-        [options]="trabajadoresOptions"
-        [(ngModel)]="selectedTrabajador"
-        placeholder="Seleccionar o escribir el trabajador"
-        [filter]="true"
-        filterBy="label,value"
-        (onChange)="onTrabajadorChange($event)"
-      >
-      </p-dropdown>
-    </div>
-    }
-  
-    @if (idRegistrosOptions.length > 0) {
-    <div class="field">
-      <p-dropdown
-        [options]="idRegistrosOptions"
-        [(ngModel)]="selectedIdRegistro"
-        placeholder="Seleccionar ID de Registro"
-      >
-      </p-dropdown>
-    </div>
-    }
+  <div class="field">
+    <p-dropdown
+      [options]="reportOptions"
+      [(ngModel)]="selectedReport"
+      placeholder="Seleccionar el tipo de reporte"
+      (onChange)="onReportChange($event)"
+    >
+    </p-dropdown>
   </div>
-  
+
+  @if (trabajadoresOptions.length > 0) {
+  <div class="field">
+    <p-dropdown
+      [options]="trabajadoresOptions"
+      [(ngModel)]="selectedTrabajador"
+      placeholder="Seleccionar o escribir el trabajador"
+      [filter]="true"
+      filterBy="label,value"
+      (onChange)="onTrabajadorChange($event)"
+    >
+    </p-dropdown>
+  </div>
+  } @if (idRegistrosOptions.length > 0) {
+  <div class="field">
+    <p-dropdown
+      [options]="idRegistrosOptions"
+      [(ngModel)]="selectedIdRegistro"
+      placeholder="Seleccionar ID de Registro"
+      (onChange)="onIdRegistroChange($event)"
+    >
+    </p-dropdown>
+  </div>
+  }
+</div>
+
+@if (registroDetalles.length > 0) {
+<div class="grid">
+  <div class="col-12 xl:col-6">
+    <p-table [value]="registroDetalles">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>ID</th>
+          <th>CÓDIGO</th>
+
+          <th>PRODUCTO</th>
+          <th>CANTIDAD</th>
+          <th>ACCIÓN</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-detalle>
+        <tr>
+          <td>{{ detalle.id_tbl_registro_detalles }}</td>
+          <td>{{ detalle.codigo_producto }}</td>
+
+          <td>{{ detalle.nombre_producto }}</td>
+          <td>{{ detalle.cantidad }}</td>
+          <td>
+            <div class="flex md:flex-row">
+              <div>
+                <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" />
+              </div>
+              <div>
+                <p-button
+                  icon="pi pi-trash"
+                  [rounded]="true"
+                  severity="danger"
+                />
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  <div class="col-12 xl:col-6">
+    <p-card header="Producto a Editar"></p-card>
+  </div>
+</div>
+}
