@@ -116,6 +116,16 @@ export class MenuComponent {
         ],
       },
       {
+        label: 'Acciones',
+        items: [
+          {
+            label: 'Editar/Eliminar',
+            icon: 'pi pi-pencil',
+            routerLink: '/home/editar-eliminar',
+          }
+        ],
+      },
+      {
         label: 'Reportes',
         items: [
           {

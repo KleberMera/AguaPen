@@ -63,6 +63,10 @@ export const routes: Routes = [
         loadComponent: () => import('./registros-vehiculos/registros-vehiculos.component'),
       },
       {
+        path: 'editar-eliminar',
+        loadComponent: () => import ('./edit-delete/edit-delete.component')
+      },
+      {
         path: '**',
         redirectTo: '/home/dashboard',
       },
