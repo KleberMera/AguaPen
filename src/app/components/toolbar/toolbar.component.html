@@ -30,7 +30,11 @@
     }"
   >
     <app-themes (click)="accionThemes()"></app-themes>
-    <button class="p-link layout-topbar-button" (click)="visible = true" (click)="dataUser()">
+    <button
+      class="p-link layout-topbar-button"
+      (click)="visible = true"
+      (click)="dataUser()"
+    >
       <i class="pi pi-user"></i>
       <span>Usuario</span>
     </button>
@@ -45,109 +49,105 @@
   [modal]="true"
   header="Datos del Usuario"
   [style]="{ width: '30rem' }"
-  
 >
-  
-
   @if (loading) {
-    <div class="loading-container">
-      <p>Cargando datos del usuario...</p>
-      <p-progressSpinner
-        ariaLabel="loading"
-        styleClass="w-4rem h-4rem"
-        strokeWidth="8"
-        fill="var(--surface-ground)"
-      ></p-progressSpinner>
+  <div class="loading-container">
+    <p>Cargando datos del usuario...</p>
+    <p-progressSpinner
+      ariaLabel="loading"
+      styleClass="w-4rem h-4rem"
+      strokeWidth="8"
+      fill="var(--surface-ground)"
+    ></p-progressSpinner>
+  </div>
+  } @else {
+  <div class="p-fluid">
+    <div class="p-field">
+      <label for="cedula">Cédula</label>
+      <input
+        id="cedula"
+        type="text"
+        pInputText
+        [(ngModel)]="user.cedula"
+        disabled
+      />
     </div>
-    } @else {
-      <div class="p-fluid">
-        <div class="p-field">
-          <label for="cedula">Cédula</label>
-          <input
-            id="cedula"
-            type="text"
-            pInputText
-            [(ngModel)]="user.cedula"
-            disabled
-          />
-        </div>
-        <div class="p-field">
-          <label for="telefono">Teléfono</label>
-          <input id="telefono" type="text" pInputText [(ngModel)]="user.telefono" />
-        </div>
-        <div class="p-field">
-          <label for="nombres">Nombres</label>
-          <input id="nombres" type="text" pInputText [(ngModel)]="user.nombres" />
-        </div>
-        <div class="p-field">
-          <label for="apellidos">Apellidos</label>
-          <input
-            id="apellidos"
-            type="text"
-            pInputText
-            [(ngModel)]="user.apellidos"
-          />
-        </div>
-        <div class="p-field">
-          <label for="email">Correo</label>
-          <input id="email" type="email" pInputText [(ngModel)]="user.email" />
-        </div>
-        <div class="p-field">
-          <label for="usuario">Usuario</label>
-          <input id="usuario" type="text" pInputText [(ngModel)]="user.usuario" />
-        </div>
-    
-        <div class="p-field">
-          <p-checkbox
-            label="Cambiar Contraseña"
-            [(ngModel)]="changePassword"
-            [binary]="true"
-          ></p-checkbox>
-        </div>
-    
-        @if (changePassword) {
-        <div>
-          <div class="p-field">
-            <label for="newPassword">Nueva Contraseña</label>
-            <p-password
-              id="newPassword"
-              [(ngModel)]="password"
-              [feedback]="false"
-              [toggleMask]="true"
-            />
-          </div>
-          <div class="p-field">
-            <label for="confirmPassword">Confirmar Contraseña</label>
-            <p-password
-              id="confirmPassword"
-              [(ngModel)]="confirmPassword"
-              [feedback]="false"
-              [toggleMask]="true"
-            />
-          </div>
-        </div>
-        }
-      </div>
-    
+    <div class="p-field">
+      <label for="telefono">Teléfono</label>
+      <input id="telefono" type="text" pInputText [(ngModel)]="user.telefono" />
+    </div>
+    <div class="p-field">
+      <label for="nombres">Nombres</label>
+      <input id="nombres" type="text" pInputText [(ngModel)]="user.nombres" />
+    </div>
+    <div class="p-field">
+      <label for="apellidos">Apellidos</label>
+      <input
+        id="apellidos"
+        type="text"
+        pInputText
+        [(ngModel)]="user.apellidos"
+      />
+    </div>
+    <div class="p-field">
+      <label for="email">Correo</label>
+      <input id="email" type="email" pInputText [(ngModel)]="user.email" />
+    </div>
+    <div class="p-field">
+      <label for="usuario">Usuario</label>
+      <input id="usuario" type="text" pInputText [(ngModel)]="user.usuario" />
+    </div>
 
-    }
-    <p-footer>
-      <div>
-        <button
-          pButton
-          label="Cancelar"
-          class="p-button-text"
-          icon="pi pi-times"
-          (click)="visible = false"
-        ></button>
-        <button
-          pButton
-          label="Actualizar"
-          (click)="updateUser($event)"
-          [loading]="loadingUpdate"
-        ></button>
+    <div class="p-field">
+      <p-checkbox
+        label="Cambiar Contraseña"
+        [(ngModel)]="changePassword"
+        [binary]="true"
+      ></p-checkbox>
+    </div>
+
+    @if (changePassword) {
+    <div>
+      <div class="p-field">
+        <label for="newPassword">Nueva Contraseña</label>
+        <p-password
+          id="newPassword"
+          [(ngModel)]="password"
+          [feedback]="false"
+          [toggleMask]="true"
+        />
       </div>
-    </p-footer>
+      <div class="p-field">
+        <label for="confirmPassword">Confirmar Contraseña</label>
+        <p-password
+          id="confirmPassword"
+          [(ngModel)]="confirmPassword"
+          [feedback]="false"
+          [toggleMask]="true"
+        />
+      </div>
+    </div>
+    }
+  </div>
+
+  }
+  <p-footer>
+    <div>
+      <button
+        pButton
+        label="Cancelar"
+        class="p-button-text"
+        icon="pi pi-times"
+        (click)="visible = false"
+      ></button>
+      <button
+        pButton
+        label="Actualizar"
+        (click)="updateUser($event)"
+        [loading]="loadingUpdate"
+      ></button>
+    </div>
+  </p-footer>
 </p-dialog>
 
 <p-toast

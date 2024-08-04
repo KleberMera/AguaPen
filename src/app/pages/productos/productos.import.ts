@@ -14,7 +14,8 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { RippleModule } from 'primeng/ripple';
-
+import { TagModule } from 'primeng/tag';
+import { InputSwitchModule } from 'primeng/inputswitch';
 export const PRIMENG_MODULES = [
   FieldsetModule,
   TableModule,
@@ -30,5 +31,7 @@ export const PRIMENG_MODULES = [
   InputGroupAddonModule,
   IconFieldModule,
   InputIconModule,
-  RippleModule
+  RippleModule,
+  TagModule,
+  InputSwitchModule
 ];

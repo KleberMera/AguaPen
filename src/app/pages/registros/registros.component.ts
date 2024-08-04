@@ -76,7 +76,8 @@ export default class RegistrosComponent implements OnInit {
   async getListProductos(): Promise<void> {
     try {
       const res = await this.srvList.getlistProducts().toPromise();
-      this.ListProductos = res.data.map((product: Product) => ({
+    //Trare los productos activos
+      this.ListProductos = res.data.filter((product: Product) => product.estado_producto === 1 && product.stock_producto > 0).map((product: Product) => ({
         ...product,
         cantidad: 1,
       }));

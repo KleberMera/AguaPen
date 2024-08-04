@@ -84,7 +84,7 @@ export default class RegxAreaComponent {
   async getListProductos(): Promise<void> {
     try {
       const res = await this.srvList.getlistProducts().toPromise();
-      this.ListProductos = res.data.map((product: Product) => ({
+      this.ListProductos = res.data.filter((product: Product) => product.estado_producto === 1 && product.stock_producto > 0).map((product: Product) => ({
         ...product,
         cantidad: 1,
       }));

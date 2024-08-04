@@ -11,7 +11,7 @@
       />
     </p-inputGroup>
   </div>
- 
+
   <div class=" ">
     <p-button
       label="Nuevo"
@@ -39,10 +39,8 @@
     [paginator]="true"
     [rows]="20"
     [rowsPerPageOptions]="[20, 30, 40, 50]"
-    [scrollable]="true" 
-
-    [resizableColumns]="true" 
-
+    [scrollable]="true"
+    [resizableColumns]="true"
   >
     >
     <ng-template pTemplate="header">
@@ -56,6 +54,7 @@
           Stock
           <p-sortIcon field="stock_producto"></p-sortIcon>
         </th>
+        <th>Estado</th>
         <th>Acción</th>
       </tr>
     </ng-template>
@@ -64,6 +63,15 @@
         <td>{{ product.codigo_producto }}</td>
         <td>{{ product.nombre_producto }}</td>
         <td>{{ product.stock_producto }}</td>
+        @if (product.estado_producto === 1) {
+        <td>
+          <p-tag value="Activo" severity="success"></p-tag>
+        </td>
+        } @else {
+        <td>
+          <p-tag value="Inactivo" severity="danger"></p-tag>
+        </td>
+        }
         <td>
           <div class="flex md:flex-row">
             <div>
@@ -104,6 +112,12 @@
   @if (selectedProduct) {
   <div>
     <div class="flex align-items-center gap-3 mb-3">
+      <label for="estado_producto" class="font-semibold w-6rem">Estado:</label>
+      <p-inputSwitch [(ngModel)]="estadoBoolean"></p-inputSwitch>
+    </div>
+    
+    
+    <div class="flex align-items-center gap-3 mb-3">
       <label for="codigo_producto" class="font-semibold w-6rem">Código:</label>
       <input
         id="codigo_producto"
@@ -113,8 +127,7 @@
         disabled
       />
     </div>
-    
-    
+
     <div class="flex align-items-center gap-3 mb-3">
       <label for="nombre_producto" class="font-semibold w-6rem"
         >Nombre del Producto:
@@ -178,6 +191,6 @@
 </p-dialog>
 
 <p-toast
- [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
+  [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
 ></p-toast>
 <p-confirmDialog />
