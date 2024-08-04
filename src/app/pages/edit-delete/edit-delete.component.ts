@@ -1,50 +1,102 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { PRIMEMG_MODULES } from './edit-delete.imports';
 import { ListService } from '../../services/list.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Product } from '../../interfaces/products.interfaces';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-edit-delete',
   standalone: true,
   imports: [PRIMEMG_MODULES, FormsModule, CommonModule],
   templateUrl: './edit-delete.component.html',
-  styleUrl: './edit-delete.component.scss'
+  styleUrl: './edit-delete.component.scss',
+  providers: [MessageService],
 })
-
-export default class EditDeleteComponent {
+export default class EditDeleteComponent implements OnInit {
   reportOptions = [
     { label: 'Trabajadores', value: 'trabajadores' },
     { label: 'Areas', value: 'areas' },
-    { label: 'Vehiculos', value: 'vehiculos' }
+    { label: 'Vehiculos', value: 'vehiculos' },
   ];
 
+  visible: boolean = false;
   trabajadoresOptions: any[] = [];
   idRegistrosOptions: any[] = [];
   selectedReport: string | undefined;
   selectedTrabajador: string | undefined;
   selectedIdRegistro: string | undefined;
   registroDetalles: any[] = [];
+  selectedProduct: any = null;
+  ListProductos: Product[] = [];
+  searchTerm: string = '';
+  selectedProducts: Product[] = [];
 
   private srvList = inject(ListService);
+  private messageService = inject(MessageService);
+
+  async ngOnInit(): Promise<void> {
+    await this.loadInitialData();
+  }
+  async getListProductos(): Promise<void> {
+    try {
+      const res = await this.srvList.getlistProducts().toPromise();
+      //Trare los productos activos
+      this.ListProductos = res.data
+        .filter(
+          (product: Product) =>
+            product.estado_producto === 1 && product.stock_producto > 0
+        )
+        .map((product: Product) => ({
+          ...product,
+          cantidad: 1,
+        }));
+    } catch (error) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Error al cargar productos',
+      });
+    }
+  }
+
+  filterProducts(query: string) {
+    const lowerQuery = query.toLowerCase();
+    return this.ListProductos.filter(
+      (product) =>
+        product.nombre_producto.toLowerCase().includes(lowerQuery) ||
+        product.codigo_producto.toLowerCase().includes(lowerQuery)
+    );
+  }
+
+  async loadInitialData(): Promise<void> {
+    try {
+      //   this.loading = true;
+      //  this.loadingMessage = 'Cargando datos...';
+      await Promise.all([this.getListProductos()]);
+    } finally {
+      // this.loading = false;
+    }
+  }
 
   onReportChange(event: any) {
     if (this.selectedReport === 'trabajadores') {
       this.srvList.getReportsTrabajadores().subscribe(
-        res => {
+        (res) => {
           console.log('Trabajadores Report:', res.data);
           const uniqueTrabajadores = new Map();
           res.data.forEach((item: any) => {
             if (!uniqueTrabajadores.has(item.cedula)) {
               uniqueTrabajadores.set(item.cedula, {
                 label: `${item.nombre} (${item.cedula})`,
-                value: item.cedula
+                value: item.cedula,
               });
             }
           });
           this.trabajadoresOptions = Array.from(uniqueTrabajadores.values());
         },
-        error => console.error('Error fetching Trabajadores report:', error)
+        (error) => console.error('Error fetching Trabajadores report:', error)
       );
     } else {
       // Reset trabajadoresOptions if another report type is selected
@@ -53,23 +105,26 @@ export default class EditDeleteComponent {
       this.idRegistrosOptions = [];
       this.selectedIdRegistro = undefined;
       this.registroDetalles = [];
+      this.selectedProduct = null;
     }
   }
 
   onTrabajadorChange(event: any) {
     const selectedTrabajadorCedula = event.value;
     this.srvList.getReportsTrabajadores().subscribe(
-      res => {
-        const registros = res.data.filter((item: any) => item.cedula === selectedTrabajadorCedula);
+      (res) => {
+        const registros = res.data.filter(
+          (item: any) => item.cedula === selectedTrabajadorCedula
+        );
         const uniqueRegistros = new Set<number>();
-        const uniqueIdRegistrosOptions: { label: string, value: number }[] = [];
+        const uniqueIdRegistrosOptions: { label: string; value: number }[] = [];
 
         registros.forEach((item: any) => {
           if (!uniqueRegistros.has(item.id_tbl_registros)) {
             uniqueRegistros.add(item.id_tbl_registros);
             uniqueIdRegistrosOptions.push({
               label: `ID Registro: ${item.id_tbl_registros}`,
-              value: item.id_tbl_registros
+              value: item.id_tbl_registros,
             });
           }
         });
@@ -77,28 +132,88 @@ export default class EditDeleteComponent {
         this.idRegistrosOptions = uniqueIdRegistrosOptions;
         console.log('ID Registros Options:', this.idRegistrosOptions);
       },
-      error => console.error('Error fetching ID Registros:', error)
+      (error) => console.error('Error fetching ID Registros:', error)
     );
   }
 
   onIdRegistroChange(event: any) {
     const selectedIdRegistro = event.value;
     this.srvList.getReportsTrabajadores().subscribe(
-      res => {
-        const detalles = res.data.filter((item: any) => item.id_tbl_registros === selectedIdRegistro);
+      (res) => {
+        const detalles = res.data.filter(
+          (item: any) => item.id_tbl_registros === selectedIdRegistro
+        );
         console.log('Detalles:', detalles);
-        
+
         this.registroDetalles = detalles.map((item: any) => ({
           id_tbl_registro_detalles: item.id_tbl_registro_detalles,
           codigo_producto: item.codigo_producto,
           id_tbl_productos: item.id_tbl_productos,
           nombre_producto: item.nombre_producto,
-          cantidad: item.cantidad
+          stock_producto: item.stock_producto,
+          cantidad: item.cantidad,
         }));
         console.log('Registro Detalles:', this.registroDetalles);
       },
-      error => console.error('Error fetching Registro Detalles:', error)
+      (error) => console.error('Error fetching Registro Detalles:', error)
     );
   }
-  
+
+  onEditProduct(product: any) {
+    this.selectedProduct = product;
+  }
+
+  isProductSelected(product: Product): boolean {
+    return this.selectedProducts.some((p) => p.id === product.id);
+  }
+
+  increment(product: Product) {
+    if (product.cantidad < product.stock_producto) {
+      product.cantidad++;
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No puedes agregar más de la cantidad en stock',
+      });
+    }
+  }
+
+  decrement(product: Product) {
+    if (product.cantidad > 1) {
+      product.cantidad--;
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'La cantidad no puede ser menor a 1',
+      });
+    }
+  }
+
+  revertProduct(product: Product): void {
+    const index = this.selectedProducts.findIndex((p) => p.id === product.id);
+    if (index !== -1) {
+      this.selectedProducts.splice(index, 1);
+      product.cantidad = 0;
+    }
+  }
+
+  addProduct(producto: Product): void {
+    const foundProduct = this.selectedProducts.find(
+      (p) => p.id === producto.id
+    );
+
+    if (foundProduct) {
+      foundProduct.cantidad! += producto.cantidad!;
+    } else {
+      this.selectedProducts.push({ ...producto, cantidad: producto.cantidad });
+    }
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Producto agregado',
+      detail: `${producto.nombre_producto} agregado con éxito`,
+    });
+  }
 }

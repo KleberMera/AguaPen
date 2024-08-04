@@ -15,7 +15,6 @@ export class RegisterDetailsService {
   //injector
   private http = inject(HttpClient);
 
-
   // Registrar registro
   postRegisterRegistro(objRegistro: any) {
     const url = `${this.environment}registros/mutate`;
@@ -24,7 +23,6 @@ export class RegisterDetailsService {
         {
           operation: 'create',
           attributes: {
-            
             id_usuario: objRegistro.id_usuario,
             fecha_registro: objRegistro.fecha_registro,
             hora_registro: objRegistro.hora_registro,
@@ -52,80 +50,91 @@ export class RegisterDetailsService {
     });
   }
 
-postRegisterArea(objRegistro : any){
-  const url = `${this.environment}registroareas/mutate`;
-  return this.http.post(url, {
-    mutate: [
-      {
-        operation: 'create',
-        attributes: {
-          id_area: objRegistro.id_area,
-          fecha_registro: objRegistro.fecha_registro,
-          hora_registro: objRegistro.hora_registro,
-          observacion: objRegistro.observacion,
+  // Registrar detalles del registro
+  postEditRegistroDetalle(objDetalle: any) {
+    const url = `${this.environment}registrosdetalle/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'update',
+          key: objDetalle.id,
+          attributes: {
+            id_registro: objDetalle.id_registro,
+            id_producto: objDetalle.id_producto,
+            cantidad: objDetalle.cantidad,
+          },
         },
-      },
-    ],
-  });
-}
+      ],
+    });
+  }
 
-//RegisterVehiculos
-postRegisterVehiculos(objRegistro : any){
-  const url = `${this.environment}registrovehiculos/mutate`;
-  return this.http.post(url, {
-    mutate: [
-      {
-        operation: 'create',
-        attributes: {
-          id_vehiculo: objRegistro.id_vehiculo,
-          fecha_registro: objRegistro.fecha_registro,
-          hora_registro: objRegistro.hora_registro,
-          observacion: objRegistro.observacion,
+  postRegisterArea(objRegistro: any) {
+    const url = `${this.environment}registroareas/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'create',
+          attributes: {
+            id_area: objRegistro.id_area,
+            fecha_registro: objRegistro.fecha_registro,
+            hora_registro: objRegistro.hora_registro,
+            observacion: objRegistro.observacion,
+          },
         },
-      },
-    ],
-  });
-}
+      ],
+    });
+  }
 
-//RegisterDetalleVehiculos
-postRegisterDetalleVehiculos(objRegistro : any){
-  const url = `${this.environment}registrodetallevehiculos/mutate`;
-  return this.http.post(url, {
-    mutate: [
-      {
-        operation: 'create',
-        attributes: {
-          id_registro_vehiculo: objRegistro.id_registro_vehiculo,
-          id_producto: objRegistro.id_producto,
-          cantidad: objRegistro.cantidad,
+  //RegisterVehiculos
+  postRegisterVehiculos(objRegistro: any) {
+    const url = `${this.environment}registrovehiculos/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'create',
+          attributes: {
+            id_vehiculo: objRegistro.id_vehiculo,
+            fecha_registro: objRegistro.fecha_registro,
+            hora_registro: objRegistro.hora_registro,
+            observacion: objRegistro.observacion,
+          },
         },
-      },
-    ],
-  });
-}
+      ],
+    });
+  }
 
-
-
-postRegisterDetalleAreas(objDetalle : any){
-  const url = `${this.environment}registrodetalleareas/mutate`;
-  return this.http.post(url, {
-    mutate: [
-      {
-        operation: 'create',
-        attributes: {
-          id_registro_area: objDetalle.id_registro_area,
-          id_producto: objDetalle.id_producto,
-          cantidad: objDetalle.cantidad,
+  //RegisterDetalleVehiculos
+  postRegisterDetalleVehiculos(objRegistro: any) {
+    const url = `${this.environment}registrodetallevehiculos/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'create',
+          attributes: {
+            id_registro_vehiculo: objRegistro.id_registro_vehiculo,
+            id_producto: objRegistro.id_producto,
+            cantidad: objRegistro.cantidad,
+          },
         },
-      },
-    ],
-  });
+      ],
+    });
+  }
 
-
-  
-}
-
-
+  postRegisterDetalleAreas(objDetalle: any) {
+    const url = `${this.environment}registrodetalleareas/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'create',
+          attributes: {
+            id_registro_area: objDetalle.id_registro_area,
+            id_producto: objDetalle.id_producto,
+            cantidad: objDetalle.cantidad,
+          },
+        },
+      ],
+    });
+  }
 
   // Ver detalles de registro
   getViewRegistroDetalles() {
@@ -161,11 +170,10 @@ postRegisterDetalleAreas(objDetalle : any){
             fecha_producto: objProduct.fecha_producto,
             hora_producto: objProduct.hora_producto,
             stock_producto: objProduct.stock_producto,
+            estado_producto: objProduct.estado_producto,
           },
         },
       ],
     });
   }
-
-  
 }

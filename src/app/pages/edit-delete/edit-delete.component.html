@@ -38,44 +38,173 @@
 @if (registroDetalles.length > 0) {
 <div class="grid">
   <div class="col-12 xl:col-6">
-    <p-table [value]="registroDetalles">
-      <ng-template pTemplate="header">
-        <tr>
-          <th>ID</th>
-          <th>CÓDIGO</th>
+    <p-card>
+      <p-scrollPanel
+        [style]="{ width: '100%', height: '216px' }"
+        styleClass="custombar1"
+      >
+        <p-table [value]="registroDetalles">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>ID</th>
+              <th>CÓDIGO</th>
 
-          <th>PRODUCTO</th>
-          <th>CANTIDAD</th>
-          <th>ACCIÓN</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-detalle>
-        <tr>
-          <td>{{ detalle.id_tbl_registro_detalles }}</td>
-          <td>{{ detalle.codigo_producto }}</td>
+              <th>PRODUCTO</th>
+              <th>CANTIDAD</th>
+              <th>ACCIÓN</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-detalle>
+            <tr>
+              <td>{{ detalle.id_tbl_registro_detalles }}</td>
+              <td>{{ detalle.codigo_producto }}</td>
 
-          <td>{{ detalle.nombre_producto }}</td>
-          <td>{{ detalle.cantidad }}</td>
-          <td>
-            <div class="flex md:flex-row">
-              <div>
-                <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" />
-              </div>
-              <div>
-                <p-button
-                  icon="pi pi-trash"
-                  [rounded]="true"
-                  severity="danger"
-                />
-              </div>
-            </div>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
+              <td>{{ detalle.nombre_producto }}</td>
+              <td>{{ detalle.cantidad }}</td>
+              <td>
+                <div class="flex md:flex-row">
+                  <div>
+                    <p-button
+                      icon="pi pi-pencil"
+                      class="mr-2"
+                      [rounded]="true"
+                      (click)="onEditProduct(detalle)"
+                    />
+                  </div>
+                  <div>
+                    <p-button
+                      icon="pi pi-trash"
+                      [rounded]="true"
+                      severity="danger"
+                    />
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-scrollPanel>
+    </p-card>
   </div>
   <div class="col-12 xl:col-6">
-    <p-card header="Producto a Editar"></p-card>
+    <p-card header="Producto a Editar">
+      <p-scrollPanel
+        [style]="{ width: '100%', height: '143px' }"
+        styleClass="custombar1"
+      >
+        @if (selectedProduct) {
+        <div>
+          <span>Producto Actual:</span>
+          <p>ID: {{ selectedProduct.id_tbl_productos }}</p>
+          <p>Código: {{ selectedProduct.codigo_producto }}</p>
+          <p>Nombre: {{ selectedProduct.nombre_producto }}</p>
+          <p>Stock Actual: {{ selectedProduct.stock_producto }}</p>
+          <p>Cantidad: {{ selectedProduct.cantidad }}</p>
+          <span>Sera Reemplazdo por:</span>
+        </div>
+        }
+      </p-scrollPanel>
+      <p-button
+        label="Reemplazar Producto"
+        icon="pi pi-plus"
+        severity="success"
+        (click)="visible = true"
+      />
+    </p-card>
   </div>
 </div>
 }
+
+<div class="flex flex-column-reverse">
+  <div class="flex align-items-center justify-content-center h-4rem">
+    <p-inputGroup>
+      <p-inputGroupAddon styleClass="pi pi-shopping-cart" />
+      <input
+        type="text"
+        pInputText
+        placeholder="Buscar por nombre"
+        [(ngModel)]="searchTerm"
+      />
+    </p-inputGroup>
+  </div>
+</div>
+
+<p-table
+  [value]="filterProducts(searchTerm)"
+  [tableStyle]="{ 'min-width': '50rem' }"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Codigo</th>
+      <th pSortableColumn="nombre_producto">
+        Nombre del Producto
+        <p-sortIcon field="nombre_producto"></p-sortIcon>
+      </th>
+      <th>Stock</th>
+      <th>Acción</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-producto>
+    <tr>
+      <td>{{ producto.codigo_producto }}</td>
+      <td>{{ producto.nombre_producto }}</td>
+      <td>{{ producto.stock_producto }}</td>
+      <td>
+        @if (isProductSelected(producto)) {
+
+        <ng-container>
+          <span>{{ producto.cantidad }} agregado(s)</span>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-undo"
+            class="p-button-rounded p-button-warning p-button-outlined"
+            (click)="revertProduct(producto)"
+          ></button>
+        </ng-container>
+
+        } @else {
+        <ng-container>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-minus"
+            class="p-button-rounded p-button-secondary p-button-outlined"
+            (click)="decrement(producto)"
+          ></button>
+          <input
+            type="number"
+            pInputText
+            [(ngModel)]="producto.cantidad"
+            [min]="1"
+            [max]="producto.stock_producto"
+            style="width: 60px; margin: 0 8px"
+          />
+          <button
+            pButton
+            type="button"
+            icon="pi pi-plus"
+            class="p-button-rounded p-button-secondary p-button-outlined"
+            (click)="increment(producto)"
+          ></button>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-check"
+            class="p-button-rounded p-button-success p-button-outlined"
+            (click)="addProduct(producto)"
+            [disabled]="
+              producto.cantidad > producto.stock_producto ||
+              producto.cantidad < 1
+            "
+          ></button>
+        </ng-container>
+        }
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-toast
+  [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
+></p-toast>
