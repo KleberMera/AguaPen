@@ -67,7 +67,12 @@
               />
             </div>
             <div>
-              <p-button icon="pi pi-trash" [rounded]="true" severity="danger" />
+              <p-button
+                icon="pi pi-trash"
+                [rounded]="true"
+                severity="danger"
+                (click)="onDeleteDetalle(detalle.id_tbl_registro_detalles)"
+              />
             </div>
           </div>
         </td>
@@ -116,9 +121,10 @@
 
   <p-button
     label="Reemplazar Producto"
-    icon="pi pi-plus"
+
     severity="success"
     (click)="onReplaceProduct()"
+    [loading]="loading"
   />
 </p-card>
 
