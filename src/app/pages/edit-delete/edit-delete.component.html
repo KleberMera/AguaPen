@@ -75,7 +75,6 @@
     </ng-template>
   </p-table>
 </p-card>
-
 <p-card header="Producto a Editar">
   @if (selectedProduct) {
   <div>
@@ -99,11 +98,14 @@
 
   @if (selectedNewProduct) {
   <div class="field">
+    <p>ID: {{ selectedNewProduct.id }}</p>
+    <p>Código: {{ selectedNewProduct.codigo_producto }}</p>
+    <p>Nombre: {{ selectedNewProduct.nombre_producto }}</p>
+    <p>Stock Actual: {{ selectedNewProduct.stock_producto }}</p>
     <label for="cantidad">Cantidad</label>
     <input
       type="number"
-       pInputText
-   
+      pInputText
       id="cantidad"
       [(ngModel)]="newProductQuantity"
       min="1"
@@ -112,8 +114,16 @@
   </div>
   }
 
-  <p-button label="Reemplazar Producto" icon="pi pi-plus" severity="success" (click)="onReplaceProduct()" />
+  <p-button
+    label="Reemplazar Producto"
+    icon="pi pi-plus"
+    severity="success"
+    (click)="onReplaceProduct()"
+  />
 </p-card>
 
-
 }
+
+<p-toast
+  [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
+></p-toast>

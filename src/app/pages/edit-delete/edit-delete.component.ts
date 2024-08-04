@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Product } from '../../interfaces/products.interfaces';
 import { MessageService } from 'primeng/api';
+import { RegisterDetailsService } from '../../services/register-details.service';
 
 @Component({
   selector: 'app-edit-delete',
@@ -35,14 +36,18 @@ export default class EditDeleteComponent implements OnInit {
   newProductQuantity: number = 0;
 
   private srvList = inject(ListService);
-  private messageService = inject(MessageService);
+  private registerDetailsService = inject(RegisterDetailsService);
 
+  private messageService = inject(MessageService);
 
   ngOnInit() {
     this.srvList.getlistProducts().subscribe(
       (res) => {
         this.productosOptions = res.data
-          .filter((product: any) => product.stock_producto > 0 && product.estado_producto === 1)
+          .filter(
+            (product: any) =>
+              product.stock_producto > 0 && product.estado_producto === 1
+          )
           .map((product: any) => ({
             label: `${product.nombre_producto} (Código: ${product.codigo_producto})`,
             value: product,
@@ -57,14 +62,7 @@ export default class EditDeleteComponent implements OnInit {
     this.newProductQuantity = 0; // Reset quantity when a new product is selected
   }
 
-  onReplaceProduct() {
-    if (this.selectedNewProduct && this.newProductQuantity > 0) {
-      console.log('Reemplazar producto con:', this.selectedNewProduct, 'Cantidad:', this.newProductQuantity);
-      // Implement the logic to replace the product in your service or component logic
-    } else {
-      this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: 'Selecciona un producto y cantidad válida' });
-    }
-  }
+
 
   onReportChange(event: any) {
     if (this.selectedReport === 'trabajadores') {
@@ -147,5 +145,97 @@ export default class EditDeleteComponent implements OnInit {
 
   onEditProduct(product: any) {
     this.selectedProduct = product;
+  }
+
+
+
+  onReplaceProduct() {
+    if (this.selectedNewProduct && this.newProductQuantity > 0) {
+      const originalProductStock =
+        this.selectedProduct.stock_producto + this.selectedProduct.cantidad;
+      const newProductStock =
+        this.selectedNewProduct.stock_producto - this.newProductQuantity;
+
+      const updatedOriginalProduct = {
+        id: this.selectedProduct.id_tbl_productos,
+        stock_producto: originalProductStock,
+      };
+
+      const updatedNewProduct = {
+        id: this.selectedNewProduct.id,
+        stock_producto: newProductStock,
+      };
+
+      const updatedRegistroDetalle = {
+        id: this.selectedProduct.id_tbl_registro_detalles,
+        id_registro: this.selectedProduct.id_tbl_registros,
+        id_producto: this.selectedNewProduct.id,
+        cantidad: this.newProductQuantity,
+      };
+
+      // Update the original product's stock
+      this.registerDetailsService
+        .postEditProductos(updatedOriginalProduct)
+        .subscribe(
+          () => {
+            // Update the new product's stock
+            this.registerDetailsService
+              .postEditProductos(updatedNewProduct)
+              .subscribe(
+                () => {
+                  // Update the registro detalle
+                  this.registerDetailsService
+                    .postEditRegistroDetalle(updatedRegistroDetalle)
+                    .subscribe(
+                      () => {
+                        this.messageService.add({
+                          severity: 'success',
+                          summary: 'Éxito',
+                          detail: 'Producto reemplazado exitosamente',
+                        });
+                        // Update UI as needed
+                      },
+                      (error) => {
+                        console.error(
+                          'Error updating Registro Detalle:',
+                          error
+                        );
+                        this.messageService.add({
+                          severity: 'error',
+                          summary: 'Error',
+                          detail:
+                            'Hubo un problema al actualizar el detalle del registro',
+                        });
+                      }
+                    );
+                },
+                (error) => {
+                  console.error('Error updating new product stock:', error);
+                  this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail:
+                      'Hubo un problema al actualizar el stock del nuevo producto',
+                  });
+                }
+              );
+          },
+          (error) => {
+            console.error('Error updating original product stock:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail:
+                'Hubo un problema al actualizar el stock del producto original',
+            });
+          }
+        );
+    } else {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Advertencia',
+        detail: 'Selecciona un producto y cantidad válida',
+      });
+    }
   }
 }

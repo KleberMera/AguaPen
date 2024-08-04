@@ -50,23 +50,6 @@ export class RegisterDetailsService {
     });
   }
 
-  // Registrar detalles del registro
-  postEditRegistroDetalle(objDetalle: any) {
-    const url = `${this.environment}registrosdetalle/mutate`;
-    return this.http.post(url, {
-      mutate: [
-        {
-          operation: 'update',
-          key: objDetalle.id,
-          attributes: {
-            id_registro: objDetalle.id_registro,
-            id_producto: objDetalle.id_producto,
-            cantidad: objDetalle.cantidad,
-          },
-        },
-      ],
-    });
-  }
 
   postRegisterArea(objRegistro: any) {
     const url = `${this.environment}registroareas/mutate`;
@@ -176,4 +159,24 @@ export class RegisterDetailsService {
       ],
     });
   }
+
+
+    // Editar detalles del registro
+    postEditRegistroDetalle(objDetalle: any) {
+      const url = `${this.environment}registrosdetalle/mutate`;
+      return this.http.post(url, {
+        mutate: [
+          {
+            operation: 'update',
+            key: objDetalle.id,
+            attributes: {
+              id_registro: objDetalle.id_registro,
+              id_producto: objDetalle.id_producto,
+              cantidad: objDetalle.cantidad,
+            },
+          },
+        ],
+      });
+    }
+  
 }
