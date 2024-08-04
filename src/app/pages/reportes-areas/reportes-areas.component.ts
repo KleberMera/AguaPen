@@ -15,7 +15,6 @@ import { PRIMEMG_MODULES } from './reportes-area.import';
   providers: [MessageService, ConfirmationService],
 })
 export default class AreasComponent implements OnInit, OnDestroy {
-  listAreas: any[] = [];
   listReports: any[] = [];
   filteredReports: any[] = [];
   uniqueAreas: any[] = [];
@@ -29,7 +28,6 @@ export default class AreasComponent implements OnInit, OnDestroy {
   private srvMessage = inject(MessageService);
 
   ngOnInit(): void {
-    this.getListAreas();
     this.loadReports();
   }
 
@@ -101,13 +99,7 @@ export default class AreasComponent implements OnInit, OnDestroy {
     this.filteredReports = this.listReports;
   }
 
-  getListAreas() {
-    this.SrvList.getListAreas().subscribe((res) => {
-      this.listAreas = res.data;
-      console.log(this.listAreas);
-      
-    });
-  }
+  
 
   printTable(): void {
     this.srvPrint.printElement('reportTable');
