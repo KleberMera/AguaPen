@@ -80,6 +80,16 @@ export default class ProductosComponent implements OnInit {
     this.dialogVisible = true;
   }
 
+  get estadoBoolean(): boolean {
+    return this.selectedProduct ? this.selectedProduct.estado_producto === 1 : false;
+  }
+
+  set estadoBoolean(value: boolean) {
+    if (this.selectedProduct) {
+      this.selectedProduct.estado_producto = value ? 1 : 0;
+    }
+  }
+
   private createNewProduct(): Product {
     // Obtener el último producto ordenando por el campo codigo_producto
     const lastProduct = this.listProduct.sort((a, b) =>
@@ -98,7 +108,7 @@ export default class ProductosComponent implements OnInit {
       hora_producto: formatDate(new Date(), 'HH:mm', 'en-US'),
       stock_producto: 0,
       cantidad: 0,
-      estado: 0,
+      estado_producto: 0,
     };
   }
   
@@ -107,16 +117,7 @@ export default class ProductosComponent implements OnInit {
   private async addProduct() {
     if (!this.validateProduct()) return;
   
-    // Validar que el stock sea mayor o igual a 1
-    if (this.selectedProduct!.stock_producto < 1) {
-      this.srvMensajes.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'El stock del producto esta en 0',
-      });
-      return;
-    }
-  
+   
     try {
       const res = await this.srvReg
         .postRegisterProducts(this.selectedProduct!)
@@ -210,6 +211,17 @@ export default class ProductosComponent implements OnInit {
       });
       return false;
     }
+
+        // La lógica del estado ahora depende del estado del switch
+  if (!this.estadoBoolean) {
+    this.selectedProduct!.estado_producto = 0;
+  } else if (this.selectedProduct!.stock_producto > 0) {
+    this.selectedProduct!.estado_producto = 1;
+  } else if (this.selectedProduct!.stock_producto <= 0) {
+    this.selectedProduct!.estado_producto = 0;
+  } else if (this.estadoBoolean) {
+    this.selectedProduct!.estado_producto = 1;
+  }
 
     return true;
   }

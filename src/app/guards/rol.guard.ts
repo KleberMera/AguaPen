@@ -6,15 +6,16 @@ import { map } from 'rxjs';
 export const rolGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
+  
+  // Obtener el usuario actual desde el AuthService
+  const currentUser = authService.getStoredUser();
 
-  return authService.viewDataUser().pipe(
-    map((res: any) => {
-      if (res && res.data.rol_id === 1) {
-        return true;
-      } else {
-        router.navigate(['/home/dashboard']);
-        return false;
-      }
-    }),
-  );
+  // Verificar si el usuario tiene rol_id 1
+  if (currentUser && currentUser.rol_id === 1) {
+    return true;
+  } else {
+    // Redirigir a una página de acceso denegado o página principal si no tiene el rol adecuado
+    router.navigate(['/home/dashboard']);
+    return false;
+  }
 };
