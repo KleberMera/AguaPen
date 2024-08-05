@@ -42,7 +42,6 @@ export default class EditDeleteComponent {
   private deleteService = inject(DeleteService);
   private registerDetailsService = inject(RegisterDetailsService);
 
-
   ngOnInit() {
     this.srvList.getlistProducts().subscribe(
       (res) => {
@@ -62,11 +61,10 @@ export default class EditDeleteComponent {
     this.newProductQuantity = 0; // Reset quantity when a new product is selected
   }
 
-
-
   onDeleteDetalle(detalleId: number) {
     this.loading = true;
-    this.deleteService.requestdeletedetalle(detalleId).subscribe(
+    const deleteServiceMethod = this.selectedReport === 'areas' ? 'requestdeletedetalleareas' : 'requestdeletedetalle';
+    this.deleteService[deleteServiceMethod](detalleId).subscribe(
       () => {
         this.messageService.add({
           severity: 'success',
@@ -74,7 +72,10 @@ export default class EditDeleteComponent {
           detail: 'Detalle eliminado exitosamente',
         });
         // Remove the deleted detail from registroDetalles array
-        this.registroDetalles = this.registroDetalles.filter(detalle => detalle.id_tbl_registro_detalles !== detalleId);
+        this.registroDetalles = this.registroDetalles.filter(detalle => {
+          const idKey = this.selectedReport === 'areas' ? 'id_tbl_registro_detalle_areas' : 'id_tbl_registro_detalles';
+          return detalle[idKey] !== detalleId;
+        });
         this.resetForm();
         this.loading = false;
       },
@@ -108,8 +109,25 @@ export default class EditDeleteComponent {
         },
         (error) => console.error('Error fetching Trabajadores report:', error)
       );
+    } else if (this.selectedReport === 'areas') {
+      this.srvList.getReportsAreas().subscribe(
+        (res) => {
+          console.log('Areas Report:', res.data);
+          const uniqueAreas = new Map();
+          res.data.forEach((item: any) => {
+            if (!uniqueAreas.has(item.nombre_area)) {
+              uniqueAreas.set(item.nombre_area, {
+                label: item.nombre_area,
+                value: item.nombre_area,
+              });
+            }
+          });
+          this.trabajadoresOptions = Array.from(uniqueAreas.values());
+        },
+        (error) => console.error('Error fetching Areas report:', error)
+      );
     } else {
-      // Reset trabajadoresOptions if another report type is selected
+      // Reset options if another report type is selected
       this.trabajadoresOptions = [];
       this.selectedTrabajador = undefined;
       this.idRegistrosOptions = [];
@@ -121,20 +139,22 @@ export default class EditDeleteComponent {
 
   onTrabajadorChange(event: any) {
     const selectedTrabajadorCedula = event.value;
-    this.srvList.getReportsTrabajadores().subscribe(
+    const getReportsMethod = this.selectedReport === 'areas' ? 'getReportsAreas' : 'getReportsTrabajadores';
+    this.srvList[getReportsMethod]().subscribe(
       (res) => {
         const registros = res.data.filter(
-          (item: any) => item.cedula === selectedTrabajadorCedula
+          (item: any) => item[this.selectedReport === 'areas' ? 'nombre_area' : 'cedula'] === selectedTrabajadorCedula
         );
         const uniqueRegistros = new Set<number>();
         const uniqueIdRegistrosOptions: { label: string; value: number }[] = [];
 
         registros.forEach((item: any) => {
-          if (!uniqueRegistros.has(item.id_tbl_registros)) {
-            uniqueRegistros.add(item.id_tbl_registros);
+          const idKey = this.selectedReport === 'areas' ? 'id_tbl_registros_areas' : 'id_tbl_registros';
+          if (!uniqueRegistros.has(item[idKey])) {
+            uniqueRegistros.add(item[idKey]);
             uniqueIdRegistrosOptions.push({
-              label: `ID Registro: ${item.id_tbl_registros}`,
-              value: item.id_tbl_registros,
+              label: `ID Registro: ${item[idKey]}`,
+              value: item[idKey],
             });
           }
         });
@@ -148,15 +168,16 @@ export default class EditDeleteComponent {
 
   onIdRegistroChange(event: any) {
     const selectedIdRegistro = event.value;
-    this.srvList.getReportsTrabajadores().subscribe(
+    const getReportsMethod = this.selectedReport === 'areas' ? 'getReportsAreas' : 'getReportsTrabajadores';
+    this.srvList[getReportsMethod]().subscribe(
       (res) => {
         const detalles = res.data.filter(
-          (item: any) => item.id_tbl_registros === selectedIdRegistro
+          (item: any) => item[this.selectedReport === 'areas' ? 'id_tbl_registros_areas' : 'id_tbl_registros'] === selectedIdRegistro
         );
         console.log('Detalles:', detalles);
 
         this.registroDetalles = detalles.map((item: any) => ({
-          id_tbl_registro_detalles: item.id_tbl_registro_detalles,
+          id_tbl_registro_detalles: item[this.selectedReport === 'areas' ? 'id_tbl_registro_detalle_areas' : 'id_tbl_registro_detalles'],
           codigo_producto: item.codigo_producto,
           id_tbl_productos: item.id_tbl_productos,
           nombre_producto: item.nombre_producto,
@@ -172,7 +193,6 @@ export default class EditDeleteComponent {
   onEditProduct(product: any) {
     this.selectedProduct = product;
   }
-
 
   onReplaceProduct() {
     this.loading = true;
@@ -204,16 +224,16 @@ export default class EditDeleteComponent {
           this.registerDetailsService.postEditProductos(updatedNewProduct).subscribe(
             () => {
               // Update the registro detalle
-              this.registerDetailsService.postEditRegistroDetalle(updatedRegistroDetalle).subscribe(
-                () => {
-                  this.messageService.add({
-                    severity: 'success',
-                    summary: 'Éxito',
-                    detail: 'Producto reemplazado exitosamente',
-                  });
-                  // Update UI as needed
-                  this.resetForm();
-                    this.loading = false;
+              const postEditMethod = this.selectedReport === 'areas' ? 'postEditRegistroDetalleArea' : 'postEditRegistroDetalle';
+              this.registerDetailsService[postEditMethod](updatedRegistroDetalle).subscribe(
+                  () => {
+                      this.messageService.add({
+                          severity: 'success',
+                          summary: 'Éxito',
+                          detail: 'Producto reemplazado exitosamente',
+                      });
+                      this.resetForm();
+                      this.loading = false;
                 },
                 (error) => {
                   this.loading = false;
@@ -228,7 +248,7 @@ export default class EditDeleteComponent {
             },
             (error) => {
               this.loading = false;
-              console.error('Error updating new product stock:', error);
+              console.error('Error updating New Product:', error);
               this.messageService.add({
                 severity: 'error',
                 summary: 'Error',
@@ -239,7 +259,7 @@ export default class EditDeleteComponent {
         },
         (error) => {
           this.loading = false;
-          console.error('Error updating original product stock:', error);
+          console.error('Error updating Original Product:', error);
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
@@ -250,23 +270,16 @@ export default class EditDeleteComponent {
     } else {
       this.loading = false;
       this.messageService.add({
-        severity: 'warn',
-        summary: 'Advertencia',
-        detail: 'Selecciona un producto y cantidad válida',
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Debes seleccionar un producto y establecer una cantidad mayor a cero',
       });
     }
   }
 
-
-  private resetForm() {
-    this.selectedReport = undefined;
-    this.trabajadoresOptions = [];
-    this.selectedTrabajador = undefined;
-    this.idRegistrosOptions = [];
-    this.selectedIdRegistro = undefined;
-    this.registroDetalles = [];
-    this.selectedProduct = null;
+  resetForm() {
     this.selectedNewProduct = null;
     this.newProductQuantity = 0;
+    this.selectedProduct = null;
   }
 }

@@ -50,7 +50,6 @@ export class RegisterDetailsService {
     });
   }
 
-
   postRegisterArea(objRegistro: any) {
     const url = `${this.environment}registroareas/mutate`;
     return this.http.post(url, {
@@ -160,23 +159,39 @@ export class RegisterDetailsService {
     });
   }
 
-
-    // Editar detalles del registro
-    postEditRegistroDetalle(objDetalle: any) {
-      const url = `${this.environment}registrosdetalle/mutate`;
-      return this.http.post(url, {
-        mutate: [
-          {
-            operation: 'update',
-            key: objDetalle.id,
-            attributes: {
-              id_registro: objDetalle.id_registro,
-              id_producto: objDetalle.id_producto,
-              cantidad: objDetalle.cantidad,
-            },
+  // Editar detalles del registro
+  postEditRegistroDetalle(objDetalle: any) {
+    const url = `${this.environment}registrosdetalle/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'update',
+          key: objDetalle.id,
+          attributes: {
+            id_registro: objDetalle.id_registro,
+            id_producto: objDetalle.id_producto,
+            cantidad: objDetalle.cantidad,
           },
-        ],
-      });
-    }
-  
+        },
+      ],
+    });
+  }
+
+  // Editar detalles del registro
+  postEditRegistroDetalleArea(objDetalle: any) {
+    const url = `${this.environment}registrodetalleareas/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'update',
+          key: objDetalle.id,
+          attributes: {
+            id_registro_area: objDetalle.id_registro_area,
+            id_producto: objDetalle.id_producto,
+            cantidad: objDetalle.cantidad,
+          },
+        },
+      ],
+    });
+  }
 }

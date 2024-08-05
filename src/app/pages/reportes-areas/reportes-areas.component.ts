@@ -29,7 +29,7 @@ export default class AreasComponent implements OnInit, OnDestroy {
   private srvMessage = inject(MessageService);
 
   ngOnInit(): void {
-    this.getListAreas();
+    //this.getListAreas();
     this.loadReports();
   }
 
@@ -45,6 +45,7 @@ export default class AreasComponent implements OnInit, OnDestroy {
         this.uniqueAreas = this.extractUniqueAreas(res.data);
         console.log('Listado de Reportes:', this.listReports);
         this.loading = false;
+        
       }
     );
 
@@ -101,13 +102,7 @@ export default class AreasComponent implements OnInit, OnDestroy {
     this.filteredReports = this.listReports;
   }
 
-  getListAreas() {
-    this.SrvList.getListAreas().subscribe((res) => {
-      this.listAreas = res.data;
-      console.log(this.listAreas);
-      
-    });
-  }
+
 
   printTable(): void {
     this.srvPrint.printElement('reportTable');
