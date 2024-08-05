@@ -194,4 +194,23 @@ export class RegisterDetailsService {
       ],
     });
   }
+
+
+   //RegisterDetalleVehiculos
+   postEditRegistroDetalleVehiculos(objRegistro: any) {
+    const url = `${this.environment}registrodetallevehiculos/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'update',
+          key: objRegistro.id,
+          attributes: {
+            id_registro_vehiculo: objRegistro.id_registro_vehiculo,
+            id_producto: objRegistro.id_producto,
+            cantidad: objRegistro.cantidad,
+          },
+        },
+      ],
+    });
+  }
 }

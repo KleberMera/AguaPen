@@ -63,7 +63,13 @@ export default class EditDeleteComponent {
 
   onDeleteDetalle(detalleId: number) {
     this.loading = true;
-    const deleteServiceMethod = this.selectedReport === 'areas' ? 'requestdeletedetalleareas' : 'requestdeletedetalle';
+    const deleteServiceMethod =
+    this.selectedReport === 'areas'
+      ? 'requestdeletedetalleareas'
+      : this.selectedReport === 'vehiculos'
+      ? 'requestdeletedetallevehiculos'
+      : 'requestdeletedetalle';
+
     this.deleteService[deleteServiceMethod](detalleId).subscribe(
       () => {
         this.messageService.add({
@@ -73,7 +79,12 @@ export default class EditDeleteComponent {
         });
         // Remove the deleted detail from registroDetalles array
         this.registroDetalles = this.registroDetalles.filter(detalle => {
-          const idKey = this.selectedReport === 'areas' ? 'id_tbl_registro_detalle_areas' : 'id_tbl_registro_detalles';
+          const idKey =
+          this.selectedReport === 'areas'
+            ? 'id_tbl_registro_detalle_areas'
+            : this.selectedReport === 'vehiculos'
+            ? 'id_tbl_registro_detalle_vehiculos'
+            : 'id_tbl_registro_detalles';
           return detalle[idKey] !== detalleId;
         });
         this.resetForm();
@@ -126,30 +137,59 @@ export default class EditDeleteComponent {
         },
         (error) => console.error('Error fetching Areas report:', error)
       );
+    } else if (this.selectedReport === 'vehiculos') {
+      this.srvList.getReportsVehiculos().subscribe(
+        (res) => {
+          console.log('Vehiculos Report:', res.data);
+          const uniqueVehiculos = new Map();
+          res.data.forEach((item: any) => {
+            if (!uniqueVehiculos.has(item.placa)) {
+              uniqueVehiculos.set(item.placa, {
+                label: item.placa,
+                value: item.placa,
+              });
+            }
+          });
+          this.trabajadoresOptions = Array.from(uniqueVehiculos.values());
+        },
+        error => console.error('Error fetching Vehiculos report:', error)
+      );
     } else {
-      // Reset options if another report type is selected
-      this.trabajadoresOptions = [];
-      this.selectedTrabajador = undefined;
-      this.idRegistrosOptions = [];
-      this.selectedIdRegistro = undefined;
-      this.registroDetalles = [];
-      this.selectedProduct = null;
+    
+        // Reset options if another report type is selected
+        this.trabajadoresOptions = [];
+        this.selectedTrabajador = undefined;
+        this.idRegistrosOptions = [];
+        this.selectedIdRegistro = undefined;
+        this.registroDetalles = [];
+        this.selectedProduct = null;
+    
     }
   }
 
   onTrabajadorChange(event: any) {
     const selectedTrabajadorCedula = event.value;
-    const getReportsMethod = this.selectedReport === 'areas' ? 'getReportsAreas' : 'getReportsTrabajadores';
+    const getReportsMethod =
+    this.selectedReport === 'areas'
+      ? 'getReportsAreas'
+      : this.selectedReport === 'vehiculos'
+      ? 'getReportsVehiculos'
+      : 'getReportsTrabajadores';
     this.srvList[getReportsMethod]().subscribe(
       (res) => {
         const registros = res.data.filter(
-          (item: any) => item[this.selectedReport === 'areas' ? 'nombre_area' : 'cedula'] === selectedTrabajadorCedula
+          (item: any) => item[this.selectedReport === 'areas' ? 'nombre_area' : this.selectedReport === 'vehiculos' ? 'placa' : 'cedula'] === selectedTrabajadorCedula
         );
         const uniqueRegistros = new Set<number>();
         const uniqueIdRegistrosOptions: { label: string; value: number }[] = [];
 
         registros.forEach((item: any) => {
-          const idKey = this.selectedReport === 'areas' ? 'id_tbl_registros_areas' : 'id_tbl_registros';
+          const idKey =
+            this.selectedReport === 'areas'
+              ? 'id_tbl_registros_areas'
+              : this.selectedReport === 'vehiculos'
+              ? 'id_tbl_registros_vehiculos'
+              : 'id_tbl_registros';
           if (!uniqueRegistros.has(item[idKey])) {
             uniqueRegistros.add(item[idKey]);
             uniqueIdRegistrosOptions.push({
@@ -168,16 +208,21 @@ export default class EditDeleteComponent {
 
   onIdRegistroChange(event: any) {
     const selectedIdRegistro = event.value;
-    const getReportsMethod = this.selectedReport === 'areas' ? 'getReportsAreas' : 'getReportsTrabajadores';
+    const getReportsMethod =
+      this.selectedReport === 'areas'
+        ? 'getReportsAreas'
+        : this.selectedReport === 'vehiculos'
+        ? 'getReportsVehiculos'
+        : 'getReportsTrabajadores';
     this.srvList[getReportsMethod]().subscribe(
       (res) => {
         const detalles = res.data.filter(
-          (item: any) => item[this.selectedReport === 'areas' ? 'id_tbl_registros_areas' : 'id_tbl_registros'] === selectedIdRegistro
+          (item: any) => item[this.selectedReport === 'areas' ? 'id_tbl_registros_areas' : this.selectedReport === 'vehiculos' ? 'id_tbl_registros_vehiculos' : 'id_tbl_registros'] === selectedIdRegistro
         );
         console.log('Detalles:', detalles);
 
         this.registroDetalles = detalles.map((item: any) => ({
-          id_tbl_registro_detalles: item[this.selectedReport === 'areas' ? 'id_tbl_registro_detalle_areas' : 'id_tbl_registro_detalles'],
+          id_tbl_registro_detalles: item[this.selectedReport === 'areas' ? 'id_tbl_registro_detalle_areas' : this.selectedReport === 'vehiculos' ? 'id_tbl_registro_detalle_vehiculos' : 'id_tbl_registro_detalles'],
           codigo_producto: item.codigo_producto,
           id_tbl_productos: item.id_tbl_productos,
           nombre_producto: item.nombre_producto,
@@ -224,7 +269,13 @@ export default class EditDeleteComponent {
           this.registerDetailsService.postEditProductos(updatedNewProduct).subscribe(
             () => {
               // Update the registro detalle
-              const postEditMethod = this.selectedReport === 'areas' ? 'postEditRegistroDetalleArea' : 'postEditRegistroDetalle';
+            //  const postEditMethod = this.selectedReport === 'areas' ? 'postEditRegistroDetalleArea' : 'postEditRegistroDetalle';
+              const postEditMethod =
+              this.selectedReport === 'areas'
+                ? 'postEditRegistroDetalleArea'
+                : this.selectedReport === 'vehiculos'
+                ? 'postEditRegistroDetalleVehiculos'
+                : 'postEditRegistroDetalle';
               this.registerDetailsService[postEditMethod](updatedRegistroDetalle).subscribe(
                   () => {
                       this.messageService.add({
@@ -277,9 +328,15 @@ export default class EditDeleteComponent {
     }
   }
 
-  resetForm() {
+  private resetForm() {
+    this.selectedReport = undefined;
+    this.trabajadoresOptions = [];
+    this.selectedTrabajador = undefined;
+    this.idRegistrosOptions = [];
+    this.selectedIdRegistro = undefined;
+    this.registroDetalles = [];
+    this.selectedProduct = null;
     this.selectedNewProduct = null;
     this.newProductQuantity = 0;
-    this.selectedProduct = null;
   }
 }
