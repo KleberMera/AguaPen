@@ -46,7 +46,7 @@ export default class AreasComponent implements OnInit, OnDestroy {
         //this.listReports = res.data;
         this.filteredReports = this.listReports;
         this.uniqueAreas = this.extractUniqueAreas(this.listReports);
-        console.log('Listado de Reportes:', this.listReports);
+      
         this.loading = false;
         
       }

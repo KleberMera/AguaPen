@@ -89,7 +89,7 @@ export class ToolbarComponent implements OnInit {
   dataUser() {
     this.srvAuth.viewDataUser().subscribe((res: any) => {
       if (res) {
-        console.log(res.data);
+      
         
         this.user = res.data;
         this.loading = false;

@@ -50,7 +50,7 @@ export default class ProductosComponent implements OnInit {
     try {
       const res = await this.srvList.getlistProducts().toPromise();
       this.listProduct = res.data;
-      console.log('ListProducts:', this.listProduct);
+     
       
     } catch (error) {
       this.handleError(error, 'Error al cargar productos:');

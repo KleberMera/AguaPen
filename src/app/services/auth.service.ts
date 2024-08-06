@@ -112,7 +112,7 @@ export class AuthService {
           error: (err) => {
             this.clearAuthData(); // Limpiar localStorage en caso de error
             observer.error(err);
-            console.log(err.message);
+          
             this.router.navigate(['/auth']);
             
           }
@@ -120,7 +120,7 @@ export class AuthService {
       } catch (error : any) {
         this.clearAuthData(); // Limpiar localStorage en caso de excepción
         observer.error(error);
-        console.log(error.message);
+    
         this.router.navigate(['/auth']);
       }
     });
