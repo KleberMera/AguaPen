@@ -107,7 +107,7 @@ export default class EditDeleteComponent {
     if (this.selectedReport === 'trabajadores') {
       this.srvList.getReportsTrabajadores().subscribe(
         (res) => {
-          console.log('Trabajadores Report:', res.data);
+          
           const uniqueTrabajadores = new Map();
           res.data.forEach((item: any) => {
             if (!uniqueTrabajadores.has(item.cedula)) {
@@ -124,7 +124,7 @@ export default class EditDeleteComponent {
     } else if (this.selectedReport === 'areas') {
       this.srvList.getReportsAreas().subscribe(
         (res) => {
-          console.log('Areas Report:', res.data);
+    
           const uniqueAreas = new Map();
           res.data.forEach((item: any) => {
             if (!uniqueAreas.has(item.nombre_area)) {
@@ -141,7 +141,7 @@ export default class EditDeleteComponent {
     } else if (this.selectedReport === 'vehiculos') {
       this.srvList.getReportsVehiculos().subscribe(
         (res) => {
-          console.log('Vehiculos Report:', res.data);
+     
           const uniqueVehiculos = new Map();
           res.data.forEach((item: any) => {
             if (!uniqueVehiculos.has(item.placa)) {
@@ -201,7 +201,7 @@ export default class EditDeleteComponent {
         });
 
         this.idRegistrosOptions = uniqueIdRegistrosOptions;
-        console.log('ID Registros Options:', this.idRegistrosOptions);
+    
       },
       (error) => console.error('Error fetching ID Registros:', error)
     );
@@ -220,7 +220,7 @@ export default class EditDeleteComponent {
         const detalles = res.data.filter(
           (item: any) => item[this.selectedReport === 'areas' ? 'id_tbl_registros_areas' : this.selectedReport === 'vehiculos' ? 'id_tbl_registros_vehiculos' : 'id_tbl_registros'] === selectedIdRegistro
         );
-        console.log('Detalles:', detalles);
+       
         this.estadoRegistro = detalles[0].estado_registro;
 
         this.registroDetalles = detalles.map((item: any) => ({
@@ -231,7 +231,7 @@ export default class EditDeleteComponent {
           stock_producto: item.stock_producto,
           cantidad: item.cantidad,
         }));
-        console.log('Registro Detalles:', this.registroDetalles);
+
       },
       (error) => console.error('Error fetching Registro Detalles:', error)
     );
@@ -344,10 +344,6 @@ export default class EditDeleteComponent {
 
 
   async onAnularRegistro(): Promise<void> {
-    console.log('onAnularRegistro');
-    console.log(this.selectedIdRegistro);
-    
-    
     if (!this.selectedIdRegistro) {
       this.messageService.add({
         severity: 'error',
@@ -392,9 +388,7 @@ export default class EditDeleteComponent {
   }
 
   async onValidarRegistro(): Promise<void> {
-    console.log('onAnularRegistro');
-    console.log(this.selectedIdRegistro);
-    
+
     
     if (!this.selectedIdRegistro) {
       this.messageService.add({
