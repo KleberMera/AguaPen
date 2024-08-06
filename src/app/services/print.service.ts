@@ -89,7 +89,7 @@ export class PrintService {
             (doc as any).autoTable({
               head: [['ID', 'Codigo', 'Fecha', 'Nombre', 'Producto', 'Cantidad', 'Firma']],
               body: data.slice(startIndex, startIndex + rowsPerPage).map(report => [
-                report.id,
+                report.id_tbl_registros,
                 report.codigo_producto,
                 report.fecha_registro,
                 report.nombre,
@@ -562,12 +562,13 @@ export class PrintService {
             }
 
             addBackgroundAndDate();
-
+            
             // Uso de autoTable para agregar la tabla
             (doc as any).autoTable({
+              
               head: [['ID', 'Fecha', 'Placa', 'Producto', 'Cantidad','Observacion','Firma']],
               body: data.slice(startIndex, startIndex + rowsPerPage).map(report => [
-                report.id,
+                report.id_tbl_registros_vehiculos,
               
                 report.fecha_registro,
                 report.placa,
@@ -659,7 +660,7 @@ export class PrintService {
             (doc as any).autoTable({
               head: [['ID', 'Fecha', 'Area', 'Producto', 'Cantidad','Observacion','Firma']],
               body: data.slice(startIndex, startIndex + rowsPerPage).map(report => [
-                report.id,
+                report.id_tbl_registros_areas,
                 report.fecha_registro,
                 report.nombre_area,
                 report.nombre_producto,
