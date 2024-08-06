@@ -235,7 +235,7 @@ export default class RegistrosVehiculosComponent {
       return;
     }
   
-    this.mensajeDeDescarga();
+    this.MsjAntRegist();
   }
 
   async guardarDetallesRegistro(): Promise<void> {
@@ -317,7 +317,7 @@ export default class RegistrosVehiculosComponent {
 
 
   exportData() {
-    this.PrintService.exportAsigVehicle(this.selectedVehiculo, this.selectedProducts, this.observacion);
+    this.PrintService.exportAsigVehicle(this.selectedVehiculo, this.selectedProducts, this.observacion, this.totalCantidadProductos);
   }
 private mensajeDeDescarga(): void {
   if (!this.selectedProducts.length) {
@@ -341,6 +341,7 @@ private mensajeDeDescarga(): void {
     },
     reject: () => {
       this.procederConRegistro();
+      this.ConfirmationService.close();
     }
   });
 }
@@ -400,4 +401,20 @@ private async procederConRegistro(): Promise<void> {
     this.loading = false;
   }
 }
+
+
+MsjAntRegist() {
+  this.ConfirmationService.confirm({
+    message: '¿Deseas registrar esta asignación?',
+    header: 'Confirmación de Registro',
+    icon: 'pi pi-exclamation-triangle',
+    accept: async () => {
+     await this.mensajeDeDescarga(); 
+    },
+    reject: () => {
+      this.ConfirmationService.close(); 
+    }
+  });
+}
+
 }

@@ -312,7 +312,7 @@ export default class RegistrosComponent implements OnInit {
   }
  
   exportData() {
-    this.PrintService.exportAsignacion(this.selectedUser, this.selectedProducts, this.observacion);
+    this.PrintService.exportAsignacion(this.selectedUser, this.selectedProducts, this.observacion, this.totalCantidadProductos);
   }
 
 private mensajeDeDescarga(): void {
@@ -338,6 +338,7 @@ private mensajeDeDescarga(): void {
     },
     reject: () => {
       this.procederConRegistro();
+      this.confirmationService.close();
     }
   });
 }
@@ -402,10 +403,10 @@ MsjAntRegist() {
     header: 'Confirmación de Registro',
     icon: 'pi pi-exclamation-triangle',
     accept: async () => {
-      this.mensajeDeDescarga(); // Llama a la función que maneja la descarga y el registro
+     await this.mensajeDeDescarga(); 
     },
     reject: () => {
-      // No se hace nada en caso de rechazo
+      this.confirmationService.close(); 
     }
   });
 }
