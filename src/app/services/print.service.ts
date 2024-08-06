@@ -138,7 +138,7 @@ export class PrintService {
     }
   }
 
-  exportAsignacion(selectedUser: any, selectedProducts: any[], observacion: string): void {
+  exportAsignacion(selectedUser: any, selectedProducts: any[], observacion: string, totalCantidadProductos: number): void {
     this.dataUser().then(() => {
       // Asegúrate de que la información del usuario está disponible antes de generar el PDF
       if (!this.user.nombres || !this.user.cedula) {
@@ -201,6 +201,9 @@ export class PrintService {
                 product.codigo_producto,
                 product.nombre_producto,
                 product.cantidad
+              ]).concat([
+                // Add a row for the total only if this is the last page
+                ...(startIndex + rowsPerPage >= selectedProducts.length ? [[null, 'Total', totalCantidadProductos]] : [])
               ]),
               startY: marginTop + 10,
               margin: { top: marginTop, bottom: marginBottom },
@@ -255,7 +258,16 @@ export class PrintService {
     });
   }
 
-  exportAsigVehicle(selectedVehiculo: any, selectedProducts: any[], observacion: string): void {
+
+
+
+
+
+
+
+
+
+  exportAsigVehicle(selectedVehiculo: any, selectedProducts: any[], observacion: string, totalCantidadProductos: number): void {
     this.dataUser().then(() => {
       if (!this.user.nombres || !this.user.cedula) {
         console.error('Información del usuario no disponible.');
@@ -320,7 +332,11 @@ export class PrintService {
                 product.codigo_producto,
                 product.nombre_producto,
                 product.cantidad
+              ]).concat([
+                // Add a row for the total only if this is the last page
+                ...(startIndex + rowsPerPage >= selectedProducts.length ? [[null, 'Total', totalCantidadProductos]] : [])
               ]),
+
               startY: marginTop + 40,
               margin: { top: marginTop, bottom: marginBottom },
               styles: {
@@ -367,8 +383,16 @@ export class PrintService {
       console.error('Error al cargar datos del usuario:', error);
     });
   }
+
+
+
+
+
+
+
+
+
   exportAsigAreas(selectedArea: any, selectedProducts: any[], observacion: string, totalCantidadProductos: number): void {
-    console.log('Total Cantidad Productos:', totalCantidadProductos);
   
     this.dataUser().then(() => {
       if (!this.user.nombres || !this.user.cedula) {

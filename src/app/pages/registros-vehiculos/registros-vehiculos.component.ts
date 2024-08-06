@@ -317,7 +317,7 @@ export default class RegistrosVehiculosComponent {
 
 
   exportData() {
-    this.PrintService.exportAsigVehicle(this.selectedVehiculo, this.selectedProducts, this.observacion);
+    this.PrintService.exportAsigVehicle(this.selectedVehiculo, this.selectedProducts, this.observacion, this.totalCantidadProductos);
   }
 private mensajeDeDescarga(): void {
   if (!this.selectedProducts.length) {

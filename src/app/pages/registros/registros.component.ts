@@ -312,7 +312,7 @@ export default class RegistrosComponent implements OnInit {
   }
  
   exportData() {
-    this.PrintService.exportAsignacion(this.selectedUser, this.selectedProducts, this.observacion);
+    this.PrintService.exportAsignacion(this.selectedUser, this.selectedProducts, this.observacion, this.totalCantidadProductos);
   }
 
 private mensajeDeDescarga(): void {
