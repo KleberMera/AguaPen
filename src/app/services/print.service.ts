@@ -367,8 +367,9 @@ export class PrintService {
       console.error('Error al cargar datos del usuario:', error);
     });
   }
+  exportAsigAreas(selectedArea: any, selectedProducts: any[], observacion: string, totalCantidadProductos: number): void {
+    console.log('Total Cantidad Productos:', totalCantidadProductos);
   
-  exportAsigAreas(selectedArea: any, selectedProducts: any[], observacion: string): void {
     this.dataUser().then(() => {
       if (!this.user.nombres || !this.user.cedula) {
         console.error('Información del usuario no disponible.');
@@ -424,12 +425,16 @@ export class PrintService {
             const titleX = (pageWidth - titleWidth) / 2;
             doc.text(title, titleX, marginTop + 20);
   
-            (doc as any).autoTable({
+            // Add the table with an additional row for totals
+            const autoTableOptions = {
               head: [['Codigo', 'Nombre', 'Cantidad']],
               body: selectedProducts.slice(startIndex, startIndex + rowsPerPage).map(product => [
                 product.codigo_producto,
                 product.nombre_producto,
                 product.cantidad
+              ]).concat([
+                // Add a row for the total only if this is the last page
+                ...(startIndex + rowsPerPage >= selectedProducts.length ? [[null, 'Total', totalCantidadProductos]] : [])
               ]),
               startY: marginTop + 25,
               margin: { top: marginTop, bottom: marginBottom },
@@ -448,7 +453,9 @@ export class PrintService {
                 doc.text(`Página ${currentPage}`, pageWidth - 30, pageHeight - 10);
                 currentPage++;
               }
-            });
+            };
+  
+            (doc as any).autoTable(autoTableOptions);
   
             if (startIndex + rowsPerPage < selectedProducts.length) {
               drawPage(startIndex + rowsPerPage);
@@ -477,7 +484,9 @@ export class PrintService {
       console.error('Error al cargar datos del usuario:', error);
     });
   }
+  
 
+  
 
 
 

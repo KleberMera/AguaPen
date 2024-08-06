@@ -14,6 +14,7 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
 
 export const PrimeModules = [
   TableModule,
@@ -34,4 +35,5 @@ export const PrimeModules = [
   InputGroupModule,
   InputGroupAddonModule,
   ConfirmDialogModule,
+  ConfirmPopupModule,
 ];
