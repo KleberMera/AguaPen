@@ -3,6 +3,7 @@ export interface Registro {
   fecha_registro: string;
   hora_registro: string;
   observacion: string;
+  estado_registro: number;
 }
 
 export interface registerArea {
@@ -10,6 +11,7 @@ export interface registerArea {
   fecha_registro: string;
   hora_registro: string;
   observacion: string;
+  estado_registro: number;
 }
 
 
@@ -18,4 +20,5 @@ export interface registerVehiculos {
   fecha_registro: string;
   hora_registro: string;
   observacion: string;
+  estado_registro: number;
 }

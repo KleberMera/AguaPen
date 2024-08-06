@@ -35,9 +35,9 @@ export default class ReportesUsuariosComponent implements OnInit {
     this.loading = true;
     try {
       const res: any = await this.srvList.getReportsTrabajadores().toPromise();
-      this.listReports = res.data;
-      this.filteredReports = res.data;
-      this.uniqueUsers = this.getUniqueUsers(res.data);
+      this.listReports = res.data.filter((report : any) => report.estado_registro === 1);
+      this.filteredReports = this.listReports;
+      this.uniqueUsers = this.getUniqueUsers(this.listReports);
     } catch (error) {
       console.error('Error fetching report data:', error);
     } finally {

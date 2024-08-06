@@ -36,6 +36,7 @@ export default class EditDeleteComponent {
   selectedNewProduct: any = null;
   newProductQuantity: number = 0;
   loading: boolean = false;
+  estadoRegistro: number = 0 ;
 
   private srvList = inject(ListService);
   private messageService = inject(MessageService);
@@ -220,6 +221,7 @@ export default class EditDeleteComponent {
           (item: any) => item[this.selectedReport === 'areas' ? 'id_tbl_registros_areas' : this.selectedReport === 'vehiculos' ? 'id_tbl_registros_vehiculos' : 'id_tbl_registros'] === selectedIdRegistro
         );
         console.log('Detalles:', detalles);
+        this.estadoRegistro = detalles[0].estado_registro;
 
         this.registroDetalles = detalles.map((item: any) => ({
           id_tbl_registro_detalles: item[this.selectedReport === 'areas' ? 'id_tbl_registro_detalle_areas' : this.selectedReport === 'vehiculos' ? 'id_tbl_registro_detalle_vehiculos' : 'id_tbl_registro_detalles'],
@@ -338,5 +340,102 @@ export default class EditDeleteComponent {
     this.selectedProduct = null;
     this.selectedNewProduct = null;
     this.newProductQuantity = 0;
+  }
+
+
+  async onAnularRegistro(): Promise<void> {
+    console.log('onAnularRegistro');
+    console.log(this.selectedIdRegistro);
+    
+    
+    if (!this.selectedIdRegistro) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Debe seleccionar un ID de Registro para anularlo',
+      });
+      return;
+    }
+    const updatedRegistro = {
+      id : this.selectedIdRegistro,
+      estado_registro: 0,
+    };
+
+    this.loading = true;
+    const anularRegistroMethod =
+    this.selectedReport === 'areas'
+      ? 'postEditRegistroAreas'
+      : this.selectedReport === 'vehiculos'
+      ? 'postEditRegistroVehiculos'
+      : 'postEditRegistro';
+
+    this.registerDetailsService[anularRegistroMethod]( updatedRegistro).subscribe(
+      () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Registro anulado exitosamente',
+        });
+        this.resetForm();
+        this.loading = false;
+      },
+      (error) => {
+        this.loading = false;
+        console.error('Error deleting Registro Detalle:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Hubo un problema al anular el registro',
+        });
+      }
+    );
+  }
+
+  async onValidarRegistro(): Promise<void> {
+    console.log('onAnularRegistro');
+    console.log(this.selectedIdRegistro);
+    
+    
+    if (!this.selectedIdRegistro) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Debe seleccionar un ID de Registro para anularlo',
+      });
+      return;
+    }
+    const updatedRegistro = {
+      id : this.selectedIdRegistro,
+      estado_registro: 1,
+    };
+
+    this.loading = true;
+    const anularRegistroMethod =
+    this.selectedReport === 'areas'
+      ? 'postEditRegistroAreas'
+      : this.selectedReport === 'vehiculos'
+      ? 'postEditRegistroVehiculos'
+      : 'postEditRegistro';
+
+    this.registerDetailsService[anularRegistroMethod]( updatedRegistro).subscribe(
+      () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Registro validado exitosamente',
+        });
+        this.resetForm();
+        this.loading = false;
+      },
+      (error) => {
+        this.loading = false;
+        console.error('Error deleting Registro Detalle:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Hubo un problema al validar el registro',
+        });
+      }
+    );
   }
 }

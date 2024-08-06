@@ -31,7 +31,29 @@
       (onChange)="onIdRegistroChange($event)"
     >
     </p-dropdown>
+
+    
   </div>
+  }
+
+  @if (idRegistrosOptions.length > 0) {
+    <div class="field">
+      @if (estadoRegistro === 0) {
+        <p-button
+          label="Validar"
+          severity="success"
+          (click)="onValidarRegistro()"
+          [loading]="loading"
+        />
+      } @else {
+        <p-button
+          label="Anular"
+          severity="danger"
+          (click)="onAnularRegistro()"
+          [loading]="loading"
+        />
+      }
+    </div>
   }
 </div>
 

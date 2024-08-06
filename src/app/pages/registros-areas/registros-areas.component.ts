@@ -380,6 +380,7 @@ private async procederConRegistro(): Promise<void> {
       fecha_registro: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
       hora_registro: formatDate(new Date(), 'HH:mm', 'en-US'),
       observacion: this.observacion,
+      estado_registro: 1,
     };
 
     const res: any = await this.srvRegDet

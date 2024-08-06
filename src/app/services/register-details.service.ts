@@ -27,6 +27,7 @@ export class RegisterDetailsService {
             fecha_registro: objRegistro.fecha_registro,
             hora_registro: objRegistro.hora_registro,
             observacion: objRegistro.observacion,
+            estado_registro: objRegistro.estado_registro,
           },
         },
       ],
@@ -61,6 +62,7 @@ export class RegisterDetailsService {
             fecha_registro: objRegistro.fecha_registro,
             hora_registro: objRegistro.hora_registro,
             observacion: objRegistro.observacion,
+            estado_registro: objRegistro.estado_registro,
           },
         },
       ],
@@ -79,6 +81,7 @@ export class RegisterDetailsService {
             fecha_registro: objRegistro.fecha_registro,
             hora_registro: objRegistro.hora_registro,
             observacion: objRegistro.observacion,
+            estado_registro: objRegistro.estado_registro,
           },
         },
       ],
@@ -195,9 +198,8 @@ export class RegisterDetailsService {
     });
   }
 
-
-   //RegisterDetalleVehiculos
-   postEditRegistroDetalleVehiculos(objRegistro: any) {
+  //RegisterDetalleVehiculos
+  postEditRegistroDetalleVehiculos(objRegistro: any) {
     const url = `${this.environment}registrodetallevehiculos/mutate`;
     return this.http.post(url, {
       mutate: [
@@ -213,4 +215,64 @@ export class RegisterDetailsService {
       ],
     });
   }
+
+  postEditRegistro(objRegistro: any) {
+    const url = `${this.environment}registros/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'update',
+          key: objRegistro.id,
+          attributes: {
+            id_usuario: objRegistro.id_usuario,
+            fecha_registro: objRegistro.fecha_registro,
+            hora_registro: objRegistro.hora_registro,
+            observacion: objRegistro.observacion,
+            estado_registro: objRegistro.estado_registro,
+          },
+        },
+      ],
+    });
+  }
+
+
+  postEditRegistroAreas(objRegistro: any) {
+    const url = `${this.environment}registroareas/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'update',
+          key: objRegistro.id,
+          attributes: {
+            id_area: objRegistro.id_area,
+            fecha_registro: objRegistro.fecha_registro,
+            hora_registro: objRegistro.hora_registro,
+            observacion: objRegistro.observacion,
+            estado_registro: objRegistro.estado_registro,
+          },
+        },
+      ],
+    });
+  }
+
+  //RegisterVehiculos
+  postEditRegistroVehiculos(objRegistro: any) {
+    const url = `${this.environment}registrovehiculos/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'update',
+          key: objRegistro.id,
+          attributes: {
+            id_vehiculo: objRegistro.id_vehiculo,
+            fecha_registro: objRegistro.fecha_registro,
+            hora_registro: objRegistro.hora_registro,
+            observacion: objRegistro.observacion,
+            estado_registro: objRegistro.estado_registro,
+          },
+        },
+      ],
+    });
+  }
+
 }

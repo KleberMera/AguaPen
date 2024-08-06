@@ -47,11 +47,11 @@ export default class ReportesComponent implements OnInit {
     const reportSubscription = this.srvList
       .getReportsTrabajadores()
       .subscribe((res: any) => {
-        this.listReports = res.data;
-        console.log(res.data);
+        this.listReports = res.data.filter((report : any) => report.estado_registro === 1);
+     
         
-        this.filteredReports = res.data;
-        this.uniqueUsers = this.extractUniqueUsers(res.data);
+        this.filteredReports = this.listReports;
+        this.uniqueUsers = this.extractUniqueUsers(this.listReports);
         this.loading = false;
       });
 

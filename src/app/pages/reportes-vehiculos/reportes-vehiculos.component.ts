@@ -29,7 +29,7 @@ export default class ReportesVehiculosComponent {
   private srvMessage = inject(MessageService);
 
   ngOnInit(): void {
-    this.getListVehiculos();
+   
     this.loadReports();
   }
 
@@ -40,10 +40,11 @@ export default class ReportesVehiculosComponent {
   loadReports() {
     const reportSubscription = this.SrvList.getReportsVehiculos().subscribe(
       (res: any) => {
-        this.listReports = res.data;
-        this.filteredReports = res.data;
-        this.uniqueVehiculos = this.extractUniqueVehiculos(res.data);
-        console.log('Listado de Reportes:', this.listReports);
+        this.listReports = res.data.filter((report : any) => report.estado_registro === 1);
+        this.filteredReports = this.listReports;
+        this.uniqueVehiculos = this.extractUniqueVehiculos(this.listReports);
+
+       
         this.loading = false;
       }
     );
@@ -102,13 +103,6 @@ export default class ReportesVehiculosComponent {
     this.filteredReports = this.listReports;
   }
 
-  getListVehiculos() {
-    this.SrvList.getListVehiculos().subscribe((res) => {
-      this.listVehiculos = res.data;
-      console.log(this.listVehiculos);
-      
-    });
-  }
 
   printTable(): void {
     this.srvPrint.printElement('reportTable');
