@@ -43,7 +43,11 @@
       </ng-template>
     </p-dropdown>
   </div>
-  <div class="field col">
+  
+</div>
+
+<div class="formgroup-inline">
+  <div class="field">
     <button
       pButton
       type="button"
@@ -53,12 +57,16 @@
       aria-label="Imprimir"
       position="right"
     ></button>
+  
+  </div>
+
+  <div class="field">
     <button
     pButton
     type="button"
     icon="pi pi-file-pdf"
     (click)="exportToPDF()"
-    class="p-button-rounded p-button-secondary"
+    class="p-button-rounded p-button-primary"
     aria-label="Exportar a PDF"
   ></button>
   </div>

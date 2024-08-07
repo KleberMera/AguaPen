@@ -43,14 +43,14 @@
           label="Validar"
           severity="success"
           (click)="onValidarRegistro()"
-          [loading]="loading"
+          [loading]="lodingEstadoRegistro"
         />
       } @else {
         <p-button
           label="Anular"
           severity="danger"
           (click)="onAnularRegistro()"
-          [loading]="loading"
+          [loading]="lodingEstadoRegistro"
         />
       }
     </div>

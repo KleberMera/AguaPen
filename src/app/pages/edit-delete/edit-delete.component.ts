@@ -36,6 +36,7 @@ export default class EditDeleteComponent {
   selectedNewProduct: any = null;
   newProductQuantity: number = 0;
   loading: boolean = false;
+  lodingEstadoRegistro: boolean = false;
   estadoRegistro: number = 0 ;
 
   private srvList = inject(ListService);
@@ -357,7 +358,7 @@ export default class EditDeleteComponent {
       estado_registro: 0,
     };
 
-    this.loading = true;
+    this.lodingEstadoRegistro = true;
     const anularRegistroMethod =
     this.selectedReport === 'areas'
       ? 'postEditRegistroAreas'
@@ -373,10 +374,10 @@ export default class EditDeleteComponent {
           detail: 'Registro anulado exitosamente',
         });
         this.resetForm();
-        this.loading = false;
+        this.lodingEstadoRegistro = false;
       },
       (error) => {
-        this.loading = false;
+        this.lodingEstadoRegistro = false;
         console.error('Error deleting Registro Detalle:', error);
         this.messageService.add({
           severity: 'error',
@@ -403,7 +404,7 @@ export default class EditDeleteComponent {
       estado_registro: 1,
     };
 
-    this.loading = true;
+    this.lodingEstadoRegistro = true;
     const anularRegistroMethod =
     this.selectedReport === 'areas'
       ? 'postEditRegistroAreas'
@@ -419,10 +420,10 @@ export default class EditDeleteComponent {
           detail: 'Registro validado exitosamente',
         });
         this.resetForm();
-        this.loading = false;
+        this.lodingEstadoRegistro = false;
       },
       (error) => {
-        this.loading = false;
+        this.lodingEstadoRegistro = false;
         console.error('Error deleting Registro Detalle:', error);
         this.messageService.add({
           severity: 'error',

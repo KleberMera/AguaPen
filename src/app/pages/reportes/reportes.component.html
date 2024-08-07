@@ -1,4 +1,4 @@
-<div class="formgrid grid">
+<div class="formgroup-inline">
   <div class="field col">
     <p-inputGroup>
       <button
@@ -44,30 +44,12 @@
     </p-dropdown>
   </div>
   
-  <!-- Align buttons next to dropdown -->
-  <div class="field col">
-    <div class="p-d-flex p-ai-center">
-      <button
-        pButton
-        type="button"
-        icon="pi pi-print"
-        (click)="printTable()"
-        class="p-button-rounded p-button-secondary p-mr-2"
-        aria-label="Imprimir"
-      ></button>
-      
-      
-      <button
-        pButton
-        type="button"
-        icon="pi pi-file-pdf"
-        (click)="exportToPDF()"
-        class="p-button-rounded p-button-secondary"
-        aria-label="Exportar a PDF"
-      ></button>
-    </div>
-  </div>
+ 
+
 </div>
+
+
+
 
 <div class="formgroup-inline">
   <div class="field">
@@ -110,6 +92,34 @@
       class="p-ml-2"
     ></button>
   </div>
+</div>
+
+<div class="formgroup-inline">
+  <!-- Align buttons next to dropdown -->
+  <div class="field">
+   <button
+     pButton
+     type="button"
+     icon="pi pi-print"
+     (click)="printTable()"
+     class="p-button-rounded p-button-secondary p-mr-2"
+     aria-label="Imprimir"
+   ></button>
+   
+   
+   
+ </div>
+
+ <div class="field">
+   <button
+     pButton
+     type="button"
+     icon="pi pi-file-pdf"
+     (click)="exportToPDF()"
+     class="p-button-rounded p-button-primary"
+     aria-label="Exportar a PDF"
+   ></button>
+ </div>
 </div>
 
 @if (loading) {

@@ -113,5 +113,15 @@ export default class AreasComponent implements OnInit, OnDestroy {
   exportToPDF(): void {
     this.srvPrint.exportToPDFAREA(this.filteredReports);
     
+    if (this.listReports.length > 0) {
+      this.srvPrint.exportToPDFAREA(this.filteredReports);
+    } else {
+      this.srvMessage.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No hay registros para imprimir',
+      });
+    }
+    
   }
 }
