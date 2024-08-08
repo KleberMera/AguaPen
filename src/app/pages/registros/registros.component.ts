@@ -12,6 +12,7 @@ import { Product } from '../../interfaces/products.interfaces';
 import { PRIMEMG_MODULES } from './registros.imports';
 import { User } from '../../interfaces/users.interfaces';
 import { details } from '../../interfaces/details.interfaces';
+import { UploadimageService } from '../../services/uploadimage.service';
 
 @Component({
   selector: 'app-registros',
@@ -37,12 +38,15 @@ export default class RegistrosComponent implements OnInit {
   grid: boolean = false;
 
   isInProgress: boolean = false;
+  selectedFile: File | null = null;
+  imagePreview: string | ArrayBuffer | null = null;
 
   private srvRegDet = inject(RegisterDetailsService);
   private srvList = inject(ListService);
   private PrintService = inject(PrintService);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
+  private uploadService = inject(UploadimageService);
 
   async ngOnInit(): Promise<void> {
     await this.loadInitialData();
@@ -365,12 +369,18 @@ private async procederConRegistro(): Promise<void> {
       estado_registro: 1,
     };
 
+
+
     const res: any = await this.srvRegDet
       .postRegisterRegistro(registro)
       .toPromise();
 
+    
+
     if (res) {
+      await this.onUpload();
       await this.guardarDetallesRegistro();
+     
 
       this.clearForm();
       this.messageService.add({
@@ -411,4 +421,34 @@ MsjAntRegist() {
   });
 }
 
+
+
+
+
+
+onFileSelected(event: any) {
+  this.selectedFile = event.files[0]; // PrimeNG returns files array
+  if (this.selectedFile) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = reader.result;
+    };
+    reader.readAsDataURL(this.selectedFile);
+  }
+}
+
+async onUpload() {
+  if (this.selectedFile) {
+    const res: any = await this.srvRegDet.getidlasregistro().toPromise();
+    const lastRegistroId = res.id_registro;
+    this.uploadService.uploadImage(lastRegistroId, this.selectedFile).subscribe(
+      (response) => {
+        console.log('Imagen subida correctamente:', response);
+      },
+      (error) => {
+        console.error('Error al subir la imagen:', error);
+      }
+    );
+  }
+}
 }

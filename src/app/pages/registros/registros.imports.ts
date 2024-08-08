@@ -13,7 +13,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
-
+import { FileUploadModule } from 'primeng/fileupload';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 export const  PRIMEMG_MODULES = [
@@ -34,4 +34,5 @@ export const  PRIMEMG_MODULES = [
   InputGroupModule,
   InputGroupAddonModule,
   ScrollPanelModule,
+  FileUploadModule,
 ];

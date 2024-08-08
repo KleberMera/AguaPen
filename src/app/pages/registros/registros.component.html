@@ -234,8 +234,25 @@
     </ng-template>
   </p-table>
 </div>
+<p-fileUpload
+  mode="basic"
+  chooseLabel="Seleccionar Imagen"
+  accept="image/*"
+
+  customUpload="true"
+  (onSelect)="onFileSelected($event)"
+></p-fileUpload>
+
+
+@if (imagePreview) {
+  <img  [src]="imagePreview" alt="Image Preview" style="max-width: 300px; max-height: 300px;" />
 
 }
+
+}
+
+
+
 
 <!-- Componente de carga -->
 <p-blockUI [blocked]="loading">
