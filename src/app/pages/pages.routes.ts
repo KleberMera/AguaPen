@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { rolGuard } from '../guards/rol.guard';
+import { roldataGuard } from '../guards/roldata.guard';
 
 export const routes: Routes = [
   {
@@ -13,18 +14,22 @@ export const routes: Routes = [
       {
         path: 'productos',
         loadComponent: () => import('./productos/productos.component'),
+        canActivate: [roldataGuard],
       },
       {
         path: 'vehiculos',
         loadComponent: () => import('./vehiculos/vehiculos.component'),
+        canActivate: [roldataGuard],
       },
       {
         path: 'trabajadores',
         loadComponent: () => import('./trabajadores/trabajadores.component'),
+        canActivate: [roldataGuard],
       },
       {
         path: 'areas',
         loadComponent: () => import('./areas/areas.component'),
+        canActivate: [roldataGuard],
       },
       {
         path: 'roles',
@@ -34,11 +39,13 @@ export const routes: Routes = [
       {
         path: 'registros',
         loadComponent: () => import('./registros/registros.component'),
+        canActivate: [roldataGuard],
     
       },
       {
         path: 'reportes',
         loadComponent: () => import('./reportes/reportes.component'),
+        
       },
       {
         path: 'reportes-usuarios',

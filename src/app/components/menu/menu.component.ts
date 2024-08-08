@@ -37,7 +37,11 @@ export class MenuComponent {
        
         
         this.rol_id = res.data.rol_id;
-        this.initializeMenu();
+        if (this.rol_id === 1 || this.rol_id === 2) {
+          this.initializeMenu();
+        } else {
+          this.initializeMenu2();
+        }
         this.loading = false;
       } else {
         this.messageService.add({
@@ -125,6 +129,49 @@ export class MenuComponent {
           }
         ],
       },
+      {
+        label: 'Reportes',
+        items: [
+          {
+            label: 'Areas',
+            icon: 'pi pi-map-marker',
+            routerLink: '/home/reportes-areas',
+          },
+          {
+            label: 'Vehiculos',
+            icon: 'pi pi-car',
+            routerLink: '/home/reportes-vehiculos',
+          },
+          {
+            label: 'General',
+            icon: 'pi pi-th-large',
+            routerLink: '/home/reportes',
+          },
+          {
+            label: 'Detalles',
+            icon: 'pi pi-id-card',
+            routerLink: '/home/reportes-usuarios',
+          },
+        ],
+      },
+    ];
+  }
+
+
+  initializeMenu2() {
+
+    this.model = [
+      {
+        label: 'Home',
+        items: [
+          {
+            label: 'Dashboard',
+            icon: 'pi pi-home',
+            routerLink: '/home/dashboard',
+          },
+        ],
+      },
+     
       {
         label: 'Reportes',
         items: [
