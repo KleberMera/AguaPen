@@ -36,7 +36,7 @@ export default class RegistrosComponent implements OnInit {
   observacion: string = '';
   loadingMessage: string = '';
   grid: boolean = false;
-
+  visible: boolean = false;
   isInProgress: boolean = false;
   selectedFile: File | null = null;
   imagePreview: string | ArrayBuffer | null = null;

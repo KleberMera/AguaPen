@@ -84,6 +84,7 @@
             label="Registrar"
             (click)="register()"
           ></button>
+
         </div>
       </div>
     </p-card>
@@ -105,6 +106,12 @@
               [(ngModel)]="observacion"
             />
           </p-inputGroup>
+          <button  pButton
+          type="button"
+          label="Imagen"
+          (click)="visible = true">
+           
+          </button>
         </div>
       </div>
       <p-scrollPanel
@@ -234,7 +241,14 @@
     </ng-template>
   </p-table>
 </div>
-<p-fileUpload
+
+
+}
+
+
+<p-dialog header="Agregar Imagen" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }">
+<div class="p-fluid">
+  <p-fileUpload
   mode="basic"
   chooseLabel="Seleccionar Imagen"
   accept="image/*"
@@ -243,13 +257,13 @@
   (onSelect)="onFileSelected($event)"
 ></p-fileUpload>
 
-
 @if (imagePreview) {
   <img  [src]="imagePreview" alt="Image Preview" style="max-width: 300px; max-height: 300px;" />
 
 }
+</div>
 
-}
+</p-dialog>
 
 
 

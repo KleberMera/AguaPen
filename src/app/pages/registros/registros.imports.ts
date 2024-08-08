@@ -15,7 +15,7 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-
+import { DialogModule } from 'primeng/dialog';
 export const  PRIMEMG_MODULES = [
 
   TableModule,
@@ -35,4 +35,5 @@ export const  PRIMEMG_MODULES = [
   InputGroupAddonModule,
   ScrollPanelModule,
   FileUploadModule,
+  DialogModule,
 ];
