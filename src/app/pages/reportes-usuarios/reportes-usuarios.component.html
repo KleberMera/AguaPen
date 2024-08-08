@@ -107,7 +107,25 @@
       (onChange)="filterReportsByDate()"
     ></p-dropdown>
   </div>
+ 
 </div>
+
+<div class="field">
+  @if (selectedDate && filteredReports.length > 0) {
+    <div >
+      <button
+        pButton
+        type="button"
+        label="Ver Imagen"
+        (click)="showImage()"
+        *ngIf="hasImageForSelectedDate()"
+      ></button>
+    </div>
+  }
+</div>
+
+
+
 } @if (loading) {
 <div class="loading-container p-d-flex p-jc-center p-ai-center p-flex-column">
   <p>Cargando Reportes...</p>
@@ -174,3 +192,12 @@
 <p-toast
   [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
 ></p-toast>
+
+
+<p-dialog header="Imagen" [(visible)]="displayImage" [modal]="true" [responsive]="true" >
+  <img [src]="selectedImageUrl" alt="Imagen" style="width: 100%;" />
+  <p-footer>
+    <button type="button" pButton label="Cerrar" (click)="displayImage = false"></button>
+  </p-footer>
+</p-dialog>
+

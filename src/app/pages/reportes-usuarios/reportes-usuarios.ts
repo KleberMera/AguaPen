@@ -14,6 +14,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CalendarModule } from 'primeng/calendar';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { DialogModule } from 'primeng/dialog';
+
 export const PRIMEMG_MODULES = [
   TableModule,
   FieldsetModule,
@@ -31,4 +33,5 @@ export const PRIMEMG_MODULES = [
   CalendarModule,
   InputGroupModule,
   InputGroupAddonModule,
+  DialogModule,
 ];

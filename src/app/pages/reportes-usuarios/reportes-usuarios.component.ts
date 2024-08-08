@@ -4,11 +4,14 @@ import { ListService } from '../../services/list.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { PRIMEMG_MODULES } from '../registros/registros.imports';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { DialogModule } from 'primeng/dialog';
+import { environment } from '../../../environments/environment.development';
 
 @Component({
   selector: 'app-reportes-usuarios',
   standalone: true,
-  imports: [PRIMEMG_MODULES, FormsModule],
+  imports: [PRIMEMG_MODULES, FormsModule, CommonModule, DialogModule],
   templateUrl: './reportes-usuarios.component.html',
   styleUrl: './reportes-usuarios.component.scss',
   providers: [MessageService, ConfirmationService],
@@ -26,6 +29,7 @@ export default class ReportesUsuariosComponent implements OnInit {
   private srvList = inject(ListService);
   private srvMessage = inject(MessageService);
   private srvPrint = inject(PrintService);
+  public environment = environment.imageApi;
 
   async ngOnInit(): Promise<void> {
     await this.viewListReports();
@@ -36,8 +40,18 @@ export default class ReportesUsuariosComponent implements OnInit {
     try {
       const res: any = await this.srvList.getReportsTrabajadores().toPromise();
       this.listReports = res.data.filter((report : any) => report.estado_registro === 1);
+
+       // Actualiza las URLs de las imágenes
+       this.listReports.forEach(report => {
+        report.imagen = this.setImageUrl(report);
+      });
+
       this.filteredReports = this.listReports;
       this.uniqueUsers = this.getUniqueUsers(this.listReports);
+      console.log(this.listReports);
+
+
+      
     } catch (error) {
       console.error('Error fetching report data:', error);
     } finally {
@@ -152,5 +166,34 @@ export default class ReportesUsuariosComponent implements OnInit {
   exportToPDF(): void {
     this.srvPrint.exportToPDF(this.filteredReports);
     
+
+
+  }
+
+
+  // ... otras propiedades
+  displayImage: boolean = false;
+  selectedImageUrl: string | null = null;
+
+  // ... resto del código
+
+  hasImageForSelectedDate(): boolean {
+    return this.filteredReports.some(report => report.imagen !== null);
+  }
+
+   // Método que obtiene las imágenes
+   setImageUrl(report: any): string | null {
+    if (report.imagen) {
+      return `${this.environment}${report.imagen}`;
+    }
+    return null;
+  }
+
+  showImage(): void {
+    const reportWithImage = this.filteredReports.find(report => report.imagen !== null);
+    if (reportWithImage) {
+      this.selectedImageUrl = reportWithImage.imagen;
+      this.displayImage = true;
+    }
   }
 }
