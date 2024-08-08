@@ -15,7 +15,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { DialogModule } from 'primeng/dialog';
-
+import { ImageModule } from 'primeng/image';
 export const PRIMEMG_MODULES = [
   TableModule,
   FieldsetModule,
@@ -34,4 +34,5 @@ export const PRIMEMG_MODULES = [
   InputGroupModule,
   InputGroupAddonModule,
   DialogModule,
+  ImageModule,
 ];

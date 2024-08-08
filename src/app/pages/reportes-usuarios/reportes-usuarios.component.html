@@ -43,7 +43,6 @@
       </ng-template>
     </p-dropdown>
   </div>
-  
 </div>
 
 <div class="formgroup-inline">
@@ -57,18 +56,17 @@
       aria-label="Imprimir"
       position="right"
     ></button>
-  
   </div>
 
   <div class="field">
     <button
-    pButton
-    type="button"
-    icon="pi pi-file-pdf"
-    (click)="exportToPDF()"
-    class="p-button-rounded p-button-primary"
-    aria-label="Exportar a PDF"
-  ></button>
+      pButton
+      type="button"
+      icon="pi pi-file-pdf"
+      (click)="exportToPDF()"
+      class="p-button-rounded p-button-primary"
+      aria-label="Exportar a PDF"
+    ></button>
   </div>
 </div>
 
@@ -107,24 +105,15 @@
       (onChange)="filterReportsByDate()"
     ></p-dropdown>
   </div>
- 
 </div>
 
 <div class="field">
   @if (selectedDate && filteredReports.length > 0) {
-    <div >
-      <button
-        pButton
-        type="button"
-        label="Ver Imagen"
-        (click)="showImage()"
-        *ngIf="hasImageForSelectedDate()"
-      ></button>
-    </div>
+  <div>
+    <p-button icon="pi pi-image" (click)="showImage()"></p-button>
+  </div>
   }
 </div>
-
-
 
 } @if (loading) {
 <div class="loading-container p-d-flex p-jc-center p-ai-center p-flex-column">
@@ -193,11 +182,20 @@
   [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
 ></p-toast>
 
+<p-dialog
+  header="Imagen"
+  [(visible)]="displayImage"
+  [modal]="true"
+  [responsive]="true"
+>
+  <p-image src="{{ selectedImageUrl }}" alt="Imagen" width="350" />
 
-<p-dialog header="Imagen" [(visible)]="displayImage" [modal]="true" [responsive]="true" >
-  <img [src]="selectedImageUrl" alt="Imagen" style="width: 100%;" />
   <p-footer>
-    <button type="button" pButton label="Cerrar" (click)="displayImage = false"></button>
+    <button
+      type="button"
+      pButton
+      label="Cerrar"
+      (click)="displayImage = false"
+    ></button>
   </p-footer>
 </p-dialog>
-

@@ -2,16 +2,15 @@ import { Component, inject, OnInit } from '@angular/core';
 import { PrintService } from '../../services/print.service';
 import { ListService } from '../../services/list.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { PRIMEMG_MODULES } from '../registros/registros.imports';
+
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { DialogModule } from 'primeng/dialog';
 import { environment } from '../../../environments/environment.development';
-
+import { PRIMEMG_MODULES } from './reportes-usuarios';
 @Component({
   selector: 'app-reportes-usuarios',
   standalone: true,
-  imports: [PRIMEMG_MODULES, FormsModule, CommonModule, DialogModule],
+  imports: [PRIMEMG_MODULES, FormsModule, CommonModule],
   templateUrl: './reportes-usuarios.component.html',
   styleUrl: './reportes-usuarios.component.scss',
   providers: [MessageService, ConfirmationService],
@@ -25,6 +24,7 @@ export default class ReportesUsuariosComponent implements OnInit {
   selectedDate: any | null = null;
   availableDates: any[] = [];
   loading: boolean = false;
+  
 
   private srvList = inject(ListService);
   private srvMessage = inject(MessageService);
@@ -174,12 +174,11 @@ export default class ReportesUsuariosComponent implements OnInit {
   // ... otras propiedades
   displayImage: boolean = false;
   selectedImageUrl: string | null = null;
+  Imageloading: boolean = true;
 
   // ... resto del código
 
-  hasImageForSelectedDate(): boolean {
-    return this.filteredReports.some(report => report.imagen !== null);
-  }
+  
 
    // Método que obtiene las imágenes
    setImageUrl(report: any): string | null {
@@ -190,10 +189,12 @@ export default class ReportesUsuariosComponent implements OnInit {
   }
 
   showImage(): void {
+
     const reportWithImage = this.filteredReports.find(report => report.imagen !== null);
     if (reportWithImage) {
       this.selectedImageUrl = reportWithImage.imagen;
       this.displayImage = true;
-    }
+      this.Imageloading = false;
+    } 
   }
 }
