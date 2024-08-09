@@ -7,6 +7,7 @@ import { Product } from '../../interfaces/products.interfaces';
 import { MessageService } from 'primeng/api';
 import { DeleteService } from '../../services/delete.service';
 import { RegisterDetailsService } from '../../services/register-details.service';
+import { RegisterService } from '../../services/register.service';
 
 @Component({
   selector: 'app-edit-delete',
@@ -44,6 +45,7 @@ export default class EditDeleteComponent {
   private messageService = inject(MessageService);
   private deleteService = inject(DeleteService);
   private registerDetailsService = inject(RegisterDetailsService);
+  private srvReg = inject(RegisterService);
 
   ngOnInit() {
     this.srvList.getlistProducts().subscribe(
@@ -64,7 +66,7 @@ export default class EditDeleteComponent {
     this.newProductQuantity = 0; // Reset quantity when a new product is selected
   }
 
-  onDeleteDetalle(detalleId: number) {
+  onDeleteDetalle(detalleId: number , productId: number , cantidad: number) {
     this.loading = true;
     const deleteServiceMethod =
     this.selectedReport === 'areas'
@@ -92,6 +94,13 @@ export default class EditDeleteComponent {
         });
         this.resetForm();
         this.loading = false;
+      
+  
+
+    
+        
+
+   
       },
       (error) => {
         this.loading = false;
@@ -103,6 +112,40 @@ export default class EditDeleteComponent {
         });
       }
     );
+
+    this.srvList.getlistProducts().subscribe(
+      (res) => {
+        const UpdateProduct = res.data
+
+        UpdateProduct.forEach(( product: any) => {
+          if (product.id === productId) {
+            product.stock_producto = product.stock_producto + cantidad
+            
+            const updatedProducts = {
+              id: product.id,
+              stock_producto: product.stock_producto,
+            }
+
+            this.srvReg.postEditProducts(updatedProducts).subscribe(
+              () => {
+               
+              },
+              (error) => {
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'Error',
+                  detail: 'Hubo un problema al actualizar el producto',
+                });
+              }
+            );
+          }
+        });
+
+        
+       
+      },
+      
+    )
   }
 
   onReportChange(event: any) {

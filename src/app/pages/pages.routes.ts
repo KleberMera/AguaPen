@@ -69,6 +69,8 @@ export const routes: Routes = [
         path: 'registros-vehiculos',
         loadComponent: () => import('./registros-vehiculos/registros-vehiculos.component'),
       },
+      {path: 'anulados',
+       loadComponent: () => import('./anulados/anulados.component')},
       {
         path: 'editar-eliminar',
         loadComponent: () => import ('./edit-delete/edit-delete.component')

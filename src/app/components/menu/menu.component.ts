@@ -152,6 +152,11 @@ export class MenuComponent {
             icon: 'pi pi-id-card',
             routerLink: '/home/reportes-usuarios',
           },
+          {
+            label: 'Anulados',
+            icon: 'pi pi-exclamation-triangle',
+            routerLink: '/home/anulados',
+          },
         ],
       },
     ];
@@ -194,6 +199,11 @@ export class MenuComponent {
             label: 'Detalles',
             icon: 'pi pi-id-card',
             routerLink: '/home/reportes-usuarios',
+          },
+          {
+            label: 'Anulados',
+            icon: 'pi pi-exclamation-triangle',
+            routerLink: '/home/anulados',
           },
         ],
       },
