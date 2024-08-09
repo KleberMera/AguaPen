@@ -38,6 +38,7 @@ export default class EditDeleteComponent {
   loading: boolean = false;
   lodingEstadoRegistro: boolean = false;
   estadoRegistro: number = 0 ;
+  Observaciones: string = '';
 
   private srvList = inject(ListService);
   private messageService = inject(MessageService);
@@ -195,7 +196,7 @@ export default class EditDeleteComponent {
           if (!uniqueRegistros.has(item[idKey])) {
             uniqueRegistros.add(item[idKey]);
             uniqueIdRegistrosOptions.push({
-              label: `ID Registro: ${item[idKey]}`,
+              label: `${item[idKey]}`,
               value: item[idKey],
             });
           }
@@ -355,8 +356,11 @@ export default class EditDeleteComponent {
     }
     const updatedRegistro = {
       id : this.selectedIdRegistro,
+      observacion: this.Observaciones,
       estado_registro: 0,
     };
+
+
 
     this.lodingEstadoRegistro = true;
     const anularRegistroMethod =
@@ -401,6 +405,7 @@ export default class EditDeleteComponent {
     }
     const updatedRegistro = {
       id : this.selectedIdRegistro,
+      observacion: '',
       estado_registro: 1,
     };
 
@@ -433,4 +438,12 @@ export default class EditDeleteComponent {
       }
     );
   }
+
+  options = [
+    {label: '001 - Valores Ingresados de manera incorrecta', value: '001 - Valores Ingresados de manera incorrecta'},
+    {label: '002 - Cambio de Producto', value: '002 - Cambio de Producto'},
+    {label: '003 - Devolución', covaluede: '003 - Devolucion'},
+    {label: '004 - Anulación por Error', value: '004 - Anulacion por Error'},
+  
+  ];
 }

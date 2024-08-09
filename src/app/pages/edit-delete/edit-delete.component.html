@@ -27,34 +27,41 @@
     <p-dropdown
       [options]="idRegistrosOptions"
       [(ngModel)]="selectedIdRegistro"
-      placeholder="Seleccionar ID de Registro"
+      placeholder="Numero de Registro"
       (onChange)="onIdRegistroChange($event)"
     >
     </p-dropdown>
-
-    
   </div>
-  }
+  } @if (idRegistrosOptions.length > 0) { @if (estadoRegistro === 0) {
+  <div class="field">
+    <p-button
+      label="Validar"
+      severity="success"
+      (click)="onValidarRegistro()"
+      [loading]="lodingEstadoRegistro"
+    />
+  </div>
+  } @else {
+  <div class="field">
+    <p-button
+      label="Anular"
+      severity="danger"
+      (click)="onAnularRegistro()"
+      [loading]="lodingEstadoRegistro"
+    />
+  </div>
 
-  @if (idRegistrosOptions.length > 0) {
-    <div class="field">
-      @if (estadoRegistro === 0) {
-        <p-button
-          label="Validar"
-          severity="success"
-          (click)="onValidarRegistro()"
-          [loading]="lodingEstadoRegistro"
-        />
-      } @else {
-        <p-button
-          label="Anular"
-          severity="danger"
-          (click)="onAnularRegistro()"
-          [loading]="lodingEstadoRegistro"
-        />
-      }
-    </div>
-  }
+  <div class="field">
+    <p-dropdown
+      [options]="options"
+      [(ngModel)]="Observaciones"
+      placeholder="Observaciones"
+      [editable]="true"
+   
+    />
+  </div>
+
+  } }
 </div>
 
 @if (registroDetalles.length > 0) {
@@ -63,7 +70,7 @@
   <p-table [value]="registroDetalles">
     <ng-template pTemplate="header">
       <tr>
-        <th>ID</th>
+        <th>N°</th>
         <th>CÓDIGO</th>
 
         <th>PRODUCTO</th>
@@ -112,7 +119,7 @@
     <p-card header="Producto a Editar">
       @if (selectedProduct) {
       <div class="field">
-        <p>ID: {{ selectedProduct.id_tbl_productos }}</p>
+        <p>N°: {{ selectedProduct.id_tbl_productos }}</p>
         <p>Código: {{ selectedProduct.codigo_producto }}</p>
         <p>Nombre: {{ selectedProduct.nombre_producto }}</p>
         <p>Stock Actual: {{ selectedProduct.stock_producto }}</p>
@@ -143,7 +150,7 @@
 
       @if (selectedNewProduct) {
       <div class="field">
-        <p>ID: {{ selectedNewProduct.id }}</p>
+        <p>N°: {{ selectedNewProduct.id }}</p>
         <p>Código: {{ selectedNewProduct.codigo_producto }}</p>
         <p>Nombre: {{ selectedNewProduct.nombre_producto }}</p>
         <p>Stock Actual: {{ selectedNewProduct.stock_producto }}</p>

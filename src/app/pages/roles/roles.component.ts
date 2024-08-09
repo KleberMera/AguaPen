@@ -33,6 +33,7 @@ export default class UsuariosRolesComponent implements OnInit {
   roles = [
     { label: 'Administrador', value: 1 },
     { label: 'Cliente', value: 2 },
+    { label: 'Visualizador', value: 3 },
   ];
 
 
