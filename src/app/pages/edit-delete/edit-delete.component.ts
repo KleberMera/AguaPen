@@ -140,8 +140,6 @@ export default class EditDeleteComponent {
             );
           }
         });
-
-        
        
       },
       
