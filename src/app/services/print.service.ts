@@ -125,6 +125,90 @@ export class PrintService {
     });
   }
 
+  exportToPDFAnulados(data: any[]): void {
+    this.dataUser().then(() => {
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+
+      // Definir márgenes
+      const marginTop = 40;
+      const marginBottom = 30;
+
+      // Obtener la fecha y hora de exportación
+      const exportDate = new Date();
+      const exportDateString = exportDate.toLocaleString();
+
+      // Establecer la fuente a "Times"
+      doc.setFont('Times', 'normal');
+
+      // Cargar la imagen de fondo
+      this.loadImage('assets/fondo.webp').subscribe((imageData) => {
+        const img = new Image();
+        const url = URL.createObjectURL(new Blob([imageData], { type: 'image/webp' }));
+        img.src = url;
+
+        img.onload = () => {
+          let currentPage = 1;
+
+          const addBackgroundAndDate = () => {
+            doc.addImage(img, 'WEBP', 0, 0, pageWidth, pageHeight); 
+            doc.setFontSize(8);
+            doc.text(` ${exportDateString}`, 14, marginTop - 0);
+          };
+
+          const rowsPerPage = 25;
+
+          const drawPage = (startIndex: number) => {
+            if (startIndex >= data.length) return;
+
+            if (currentPage > 1) {
+              doc.addPage();
+            }
+
+            addBackgroundAndDate();
+
+            // Uso de autoTable para agregar la tabla
+            (doc as any).autoTable({
+              head: [['ID', 'Codigo', 'Fecha', 'Nombre', 'Producto', 'Cantidad', 'Observacion']],
+              body: data.slice(startIndex, startIndex + rowsPerPage).map(report => [
+                report.id_tbl_registros,
+                report.codigo_producto,
+                report.fecha_registro,
+                report.nombre,
+                report.nombre_producto,
+                report.cantidad,
+                report.observacion
+              ]),
+              startY: marginTop + 10, 
+              margin: { top: marginTop, bottom: marginBottom },
+              didDrawPage: () => {
+                // Añadir número de página
+                doc.setFontSize(10);
+                doc.text(`Página ${currentPage}`, pageWidth - 30, pageHeight - 10);
+                currentPage++;
+              },
+              styles: {
+                font: 'Times', // Asegúrate de que la fuente se aplique aquí
+                fontSize: 10,
+              }
+            });
+
+            if (startIndex + rowsPerPage < data.length) {
+              drawPage(startIndex + rowsPerPage);
+            } else {
+              doc.save(`Reporte_${exportDateString.replace(/[/, :]/g, '_')}.pdf`);
+            }
+          };
+
+          drawPage(0);
+        };
+      });
+    }).catch((error) => {
+      console.error('Error al cargar datos del usuario:', error);
+    });
+  }
+
   printElement(elementId: string): void {
     const printContents = document.getElementById(elementId)?.innerHTML;
     if (printContents) {

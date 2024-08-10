@@ -1,29 +1,4 @@
-<div class="formgroup-inline">
-    <div class="field col">
-      <p-inputGroup>
-        <button
-          type="button"
-          pButton
-          icon="pi pi-search"
-          (click)="searchReport()"
-        ></button>
-        <input
-          id="searchInput"
-          type="text"
-          pInputText
-          placeholder="Buscar por Cédula"
-          [(ngModel)]="searchQuery"
-        />
-        <button
-          type="button"
-          pButton
-          icon="pi pi-times"
-          class="p-button-danger"
-          (click)="clearSearch()"
-        ></button>
-      </p-inputGroup>
-    </div>
-    
+<div class="formgroup-inline">    
     <div class="field col">
       <p-dropdown
         id="dropdown"
@@ -31,9 +6,9 @@
         [(ngModel)]="selectedUser"
         optionLabel="nombre"
         [filter]="true"
-        filterBy="nombre"
+        filterBy="nombre,cedula"
         [showClear]="true"
-        placeholder="Seleccionar o escribir Usuario"
+        placeholder="Seleccionar o escribir"
         (onChange)="filterReportsByName()"
       >
         <ng-template let-user pTemplate="item">

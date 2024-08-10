@@ -19,13 +19,11 @@ export default class AnuladosComponent {
   listReports: any[] = []; // Lista completa de reportes
   filteredReports: any[] = []; // Lista filtrada de reportes
   uniqueUsers: any[] = []; // Lista de usuarios únicos
-  searchQuery: string = ''; // Consulta de búsqueda
-  selectedUser: any | null = null; // Usuario seleccionado
+
+  selectedUser: any | null = null;
   startDate: string | null = null; // Fecha de inicio para el filtrado por fecha
   endDate: string | null = null; // Fecha de fin para el filtrado por fecha+
   loading: boolean = true; // Indica si se está cargando datos
-
-
 
   constructor(
     private srvList: ListService,
@@ -37,21 +35,19 @@ export default class AnuladosComponent {
     this.loadReports();
   }
 
-
-
   // Cargar la lista de reportes desde el servicio
   loadReports() {
     const reportSubscription = this.srvList
       .getReportsTrabajadores()
       .subscribe((res: any) => {
-        this.listReports = res.data.filter((report : any) => report.estado_registro === 0);
-     
-        
+        this.listReports = res.data.filter(
+          (report: any) => report.estado_registro === 0
+        );
+
         this.filteredReports = this.listReports;
         this.uniqueUsers = this.extractUniqueUsers(this.listReports);
         this.loading = false;
       });
-
   }
 
   // Extraer usuarios únicos de la lista de reportes
@@ -65,49 +61,22 @@ export default class AnuladosComponent {
     return Array.from(usersMap.values());
   }
 
-  // Buscar reportes por cédula
-  searchReport() {
-    if (this.searchQuery.trim() === '') {
-      this.filteredReports = this.listReports;
-      return;
-    }
-
-    this.filteredReports = this.listReports.filter(
-      (report) =>
-        report.cedula &&
-        report.cedula.toLowerCase().includes(this.searchQuery.toLowerCase())
-    );
-
-    if (this.filteredReports.length > 0) {
-      this.selectedUser = this.filteredReports[0];
-      this.srvMessage.add({
-        severity: 'success',
-        summary: 'Usuario encontrado',
-        detail: `Se encontraron ${this.filteredReports.length} datos de reportes`,
-      });
-    } else {
-      this.selectedUser = null;
-      this.srvMessage.add({
-        severity: 'error',
-        summary: 'Usuario no encontrado',
-        detail: 'No se encontraron usuarios con ese criterio de búsqueda',
-      });
-    }
-  }
-
   // Limpiar búsqueda por cédula
   clearSearch() {
-    this.searchQuery = '';
     this.filteredReports = this.listReports;
   }
 
   // Filtrar reportes por nombre de usuario seleccionado
   filterReportsByName() {
     if (this.selectedUser) {
-      this.filteredReports = this.listReports.filter((report) =>
-        report.nombre
-          .toLowerCase()
-          .includes(this.selectedUser.nombre.toLowerCase())
+      this.filteredReports = this.listReports.filter(
+        (report) =>
+          report.nombre
+            .toLowerCase()
+            .includes(this.selectedUser.nombre.toLowerCase()) ||
+          report.cedula
+            .toLowerCase()
+            .includes(this.selectedUser.cedula.toLowerCase())
       );
     } else {
       this.filteredReports = this.listReports;
@@ -137,8 +106,7 @@ export default class AnuladosComponent {
 
   // Exportar la tabla de reportes a PDF
   exportToPDF(): void {
-    this.srvPrint.exportToPDF(this.filteredReports);
-    
+    this.srvPrint.exportToPDFAnulados(this.filteredReports);
   }
 
   // Imprimir la tabla de reportes
