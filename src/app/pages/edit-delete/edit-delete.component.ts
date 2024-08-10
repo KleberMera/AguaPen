@@ -38,8 +38,18 @@ export default class EditDeleteComponent {
   newProductQuantity: number = 0;
   loading: boolean = false;
   lodingEstadoRegistro: boolean = false;
-  estadoRegistro: number = 0 ;
+  estadoRegistro: number = 0;
   Observaciones: string = '';
+
+  options = [
+    {
+      label: '001 - Valores Ingresados de manera incorrecta',
+      value: '001 - Valores Ingresados de manera incorrecta',
+    },
+    { label: '002 - Cambio de Producto', value: '002 - Cambio de Producto' },
+    { label: '003 - Devolución', value: '003 - Devolucion' },
+    { label: '004 - Anulación por Error', value: '004 - Anulacion por Error' },
+  ];
 
   private srvList = inject(ListService);
   private messageService = inject(MessageService);
@@ -51,7 +61,10 @@ export default class EditDeleteComponent {
     this.srvList.getlistProducts().subscribe(
       (res) => {
         this.productosOptions = res.data
-          .filter((product: any) => product.stock_producto > 0 && product.estado_producto === 1)
+          .filter(
+            (product: any) =>
+              product.stock_producto > 0 && product.estado_producto === 1
+          )
           .map((product: any) => ({
             label: `${product.nombre_producto} (Código: ${product.codigo_producto})`,
             value: product,
@@ -66,14 +79,14 @@ export default class EditDeleteComponent {
     this.newProductQuantity = 0; // Reset quantity when a new product is selected
   }
 
-  onDeleteDetalle(detalleId: number , productId: number , cantidad: number) {
+  onDeleteDetalle(detalleId: number, productId: number, cantidad: number) {
     this.loading = true;
     const deleteServiceMethod =
-    this.selectedReport === 'areas'
-      ? 'requestdeletedetalleareas'
-      : this.selectedReport === 'vehiculos'
-      ? 'requestdeletedetallevehiculos'
-      : 'requestdeletedetalle';
+      this.selectedReport === 'areas'
+        ? 'requestdeletedetalleareas'
+        : this.selectedReport === 'vehiculos'
+        ? 'requestdeletedetallevehiculos'
+        : 'requestdeletedetalle';
 
     this.deleteService[deleteServiceMethod](detalleId).subscribe(
       () => {
@@ -83,24 +96,17 @@ export default class EditDeleteComponent {
           detail: 'Detalle eliminado exitosamente',
         });
         // Remove the deleted detail from registroDetalles array
-        this.registroDetalles = this.registroDetalles.filter(detalle => {
+        this.registroDetalles = this.registroDetalles.filter((detalle) => {
           const idKey =
-          this.selectedReport === 'areas'
-            ? 'id_tbl_registro_detalle_areas'
-            : this.selectedReport === 'vehiculos'
-            ? 'id_tbl_registro_detalle_vehiculos'
-            : 'id_tbl_registro_detalles';
+            this.selectedReport === 'areas'
+              ? 'id_tbl_registro_detalle_areas'
+              : this.selectedReport === 'vehiculos'
+              ? 'id_tbl_registro_detalle_vehiculos'
+              : 'id_tbl_registro_detalles';
           return detalle[idKey] !== detalleId;
         });
         this.resetForm();
         this.loading = false;
-      
-  
-
-    
-        
-
-   
       },
       (error) => {
         this.loading = false;
@@ -113,44 +119,37 @@ export default class EditDeleteComponent {
       }
     );
 
-    this.srvList.getlistProducts().subscribe(
-      (res) => {
-        const UpdateProduct = res.data
+    this.srvList.getlistProducts().subscribe((res) => {
+      const UpdateProduct = res.data;
 
-        UpdateProduct.forEach(( product: any) => {
-          if (product.id === productId) {
-            product.stock_producto = product.stock_producto + cantidad
-            
-            const updatedProducts = {
-              id: product.id,
-              stock_producto: product.stock_producto,
+      UpdateProduct.forEach((product: any) => {
+        if (product.id === productId) {
+          product.stock_producto = product.stock_producto + cantidad;
+
+          const updatedProducts = {
+            id: product.id,
+            stock_producto: product.stock_producto,
+          };
+
+          this.srvReg.postEditProducts(updatedProducts).subscribe(
+            () => {},
+            (error) => {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Hubo un problema al actualizar el producto',
+              });
             }
-
-            this.srvReg.postEditProducts(updatedProducts).subscribe(
-              () => {
-               
-              },
-              (error) => {
-                this.messageService.add({
-                  severity: 'error',
-                  summary: 'Error',
-                  detail: 'Hubo un problema al actualizar el producto',
-                });
-              }
-            );
-          }
-        });
-       
-      },
-      
-    )
+          );
+        }
+      });
+    });
   }
 
   onReportChange(event: any) {
     if (this.selectedReport === 'trabajadores') {
       this.srvList.getReportsTrabajadores().subscribe(
         (res) => {
-          
           const uniqueTrabajadores = new Map();
           res.data.forEach((item: any) => {
             if (!uniqueTrabajadores.has(item.cedula)) {
@@ -167,7 +166,6 @@ export default class EditDeleteComponent {
     } else if (this.selectedReport === 'areas') {
       this.srvList.getReportsAreas().subscribe(
         (res) => {
-    
           const uniqueAreas = new Map();
           res.data.forEach((item: any) => {
             if (!uniqueAreas.has(item.nombre_area)) {
@@ -184,7 +182,6 @@ export default class EditDeleteComponent {
     } else if (this.selectedReport === 'vehiculos') {
       this.srvList.getReportsVehiculos().subscribe(
         (res) => {
-     
           const uniqueVehiculos = new Map();
           res.data.forEach((item: any) => {
             if (!uniqueVehiculos.has(item.placa)) {
@@ -196,33 +193,38 @@ export default class EditDeleteComponent {
           });
           this.trabajadoresOptions = Array.from(uniqueVehiculos.values());
         },
-        error => console.error('Error fetching Vehiculos report:', error)
+        (error) => console.error('Error fetching Vehiculos report:', error)
       );
     } else {
-    
-        // Reset options if another report type is selected
-        this.trabajadoresOptions = [];
-        this.selectedTrabajador = undefined;
-        this.idRegistrosOptions = [];
-        this.selectedIdRegistro = undefined;
-        this.registroDetalles = [];
-        this.selectedProduct = null;
-    
+      // Reset options if another report type is selected
+      this.trabajadoresOptions = [];
+      this.selectedTrabajador = undefined;
+      this.idRegistrosOptions = [];
+      this.selectedIdRegistro = undefined;
+      this.registroDetalles = [];
+      this.selectedProduct = null;
     }
   }
 
   onTrabajadorChange(event: any) {
     const selectedTrabajadorCedula = event.value;
     const getReportsMethod =
-    this.selectedReport === 'areas'
-      ? 'getReportsAreas'
-      : this.selectedReport === 'vehiculos'
-      ? 'getReportsVehiculos'
-      : 'getReportsTrabajadores';
+      this.selectedReport === 'areas'
+        ? 'getReportsAreas'
+        : this.selectedReport === 'vehiculos'
+        ? 'getReportsVehiculos'
+        : 'getReportsTrabajadores';
     this.srvList[getReportsMethod]().subscribe(
       (res) => {
         const registros = res.data.filter(
-          (item: any) => item[this.selectedReport === 'areas' ? 'nombre_area' : this.selectedReport === 'vehiculos' ? 'placa' : 'cedula'] === selectedTrabajadorCedula
+          (item: any) =>
+            item[
+              this.selectedReport === 'areas'
+                ? 'nombre_area'
+                : this.selectedReport === 'vehiculos'
+                ? 'placa'
+                : 'cedula'
+            ] === selectedTrabajadorCedula
         );
         const uniqueRegistros = new Set<number>();
         const uniqueIdRegistrosOptions: { label: string; value: number }[] = [];
@@ -244,7 +246,6 @@ export default class EditDeleteComponent {
         });
 
         this.idRegistrosOptions = uniqueIdRegistrosOptions;
-    
       },
       (error) => console.error('Error fetching ID Registros:', error)
     );
@@ -261,20 +262,33 @@ export default class EditDeleteComponent {
     this.srvList[getReportsMethod]().subscribe(
       (res) => {
         const detalles = res.data.filter(
-          (item: any) => item[this.selectedReport === 'areas' ? 'id_tbl_registros_areas' : this.selectedReport === 'vehiculos' ? 'id_tbl_registros_vehiculos' : 'id_tbl_registros'] === selectedIdRegistro
+          (item: any) =>
+            item[
+              this.selectedReport === 'areas'
+                ? 'id_tbl_registros_areas'
+                : this.selectedReport === 'vehiculos'
+                ? 'id_tbl_registros_vehiculos'
+                : 'id_tbl_registros'
+            ] === selectedIdRegistro
         );
-       
+
         this.estadoRegistro = detalles[0].estado_registro;
 
         this.registroDetalles = detalles.map((item: any) => ({
-          id_tbl_registro_detalles: item[this.selectedReport === 'areas' ? 'id_tbl_registro_detalle_areas' : this.selectedReport === 'vehiculos' ? 'id_tbl_registro_detalle_vehiculos' : 'id_tbl_registro_detalles'],
+          id_tbl_registro_detalles:
+            item[
+              this.selectedReport === 'areas'
+                ? 'id_tbl_registro_detalle_areas'
+                : this.selectedReport === 'vehiculos'
+                ? 'id_tbl_registro_detalle_vehiculos'
+                : 'id_tbl_registro_detalles'
+            ],
           codigo_producto: item.codigo_producto,
           id_tbl_productos: item.id_tbl_productos,
           nombre_producto: item.nombre_producto,
           stock_producto: item.stock_producto,
           cantidad: item.cantidad,
         }));
-
       },
       (error) => console.error('Error fetching Registro Detalles:', error)
     );
@@ -287,8 +301,10 @@ export default class EditDeleteComponent {
   onReplaceProduct() {
     this.loading = true;
     if (this.selectedNewProduct && this.newProductQuantity > 0) {
-      const originalProductStock = this.selectedProduct.stock_producto + this.selectedProduct.cantidad;
-      const newProductStock = this.selectedNewProduct.stock_producto - this.newProductQuantity;
+      const originalProductStock =
+        this.selectedProduct.stock_producto + this.selectedProduct.cantidad;
+      const newProductStock =
+        this.selectedNewProduct.stock_producto - this.newProductQuantity;
 
       const updatedOriginalProduct = {
         id: this.selectedProduct.id_tbl_productos,
@@ -308,67 +324,77 @@ export default class EditDeleteComponent {
       };
 
       // Update the original product's stock
-      this.registerDetailsService.postEditProductos(updatedOriginalProduct).subscribe(
-        () => {
-          // Update the new product's stock
-          this.registerDetailsService.postEditProductos(updatedNewProduct).subscribe(
-            () => {
-              // Update the registro detalle
-            //  const postEditMethod = this.selectedReport === 'areas' ? 'postEditRegistroDetalleArea' : 'postEditRegistroDetalle';
-              const postEditMethod =
-              this.selectedReport === 'areas'
-                ? 'postEditRegistroDetalleArea'
-                : this.selectedReport === 'vehiculos'
-                ? 'postEditRegistroDetalleVehiculos'
-                : 'postEditRegistroDetalle';
-              this.registerDetailsService[postEditMethod](updatedRegistroDetalle).subscribe(
-                  () => {
+      this.registerDetailsService
+        .postEditProductos(updatedOriginalProduct)
+        .subscribe(
+          () => {
+            // Update the new product's stock
+            this.registerDetailsService
+              .postEditProductos(updatedNewProduct)
+              .subscribe(
+                () => {
+                  // Update the registro detalle
+                  //  const postEditMethod = this.selectedReport === 'areas' ? 'postEditRegistroDetalleArea' : 'postEditRegistroDetalle';
+                  const postEditMethod =
+                    this.selectedReport === 'areas'
+                      ? 'postEditRegistroDetalleArea'
+                      : this.selectedReport === 'vehiculos'
+                      ? 'postEditRegistroDetalleVehiculos'
+                      : 'postEditRegistroDetalle';
+                  this.registerDetailsService[postEditMethod](
+                    updatedRegistroDetalle
+                  ).subscribe(
+                    () => {
                       this.messageService.add({
-                          severity: 'success',
-                          summary: 'Éxito',
-                          detail: 'Producto reemplazado exitosamente',
+                        severity: 'success',
+                        summary: 'Éxito',
+                        detail: 'Producto reemplazado exitosamente',
                       });
                       this.resetForm();
                       this.loading = false;
+                    },
+                    (error) => {
+                      this.loading = false;
+                      console.error('Error updating Registro Detalle:', error);
+                      this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail:
+                          'Hubo un problema al actualizar el detalle del registro',
+                      });
+                    }
+                  );
                 },
                 (error) => {
                   this.loading = false;
-                  console.error('Error updating Registro Detalle:', error);
+                  console.error('Error updating New Product:', error);
                   this.messageService.add({
                     severity: 'error',
                     summary: 'Error',
-                    detail: 'Hubo un problema al actualizar el detalle del registro',
+                    detail:
+                      'Hubo un problema al actualizar el stock del nuevo producto',
                   });
                 }
               );
-            },
-            (error) => {
-              this.loading = false;
-              console.error('Error updating New Product:', error);
-              this.messageService.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Hubo un problema al actualizar el stock del nuevo producto',
-              });
-            }
-          );
-        },
-        (error) => {
-          this.loading = false;
-          console.error('Error updating Original Product:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Hubo un problema al actualizar el stock del producto original',
-          });
-        }
-      );
+          },
+          (error) => {
+            this.loading = false;
+            console.error('Error updating Original Product:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail:
+                'Hubo un problema al actualizar el stock del producto original',
+            });
+          }
+        );
     } else {
       this.loading = false;
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Debes seleccionar un producto y establecer una cantidad mayor a cero',
+        detail:
+          'Debes seleccionar un producto y establecer una cantidad mayor a cero',
       });
     }
   }
@@ -385,7 +411,6 @@ export default class EditDeleteComponent {
     this.newProductQuantity = 0;
   }
 
-
   async onAnularRegistro(): Promise<void> {
     if (!this.selectedIdRegistro) {
       this.messageService.add({
@@ -396,22 +421,22 @@ export default class EditDeleteComponent {
       return;
     }
     const updatedRegistro = {
-      id : this.selectedIdRegistro,
+      id: this.selectedIdRegistro,
       observacion: this.Observaciones,
       estado_registro: 0,
     };
 
-
-
     this.lodingEstadoRegistro = true;
     const anularRegistroMethod =
-    this.selectedReport === 'areas'
-      ? 'postEditRegistroAreas'
-      : this.selectedReport === 'vehiculos'
-      ? 'postEditRegistroVehiculos'
-      : 'postEditRegistro';
+      this.selectedReport === 'areas'
+        ? 'postEditRegistroAreas'
+        : this.selectedReport === 'vehiculos'
+        ? 'postEditRegistroVehiculos'
+        : 'postEditRegistro';
 
-    this.registerDetailsService[anularRegistroMethod]( updatedRegistro).subscribe(
+    this.registerDetailsService[anularRegistroMethod](
+      updatedRegistro
+    ).subscribe(
       () => {
         this.messageService.add({
           severity: 'success',
@@ -431,11 +456,12 @@ export default class EditDeleteComponent {
         });
       }
     );
+
+
+    
   }
 
   async onValidarRegistro(): Promise<void> {
-
-    
     if (!this.selectedIdRegistro) {
       this.messageService.add({
         severity: 'error',
@@ -445,20 +471,22 @@ export default class EditDeleteComponent {
       return;
     }
     const updatedRegistro = {
-      id : this.selectedIdRegistro,
+      id: this.selectedIdRegistro,
       observacion: '',
       estado_registro: 1,
     };
 
     this.lodingEstadoRegistro = true;
     const anularRegistroMethod =
-    this.selectedReport === 'areas'
-      ? 'postEditRegistroAreas'
-      : this.selectedReport === 'vehiculos'
-      ? 'postEditRegistroVehiculos'
-      : 'postEditRegistro';
+      this.selectedReport === 'areas'
+        ? 'postEditRegistroAreas'
+        : this.selectedReport === 'vehiculos'
+        ? 'postEditRegistroVehiculos'
+        : 'postEditRegistro';
 
-    this.registerDetailsService[anularRegistroMethod]( updatedRegistro).subscribe(
+    this.registerDetailsService[anularRegistroMethod](
+      updatedRegistro
+    ).subscribe(
       () => {
         this.messageService.add({
           severity: 'success',
@@ -480,11 +508,5 @@ export default class EditDeleteComponent {
     );
   }
 
-  options = [
-    {label: '001 - Valores Ingresados de manera incorrecta', value: '001 - Valores Ingresados de manera incorrecta'},
-    {label: '002 - Cambio de Producto', value: '002 - Cambio de Producto'},
-    {label: '003 - Devolución', covaluede: '003 - Devolucion'},
-    {label: '004 - Anulación por Error', value: '004 - Anulacion por Error'},
-  
-  ];
+
 }

@@ -1,1 +1,171 @@
-<p>anulados works!</p>
+<div class="formgroup-inline">
+    <div class="field col">
+      <p-inputGroup>
+        <button
+          type="button"
+          pButton
+          icon="pi pi-search"
+          (click)="searchReport()"
+        ></button>
+        <input
+          id="searchInput"
+          type="text"
+          pInputText
+          placeholder="Buscar por Cédula"
+          [(ngModel)]="searchQuery"
+        />
+        <button
+          type="button"
+          pButton
+          icon="pi pi-times"
+          class="p-button-danger"
+          (click)="clearSearch()"
+        ></button>
+      </p-inputGroup>
+    </div>
+    
+    <div class="field col">
+      <p-dropdown
+        id="dropdown"
+        [options]="uniqueUsers"
+        [(ngModel)]="selectedUser"
+        optionLabel="nombre"
+        [filter]="true"
+        filterBy="nombre"
+        [showClear]="true"
+        placeholder="Seleccionar o escribir Usuario"
+        (onChange)="filterReportsByName()"
+      >
+        <ng-template let-user pTemplate="item">
+          <div class="flex align-items-center gap-2">
+            <div>{{ user.nombre }} ({{ user.cedula }})</div>
+          </div>
+        </ng-template>
+      </p-dropdown>
+    </div>
+    
+   
+  
+  </div>
+  
+  
+  
+  
+  <div class="formgroup-inline">
+    <div class="field">
+      <label for="stardate">Fecha Inicio:</label>
+      <input
+        id="stardate"
+        type="date"
+        [(ngModel)]="startDate"
+        class="p-inputtext"
+        placeholder="Fecha Inicio"
+      />
+    </div>
+    
+    <div class="field">
+      <label for="endDate">Fecha Final:</label>
+      <input
+        id="endDate"
+        type="date"
+        [(ngModel)]="endDate"
+        class="p-inputtext"
+        placeholder="Fecha Fin"
+      />
+    </div>
+  
+    <div class="field">
+      <button
+        pButton
+        type="button"
+        label="Filtrar por Fecha"
+        (click)="filterReportsByDate()"
+      ></button>
+    </div>
+  
+    <div class="field">
+      <button
+        pButton
+        type="button"
+        label="Limpiar Filtros de Fecha"
+        (click)="clearDateFilter()"
+        class="p-ml-2"
+      ></button>
+    </div>
+  </div>
+  
+  <div class="formgroup-inline">
+    <!-- Align buttons next to dropdown -->
+    <div class="field">
+     <button
+       pButton
+       type="button"
+       icon="pi pi-print"
+       (click)="printTable()"
+       class="p-button-rounded p-button-secondary p-mr-2"
+       aria-label="Imprimir"
+     ></button>
+     
+     
+     
+   </div>
+  
+   <div class="field">
+     <button
+       pButton
+       type="button"
+       icon="pi pi-file-pdf"
+       (click)="exportToPDF()"
+       class="p-button-rounded p-button-primary"
+       aria-label="Exportar a PDF"
+     ></button>
+   </div>
+  </div>
+  
+  @if (loading) {
+    <div class="loading-container p-d-flex p-jc-center p-ai-center p-flex-column">
+      <p>Cargando reportes...</p>
+      <p-progressSpinner
+        ariaLabel="loading"
+        styleClass="w-4rem h-4rem"
+        strokeWidth="8"
+        fill="var(--surface-ground)"
+      ></p-progressSpinner>
+    </div>
+  } @else {
+    <!-- Tabla de reportes -->
+    <div id="reportTable">
+      <p-table [value]="filteredReports">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>ID</th>
+            <th>Codigo</th>
+            <th pSortableColumn="fecha_registro">
+              Fecha
+              <p-sortIcon field="fecha_registro"></p-sortIcon>
+            </th>
+            <th>Nombre</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Observaciones</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-report>
+          <tr>
+            <td>{{ report.id_tbl_registros }}</td>
+            <td>{{ report.codigo_producto }}</td>
+            <td>{{ report.fecha_registro }}</td>
+            <td>{{ report.nombre }}</td>
+            <td>{{ report.nombre_producto }}</td>
+            <td>{{ report.cantidad }}</td>
+            <td>{{ report.observacion }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  }
+  
+  <p-toast
+    [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
+  ></p-toast>
+  
