@@ -7,11 +7,7 @@ export const routes : Routes = [
         loadComponent: () => import('./login/login.component'),
         canActivate: [authinverseGuard], 
     },
-    {
-        path: 'forgot-password',
-        loadComponent: () => import('./forgot-password/forgot-password.component'),
-        canActivate: [authinverseGuard], 
-    }
+    
 ]
 
 export default routes;
