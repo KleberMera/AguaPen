@@ -1,16 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { PRIMEMG_MODULES } from './anulados.imports';
 import { FormsModule } from '@angular/forms';
 import { FieldsetModule } from 'primeng/fieldset';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ListService } from '../../services/list.service';
-import { Subscription } from 'rxjs';
 import { PrintService } from '../../services/print.service';
+import { CommonModule } from '@angular/common';
+import { PrintvoidService } from '../../services/printvoid.service';
 
 @Component({
   selector: 'app-anulados',
   standalone: true,
-  imports: [PRIMEMG_MODULES, FormsModule, FieldsetModule],
+  imports: [PRIMEMG_MODULES, FormsModule, FieldsetModule, CommonModule],
   templateUrl: './anulados.component.html',
   styleUrl: './anulados.component.scss',
   providers: [MessageService, ConfirmationService],
@@ -18,65 +19,65 @@ import { PrintService } from '../../services/print.service';
 export default class AnuladosComponent {
   listReports: any[] = []; // Lista completa de reportes
   filteredReports: any[] = []; // Lista filtrada de reportes
-  uniqueUsers: any[] = []; // Lista de usuarios únicos
+  uniqueItems: any[] = []; // Lista de items únicos (usuarios, áreas, vehículos)
+  categories: any[] = [
+    { label: 'Trabajadores', value: 'trabajadores' },
+    { label: 'Areas', value: 'areas' },
+    { label: 'Vehiculos', value: 'vehiculos' },
+  ];
 
-  selectedUser: any | null = null;
+  selectedCategory: string = '';
+  selectedItem: any | null = null;
+  optionLabel: string = 'nombre'; // Campo usado como etiqueta en el dropdown
+  filterBy: string = 'nombre,cedula'; // Campos usados para el filtrado en el dropdown
+
   startDate: string | null = null; // Fecha de inicio para el filtrado por fecha
-  endDate: string | null = null; // Fecha de fin para el filtrado por fecha+
+  endDate: string | null = null; // Fecha de fin para el filtrado por fecha
   loading: boolean = true; // Indica si se está cargando datos
 
-  constructor(
-    private srvList: ListService,
-    private srvMessage: MessageService,
-    private srvPrint: PrintService
-  ) {}
+  private srvList = inject(ListService);
+  private srvPrint = inject(PrintService);
+  private srvPrintvoid = inject(PrintvoidService);
 
-  ngOnInit(): void {
-    this.loadReports();
-  }
-
-  // Cargar la lista de reportes desde el servicio
-  loadReports() {
-    const reportSubscription = this.srvList
-      .getReportsTrabajadores()
-      .subscribe((res: any) => {
-        this.listReports = res.data.filter(
-          (report: any) => report.estado_registro === 0
-        );
-
-        this.filteredReports = this.listReports;
-        this.uniqueUsers = this.extractUniqueUsers(this.listReports);
-        this.loading = false;
-      });
-  }
-
-  // Extraer usuarios únicos de la lista de reportes
-  extractUniqueUsers(reports: any[]): any[] {
-    const usersMap = new Map();
+  // Extraer items únicos de la lista de reportes según la categoría
+  extractUniqueItems(reports: any[], optionLabel: string): any[] {
+    const itemsMap = new Map();
     reports.forEach((report) => {
-      if (!usersMap.has(report.nombre)) {
-        usersMap.set(report.nombre, report);
+      if (!itemsMap.has(report[optionLabel])) {
+        itemsMap.set(report[optionLabel], report);
       }
     });
-    return Array.from(usersMap.values());
+    return Array.from(itemsMap.values());
   }
 
-  // Limpiar búsqueda por cédula
-  clearSearch() {
-    this.filteredReports = this.listReports;
+  // Manejar el cambio de categoría
+  onCategoryChange() {
+    if (this.selectedCategory) {
+      console.log('Categoría seleccionada:', this.selectedCategory);
+
+      if (this.selectedCategory === 'trabajadores') {
+        this.srvList.getReportsTrabajadores().subscribe((res: any) => {
+          this.handleReports(res.data, 'nombre', 'nombre,cedula');
+        });
+      } else if (this.selectedCategory === 'areas') {
+        this.srvList.getReportsAreas().subscribe((res: any) => {
+          this.handleReports(res.data, 'nombre_area', 'nombre_area');
+        });
+      } else if (this.selectedCategory === 'vehiculos') {
+        this.srvList.getReportsVehiculos().subscribe((res: any) => {
+          this.handleReports(res.data, 'placa', 'placa');
+        });
+      }
+    }
   }
 
-  // Filtrar reportes por nombre de usuario seleccionado
-  filterReportsByName() {
-    if (this.selectedUser) {
-      this.filteredReports = this.listReports.filter(
-        (report) =>
-          report.nombre
-            .toLowerCase()
-            .includes(this.selectedUser.nombre.toLowerCase()) ||
-          report.cedula
-            .toLowerCase()
-            .includes(this.selectedUser.cedula.toLowerCase())
+  // Filtrar reportes por item seleccionado (usuario, área, vehículo)
+  filterReportsByItem() {
+    if (this.selectedItem) {
+      this.filteredReports = this.listReports.filter((report) =>
+        report[this.optionLabel]
+          .toLowerCase()
+          .includes(this.selectedItem[this.optionLabel].toLowerCase())
       );
     } else {
       this.filteredReports = this.listReports;
@@ -106,11 +107,20 @@ export default class AnuladosComponent {
 
   // Exportar la tabla de reportes a PDF
   exportToPDF(): void {
-    this.srvPrint.exportToPDFAnulados(this.filteredReports);
+    this.srvPrintvoid.exportToPDFAnulados(this.filteredReports, this.selectedCategory);
   }
 
-  // Imprimir la tabla de reportes
-  printTable(): void {
-    this.srvPrint.printElement('reportTable');
+
+
+  // Manejar los datos de reportes según la categoría
+  handleReports(reports: any[], optionLabel: string, filterBy: string) {
+    this.listReports = reports.filter(
+      (report: any) => report.estado_registro === 0
+    );
+    this.filteredReports = this.listReports;
+    this.uniqueItems = this.extractUniqueItems(this.listReports, optionLabel);
+    this.optionLabel = optionLabel;
+    this.filterBy = filterBy;
+    this.loading = false;
   }
 }
