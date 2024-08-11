@@ -101,6 +101,11 @@ export class MenuComponent {
             icon: 'pi pi-users',
             routerLink: '/home/trabajadores',
           },
+          {
+            label: 'Editar/Eliminar',
+            icon: 'pi pi-pencil',
+            routerLink: '/home/editar-eliminar',
+          },
         ],
       },
       {
@@ -120,16 +125,6 @@ export class MenuComponent {
             label: 'A. Vehiculos',
             icon: 'pi pi-list-check',
             routerLink: '/home/registros-vehiculos',
-          },
-        ],
-      },
-      {
-        label: 'Acciones',
-        items: [
-          {
-            label: 'Editar/Eliminar',
-            icon: 'pi pi-pencil',
-            routerLink: '/home/editar-eliminar',
           },
         ],
       },
@@ -156,18 +151,14 @@ export class MenuComponent {
             icon: 'pi pi-id-card',
             routerLink: '/home/reportes-usuarios',
           },
-        ],
-      },
-      {
-        label: 'Anulados',
-        items: [
           {
-            label: 'Todos',
+            label: 'Anulados',
             icon: 'pi pi-exclamation-triangle',
             routerLink: '/home/anulados',
           },
         ],
-      },
+      }
+      
     ];
   }
 
@@ -207,18 +198,12 @@ export class MenuComponent {
             icon: 'pi pi-id-card',
             routerLink: '/home/reportes-usuarios',
           },
-         
-        ],
-      },
-      {
-        label: 'Anulados',
-        item: [
           {
-            label: 'Todos',
+            label: 'Anulados',
             icon: 'pi pi-exclamation-triangle',
             routerLink: '/home/anulados',
-          }
-        ]
+          },
+        ],
       }
     ];
   }
