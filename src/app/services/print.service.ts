@@ -140,7 +140,7 @@ export class PrintService {
     }
   }
 
-  exportAsignacion(selectedUser: any, selectedProducts: any[], observacion: string, totalCantidadProductos: number): void {
+  exportAsignacion(selectedUser: any, selectedProducts: any[], observacion: string, totalCantidadProductos: number, idRegistro: number,selectedFile: File | null): void {
     this.dataUser().then(() => {
       // Asegúrate de que la información del usuario está disponible antes de generar el PDF
       if (!this.user.nombres || !this.user.cedula) {
@@ -191,14 +191,14 @@ export class PrintService {
 
             // Título de la tabla centrado
             doc.setFontSize(12);
-            const title = 'Productos';
+            const title = 'Reporte De Asignaciones a Empleados (Registro N°' + idRegistro + ')';
             const titleWidth = doc.getTextWidth(title);
             const titleX = (pageWidth - titleWidth) / 2;
             doc.text(title, titleX, marginTop + 5);
 
             // Uso de autoTable para agregar la tabla
             (doc as any).autoTable({
-              head: [['Codigo', 'Nombre', 'Cantidad']],
+              head: [['Codigo', 'Producto', 'Cantidad']],
               body: selectedProducts.slice(startIndex, startIndex + rowsPerPage).map(product => [
                 product.codigo_producto,
                 product.nombre_producto,
@@ -248,9 +248,26 @@ export class PrintService {
               doc.text(`${selectedUser.tx_nombre}`, rightMargin, lastPageY);
               doc.text(`CI: ${selectedUser.tx_cedula}`, rightMargin, lastPageY + 5);
 
+              // Añadir imagen seleccionada si está disponible
+            if (selectedFile) {
+              const fileReader = new FileReader();
+              fileReader.onload = (e: any) => {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = () => {
+                  const imageWidth = 100; // Ajusta el tamaño de la imagen si es necesario
+                  const imageHeight = (imageWidth / img.width) * img.height;
+                  doc.addImage(img, 'PNG', 14, lastPageY + 10, imageWidth, imageHeight);
+                  doc.save(`Asignacion_${exportDateString.replace(/[/, :]/g, '_')}.pdf`);
+                };
+              };
+              fileReader.readAsDataURL(selectedFile);
+            } else {
               doc.save(`Asignacion_${exportDateString.replace(/[/, :]/g, '_')}.pdf`);
             }
-          };
+          }
+        };
+
 
           drawPage(0);
         };
@@ -258,7 +275,14 @@ export class PrintService {
     }).catch((error) => {
       console.error('Error al cargar datos del usuario:', error);
     });
+    
   }
+
+
+
+
+
+
 
 
 
