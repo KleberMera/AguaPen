@@ -59,10 +59,10 @@ export class PrintvoidService {
         doc.setFont('Times', 'normal');
 
         // Cargar la imagen de fondo
-        this.loadImage('assets/shared/template.jpg').subscribe((imageData) => {
+        this.loadImage('assets/shared/template.webp').subscribe((imageData) => {
           const img = new Image();
           const url = URL.createObjectURL(
-            new Blob([imageData], { type: 'image/jpg' })
+            new Blob([imageData], { type: 'image/webp' })
           );
           img.src = url;
 
@@ -89,7 +89,7 @@ export class PrintvoidService {
               // Uso de autoTable para agregar la tabla
               if (category === 'trabajadores') {
                 (doc as any).autoTable({
-                  head: [ [ 'ID', 'Codigo', 'Fecha', 'Nombre', 'Producto', 'Cantidad', 'Observacion' ] ],
+                  head: [ [ 'N°', 'Codigo', 'Fecha', 'Nombre', 'Producto', 'Cantidad', 'Observacion' ] ],
                   body: data
                     .slice(startIndex, startIndex + rowsPerPage)
                     .map((report) => [
@@ -120,7 +120,7 @@ export class PrintvoidService {
                 });
               } else if (category === 'areas') {
                 (doc as any).autoTable({
-                  head: [ [ 'ID', 'Codigo', 'Fecha', 'Area', 'Producto', 'Cantidad', 'Observacion' ] ],
+                  head: [ [ 'N°', 'Codigo', 'Fecha', 'Area', 'Producto', 'Cantidad', 'Observacion' ] ],
                   body: data
                     .slice(startIndex, startIndex + rowsPerPage)
                     .map((report) => [
@@ -151,7 +151,7 @@ export class PrintvoidService {
                 });
               } else if (category === 'vehiculos') {
                 (doc as any).autoTable({
-                  head: [ [ 'ID', 'Codigo', 'Fecha', 'Placa', 'Producto', 'Cantidad', 'Observacion' ] ],
+                  head: [ [ 'N°', 'Codigo', 'Fecha', 'Placa', 'Producto', 'Cantidad', 'Observacion' ] ],
                   body: data
                     .slice(startIndex, startIndex + rowsPerPage)
                     .map((report) => [
