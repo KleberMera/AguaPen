@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { PRIMEMG_MODULES } from './anulados.imports';
 import { FormsModule } from '@angular/forms';
 import { FieldsetModule } from 'primeng/fieldset';
@@ -7,6 +7,8 @@ import { ListService } from '../../services/list.service';
 import { PrintService } from '../../services/print.service';
 import { CommonModule } from '@angular/common';
 import { PrintvoidService } from '../../services/printvoid.service';
+import { CountdataService } from '../../services/countdata.service';
+import { CountreportsService } from '../../services/countreports.service';
 
 @Component({
   selector: 'app-anulados',
@@ -16,7 +18,7 @@ import { PrintvoidService } from '../../services/printvoid.service';
   styleUrl: './anulados.component.scss',
   providers: [MessageService, ConfirmationService],
 })
-export default class AnuladosComponent {
+export default class AnuladosComponent   {
   listReports: any[] = []; // Lista completa de reportes
   filteredReports: any[] = []; // Lista filtrada de reportes
   uniqueItems: any[] = []; // Lista de items únicos (usuarios, áreas, vehículos)
@@ -34,10 +36,12 @@ export default class AnuladosComponent {
   startDate: string | null = null; // Fecha de inicio para el filtrado por fecha
   endDate: string | null = null; // Fecha de fin para el filtrado por fecha
   loading: boolean = true; // Indica si se está cargando datos
+  reportCount: any[] = [] ; // Variable para contar los reportes generados
 
   private srvList = inject(ListService);
   private srvPrint = inject(PrintService);
   private srvPrintvoid = inject(PrintvoidService);
+
 
   // Extraer items únicos de la lista de reportes según la categoría
   extractUniqueItems(reports: any[], optionLabel: string): any[] {
@@ -49,6 +53,8 @@ export default class AnuladosComponent {
     });
     return Array.from(itemsMap.values());
   }
+
+
 
   // Manejar el cambio de categoría
   onCategoryChange() {
@@ -107,7 +113,11 @@ export default class AnuladosComponent {
 
   // Exportar la tabla de reportes a PDF
   exportToPDF(): void {
-    this.srvPrintvoid.exportToPDFAnulados(this.filteredReports, this.selectedCategory);
+    this.srvPrintvoid.exportToPDFAnulados(
+      this.filteredReports,
+      this.selectedCategory,
+
+    );
   }
 
 
@@ -117,6 +127,8 @@ export default class AnuladosComponent {
     this.listReports = reports.filter(
       (report: any) => report.estado_registro === 0
     );
+    console.log(this.listReports);
+    
     this.filteredReports = this.listReports;
     this.uniqueItems = this.extractUniqueItems(this.listReports, optionLabel);
     this.optionLabel = optionLabel;
