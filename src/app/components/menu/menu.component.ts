@@ -157,8 +157,7 @@ export class MenuComponent {
             routerLink: '/home/anulados',
           },
         ],
-      }
-      
+      },
     ];
   }
 
@@ -174,7 +173,6 @@ export class MenuComponent {
           },
         ],
       },
-
       {
         label: 'Reportes',
         items: [
@@ -204,7 +202,7 @@ export class MenuComponent {
             routerLink: '/home/anulados',
           },
         ],
-      }
+      },
     ];
   }
 }
