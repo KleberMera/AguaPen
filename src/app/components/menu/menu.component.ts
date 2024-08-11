@@ -12,7 +12,13 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [MenuComponent, FormsModule, MenuModule, MenuitemComponent, ProgressSpinnerModule],
+  imports: [
+    MenuComponent,
+    FormsModule,
+    MenuModule,
+    MenuitemComponent,
+    ProgressSpinnerModule,
+  ],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.scss',
   providers: [MessageService],
@@ -28,14 +34,11 @@ export class MenuComponent {
 
   ngOnInit() {
     this.dataUser();
-    
   }
 
   dataUser() {
-   this.srvAuth.viewDataUser().subscribe((res: any) => {
+    this.srvAuth.viewDataUser().subscribe((res: any) => {
       if (res) {
-       
-        
         this.rol_id = res.data.rol_id;
         if (this.rol_id === 1 || this.rol_id === 2) {
           this.initializeMenu();
@@ -54,7 +57,6 @@ export class MenuComponent {
   }
 
   initializeMenu() {
-
     this.model = [
       {
         label: 'Home',
@@ -70,13 +72,15 @@ export class MenuComponent {
         label: 'Opciones',
         items: [
           // Condicional para mostrar "Usuarios" solo si rol_id es 1
-          ...(this.rol_id === 1 ? [
-            {
-              label: 'Usuarios',
-              icon: 'pi pi-user',
-              routerLink: '/home/roles',
-            },
-          ] : []),
+          ...(this.rol_id === 1
+            ? [
+                {
+                  label: 'Usuarios',
+                  icon: 'pi pi-user',
+                  routerLink: '/home/roles',
+                },
+              ]
+            : []),
           {
             label: 'Areas',
             icon: 'pi pi-map-marker',
@@ -96,6 +100,11 @@ export class MenuComponent {
             label: 'Trabajadores',
             icon: 'pi pi-users',
             routerLink: '/home/trabajadores',
+          },
+          {
+            label: 'Editar/Eliminar',
+            icon: 'pi pi-pencil',
+            routerLink: '/home/editar-eliminar',
           },
         ],
       },
@@ -117,16 +126,6 @@ export class MenuComponent {
             icon: 'pi pi-list-check',
             routerLink: '/home/registros-vehiculos',
           },
-        ],
-      },
-      {
-        label: 'Acciones',
-        items: [
-          {
-            label: 'Editar/Eliminar',
-            icon: 'pi pi-pencil',
-            routerLink: '/home/editar-eliminar',
-          }
         ],
       },
       {
@@ -162,9 +161,7 @@ export class MenuComponent {
     ];
   }
 
-
   initializeMenu2() {
-
     this.model = [
       {
         label: 'Home',
@@ -176,7 +173,6 @@ export class MenuComponent {
           },
         ],
       },
-     
       {
         label: 'Reportes',
         items: [
