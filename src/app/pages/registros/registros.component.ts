@@ -13,6 +13,7 @@ import { PRIMEMG_MODULES } from './registros.imports';
 import { User } from '../../interfaces/users.interfaces';
 import { details } from '../../interfaces/details.interfaces';
 import { UploadimageService } from '../../services/uploadimage.service';
+import { ReporteService } from '../../services/reporte.service';
 
 @Component({
   selector: 'app-registros',
@@ -44,6 +45,7 @@ export default class RegistrosComponent implements OnInit {
   imagePreview: string | ArrayBuffer | null = null;
   idregistro: number = 0;
 
+  private reporte = inject(ReporteService);
   private srvRegDet = inject(RegisterDetailsService);
   private srvList = inject(ListService);
   private PrintService = inject(PrintService);
@@ -398,6 +400,7 @@ MsjAntRegist() {
       await this.procederConRegistro();
 
       await this.exportData();
+      this.ReportWords();
 
 
       this.clearForm();
@@ -437,5 +440,12 @@ async onUpload() {
       }
     );
   }
+}
+
+
+
+
+ReportWords() {
+  this.reporte.reportedeAsignacion(this.selectedUser, this.selectedProducts, this.observacion, this.totalCantidadProductos,this.idregistro);
 }
 }
