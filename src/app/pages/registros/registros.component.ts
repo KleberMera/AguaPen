@@ -23,6 +23,7 @@ import { UploadimageService } from '../../services/uploadimage.service';
   providers: [MessageService,ConfirmationService],
 })
 export default class RegistrosComponent implements OnInit {
+
   ListUsers: User[] = [];
   ListProductos: Product[] = [];
   filteredUsers: User[] = [];
@@ -39,7 +40,9 @@ export default class RegistrosComponent implements OnInit {
   visible: boolean = false;
   isInProgress: boolean = false;
   selectedFile: File | null = null;
+
   imagePreview: string | ArrayBuffer | null = null;
+  idregistro: number = 0;
 
   private srvRegDet = inject(RegisterDetailsService);
   private srvList = inject(ListService);
@@ -210,8 +213,9 @@ export default class RegistrosComponent implements OnInit {
   async guardarDetallesRegistro(): Promise<void> {
     try {
       const res: any = await this.srvRegDet.getidlasregistro().toPromise();
-      const lastRegistroId = res.id_registro;
+      this.idregistro = res.id_registro;
 
+      const lastRegistroId = res.id_registro;
       const detallesRegistro: details[] = this.selectedProducts.map((prod) => ({
         id_registro: lastRegistroId,
         id_producto: prod.id,
@@ -250,6 +254,8 @@ export default class RegistrosComponent implements OnInit {
     this.showProductsTable = false;
     this.ListProductos.forEach((product) => (product.cantidad = 1));
     this.observacion = '';
+    this.selectedFile = null;
+    this.idregistro = 0;
 
   }
 
@@ -316,36 +322,10 @@ export default class RegistrosComponent implements OnInit {
   }
  
   exportData() {
-    this.PrintService.exportAsignacion(this.selectedUser, this.selectedProducts, this.observacion, this.totalCantidadProductos);
+    this.PrintService.exportAsignacion(this.selectedUser, this.selectedProducts, this.observacion, this.totalCantidadProductos,this.idregistro,this.selectedFile);
   }
 
-private mensajeDeDescarga(): void {
-  if (!this.selectedProducts.length) {
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Error de exportación',
-      detail: 'No hay productos seleccionados para exportar.',
-    });
-    return;
-  }
 
-  this.confirmationService.confirm({
-    message: '¿Deseas exportar los datos a PDF?',
-    header: 'Confirmación',
-    icon: 'pi pi-exclamation-triangle',
-    accept: async () => {
-      // Llama a la función para exportar los datos
-      await this.exportData();
-
-      // Procede con el registro después de la exportación
-      this.procederConRegistro();
-    },
-    reject: () => {
-      this.procederConRegistro();
-      this.confirmationService.close();
-    }
-  });
-}
 private async procederConRegistro(): Promise<void> {
   if (!this.selectedUser) {
     this.messageService.add({
@@ -362,6 +342,7 @@ private async procederConRegistro(): Promise<void> {
   try {
     // Asegúrate de que selectedUser no sea null antes de acceder a sus propiedades
     const registro: Registro = {
+
       id_usuario: this.selectedUser.id,  // Aquí `id_usuario` está asegurado de no ser `null`
       fecha_registro: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
       hora_registro: formatDate(new Date(), 'HH:mm', 'en-US'),
@@ -382,7 +363,6 @@ private async procederConRegistro(): Promise<void> {
       await this.guardarDetallesRegistro();
      
 
-      this.clearForm();
       this.messageService.add({
         severity: 'success',
         summary: 'Registro exitoso',
@@ -413,7 +393,14 @@ MsjAntRegist() {
     header: 'Confirmación de Registro',
     icon: 'pi pi-exclamation-triangle',
     accept: async () => {
-     await this.mensajeDeDescarga(); 
+     
+
+      await this.procederConRegistro();
+
+      await this.exportData();
+
+
+      this.clearForm();
     },
     reject: () => {
       this.confirmationService.close(); 
