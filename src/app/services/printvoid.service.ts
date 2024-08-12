@@ -20,7 +20,11 @@ export class PrintvoidService {
   }
 
   exportToPDFAnulados(data: any[], category: string): void {
-    // Paso 1: Obtener el contador actual de la categoría seleccionada
+    if (data.length === 0) {
+      console.error('No hay datos para exportar.');
+      return;
+    } else {
+          // Paso 1: Obtener el contador actual de la categoría seleccionada
     this.srvCounReports.listCountReports().subscribe((response) => {
       // Acceder al primer objeto en el array de datos
       const reportCount = response.data[0];
@@ -135,5 +139,6 @@ export class PrintvoidService {
         console.log("El contador ha sido actualizado en el servidor.");
       });
     });
+    }
   }
 }

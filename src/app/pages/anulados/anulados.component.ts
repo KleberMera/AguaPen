@@ -18,7 +18,7 @@ import { CountreportsService } from '../../services/countreports.service';
   styleUrl: './anulados.component.scss',
   providers: [MessageService, ConfirmationService],
 })
-export default class AnuladosComponent   {
+export default class AnuladosComponent {
   listReports: any[] = []; // Lista completa de reportes
   filteredReports: any[] = []; // Lista filtrada de reportes
   uniqueItems: any[] = []; // Lista de items únicos (usuarios, áreas, vehículos)
@@ -36,12 +36,14 @@ export default class AnuladosComponent   {
   startDate: string | null = null; // Fecha de inicio para el filtrado por fecha
   endDate: string | null = null; // Fecha de fin para el filtrado por fecha
   loading: boolean = true; // Indica si se está cargando datos
-  reportCount: any[] = [] ; // Variable para contar los reportes generados
+  loadingSpinner: boolean = false; // Indica si se está mostrando el spinner de carga
+  reportCount: any[] = []; // Variable para contar los reportes generados
 
   private srvList = inject(ListService);
   private srvPrint = inject(PrintService);
   private srvPrintvoid = inject(PrintvoidService);
-
+  private srvMessage = inject(MessageService);
+  loadingMessage: string = '';
 
   // Extraer items únicos de la lista de reportes según la categoría
   extractUniqueItems(reports: any[], optionLabel: string): any[] {
@@ -53,8 +55,6 @@ export default class AnuladosComponent   {
     });
     return Array.from(itemsMap.values());
   }
-
-
 
   // Manejar el cambio de categoría
   onCategoryChange() {
@@ -113,14 +113,33 @@ export default class AnuladosComponent   {
 
   // Exportar la tabla de reportes a PDF
   exportToPDF(): void {
-    this.srvPrintvoid.exportToPDFAnulados(
-      this.filteredReports,
-      this.selectedCategory,
+    if (this.filteredReports.length === 0) {
+     
+      this.srvMessage.add({
+        severity: 'error',
+        summary: 'Error al exportar.',
+        detail: 'No hay datos para exportar.',
+        life: 3000,
+      });
+      
+    }  else {
+      this.srvPrintvoid.exportToPDFAnulados(
+        this.filteredReports,
+        this.selectedCategory
+  
+      );
 
-    );
+      this.srvMessage.add({
+        severity: 'info',
+        summary: 'Generando reporte.',
+        detail: 'Este proceso puede tardar un tiempo.',
+        life: 3000,
+      });
+
+    }
+
+   
   }
-
-
 
   // Manejar los datos de reportes según la categoría
   handleReports(reports: any[], optionLabel: string, filterBy: string) {
@@ -128,7 +147,7 @@ export default class AnuladosComponent   {
       (report: any) => report.estado_registro === 0
     );
     console.log(this.listReports);
-    
+
     this.filteredReports = this.listReports;
     this.uniqueItems = this.extractUniqueItems(this.listReports, optionLabel);
     this.optionLabel = optionLabel;

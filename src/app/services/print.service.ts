@@ -60,7 +60,7 @@ export class PrintService {
       doc.setFont('Times', 'normal');
 
       // Cargar la imagen de fondo
-      this.loadImage('assets/fondo.webp').subscribe((imageData) => {
+      this.loadImage('assets/shared/template.webp').subscribe((imageData) => {
         const img = new Image();
         const url = URL.createObjectURL(new Blob([imageData], { type: 'image/webp' }));
         img.src = url;
@@ -164,7 +164,7 @@ export class PrintService {
       doc.setFont('Times', 'normal');
 
       // Cargar la imagen de fondo
-      this.loadImage('assets/fondo.webp').subscribe((imageData) => {
+      this.loadImage('assets/shared/template.webp').subscribe((imageData) => {
         const img = new Image();
         const url = URL.createObjectURL(new Blob([imageData], { type: 'image/webp' }));
         img.src = url;
@@ -306,7 +306,7 @@ export class PrintService {
   
       doc.setFont('Times', 'normal');
   
-      this.loadImage('assets/fondo.webp').subscribe((imageData) => {
+      this.loadImage('assets/shared/template.webp').subscribe((imageData) => {
         const img = new Image();
         const url = URL.createObjectURL(new Blob([imageData], { type: 'image/webp' }));
         img.src = url;
@@ -432,7 +432,7 @@ export class PrintService {
   
       doc.setFont('Times', 'normal');
   
-      this.loadImage('assets/fondo.webp').subscribe((imageData) => {
+      this.loadImage('assets/shared/template.webp').subscribe((imageData) => {
         const img = new Image();
         const url = URL.createObjectURL(new Blob([imageData], { type: 'image/webp' }));
         img.src = url;
@@ -558,7 +558,7 @@ export class PrintService {
       doc.setFont('Times', 'normal');
 
       // Cargar la imagen de fondo
-      this.loadImage('assets/fondo.webp').subscribe((imageData) => {
+      this.loadImage('assets/shared/template.webp').subscribe((imageData) => {
         const img = new Image();
         const url = URL.createObjectURL(new Blob([imageData], { type: 'image/webp' }));
         img.src = url;
@@ -651,7 +651,7 @@ export class PrintService {
       doc.setFont('Times', 'normal');
 
       // Cargar la imagen de fondo
-      this.loadImage('assets/fondo.webp').subscribe((imageData) => {
+      this.loadImage('assets/shared/template.webp').subscribe((imageData) => {
         const img = new Image();
         const url = URL.createObjectURL(new Blob([imageData], { type: 'image/webp' }));
         img.src = url;

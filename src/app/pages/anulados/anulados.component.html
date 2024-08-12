@@ -139,6 +139,20 @@
 
 }
 
+<!-- Componente de carga -->
+<p-blockUI [blocked]="loadingSpinner">
+  <div class="loading-container">
+    <p>{{ loadingMessage }}</p>
+
+    <p-progressSpinner
+      ariaLabel="loading"
+      styleClass="w-4rem h-4rem"
+      strokeWidth="8"
+      fill="var(--surface-ground)"
+    >
+    </p-progressSpinner>
+  </div>
+</p-blockUI>
 <p-toast
   [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
 ></p-toast>
