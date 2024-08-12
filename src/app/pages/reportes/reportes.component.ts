@@ -148,19 +148,30 @@ export default class ReportesComponent implements OnInit {
   }
   
 
-  // Filtrar reportes por rango de fechas
   filterReportsByDate() {
     if (this.startDate && this.endDate) {
       const start = new Date(this.startDate);
       const end = new Date(this.endDate);
+  
       this.filteredReports = this.listReports.filter((report) => {
         const reportDate = new Date(report.fecha_registro);
-        return reportDate >= start && reportDate <= end;
+        const isWithinDateRange = reportDate >= start && reportDate <= end;
+        
+        const matchesUser = this.selectedUser
+          ? report.nombre.toLowerCase().includes(this.selectedUser.nombre.toLowerCase())
+          : true;
+  
+        const matchesProduct = this.selectedProduct
+          ? report.nombre_producto.toLowerCase().includes(this.selectedProduct.nombre_producto.toLowerCase())
+          : true;
+  
+        return isWithinDateRange && matchesUser && matchesProduct;
       });
     } else {
       this.filteredReports = this.listReports;
     }
   }
+  
 
   // Limpiar filtro de fechas
   clearDateFilter() {
