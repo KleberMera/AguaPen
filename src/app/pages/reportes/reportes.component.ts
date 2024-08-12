@@ -25,7 +25,9 @@ export default class ReportesComponent implements OnInit {
   startDate: string | null = null; // Fecha de inicio para el filtrado por fecha
   endDate: string | null = null; // Fecha de fin para el filtrado por fecha+
   loading: boolean = true; // Indica si se está cargando datos
-
+  uniqueProducts: any[] = []; // Lista de productos únicos
+  selectedProduct: any | null = null; // Producto seleccionado
+  
   private subscriptions: Subscription = new Subscription(); // Manejo de suscripciones
 
   constructor(
@@ -52,6 +54,8 @@ export default class ReportesComponent implements OnInit {
         
         this.filteredReports = this.listReports;
         this.uniqueUsers = this.extractUniqueUsers(this.listReports);
+        this.uniqueProducts = this.extractUniqueProducts(this.listReports);
+
         this.loading = false;
       });
 
@@ -69,6 +73,16 @@ export default class ReportesComponent implements OnInit {
     return Array.from(usersMap.values());
   }
 
+  extractUniqueProducts(reports: any[]): any[] {
+    const productsMap = new Map();
+    reports.forEach((report) => {
+      if (!productsMap.has(report.nombre_producto)) {
+        productsMap.set(report.nombre_producto, report);
+      }
+    });
+    return Array.from(productsMap.values());
+  }
+  
   // Buscar reportes por cédula
   searchReport() {
     if (this.searchQuery.trim() === '') {
@@ -111,12 +125,28 @@ export default class ReportesComponent implements OnInit {
       this.filteredReports = this.listReports.filter((report) =>
         report.nombre
           .toLowerCase()
-          .includes(this.selectedUser.nombre.toLowerCase())
+          .includes(this.selectedUser.nombre.toLowerCase()) || 
+        report.cedula
+          .toLowerCase()
+          .includes(this.selectedUser.cedula.toLowerCase())
       );
     } else {
       this.filteredReports = this.listReports;
     }
   }
+
+  filterReportsByProduct() {
+    if (this.selectedProduct) {
+      this.filteredReports = this.listReports.filter((report) =>
+        report.nombre_producto
+          .toLowerCase()
+          .includes(this.selectedProduct.nombre_producto.toLowerCase())
+      );
+    } else {
+      this.filteredReports = this.listReports;
+    }
+  }
+  
 
   // Filtrar reportes por rango de fechas
   filterReportsByDate() {

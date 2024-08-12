@@ -1,37 +1,13 @@
 <div class="formgroup-inline">
-  <div class="field col">
-    <p-inputGroup>
-      <button
-        type="button"
-        pButton
-        icon="pi pi-search"
-        (click)="searchReport()"
-      ></button>
-      <input
-        id="searchInput"
-        type="text"
-        pInputText
-        placeholder="Buscar por Cédula"
-        [(ngModel)]="searchQuery"
-      />
-      <button
-        type="button"
-        pButton
-        icon="pi pi-times"
-        class="p-button-danger"
-        (click)="clearSearch()"
-      ></button>
-    </p-inputGroup>
-  </div>
-  
-  <div class="field col">
+
+  <div class="field">
     <p-dropdown
       id="dropdown"
       [options]="uniqueUsers"
       [(ngModel)]="selectedUser"
       optionLabel="nombre"
       [filter]="true"
-      filterBy="nombre"
+      filterBy="nombre,cedula"
       [showClear]="true"
       placeholder="Seleccionar o escribir Usuario"
       (onChange)="filterReportsByName()"
@@ -43,9 +19,26 @@
       </ng-template>
     </p-dropdown>
   </div>
+  <div class="field">
+    <p-dropdown
+      id="productDropdown"
+      [options]="uniqueProducts"
+      [(ngModel)]="selectedProduct"
+      optionLabel="nombre_producto"
+      [filter]="true"
+      filterBy="nombre_producto"
+      [showClear]="true"
+      placeholder="Seleccionar o escribir Producto"
+      (onChange)="filterReportsByProduct()"
+    >
+      <ng-template let-product pTemplate="item">
+        <div class="flex align-items-center gap-2">
+          <div>{{ product.nombre_producto }} ({{ product.codigo_producto }})</div>
+        </div>
+      </ng-template>
+    </p-dropdown>
+  </div>
   
- 
-
 </div>
 
 
