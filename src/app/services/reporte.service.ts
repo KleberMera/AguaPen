@@ -10,7 +10,7 @@ import { AuthService } from './auth.service';
 })
 export class ReporteService {
   private user: any = {}; // Inicializar objeto de usuario
-  private docxTemplateUrl = 'assets/formato.docx'; // Ruta del documento de plantilla .docx
+  private docxTemplateUrl = 'assets/formato2.0.docx'; // Ruta del documento de plantilla .docx
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
@@ -82,4 +82,65 @@ export class ReporteService {
       );
     });
   }
-}
+
+
+
+  public async RepGeneral(data: any[]): Promise<void> {
+    try {
+      // Obtén la información del usuario
+      await this.dataUser();
+  
+      // Cargar el archivo .docx existente
+      this.http.get(this.docxTemplateUrl, { responseType: 'arraybuffer' }).subscribe({
+        next: (arrayBuffer) => {
+          const zip = new PizZip(arrayBuffer);
+          const doc = new Docxtemplater(zip);
+  
+          // Datos para agregar en el documento
+          const dataToInsert = {
+            supervisorname: "", // Asignar el nombre del supervisor si es necesario
+            nameEntregaEPP: `${this.user.nombres} ${this.user.apellidos}`,
+            fecha: new Date().toLocaleDateString('es-ES'),
+            Reportes: data.length > 0 ? data.map(report => ({
+              NameReceptor: report.nombre || '',
+              CargoReceptor: report.cargo || '',
+              Productos: report.nombre_producto || ''
+            })) : [{ // Default empty object to handle no data case
+              NameReceptor: '',
+              CargoReceptor: '',
+              Productos: ''
+            }],
+          };
+  
+          // Si solo hay un elemento en la lista, puedes asegurarte de que los otros estén vacíos en tu lógica
+          if (data.length === 1) {
+            dataToInsert.Reportes.push({ // Adding an empty entry to show blank rows
+              NameReceptor: '',
+              CargoReceptor: '',
+              Productos: ''
+            });
+          }
+  
+          // Sustituir los placeholders con datos
+          doc.setData(dataToInsert);
+  
+          try {
+            doc.render();
+          } catch (error) {
+            console.error('Error rendering document:', error);
+            return;
+          }
+  
+          // Generar y guardar el archivo
+          const output = doc.getZip().generate({ type: 'blob' });
+          saveAs(output, 'reporte_general.docx');
+        },
+        error: (err) => {
+          console.error('Error al cargar la plantilla .docx:', err);
+        }
+      });
+    } catch (error) {
+      console.error('Error al generar el reporte general:', error);
+    }
+  }
+}  
