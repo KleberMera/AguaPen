@@ -249,6 +249,7 @@
 <p-dialog header="Agregar Imagen" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }">
 <div class="p-fluid">
   <p-fileUpload
+  #fileUpload
   mode="basic"
   chooseLabel="Seleccionar Imagen"
   accept="image/*"
