@@ -84,6 +84,7 @@ export class ReporteService {
   }
 
 
+
   public async RepGeneral(data: any[]): Promise<void> {
     try {
       // Obtén la información del usuario
@@ -95,7 +96,6 @@ export class ReporteService {
           const zip = new PizZip(arrayBuffer);
           const doc = new Docxtemplater(zip);
   
-          // Datos para agregar en el documento
           let reportes = [];
   
           if (data.length <= 11) {
@@ -105,8 +105,6 @@ export class ReporteService {
               CargoReceptor: report.cargo || '',
               Productos: report.nombre_producto || '',
             }));
-            
-            // Completar con datos en blanco hasta 11
             while (reportes.length < 11) {
               reportes.push({
                 NameReceptor: '',
@@ -115,37 +113,15 @@ export class ReporteService {
               });
             }
           } else {
-            // Si hay más de 11 datos, utiliza solo los primeros 11 y añade el formato para los adicionales
-            reportes = data.slice(0, 11).map(report => ({
+            // Si hay más de 11 datos, solo asignar los datos
+            reportes = data.map(report => ({
               NameReceptor: report.nombre || '',
               CargoReceptor: report.cargo || '',
               Productos: report.nombre_producto || '',
             }));
-  
-            // Añadir más bloques de datos si hay más de 11 datos
-            // Aquí asumiendo que el documento tiene una estructura para añadir más bloques
-            const additionalBlocks = Math.ceil(data.length / 11);
-            const additionalData = [];
-  
-            for (let i = 1; i < additionalBlocks; i++) {
-              const start = i * 11;
-              const end = start + 11;
-              const block = data.slice(start, end).map(report => ({
-                NameReceptor: report.nombre || '',
-                CargoReceptor: report.cargo || '',
-                Productos: report.nombre_producto || '',
-              }));
-              additionalData.push(block);
-            }
-  
-            // Añadir los bloques adicionales a los datos para el documento
-            doc.setData({
-              reportesInitial: reportes,
-              additionalReports: additionalData,
-            });
           }
   
-          // Sustituir los placeholders con datos
+          // Configurar los datos para el documento
           doc.setData({
             supervisorname: "", // Asignar el nombre del supervisor si es necesario
             nameEntregaEPP: `${this.user.nombres} ${this.user.apellidos}`,
@@ -162,9 +138,7 @@ export class ReporteService {
   
           // Generar y guardar el archivo
           const output = doc.getZip().generate({ type: 'blob' });
-          // Antes de guardar el archivo, debo convertirlo a pdf para poder descargarlo
           saveAs(output, 'reporte_general.docx');
-  
         },
         error: (err) => {
           console.error('Error al cargar la plantilla .docx:', err);
@@ -174,4 +148,5 @@ export class ReporteService {
       console.error('Error al generar el reporte general:', error);
     }
   }
+  
 }   
