@@ -45,6 +45,7 @@ export default class RegxAreaComponent {
   // Other state
   searchTerm: string = '';
   observacion: string = '';
+  idRegistro: number = 0;
 
   // Services injected
   private srvRegDet = inject(RegisterDetailsService);
@@ -249,6 +250,7 @@ export default class RegxAreaComponent {
   async guardarDetallesRegistro(): Promise<void> {
     try {
       const res: any = await this.srvRegDet.getidlastregistroarea().toPromise();
+      this.idRegistro = res.id_registro_area;
       const lastRegistroId = res.id_registro_area;
 
       const detallesRegistro: detailAreas[] = this.selectedProducts.map(
@@ -322,7 +324,7 @@ export default class RegxAreaComponent {
   }
 
   exportData() {
-    this.PrintService.exportAsigAreas(this.selectedArea, this.selectedProducts, this.observacion, this.totalCantidadProductos);
+    this.PrintService.exportAsigAreas(this.selectedArea, this.selectedProducts, this.observacion, this.totalCantidadProductos, this.idRegistro);
   }
 
 private mensajeDeDescarga(): void {
@@ -341,10 +343,16 @@ private mensajeDeDescarga(): void {
     icon: 'pi pi-exclamation-triangle',
     accept: async () => {
       // Llama a la función para exportar los datos
-      await this.exportData();
+     
 
       // Procede con el registro después de la exportación
-      this.procederConRegistro();
+      
+      await this.procederConRegistro();
+
+      await this.exportData();
+
+
+      this.clearForm();
     },
     reject: () => {
       this.procederConRegistro();
@@ -390,7 +398,6 @@ private async procederConRegistro(): Promise<void> {
     if (res) {
       await this.guardarDetallesRegistro();
 
-      this.clearForm();
       this.messageService.add({
         severity: 'success',
         summary: 'Registro exitoso',

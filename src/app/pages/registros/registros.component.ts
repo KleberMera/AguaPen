@@ -400,7 +400,6 @@ MsjAntRegist() {
       await this.procederConRegistro();
 
       await this.exportData();
-      this.ReportWords();
 
 
       this.clearForm();
@@ -426,27 +425,30 @@ onFileSelected(event: any) {
     reader.readAsDataURL(this.selectedFile);
   }
 }
-
 async onUpload() {
   if (this.selectedFile) {
-    const res: any = await this.srvRegDet.getidlasregistro().toPromise();
-    const lastRegistroId = res.id_registro;
-    this.uploadService.uploadImage(lastRegistroId, this.selectedFile).subscribe(
-      (response) => {
-        console.log('Imagen subida correctamente:', response);
-       
-      },
-      (error) => {
-        console.error('Error al subir la imagen:', error);
-      }
-    );
+    try {
+      // Esperar a obtener el id del último registro
+      const res: any = await this.srvRegDet.getidlasregistro().toPromise();
+      const lastRegistroId = res.id_registro;
+
+      // Esperar a que se resuelva la promesa y obtén el observable
+      const observable = await this.uploadService.uploadImage(lastRegistroId, this.selectedFile);
+
+      // Ahora puedes suscribirte al observable
+      observable.subscribe(
+        (response: any) => {
+          console.log('Imagen subida correctamente:', response);
+          //limpiar el selector de archivos
+          this.selectedFile = null;
+        },
+        (error: any) => {
+          console.error('Error al subir la imagen:', error);
+        }
+      );
+    } catch (error) {
+      console.error('Error durante el proceso de subida:', error);
+    }
   }
-}
-
-
-
-
-ReportWords() {
-  this.reporte.reportedeAsignacion(this.selectedUser, this.selectedProducts, this.observacion, this.totalCantidadProductos,this.idregistro);
 }
 }

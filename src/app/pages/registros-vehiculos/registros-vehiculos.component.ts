@@ -28,6 +28,8 @@ export default class RegistrosVehiculosComponent {
   selectedProducts: Product[] = [];
   selectedVehiculo: Vehiculo | null = null;
   dropdownOptions: Vehiculo[] = [];
+  idRegistro: number = 0;
+
 
   searchQuery: string = '';
 
@@ -244,7 +246,7 @@ export default class RegistrosVehiculosComponent {
         .getidlastregistrovehiculos()
         .toPromise();
       const lastRegistroId = res.id_registro_vehiculo;
-
+      this.idRegistro = lastRegistroId;
       const detallesRegistro: detailVehiculos[] = this.selectedProducts.map(
         (prod) => ({
           id_registro_vehiculo: lastRegistroId,
@@ -317,7 +319,7 @@ export default class RegistrosVehiculosComponent {
 
 
   exportData() {
-    this.PrintService.exportAsigVehicle(this.selectedVehiculo, this.selectedProducts, this.observacion, this.totalCantidadProductos);
+    this.PrintService.exportAsigVehicle(this.selectedVehiculo, this.selectedProducts, this.observacion, this.totalCantidadProductos, this.idRegistro);
   }
 private mensajeDeDescarga(): void {
   if (!this.selectedProducts.length) {
@@ -333,11 +335,13 @@ private mensajeDeDescarga(): void {
     header: 'Confirmación',
     icon: 'pi pi-exclamation-triangle',
     accept: async () => {
-      // Llama a la función para exportar los datos
+      await this.procederConRegistro();
+
       await this.exportData();
 
-      // Procede con el registro después de la exportación
-      this.procederConRegistro();
+
+      this.clearForm();
+
     },
     reject: () => {
       this.procederConRegistro();
@@ -377,7 +381,6 @@ private async procederConRegistro(): Promise<void> {
     if (res) {
       await this.guardarDetallesRegistro();
 
-      this.clearForm();
       this.messageService.add({
         severity: 'success',
         summary: 'Registro exitoso',

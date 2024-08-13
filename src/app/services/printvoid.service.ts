@@ -107,7 +107,7 @@ export class PrintvoidService {
             doc.setFontSize(12);
             // Poner la primera letra en mayúscula
             const titleReport = category.charAt(0).toUpperCase() + category.slice(1);
-            const title = `Reporte Anulados de ${titleReport}  (N° ${reportNumber})`;
+            const title = `Reporte Anulados de ${titleReport}`;
             const titleWidth = doc.getTextWidth(title);
             const titleX = (pageWidth - titleWidth) / 2;
             doc.text(title, titleX, marginTop + 5);

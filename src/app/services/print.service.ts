@@ -101,7 +101,7 @@ export class PrintService {
               doc.setFontSize(12);
               // Poner la primera letra en mayúscula
            
-              const title = `Reporte de Trabajadores (N° ${reportNumber})`;
+              const title = `Reporte de Trabajadores )`;
               const titleWidth = doc.getTextWidth(title);
               const titleX = (pageWidth - titleWidth) / 2;
               doc.text(title, titleX, marginTop + 5);
@@ -313,7 +313,7 @@ export class PrintService {
 
 
 
-  exportAsigVehicle(selectedVehiculo: any, selectedProducts: any[], observacion: string, totalCantidadProductos: number): void {
+  exportAsigVehicle(selectedVehiculo: any, selectedProducts: any[], observacion: string, totalCantidadProductos: number , idRegistro: number): void {
     this.dataUser().then(() => {
       if (!this.user.nombres || !this.user.cedula) {
         console.error('Información del usuario no disponible.');
@@ -367,13 +367,14 @@ export class PrintService {
             }
   
             doc.setFontSize(12);
-            const title = 'Productos';
+            const title = 'Reporte De Asignaciones a Vehículos (Registro N°' + idRegistro + ')';
+
             const titleWidth = doc.getTextWidth(title);
             const titleX = (pageWidth - titleWidth) / 2;
             doc.text(title, titleX, marginTop + 35);
   
             (doc as any).autoTable({
-              head: [['Codigo', 'Nombre', 'Cantidad']],
+              head: [['Codigo', 'Producto', 'Cantidad']],
               body: selectedProducts.slice(startIndex, startIndex + rowsPerPage).map(product => [
                 product.codigo_producto,
                 product.nombre_producto,
@@ -438,7 +439,7 @@ export class PrintService {
 
 
 
-  exportAsigAreas(selectedArea: any, selectedProducts: any[], observacion: string, totalCantidadProductos: number): void {
+  exportAsigAreas(selectedArea: any, selectedProducts: any[], observacion: string, totalCantidadProductos: number, idRegistro: number): void {
   
     this.dataUser().then(() => {
       if (!this.user.nombres || !this.user.cedula) {
@@ -490,14 +491,15 @@ export class PrintService {
             }
   
             doc.setFontSize(12);
-            const title = 'Productos';
+            const title = 'Reporte De Asignaciones a Areas (Registro N°' + idRegistro + ')';
+
             const titleWidth = doc.getTextWidth(title);
             const titleX = (pageWidth - titleWidth) / 2;
             doc.text(title, titleX, marginTop + 20);
   
             // Add the table with an additional row for totals
             const autoTableOptions = {
-              head: [['Codigo', 'Nombre', 'Cantidad']],
+              head: [['Codigo', 'Producto', 'Cantidad']],
               body: selectedProducts.slice(startIndex, startIndex + rowsPerPage).map(product => [
                 product.codigo_producto,
                 product.nombre_producto,
@@ -623,7 +625,7 @@ export class PrintService {
             doc.setFontSize(12);
             // Poner la primera letra en mayúscula
          
-            const title = `Reporte de Vehiculos (N° ${reportNumber})`;
+            const title = `Reporte de Vehiculos )`;
             const titleWidth = doc.getTextWidth(title);
             const titleX = (pageWidth - titleWidth) / 2;
             doc.text(title, titleX, marginTop + 5);
@@ -739,7 +741,7 @@ export class PrintService {
             doc.setFontSize(12);
             // Poner la primera letra en mayúscula
          
-            const title = `Reporte de Areas (N° ${reportNumber})`;
+            const title = `Reporte de Areas )`;
             const titleWidth = doc.getTextWidth(title);
             const titleX = (pageWidth - titleWidth) / 2;
             doc.text(title, titleX, marginTop + 5);
