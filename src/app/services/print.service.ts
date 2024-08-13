@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable'; // Asegúrate de que este paquete está instalado
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+import { CountreportsService } from './countreports.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +14,7 @@ export class PrintService {
   private user: any = {}; // Inicializar objeto de usuario
 
   constructor(private http: HttpClient, private authService: AuthService) {}
+  private srvCounReports = inject(CountreportsService);
 
   // Método para obtener la imagen de los assets como una promesa
   private loadImage(url: string): Observable<Uint8Array> {
@@ -43,86 +45,110 @@ export class PrintService {
   }
 
   exportToPDF(data: any[]): void {
-    this.dataUser().then(() => {
-      const doc = new jsPDF();
-      const pageWidth = doc.internal.pageSize.width;
-      const pageHeight = doc.internal.pageSize.height;
+    this.srvCounReports.listCountReports().subscribe((response) => {
+      // Acceder al primer objeto en el array de datos
+      const reportCount = response.data[0];
+      console.log(reportCount);
+    
+      let reportNumber: number = 0;  // Inicializar como tipo número
+    
+      
+        reportCount.trabajadores++;
+        reportNumber = reportCount.trabajadores;
+      
 
-      // Definir márgenes
-      const marginTop = 40;
-      const marginBottom = 30;
-
-      // Obtener la fecha y hora de exportación
-      const exportDate = new Date();
-      const exportDateString = exportDate.toLocaleString();
-
-      // Establecer la fuente a "Times"
-      doc.setFont('Times', 'normal');
-
-      // Cargar la imagen de fondo
-      this.loadImage('assets/shared/template.webp').subscribe((imageData) => {
-        const img = new Image();
-        const url = URL.createObjectURL(new Blob([imageData], { type: 'image/webp' }));
-        img.src = url;
-
-        img.onload = () => {
-          let currentPage = 1;
-
-          const addBackgroundAndDate = () => {
-            doc.addImage(img, 'WEBP', 0, 0, pageWidth, pageHeight); 
-            doc.setFontSize(8);
-            doc.text(` ${exportDateString}`, 14, marginTop - 0);
-          };
-
-          const rowsPerPage = 25;
-
-          const drawPage = (startIndex: number) => {
-            if (startIndex >= data.length) return;
-
-            if (currentPage > 1) {
-              doc.addPage();
-            }
-
-            addBackgroundAndDate();
-
-            // Uso de autoTable para agregar la tabla
-            (doc as any).autoTable({
-              head: [['ID', 'Codigo', 'Fecha', 'Nombre', 'Producto', 'Cantidad', 'Firma']],
-              body: data.slice(startIndex, startIndex + rowsPerPage).map(report => [
-                report.id_tbl_registros,
-                report.codigo_producto,
-                report.fecha_registro,
-                report.nombre,
-                report.nombre_producto,
-                report.cantidad
-              ]),
-              startY: marginTop + 10, 
-              margin: { top: marginTop, bottom: marginBottom },
-              didDrawPage: () => {
-                // Añadir número de página
-                doc.setFontSize(10);
-                doc.text(`Página ${currentPage}`, pageWidth - 30, pageHeight - 10);
-                currentPage++;
-              },
-              styles: {
-                font: 'Times', // Asegúrate de que la fuente se aplique aquí
-                fontSize: 10,
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
+  
+        // Definir márgenes
+        const marginTop = 40;
+        const marginBottom = 25;
+  
+        // Obtener la fecha y hora de exportación
+        const exportDate = new Date();
+        const exportDateString = exportDate.toLocaleString();
+  
+        // Establecer la fuente a "Times"
+        doc.setFont('Times', 'normal');
+  
+        // Cargar la imagen de fondo
+        this.loadImage('assets/shared/template.webp').subscribe((imageData) => {
+          const img = new Image();
+          const url = URL.createObjectURL(new Blob([imageData], { type: 'image/webp' }));
+          img.src = url;
+  
+          img.onload = () => {
+            let currentPage = 1;
+  
+            const addBackgroundAndDate = () => {
+              doc.addImage(img, 'WEBP', 0, 0, pageWidth, pageHeight); 
+              doc.setFontSize(8);
+              doc.text(` ${exportDateString}`, 14, marginTop - 0);
+            };
+  
+            const rowsPerPage = 25;
+  
+            const drawPage = (startIndex: number) => {
+              if (startIndex >= data.length) return;
+  
+              if (currentPage > 1) {
+                doc.addPage();
               }
-            });
+  
+              addBackgroundAndDate();
 
-            if (startIndex + rowsPerPage < data.length) {
-              drawPage(startIndex + rowsPerPage);
-            } else {
-              doc.save(`Reporte_${exportDateString.replace(/[/, :]/g, '_')}.pdf`);
-            }
+              doc.setFontSize(12);
+              // Poner la primera letra en mayúscula
+           
+              const title = `Reporte de Trabajadores (N° ${reportNumber})`;
+              const titleWidth = doc.getTextWidth(title);
+              const titleX = (pageWidth - titleWidth) / 2;
+              doc.text(title, titleX, marginTop + 5);
+  
+              // Uso de autoTable para agregar la tabla
+              (doc as any).autoTable({
+                head: [['ID', 'Codigo', 'Fecha', 'Nombre', 'Producto', 'Cantidad', 'Firma']],
+                body: data.slice(startIndex, startIndex + rowsPerPage).map(report => [
+                  report.id_tbl_registros,
+                  report.codigo_producto,
+                  report.fecha_registro,
+                  report.nombre,
+                  report.nombre_producto,
+                  report.cantidad
+                ]),
+                startY: marginTop + 10, 
+                margin: { top: marginTop, bottom: marginBottom },
+                didDrawPage: () => {
+                  // Añadir número de página
+                  doc.setFontSize(10);
+                  doc.text(`Página ${currentPage}`, pageWidth - 30, pageHeight - 10);
+                  currentPage++;
+                },
+                styles: {
+                  font: 'Times', // Asegúrate de que la fuente se aplique aquí
+                  fontSize: 10,
+                }
+              });
+  
+              if (startIndex + rowsPerPage < data.length) {
+                drawPage(startIndex + rowsPerPage);
+              } else {
+                doc.save(`Reporte_${exportDateString.replace(/[/, :]/g, '_')}.pdf`);
+              }
+            };
+  
+            drawPage(0);
           };
+        });
 
-          drawPage(0);
-        };
+        this.srvCounReports.updateCountReports(reportCount).subscribe(() => {
+        
+        });
       });
-    }).catch((error) => {
-      console.error('Error al cargar datos del usuario:', error);
-    });
+  
+     
+    
   }
 
 
@@ -191,7 +217,7 @@ export class PrintService {
 
             // Título de la tabla centrado
             doc.setFontSize(12);
-            const title = 'Reporte De Asignaciones a Empleados (Registro N°' + idRegistro + ')';
+            const title = 'Reporte De Asignaciones a Trabajadores (Registro N°' + idRegistro + ')';
             const titleWidth = doc.getTextWidth(title);
             const titleX = (pageWidth - titleWidth) / 2;
             doc.text(title, titleX, marginTop + 5);
@@ -255,7 +281,7 @@ export class PrintService {
                 const img = new Image();
                 img.src = e.target.result;
                 img.onload = () => {
-                  const imageWidth = 100; // Ajusta el tamaño de la imagen si es necesario
+                  const imageWidth = 50; // Ajusta el tamaño de la imagen si es necesario
                   const imageHeight = (imageWidth / img.width) * img.height;
                   doc.addImage(img, 'PNG', 55, lastPageY -160, imageWidth, imageHeight);
                   doc.save(`Asignacion_${exportDateString.replace(/[/, :]/g, '_')}.pdf`);
@@ -541,88 +567,111 @@ export class PrintService {
 
 
   exportToPDFVEHICULO(data: any[]): void {
-    this.dataUser().then(() => {
-      const doc = new jsPDF();
-      const pageWidth = doc.internal.pageSize.width;
-      const pageHeight = doc.internal.pageSize.height;
-
-      // Definir márgenes
-      const marginTop = 40;
-      const marginBottom = 30;
-
-      // Obtener la fecha y hora de exportación
-      const exportDate = new Date();
-      const exportDateString = exportDate.toLocaleString();
-
-      // Establecer la fuente a "Times"
-      doc.setFont('Times', 'normal');
-
-      // Cargar la imagen de fondo
-      this.loadImage('assets/shared/template.webp').subscribe((imageData) => {
-        const img = new Image();
-        const url = URL.createObjectURL(new Blob([imageData], { type: 'image/webp' }));
-        img.src = url;
-
-        img.onload = () => {
-          let currentPage = 1;
-
-          const addBackgroundAndDate = () => {
-            doc.addImage(img, 'WEBP', 0, 0, pageWidth, pageHeight); 
-            doc.setFontSize(8);
-            doc.text(` ${exportDateString}`, 14, marginTop - 0);
-          };
-
-          const rowsPerPage = 25;
-
-          const drawPage = (startIndex: number) => {
-            if (startIndex >= data.length) return;
-
-            if (currentPage > 1) {
-              doc.addPage();
-            }
-
-            addBackgroundAndDate();
-            
-            // Uso de autoTable para agregar la tabla
-            (doc as any).autoTable({
-              
-              head: [['ID', 'Fecha', 'Placa', 'Producto', 'Cantidad','Observacion','Firma']],
-              body: data.slice(startIndex, startIndex + rowsPerPage).map(report => [
-                report.id_tbl_registros_vehiculos,
-              
-                report.fecha_registro,
-                report.placa,
-                report.nombre_producto,
-                report.cantidad,
-                report.observacion
-              ]),
-              startY: marginTop + 10, 
-              margin: { top: marginTop, bottom: marginBottom },
-              didDrawPage: () => {
-                // Añadir número de página
-                doc.setFontSize(10);
-                doc.text(`Página ${currentPage}`, pageWidth - 30, pageHeight - 10);
-                currentPage++;
-              },
-              styles: {
-                font: 'Times', // Asegúrate de que la fuente se aplique aquí
-                fontSize: 10,
+    this.srvCounReports.listCountReports().subscribe((response) => {
+      // Acceder al primer objeto en el array de datos
+      const reportCount = response.data[0];
+      console.log(reportCount);
+    
+      let reportNumber: number = 0;  // Inicializar como tipo número
+    
+      
+        reportCount.vehiculos++;
+        reportNumber = reportCount.vehiculos;
+      
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
+  
+        // Definir márgenes
+        const marginTop = 40;
+        const marginBottom = 25;
+  
+        // Obtener la fecha y hora de exportación
+        const exportDate = new Date();
+        const exportDateString = exportDate.toLocaleString();
+  
+        // Establecer la fuente a "Times"
+        doc.setFont('Times', 'normal');
+  
+        // Cargar la imagen de fondo
+        this.loadImage('assets/shared/template.webp').subscribe((imageData) => {
+          const img = new Image();
+          const url = URL.createObjectURL(new Blob([imageData], { type: 'image/webp' }));
+          img.src = url;
+  
+          img.onload = () => {
+            let currentPage = 1;
+  
+            const addBackgroundAndDate = () => {
+              doc.addImage(img, 'WEBP', 0, 0, pageWidth, pageHeight); 
+              doc.setFontSize(8);
+              doc.text(` ${exportDateString}`, 14, marginTop - 0);
+            };
+  
+            const rowsPerPage = 25;
+  
+            const drawPage = (startIndex: number) => {
+              if (startIndex >= data.length) return;
+  
+              if (currentPage > 1) {
+                doc.addPage();
               }
-            });
+  
+              addBackgroundAndDate();
 
-            if (startIndex + rowsPerPage < data.length) {
-              drawPage(startIndex + rowsPerPage);
-            } else {
-              doc.save(`Reporte_${exportDateString.replace(/[/, :]/g, '_')}.pdf`);
-            }
+                                        // Título de la tabla centrado
+            doc.setFontSize(12);
+            // Poner la primera letra en mayúscula
+         
+            const title = `Reporte de Vehiculos (N° ${reportNumber})`;
+            const titleWidth = doc.getTextWidth(title);
+            const titleX = (pageWidth - titleWidth) / 2;
+            doc.text(title, titleX, marginTop + 5);
+              
+              // Uso de autoTable para agregar la tabla
+              (doc as any).autoTable({
+                
+                head: [['ID', 'Fecha', 'Placa', 'Producto', 'Cantidad','Observacion','Firma']],
+                body: data.slice(startIndex, startIndex + rowsPerPage).map(report => [
+                  report.id_tbl_registros_vehiculos,
+                
+                  report.fecha_registro,
+                  report.placa,
+                  report.nombre_producto,
+                  report.cantidad,
+                  report.observacion
+                ]),
+                startY: marginTop + 10, 
+                margin: { top: marginTop, bottom: marginBottom },
+                didDrawPage: () => {
+                  // Añadir número de página
+                  doc.setFontSize(10);
+                  doc.text(`Página ${currentPage}`, pageWidth - 30, pageHeight - 10);
+                  currentPage++;
+                },
+                styles: {
+                  font: 'Times', // Asegúrate de que la fuente se aplique aquí
+                  fontSize: 10,
+                }
+              });
+  
+              if (startIndex + rowsPerPage < data.length) {
+                drawPage(startIndex + rowsPerPage);
+              } else {
+                doc.save(`Reporte_${exportDateString.replace(/[/, :]/g, '_')}.pdf`);
+              }
+            };
+  
+            drawPage(0);
           };
-
-          drawPage(0);
-        };
+        });
+        this.srvCounReports.updateCountReports(reportCount).subscribe(() => {
+        
+        });
       });
-    }).catch((error) => {
-      console.error('Error al cargar datos del usuario:', error);
-    });
+   
+      
+    
   }
 
 
@@ -634,85 +683,109 @@ export class PrintService {
 
 
   exportToPDFAREA(data: any[]): void {
-    this.dataUser().then(() => {
-      const doc = new jsPDF();
-      const pageWidth = doc.internal.pageSize.width;
-      const pageHeight = doc.internal.pageSize.height;
 
-      // Definir márgenes
-      const marginTop = 40;
-      const marginBottom = 30;
-
-      // Obtener la fecha y hora de exportación
-      const exportDate = new Date();
-      const exportDateString = exportDate.toLocaleString();
-
-      // Establecer la fuente a "Times"
-      doc.setFont('Times', 'normal');
-
-      // Cargar la imagen de fondo
-      this.loadImage('assets/shared/template.webp').subscribe((imageData) => {
-        const img = new Image();
-        const url = URL.createObjectURL(new Blob([imageData], { type: 'image/webp' }));
-        img.src = url;
-
-        img.onload = () => {
-          let currentPage = 1;
-
-          const addBackgroundAndDate = () => {
-            doc.addImage(img, 'WEBP', 0, 0, pageWidth, pageHeight); 
-            doc.setFontSize(8);
-            doc.text(` ${exportDateString}`, 14, marginTop - 0);
-          };
-
-          const rowsPerPage = 25;
-
-          const drawPage = (startIndex: number) => {
-            if (startIndex >= data.length) return;
-
-            if (currentPage > 1) {
-              doc.addPage();
-            }
-
-            addBackgroundAndDate();
-
-            // Uso de autoTable para agregar la tabla
-            (doc as any).autoTable({
-              head: [['ID', 'Fecha', 'Area', 'Producto', 'Cantidad','Observacion','Firma']],
-              body: data.slice(startIndex, startIndex + rowsPerPage).map(report => [
-                report.id_tbl_registros_areas,
-                report.fecha_registro,
-                report.nombre_area,
-                report.nombre_producto,
-                report.cantidad,
-                report.observacion
-              ]),
-              startY: marginTop + 10, 
-              margin: { top: marginTop, bottom: marginBottom },
-              didDrawPage: () => {
-                // Añadir número de página
-                doc.setFontSize(10);
-                doc.text(`Página ${currentPage}`, pageWidth - 30, pageHeight - 10);
-                currentPage++;
-              },
-              styles: {
-                font: 'Times', // Asegúrate de que la fuente se aplique aquí
-                fontSize: 10,
+    this.srvCounReports.listCountReports().subscribe((response) => {
+      // Acceder al primer objeto en el array de datos
+      const reportCount = response.data[0];
+      console.log(reportCount);
+    
+      let reportNumber: number = 0;  // Inicializar como tipo número
+    
+      
+        reportCount.areas++;
+        reportNumber = reportCount.areas;
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
+  
+        // Definir márgenes
+        const marginTop = 40;
+        const marginBottom = 25;
+  
+        // Obtener la fecha y hora de exportación
+        const exportDate = new Date();
+        const exportDateString = exportDate.toLocaleString();
+  
+        // Establecer la fuente a "Times"
+        doc.setFont('Times', 'normal');
+  
+        // Cargar la imagen de fondo
+        this.loadImage('assets/shared/template.webp').subscribe((imageData) => {
+          const img = new Image();
+          const url = URL.createObjectURL(new Blob([imageData], { type: 'image/webp' }));
+          img.src = url;
+  
+          img.onload = () => {
+            let currentPage = 1;
+  
+            const addBackgroundAndDate = () => {
+              doc.addImage(img, 'WEBP', 0, 0, pageWidth, pageHeight); 
+              doc.setFontSize(8);
+              doc.text(` ${exportDateString}`, 14, marginTop - 0);
+            };
+  
+            const rowsPerPage = 25;
+  
+            const drawPage = (startIndex: number) => {
+              if (startIndex >= data.length) return;
+  
+              if (currentPage > 1) {
+                doc.addPage();
               }
-            });
+  
+              addBackgroundAndDate();
 
-            if (startIndex + rowsPerPage < data.length) {
-              drawPage(startIndex + rowsPerPage);
-            } else {
-              doc.save(`Reporte_${exportDateString.replace(/[/, :]/g, '_')}.pdf`);
-            }
+                          // Título de la tabla centrado
+            doc.setFontSize(12);
+            // Poner la primera letra en mayúscula
+         
+            const title = `Reporte de Areas (N° ${reportNumber})`;
+            const titleWidth = doc.getTextWidth(title);
+            const titleX = (pageWidth - titleWidth) / 2;
+            doc.text(title, titleX, marginTop + 5);
+  
+              // Uso de autoTable para agregar la tabla
+              (doc as any).autoTable({
+                head: [['ID', 'Fecha', 'Area', 'Producto', 'Cantidad','Observacion','Firma']],
+                body: data.slice(startIndex, startIndex + rowsPerPage).map(report => [
+                  report.id_tbl_registros_areas,
+                  report.fecha_registro,
+                  report.nombre_area,
+                  report.nombre_producto,
+                  report.cantidad,
+                  report.observacion
+                ]),
+                startY: marginTop + 10, 
+                margin: { top: marginTop, bottom: marginBottom },
+                didDrawPage: () => {
+                  // Añadir número de página
+                  doc.setFontSize(10);
+                  doc.text(`Página ${currentPage}`, pageWidth - 30, pageHeight - 10);
+                  currentPage++;
+                },
+                styles: {
+                  font: 'Times', // Asegúrate de que la fuente se aplique aquí
+                  fontSize: 10,
+                }
+              });
+  
+              if (startIndex + rowsPerPage < data.length) {
+                drawPage(startIndex + rowsPerPage);
+              } else {
+                doc.save(`Reporte_${exportDateString.replace(/[/, :]/g, '_')}.pdf`);
+              }
+            };
+  
+            drawPage(0);
           };
+        });
 
-          drawPage(0);
-        };
-      });
-    }).catch((error) => {
-      console.error('Error al cargar datos del usuario:', error);
-    });
+        this.srvCounReports.updateCountReports(reportCount).subscribe(() => {
+        
+        });
+    })
+
+     
+   
   }
 }

@@ -111,10 +111,15 @@ export default class AreasComponent implements OnInit, OnDestroy {
     this.srvPrint.printElement('reportTable');
   }
   exportToPDF(): void {
-    this.srvPrint.exportToPDFAREA(this.filteredReports);
+  
     
     if (this.listReports.length > 0) {
       this.srvPrint.exportToPDFAREA(this.filteredReports);
+      this.srvMessage.add({
+        severity: 'info',
+        summary: 'Generando reporte',
+        detail: 'Espere un momento mientras se genera el reporte',
+      });
     } else {
       this.srvMessage.add({
         severity: 'error',

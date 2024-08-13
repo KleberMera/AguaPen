@@ -108,7 +108,21 @@ export default class ReportesVehiculosComponent {
     this.srvPrint.printElement('reportTable');
   }
   exportToPDF(): void {
-    this.srvPrint.exportToPDFVEHICULO(this.filteredReports);
+    
+    if (this.listReports.length > 0) {
+      this.srvPrint.exportToPDFVEHICULO(this.filteredReports);
+      this.srvMessage.add({
+        severity: 'info',
+        summary: 'Generando reporte',
+        detail: 'Espere un momento mientras se genera el reporte',
+      });
+    } else {
+      this.srvMessage.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No hay registros para imprimir',
+      });
+    }
     
   }
 }

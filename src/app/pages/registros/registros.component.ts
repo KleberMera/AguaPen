@@ -434,6 +434,7 @@ async onUpload() {
     this.uploadService.uploadImage(lastRegistroId, this.selectedFile).subscribe(
       (response) => {
         console.log('Imagen subida correctamente:', response);
+       
       },
       (error) => {
         console.error('Error al subir la imagen:', error);

@@ -186,8 +186,22 @@ export default class ReportesComponent implements OnInit {
 
   // Exportar la tabla de reportes a PDF
   exportToPDF(): void {
-    this.srvPrint.exportToPDF(this.filteredReports);
+   
     
+    if (this.listReports.length > 0) {
+      this.srvPrint.exportToPDF(this.filteredReports);
+      this.srvMessage.add({
+        severity: 'info',
+        summary: 'Generando reporte',
+        detail: 'Espere un momento mientras se genera el reporte',
+      });
+    } else {
+      this.srvMessage.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No hay registros para imprimir',
+      });
+    }
   }
 
   // Imprimir la tabla de reportes
