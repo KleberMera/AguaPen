@@ -258,6 +258,8 @@ export default class RegistrosComponent implements OnInit {
     this.observacion = '';
     this.selectedFile = null;
     this.idregistro = 0;
+    this.loading = false;
+    
 
   }
 
@@ -325,7 +327,9 @@ export default class RegistrosComponent implements OnInit {
  
   exportData() {
     this.PrintService.exportAsignacion(this.selectedUser, this.selectedProducts, this.observacion, this.totalCantidadProductos,this.idregistro,this.selectedFile);
-  }
+      this.selectedFile = null;
+    this.imagePreview = null;
+  }
 
 
 private async procederConRegistro(): Promise<void> {
@@ -361,7 +365,6 @@ private async procederConRegistro(): Promise<void> {
     
 
     if (res) {
-      await this.onUpload();
       await this.guardarDetallesRegistro();
      
 
@@ -395,14 +398,13 @@ MsjAntRegist() {
     header: 'Confirmación de Registro',
     icon: 'pi pi-exclamation-triangle',
     accept: async () => {
-     
+    await this.procederConRegistro();
 
-      await this.procederConRegistro();
+      this.exportData();
+      await this.onUpload();
+         this.clearForm();
+      
 
-      await this.exportData();
-
-
-      this.clearForm();
     },
     reject: () => {
       this.confirmationService.close(); 
@@ -439,8 +441,7 @@ async onUpload() {
       observable.subscribe(
         (response: any) => {
           console.log('Imagen subida correctamente:', response);
-          //limpiar el selector de archivos
-          this.selectedFile = null;
+      
         },
         (error: any) => {
           console.error('Error al subir la imagen:', error);
