@@ -6,6 +6,7 @@ import { FieldsetModule } from 'primeng/fieldset';
 import { ListService } from '../../services/list.service';
 import { FormsModule } from '@angular/forms';
 import { PRIMEMG_MODULES } from './reportes.imports';
+import { ReporteService } from '../../services/reporte.service';
 
 
 @Component({
@@ -33,7 +34,8 @@ export default class ReportesComponent implements OnInit {
   constructor(
     private srvList: ListService,
     private srvMessage: MessageService,
-    private srvPrint: PrintService
+    private srvPrint: PrintService,
+    private srvReport: ReporteService
   ) {}
 
   ngOnInit(): void {
@@ -145,6 +147,8 @@ export default class ReportesComponent implements OnInit {
     } else {
       this.filteredReports = this.listReports;
     }
+
+    console.log(this.filteredReports);
   }
   
 
@@ -190,4 +194,68 @@ export default class ReportesComponent implements OnInit {
   printTable(): void {
     this.srvPrint.printElement('reportTable');
   }
-}
+
+
+
+
+  downloadGeneralReport() {
+    // Validar si se ha seleccionado un producto
+    if (!this.selectedProduct || !this.selectedProduct.nombre_producto) {
+      this.srvMessage.add({
+        severity: 'error',
+        summary: 'Selección de producto',
+        detail: 'Debe seleccionar un producto para generar el reporte.',
+      });
+      return;
+    }
+  
+    // Validar si se ha seleccionado al menos un reporte después de aplicar filtros
+    if (!this.filteredReports || this.filteredReports.length === 0) {
+      this.srvMessage.add({
+        severity: 'error',
+        summary: 'Reportes',
+        detail: 'No se encontraron reportes con los criterios seleccionados.',
+      });
+      return;
+    }
+  
+    // Validar si las fechas están definidas y son válidas
+    if (!this.startDate || !this.endDate) {
+      this.srvMessage.add({
+        severity: 'error',
+        summary: 'Fechas',
+        detail: 'Debe seleccionar un rango de fechas para generar el reporte.',
+      });
+      return;
+    }
+  
+    const start = new Date(this.startDate);
+    const end = new Date(this.endDate);
+    if (start > end) {
+      this.srvMessage.add({
+        severity: 'error',
+        summary: 'Fechas inválidas',
+        detail: 'La fecha de inicio debe ser anterior a la fecha de fin.',
+      });
+      return;
+    }
+  
+    // Si todas las validaciones pasan, generar el reporte
+    this.srvReport.RepGeneral(this.filteredReports)
+      .then(() => {
+        this.srvMessage.add({
+          severity: 'success',
+          summary: 'Reporte generado',
+          detail: 'El reporte general ha sido generado exitosamente.',
+        });
+      })
+      .catch((error) => {
+        console.error('Error al generar el reporte:', error);
+        this.srvMessage.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Hubo un problema al generar el reporte.',
+        });
+      });
+  }
+}  
