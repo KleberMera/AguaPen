@@ -282,7 +282,7 @@ export class PrintService {
                 img.src = e.target.result;
                 img.onload = () => {
                   const imageWidth = 60; // Ajusta el tamaño de la imagen si es necesario
-                  const imageHeight = (imageWidth / img.width) * img.height;
+                  const imageHeight = (imageWidth / 1024) * 1024;
                   doc.addImage(img, 'PNG', 70, lastPageY -125, imageWidth, imageHeight);
                   doc.save(`Asignacion_${exportDateString.replace(/[/, :]/g, '_')}.pdf`);
                 };

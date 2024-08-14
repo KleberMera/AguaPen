@@ -433,7 +433,7 @@
         this.imagePreview = reader.result;
       };
       reader.readAsDataURL(this.selectedFile);
-      console.log(this.selectedFile);
+     
     } else {
       // Clear the preview if no file is selected
       this.imagePreview = null;
@@ -442,7 +442,7 @@
 
 
   async onUpload() {
-    console.log(this.selectedFile);
+   
     
     if (this.selectedFile) {
       try {
