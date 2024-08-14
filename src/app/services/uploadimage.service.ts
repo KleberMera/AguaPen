@@ -75,7 +75,7 @@ export class UploadimageService {
   }
 
   async uploadImage(id: string, imageFile: File): Promise<Observable<any>> {
-    const compressedImage = await this.compressImage(imageFile, 1024, 1024, 0.7);
+    const compressedImage = await this.compressImage(imageFile, 1024, 1024, 0.8);
     const url = `${this.environment}registros/${id}/imagen`;
 
     const formData: FormData = new FormData();

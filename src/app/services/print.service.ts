@@ -63,7 +63,7 @@ export class PrintService {
   
         // Definir márgenes
         const marginTop = 40;
-        const marginBottom = 25;
+        const marginBottom = 30;
   
         // Obtener la fecha y hora de exportación
         const exportDate = new Date();
@@ -87,7 +87,7 @@ export class PrintService {
               doc.text(` ${exportDateString}`, 14, marginTop - 0);
             };
   
-            const rowsPerPage = 25;
+            const rowsPerPage = 20;
   
             const drawPage = (startIndex: number) => {
               if (startIndex >= data.length) return;
@@ -101,14 +101,14 @@ export class PrintService {
               doc.setFontSize(12);
               // Poner la primera letra en mayúscula
            
-              const title = `Reporte de Trabajadores )`;
+              const title = `Reporte de Trabajadores`;
               const titleWidth = doc.getTextWidth(title);
               const titleX = (pageWidth - titleWidth) / 2;
               doc.text(title, titleX, marginTop + 5);
   
               // Uso de autoTable para agregar la tabla
               (doc as any).autoTable({
-                head: [['ID', 'Codigo', 'Fecha', 'Nombre', 'Producto', 'Cantidad', 'Firma']],
+                head: [['N°', 'Codigo', 'Fecha', 'Nombre', 'Producto', 'Cantidad', 'Firma']],
                 body: data.slice(startIndex, startIndex + rowsPerPage).map(report => [
                   report.id_tbl_registros,
                   report.codigo_producto,
@@ -625,7 +625,7 @@ export class PrintService {
             doc.setFontSize(12);
             // Poner la primera letra en mayúscula
          
-            const title = `Reporte de Vehiculos )`;
+            const title = `Reporte de Vehiculos`;
             const titleWidth = doc.getTextWidth(title);
             const titleX = (pageWidth - titleWidth) / 2;
             doc.text(title, titleX, marginTop + 5);
@@ -741,7 +741,7 @@ export class PrintService {
             doc.setFontSize(12);
             // Poner la primera letra en mayúscula
          
-            const title = `Reporte de Areas )`;
+            const title = `Reporte de Areas`;
             const titleWidth = doc.getTextWidth(title);
             const titleX = (pageWidth - titleWidth) / 2;
             doc.text(title, titleX, marginTop + 5);

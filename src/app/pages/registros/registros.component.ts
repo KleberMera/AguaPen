@@ -259,14 +259,11 @@
       this.showProductsTable = false;
       this.ListProductos.forEach((product) => (product.cantidad = 1));
       this.observacion = '';
-      this.selectedFile = null;
-      this.idregistro = 0;
-      this.imagePreview = null;
       
-      // Reset the file upload component
-      if (this.fileUpload) {
-        this.fileUpload.clear();
-      }
+      this.idregistro = 0;
+   
+      
+     
     }
     
 
@@ -333,9 +330,13 @@
     }
   
   async exportData() {
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Generando reporte',
+      detail: 'Espere un momento mientras se genera el reporte',
+    });
       this.PrintService.exportAsignacion(this.selectedUser, this.selectedProducts, this.observacion, this.totalCantidadProductos,this.idregistro,this.selectedFile);
-        this.selectedFile = null;
-      this.imagePreview = null;
+
     }
 
 
@@ -409,7 +410,7 @@
 
         this.exportData();
         await this.onUpload();
-          this.clearForm();
+        this.clearForm();
         
 
       },
@@ -432,6 +433,7 @@
         this.imagePreview = reader.result;
       };
       reader.readAsDataURL(this.selectedFile);
+      console.log(this.selectedFile);
     } else {
       // Clear the preview if no file is selected
       this.imagePreview = null;
@@ -440,6 +442,8 @@
 
 
   async onUpload() {
+    console.log(this.selectedFile);
+    
     if (this.selectedFile) {
       try {
         // Esperar a obtener el id del último registro
