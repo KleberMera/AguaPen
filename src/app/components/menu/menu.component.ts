@@ -89,7 +89,7 @@ export class MenuComponent {
           {
             label: 'Productos',
             icon: 'pi pi-shop',
-            routerLink: '/home/productos',
+            routerLink: '/home/industrial/productos',
           },
           {
             label: 'Vehiculos',

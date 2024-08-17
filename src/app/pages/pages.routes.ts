@@ -2,78 +2,90 @@ import { Routes } from '@angular/router';
 import { rolGuard } from '../guards/rol.guard';
 import { roldataGuard } from '../guards/roldata.guard';
 
+const ruta_seguridad = 'industrial';
+const ruta_modulo = 'modulos';
+
 export const routes: Routes = [
+  
   {
     path: '',
     loadComponent: () => import('./home/home.component'),
     children: [
       {
         path: 'dashboard',
-        loadComponent: () => import('./dashboard/dashboard.component'),
+        loadComponent: () => import('./seguridad-industrial/dashboard/dashboard.component'),
       },
       {
-        path: 'productos',
-        loadComponent: () => import('./productos/productos.component'),
+        path:`${ruta_seguridad}/productos`,
+        loadComponent: () => import('./seguridad-industrial/productos/productos.component'),
         canActivate: [roldataGuard],
       },
       {
         path: 'vehiculos',
-        loadComponent: () => import('./vehiculos/vehiculos.component'),
+        loadComponent: () => import('./seguridad-industrial/vehiculos/vehiculos.component'),
         canActivate: [roldataGuard],
       },
       {
         path: 'trabajadores',
-        loadComponent: () => import('./trabajadores/trabajadores.component'),
+        loadComponent: () => import('./seguridad-industrial/trabajadores/trabajadores.component'),
         canActivate: [roldataGuard],
       },
       {
         path: 'areas',
-        loadComponent: () => import('./areas/areas.component'),
+        loadComponent: () => import('./seguridad-industrial/areas/areas.component'),
         canActivate: [roldataGuard],
       },
       {
         path: 'roles',
-        loadComponent: () => import('./roles/roles.component'),
+        loadComponent: () => import('./seguridad-industrial/roles/roles.component'),
         canActivate: [rolGuard],
       },
       {
         path: 'registros',
-        loadComponent: () => import('./registros/registros.component'),
+        loadComponent: () => import('./seguridad-industrial/registros/registros.component'),
         canActivate: [roldataGuard],
     
       },
       {
         path: 'reportes',
-        loadComponent: () => import('./reportes/reportes.component'),
+        loadComponent: () => import('./seguridad-industrial/reportes/reportes.component'),
         
       },
       {
         path: 'reportes-usuarios',
-        loadComponent: () => import('./reportes-usuarios/reportes-usuarios.component'),
+        loadComponent: () => import('./seguridad-industrial/reportes-usuarios/reportes-usuarios.component'),
       },
       {
         path: 'reportes-areas',
-        loadComponent: () => import('./reportes-areas/reportes-areas.component'),
+        loadComponent: () => import('./seguridad-industrial/reportes-areas/reportes-areas.component'),
         
       },
       {
         path: 'reportes-vehiculos',
-        loadComponent: () => import('./reportes-vehiculos/reportes-vehiculos.component'),
+        loadComponent: () => import('./seguridad-industrial/reportes-vehiculos/reportes-vehiculos.component'),
       },
       {
         path: 'registros-areas',
-        loadComponent: () => import('./registros-areas/registros-areas.component'),
+        loadComponent: () => import('./seguridad-industrial/registros-areas/registros-areas.component'),
         
       },
       {
         path: 'registros-vehiculos',
-        loadComponent: () => import('./registros-vehiculos/registros-vehiculos.component'),
+        loadComponent: () => import('./seguridad-industrial/registros-vehiculos/registros-vehiculos.component'),
       },
       {path: 'anulados',
-       loadComponent: () => import('./anulados/anulados.component')},
+       loadComponent: () => import('./seguridad-industrial/anulados/anulados.component')},
       {
         path: 'editar-eliminar',
-        loadComponent: () => import ('./edit-delete/edit-delete.component')
+        loadComponent: () => import ('./seguridad-industrial/edit-delete/edit-delete.component')
+      },
+      {
+        path: `${ruta_modulo}/prueba`,
+        loadComponent: () => import('./modulo/prueba/prueba.component'),
+      },
+      {
+        path: 'prueba2',
+        loadComponent: () => import('./modulo/prueba2/prueba2.component'),
       },
       {
         path: '**',
