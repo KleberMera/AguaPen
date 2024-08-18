@@ -16,5 +16,5 @@ export interface usersAdmin {
   email: string;
   usuario: string;
   password: string;
-  rol_id: number;
+
 }

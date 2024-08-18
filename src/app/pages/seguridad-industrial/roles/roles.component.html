@@ -4,17 +4,6 @@
       <h2>Registro de Usuarios</h2>
       <form (ngSubmit)="registerUser()">
         <div class="field">
-          <label for="rol">Roles</label>
-          &nbsp;
-          <p-dropdown
-            [options]="roles"
-            [(ngModel)]="newUser.rol_id"
-            name="rol"
-            placeholder="Selecciona un rol"
-            required
-          ></p-dropdown>
-        </div>
-        <div class="field">
           <label for="nombres">Nombres</label>
           <input
             id="nombres"
@@ -25,7 +14,9 @@
             name="nombres"
             required
           />
-          <div *ngIf="!validateNombres()" class="p-error">Nombres solo pueden contener letras</div>
+          <div *ngIf="!validateNombres()" class="p-error">
+            Nombres solo pueden contener letras
+          </div>
         </div>
         <div class="field">
           <label for="apellidos">Apellidos</label>
@@ -38,7 +29,9 @@
             name="apellidos"
             required
           />
-          <div *ngIf="!validateApellidos()" class="p-error">Apellidos solo pueden contener letras</div>
+          <div *ngIf="!validateApellidos()" class="p-error">
+            Apellidos solo pueden contener letras
+          </div>
         </div>
         <div class="field">
           <label for="cedula">Cédula</label>
@@ -51,7 +44,9 @@
             name="cedula"
             required
           />
-          <div *ngIf="!validateCedula()" class="p-error">Cédula debe tener 10 dígitos</div>
+          <div *ngIf="!validateCedula()" class="p-error">
+            Cédula debe tener 10 dígitos
+          </div>
         </div>
         <div class="field">
           <label for="telefono">Teléfono</label>
@@ -64,7 +59,9 @@
             name="telefono"
             required
           />
-          <div *ngIf="!validateTelefono()" class="p-error">Teléfono debe tener 10 dígitos</div>
+          <div *ngIf="!validateTelefono()" class="p-error">
+            Teléfono debe tener 10 dígitos
+          </div>
         </div>
         <div class="field">
           <label for="correo">Email</label>
@@ -77,7 +74,9 @@
             name="email"
             required
           />
-          <div *ngIf="!validateEmail()" class="p-error">Correo electrónico no es válido</div>
+          <div *ngIf="!validateEmail()" class="p-error">
+            Correo electrónico no es válido
+          </div>
         </div>
         <div class="field">
           <label for="usuario">Usuario</label>
@@ -117,45 +116,131 @@
       </form>
     </div>
   </div>
-
   <div class="col-12 xl:col-6">
     <div class="card">
-      <h2>Listado de Usuarios</h2>
-      <div *ngIf="users.length > 0">
-        <div *ngFor="let user of users" class="flex align-items-center justify-content-between p-2">
-          <div class="flex align-items-center">
-            <p-avatar
-              [label]="getInitial(user.nombres)"
-              styleClass="mr-2"
-              size="xlarge"
-              shape="circle"
-            ></p-avatar>
-            <div>
-              <div>{{ user.nombres }}</div>
-              <div>{{ user.apellidos }}</div>
-            </div>
+      <h2>Asignacion de Permisos</h2>
+
+      <div class="field">
+        <label for="rol">Usuarios</label>
+        &nbsp;
+        <p-dropdown
+          [options]="opciones_usuarios"
+          [(ngModel)]="selectionUser"
+          placeholder="Selecciona un usuario"
+          required
+        ></p-dropdown>
+      </div>
+
+      <div>
+        <label for="modulos">Seleccione Módulo:</label>
+        <p-dropdown
+          [options]="opciones_modulos"
+          [(ngModel)]="selectedModulo"
+          placeholder="Seleccione un módulo"
+          (onChange)="filterOptionsByModulo()"
+        ></p-dropdown>
+      </div>
+
+      <div *ngIf="filteredOptions.length">
+        <h3>Opciones del Módulo: {{ selectedModulo }}</h3>
+      
+        <!-- Checkbox para seleccionar todo -->
+        
+
+        <p-scrollPanel [style]="{ width: '100%', height: '480px' }">
+          <div>
+            <p-checkbox
+              [(ngModel)]="seleccionarTodo"
+              (onChange)="seleccionarTodasOpciones($event)"
+              label="Seleccionar Todo"
+              binary="true"
+            ></p-checkbox>
           </div>
-          <button
-            pButton
-            icon="pi pi-trash"
-            class="p-button-danger"
-            (click)="confirmDeleteUser(user.id)"
-          ></button>
-        </div>
+          <p-table [value]="filteredOptions">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Seleccionar</th>
+                <th>Pantallas</th>
+                <th>Permitir Editar</th>
+                <th>Permitir Ver</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-opcion>
+              <tr>
+                <td>
+                  <p-checkbox
+                    [(ngModel)]="opcion.seleccionado"
+                    binary="true"
+                  ></p-checkbox>
+                </td>
+                <td>{{ opcion.opcion_label }}</td>
+                <td>
+                  <p-checkbox
+                    [(ngModel)]="opcion.per_editar"
+                    binary="true"
+                  ></p-checkbox>
+                </td>
+                <td>
+                  <p-checkbox
+                    [(ngModel)]="opcion.per_ver"
+                    binary="true"
+                  ></p-checkbox>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+      </p-scrollPanel>
+      
+     
+      
+        <p-button
+          label="Guardar Permisos"
+          (click)="guardarPermisos()"
+           [loading]="loadingpermissions"
+        ></p-button>
       </div>
-      <div *ngIf="users.length === 0" class="loading-container">
-        <p>No hay usuarios registrados</p>
-        <p-progressSpinner
-          ariaLabel="loading"
-          styleClass="w-4rem h-4rem"
-          strokeWidth="8"
-          fill="var(--surface-ground)"
-        ></p-progressSpinner>
-      </div>
+      
     </div>
   </div>
 </div>
 
+<div class="card">
+  <h2>Listado de Usuarios</h2>
+  <div *ngIf="users.length > 0">
+    <div
+      *ngFor="let user of users"
+      class="flex align-items-center justify-content-between p-2"
+    >
+      <div class="flex align-items-center">
+        <p-avatar
+          [label]="getInitial(user.nombres)"
+          styleClass="mr-2"
+          size="xlarge"
+          shape="circle"
+        ></p-avatar>
+        <div>
+          <div>{{ user.nombres }}</div>
+          <div>{{ user.apellidos }}</div>
+        </div>
+      </div>
+      <button
+        pButton
+        icon="pi pi-trash"
+        class="p-button-danger"
+        (click)="confirmDeleteUser(user.id)"
+      ></button>
+    </div>
+  </div>
+  <div *ngIf="users.length === 0" class="loading-container">
+    <p>No hay usuarios registrados</p>
+    <p-progressSpinner
+      ariaLabel="loading"
+      styleClass="w-4rem h-4rem"
+      strokeWidth="8"
+      fill="var(--surface-ground)"
+    ></p-progressSpinner>
+  </div>
+</div>
 
 <!-- Componente de carga -->
 <p-blockUI [blocked]="loading">
@@ -176,4 +261,3 @@
   [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
 ></p-toast>
 <p-confirmDialog></p-confirmDialog>
-

@@ -25,4 +25,50 @@ export class PermisosService {
     const url = `${this.environment}permisosmenus/${userId}`;
     return this.http.get<any>(url);
   }
+
+
+  getListModulos() {
+    const url = `${this.environment}allmodulos`;
+    return this.http.get<any>(url);
+  }
+
+
+  postEditPermisos(objPermiso: any) {
+    const url = `${this.environment}permisos/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'update',
+          key: objPermiso.id,
+          attributes: {
+            user_id: objPermiso.user_id,
+            opcion_id: objPermiso.opcion_id,
+            per_editar: objPermiso.per_editar,
+            per_ver: objPermiso.per_ver,
+          },
+        },
+      ],
+    });
+  }
+
+  postCreatePermisos(objPermiso: any) {
+    const url = `${this.environment}permisos/mutate`;
+    return this.http.post(url, {
+      mutate: [
+        {
+          operation: 'create',
+          attributes: {
+            user_id: objPermiso.user_id,
+            opcion_id: objPermiso.opcion_id,
+            per_editar: objPermiso.per_editar,
+            per_ver: objPermiso.per_ver,
+           
+          },
+        },
+      ],
+    });
+  }
+
+
+
 }

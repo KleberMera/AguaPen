@@ -17,7 +17,12 @@ import { RippleModule } from 'primeng/ripple';
 import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
 import { DropdownModule } from 'primeng/dropdown';
+import { CheckboxModule } from 'primeng/checkbox';
 import { BlockUIModule } from 'primeng/blockui';
+import { ScrollerModule } from 'primeng/scroller';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
+//Importar tablas de primeng
+
 export const PRIMENG_MODULES = [
   FieldsetModule,
   TableModule,
@@ -37,6 +42,9 @@ export const PRIMENG_MODULES = [
   AvatarModule,
   BadgeModule,
   DropdownModule,
-  BlockUIModule
+  BlockUIModule,
+  CheckboxModule,
+  ScrollerModule,
+  ScrollPanelModule
 
 ];
