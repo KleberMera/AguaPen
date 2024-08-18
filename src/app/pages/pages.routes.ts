@@ -2,8 +2,6 @@ import { Routes } from '@angular/router';
 import { rolGuard } from '../guards/rol.guard';
 import { roldataGuard } from '../guards/roldata.guard';
 
-const ruta_seguridad = 'industrial';
-const ruta_modulo = 'modulos';
 
 export const routes: Routes = [
   
@@ -16,34 +14,34 @@ export const routes: Routes = [
         loadComponent: () => import('./seguridad-industrial/dashboard/dashboard.component'),
       },
       {
-        path:`${ruta_seguridad}/productos`,
+        path:`productos`,
         loadComponent: () => import('./seguridad-industrial/productos/productos.component'),
-        canActivate: [roldataGuard],
+        //canActivate: [roldataGuard],
       },
       {
         path: 'vehiculos',
         loadComponent: () => import('./seguridad-industrial/vehiculos/vehiculos.component'),
-        canActivate: [roldataGuard],
+        
       },
       {
         path: 'trabajadores',
         loadComponent: () => import('./seguridad-industrial/trabajadores/trabajadores.component'),
-        canActivate: [roldataGuard],
+        
       },
       {
         path: 'areas',
         loadComponent: () => import('./seguridad-industrial/areas/areas.component'),
-        canActivate: [roldataGuard],
+       
       },
       {
         path: 'roles',
         loadComponent: () => import('./seguridad-industrial/roles/roles.component'),
-        canActivate: [rolGuard],
+        
       },
       {
         path: 'registros',
         loadComponent: () => import('./seguridad-industrial/registros/registros.component'),
-        canActivate: [roldataGuard],
+        
     
       },
       {
@@ -80,7 +78,7 @@ export const routes: Routes = [
         loadComponent: () => import ('./seguridad-industrial/edit-delete/edit-delete.component')
       },
       {
-        path: `${ruta_modulo}/prueba`,
+        path: `prueba`,
         loadComponent: () => import('./modulo/prueba/prueba.component'),
       },
       {

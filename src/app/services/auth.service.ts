@@ -51,7 +51,7 @@ export class AuthService {
             email: objUser.email,
             usuario: objUser.usuario,
             password: objUser.password,
-            rol_id: objUser.rol_id,
+           
           },
         },
       ],
@@ -73,7 +73,7 @@ export class AuthService {
             email: objUser.email,
             usuario: objUser.usuario,
             password: objUser.password,
-            rol_id: objUser.rol_id,
+           
           },
         },
       ],

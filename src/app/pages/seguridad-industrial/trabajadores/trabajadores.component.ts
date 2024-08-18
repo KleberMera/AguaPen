@@ -12,6 +12,7 @@ import { PRIMENG_MODULES } from './trabajadores.import';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DeleteService } from '../../../services/delete.service';
 import { AuthService } from '../../../services/auth.service';
+import { PermisosService } from '../../../services/permisos.service';
 
 @Component({
   selector: 'app-usuarios-trabajadores',
@@ -35,7 +36,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   areaOptions: any[] = [];
   cargoOptions: any[] = [];
   filteredCargoOptions: any[] = [];
-  rol_id: number = 0;
+  per_editar: number = 0;
 
   currentUser: User = this.createEmptyUser();
 
@@ -45,6 +46,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   private srvReg = inject(RegisterService);
   private srvDelete = inject(DeleteService);
   private srvAuth = inject(AuthService);
+  private srvPermisos = inject(PermisosService);
 
   ngOnInit(): void {
     this.getUserRole();
@@ -53,7 +55,20 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   async getUserRole() {
     try {
       const res = await this.srvAuth.viewDataUser().toPromise();
-      this.rol_id = res.data.rol_id;
+      const user_id = res.data.id;
+      if (user_id){
+        const permisos = await this.srvPermisos.getListPermisosPorUsuario(user_id).toPromise();
+        const data = permisos.data;
+
+        //Recorrer la data
+        data.forEach((permiso: any) => {
+          if (permiso.nombre_modulo === 'Seguridad Industrial' && permiso.opcion_label === 'Trabajadores'){
+            this.per_editar = permiso.per_editar;
+          
+          }
+        });
+      }
+     
       this.getListUsuarios();
     } catch (error) {
       this.srvMensajes.add({

@@ -13,7 +13,7 @@
       </p-inputGroup>
     </div>
   </div>
-  @if (rol_id === 1) {
+  @if (per_editar === 1) {
   <div class="flex align-items-center gap-2 mb-3">
     <div class="col-3">
       <div class=" ">
@@ -80,7 +80,7 @@
         <th>Área</th>
         <th>Cargo</th>
 
-        @if (rol_id === 1) {
+        @if (per_editar === 1) {
         <th>Acción</th>
         }
       </tr>
@@ -93,7 +93,7 @@
         <td>{{ user.tx_area }}</td>
         <td>{{ user.tx_cargo }}</td>
 
-        @if (rol_id === 1) {
+        @if (per_editar === 1) {
         <td>
           <div class="flex md:flex-row">
             <div>
