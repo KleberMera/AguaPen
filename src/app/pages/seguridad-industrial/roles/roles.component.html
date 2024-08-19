@@ -254,6 +254,7 @@
                   <th>Pantallas</th>
                   <th>Permitir Editar</th>
                   <th>Permitir Ver</th>
+                  <th>Eliminar</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-opcion>
@@ -272,6 +273,13 @@
                       [binary]="true"
                       [ngModel]="opcion.per_ver === 1"
                     ></p-checkbox>
+                  </td>
+                  <td>
+                    <p-button
+                      label="Eliminar"
+                      icon="pi pi-trash"
+                      (click)="eliminarPermisos(opcion)"
+                    ></p-button>
                   </td>
                 </tr>
               </ng-template>
@@ -340,6 +348,8 @@
     </p-progressSpinner>
   </div>
 </p-blockUI>
+
+                
 
 <p-toast
   [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"

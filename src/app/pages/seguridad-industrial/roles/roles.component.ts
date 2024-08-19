@@ -238,6 +238,8 @@ export default class UsuariosRolesComponent implements OnInit {
   permisosUsuario: any[] = [];
 
   loadUserPermissions() {
+    console.log('seleccionUser', this.selectionUser);
+    
     if (this.selectionUser) {
       this.SrvPermissions.getListPermisosPorUsuario(
         this.selectionUser
@@ -251,6 +253,7 @@ export default class UsuariosRolesComponent implements OnInit {
 
         // Guardar permisos para filtrarlos por módulo
         this.permisosUsuario = permisos;
+        console.log('permisosUsuario', this.permisosUsuario);
       });
     }
   }
@@ -262,34 +265,35 @@ export default class UsuariosRolesComponent implements OnInit {
           (permiso: any) => permiso.nombre_modulo === this.selectionModulo
         )
         .map((permiso: any) => ({
+          permiso_id: permiso.permiso_id,
           opcion_id: permiso.opcion_id,
           opcion_label: permiso.opcion_label,
           per_editar: permiso.per_editar,
           per_ver: permiso.per_ver,
         }));
+        console.log('modulos de permisos', this.filteredOptions);
+        
     }
   }
 
   actualizarPermisos() {
     this.loadingpermissions = true;
 
-    // Filtrar los permisos seleccionados
-    const permisosSeleccionados = this.filteredOptions.map((opcion) => ({
-      id: opcion.opcion_id,
-      user_id: this.selectionUser,
-      opcion_id: opcion.opcion_id,
-      per_editar: opcion.per_editar,
-      per_ver: opcion.per_ver,
-    }));
+    this.filteredOptions.forEach((opcion) => {
+      const updatedPermiso = {
+        id: opcion.permiso_id,
+        user_id: this.selectionUser,
+        opcion_id: opcion.opcion_id,
+        per_editar: opcion.per_editar,
+        per_ver: opcion.per_ver,
+      };
+console.log(updatedPermiso);
 
-    console.log(permisosSeleccionados);
-
-    permisosSeleccionados.forEach((permiso) => {
-      this.SrvPermissions.postEditPermisos(permiso).subscribe(
+      this.SrvPermissions.postEditPermisos(updatedPermiso).subscribe(
         (response) => {
-          this.loadingpermissions = false;
           console.log(response);
-
+          
+          this.loadingpermissions = false;
           this.messageService.add({
             severity: 'success',
             summary: 'Éxito',
@@ -319,6 +323,7 @@ export default class UsuariosRolesComponent implements OnInit {
         per_editar: opcion.per_editar || false,
         per_ver: opcion.per_ver || false,
       }));
+console.log(permisosSeleccionados);
 
     // Validar si hay un usuario seleccionado
     if (!this.selectionUser) {
@@ -364,6 +369,70 @@ export default class UsuariosRolesComponent implements OnInit {
             detail: 'Hubo un problema al guardar los permisos',
           });
           console.error('Error al guardar permisos:', error);
+        }
+      );
+    });
+  }
+
+
+  eliminarPermisos(opcion: any) {
+    this.confirmationService.confirm({
+      message: '¿Está seguro de eliminar este permiso?',
+      header: 'Confirmación de Eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.eliminarPermisosSeleccionados(opcion);
+      },
+    });
+  }
+
+  eliminarPermisosSeleccionados(opcion: any) {    
+    this.loadingpermissions = true;
+    const permisosSeleccionados = [
+      {
+        permiso_id: opcion.permiso_id,
+      },
+    ];
+console.log(permisosSeleccionados);
+
+    // Validar si hay un usuario seleccionado
+    if (!this.selectionUser) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Seleccione un usuario',
+      });
+      this.loadingpermissions = false;
+      return;
+    }
+
+    // Validar si hay al menos una opción seleccionada
+    if (permisosSeleccionados.length === 0) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Seleccione al menos una opción',
+      });
+      this.loadingpermissions = false;
+      return;
+    }
+
+    permisosSeleccionados.forEach((permiso) => {
+      this.SrvPermissions.requestdeletePermisos(permiso.permiso_id).subscribe(
+        (response) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Permisos eliminados correctamente',
+          });
+          this.loadPermissionsByModule();
+        },
+        (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al eliminar los permisos',
+          });
         }
       );
     });

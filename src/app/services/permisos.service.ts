@@ -69,6 +69,15 @@ export class PermisosService {
     });
   }
 
+  //Eliminacion de Permisos
+  requestdeletePermisos(id: number) {
+    let url = `${this.environment}permisos`;
+    return this.http.request('DELETE', url, {
+      body: {
+        resources: [id],
+      },
+    });
+  }
 
 
 }

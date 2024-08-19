@@ -52,16 +52,10 @@ export class MenuComponent implements OnInit {
                 this.initializeMenuAdmin(res.data);
                 this.loading = false;
               } else {
-                this.initializeMenuUser(res.data);
+                this.initializeMenuAdmin(res.data);
                 this.loading = false;
               }
               this.loading = false;
-            } else {
-              this.messageService.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'No se pudo obtener la información del usuario.',
-              });
             }
           });
 
