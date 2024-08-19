@@ -62,7 +62,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
 
         //Recorrer la data
         data.forEach((permiso: any) => {
-          if (permiso.nombre_modulo === 'Seguridad Industrial' && permiso.opcion_label === 'Trabajadores'){
+          if (permiso.nombre_modulo === 'Tecnologia de la información' && permiso.opcion_label === 'Trabajadores'){
             this.per_editar = permiso.per_editar;
           
           }
