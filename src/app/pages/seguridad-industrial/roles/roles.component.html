@@ -118,88 +118,172 @@
   </div>
   <div class="col-12 xl:col-6">
     <div class="card">
-      <h2>Asignacion de Permisos</h2>
+      <h2>Permisos</h2>
 
-      <div class="field">
-        <label for="rol">Usuarios</label>
-        &nbsp;
-        <p-dropdown
-          [options]="opciones_usuarios"
-          [(ngModel)]="selectionUser"
-          placeholder="Selecciona un usuario"
-          required
-        ></p-dropdown>
-      </div>
-
-      <div>
-        <label for="modulos">Seleccione Módulo:</label>
-        <p-dropdown
-          [options]="opciones_modulos"
-          [(ngModel)]="selectedModulo"
-          placeholder="Seleccione un módulo"
-          (onChange)="filterOptionsByModulo()"
-        ></p-dropdown>
-      </div>
-
-      <div *ngIf="filteredOptions.length">
-        <h3>Opciones del Módulo: {{ selectedModulo }}</h3>
-      
-        <!-- Checkbox para seleccionar todo -->
-        
-
-        <p-scrollPanel [style]="{ width: '100%', height: '480px' }">
-          <div>
-            <p-checkbox
-              [(ngModel)]="seleccionarTodo"
-              (onChange)="seleccionarTodasOpciones($event)"
-              label="Seleccionar Todo"
-              binary="true"
-            ></p-checkbox>
-          </div>
-          <p-table [value]="filteredOptions">
-            <ng-template pTemplate="header">
-              <tr>
-                <th>Seleccionar</th>
-                <th>Pantallas</th>
-                <th>Permitir Editar</th>
-                <th>Permitir Ver</th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-opcion>
-              <tr>
-                <td>
-                  <p-checkbox
-                    [(ngModel)]="opcion.seleccionado"
-                    binary="true"
-                  ></p-checkbox>
-                </td>
-                <td>{{ opcion.opcion_label }}</td>
-                <td>
-                  <p-checkbox
-                    [(ngModel)]="opcion.per_editar"
-                    binary="true"
-                  ></p-checkbox>
-                </td>
-                <td>
-                  <p-checkbox
-                    [(ngModel)]="opcion.per_ver"
-                    binary="true"
-                  ></p-checkbox>
-                </td>
-              </tr>
-            </ng-template>
-          </p-table>
-      </p-scrollPanel>
-      
-     
-      
+      <div class="flex justify-content-center">
         <p-button
-          label="Guardar Permisos"
-          (click)="guardarPermisos()"
-           [loading]="loadingpermissions"
+          label="Asignar"
+          (click)="visibleAsignacion = true"
+          icon="pi pi-pencil"
+        ></p-button>
+        &nbsp; &nbsp; &nbsp;
+        <p-button
+          label="Actualizar"
+          icon="pi pi-refresh"
+          (click)="visibleActualizacion = true"
         ></p-button>
       </div>
-      
+
+      @if (visibleAsignacion){
+      <div>
+        &nbsp;
+        <div class="field">
+          <label>Usuarios: </label>
+          &nbsp;
+          <p-dropdown
+            [options]="opciones_usuarios"
+            [(ngModel)]="selectionUser"
+            placeholder="Selecciona un usuario"
+            [showClear]="true"
+            required
+          ></p-dropdown>
+        </div>
+        @if (selectionUser) {
+
+        <div>
+          <label for="modulos">Módulos: </label>
+          <p-dropdown
+            [options]="opciones_modulos"
+            [(ngModel)]="selectedModulo"
+            placeholder="Seleccione un módulo"
+            [showClear]="true"
+            (onChange)="filterOptionsByModulo()"
+          ></p-dropdown>
+        </div>
+        }
+
+        <div *ngIf="filteredOptions.length">
+          <h3>Opciones del Módulo: {{ selectedModulo }}</h3>
+
+          <p-scrollPanel [style]="{ width: '100%', height: '425px' }">
+            <div>
+              <p-checkbox
+                [(ngModel)]="seleccionarTodo"
+                (onChange)="seleccionarTodasOpciones($event)"
+                label="Seleccionar Todo"
+                binary="true"
+              ></p-checkbox>
+            </div>
+            <p-table [value]="filteredOptions">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Seleccionar</th>
+                  <th>Pantallas</th>
+                  <th>Permitir Editar</th>
+                  <th>Permitir Ver</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-opcion>
+                <tr>
+                  <td>
+                    <p-checkbox
+                      [(ngModel)]="opcion.seleccionado"
+                      binary="true"
+                    ></p-checkbox>
+                  </td>
+                  <td>{{ opcion.opcion_label }}</td>
+                  <td>
+                    <p-checkbox
+                      [(ngModel)]="opcion.per_editar"
+                      binary="true"
+                    ></p-checkbox>
+                  </td>
+                  <td>
+                    <p-checkbox
+                      [(ngModel)]="opcion.per_ver"
+                      binary="true"
+                    ></p-checkbox>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+            &nbsp;
+          </p-scrollPanel>
+
+          <p-button
+            label="Guardar Permisos"
+            (click)="guardarPermisos()"
+            [loading]="loadingpermissions"
+          ></p-button>
+        </div>
+      </div>
+      }
+
+      <div *ngIf="visibleActualizacion">
+        &nbsp;
+        <div class="field">
+          <label for="usuarios">Usuarios:</label>
+          <p-dropdown
+            [options]="opciones_usuarios"
+            [(ngModel)]="selectionUser"
+            placeholder="Selecciona un usuario"
+            [showClear]="true"
+            (onChange)="loadUserPermissions()"
+            required
+          ></p-dropdown>
+        </div>
+
+        <div *ngIf="modulosDisponibles?.length">
+          <label for="modulos">Módulos:</label>
+          <p-dropdown
+            [options]="modulosDisponibles"
+            [(ngModel)]="selectionModulo"
+            placeholder="Selecciona un módulo"
+            [showClear]="true"
+            (onChange)="loadPermissionsByModule()"
+            required
+          ></p-dropdown>
+        </div>
+
+        <div *ngIf="filteredOptions?.length">
+          <h3>Opciones del Módulo:</h3>
+          <p-scrollPanel [style]="{ width: '100%', height: '425px' }">
+            <p-table [value]="filteredOptions">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Pantallas</th>
+                  <th>Permitir Editar</th>
+                  <th>Permitir Ver</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-opcion>
+                <tr>
+                  <td>{{ opcion.opcion_label }}</td>
+                  <td>
+                    <p-checkbox
+                      [(ngModel)]="opcion.per_editar"
+                      [binary]="true"
+                      [ngModel]="opcion.per_editar === 1"
+                    ></p-checkbox>
+                  </td>
+                  <td>
+                    <p-checkbox
+                      [(ngModel)]="opcion.per_ver"
+                      [binary]="true"
+                      [ngModel]="opcion.per_ver === 1"
+                    ></p-checkbox>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-scrollPanel>
+          <p-button
+            label="Actualizar Permisos"
+            (click)="actualizarPermisos()"
+            [loading]="loadingpermissions"
+          ></p-button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

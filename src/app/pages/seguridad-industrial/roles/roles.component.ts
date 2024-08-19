@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth.service';
 import { PermisosService } from '../../../services/permisos.service';
 import { Permisos } from '../../../interfaces/permisos.interfaces';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-usuarios-roles',
@@ -28,6 +29,8 @@ export default class UsuariosRolesComponent implements OnInit {
   loading: boolean = false;
   loadingpermissions: boolean = false;
   permisos: Permisos[] = [];
+  visibleAsignacion: boolean = false;
+  visibleActualizacion: boolean = false;
   newUser: usersAdmin = {
     id: 0,
     cedula: '',
@@ -37,14 +40,6 @@ export default class UsuariosRolesComponent implements OnInit {
     email: '',
     usuario: '',
     password: '',
-  };
-
-  newPermiso: Permisos = {
-    id: 0,
-    user_id: 0,
-    opcion_id: 0,
-    per_editar: false,
-    per_ver: false,
   };
 
   constructor(
@@ -107,7 +102,7 @@ export default class UsuariosRolesComponent implements OnInit {
   loadModulos() {
     this.SrvPermissions.getListModulos().subscribe((res) => {
       console.log(res.data);
-      
+
       const uniqueModulos = new Map();
       res.data.forEach((item: any) => {
         if (!uniqueModulos.has(item.nombre_modulo)) {
@@ -120,7 +115,6 @@ export default class UsuariosRolesComponent implements OnInit {
       this.opciones_modulos = Array.from(uniqueModulos.values());
     });
   }
-  
 
   validateForm(): boolean {
     return (
@@ -205,99 +199,173 @@ export default class UsuariosRolesComponent implements OnInit {
 
   getInitial(name: string): string {
     return name ? name.charAt(0).toUpperCase() : '';
- 
- }
-
-
-
-
-
-
-filterOptionsByModulo() {
-  if (this.selectedModulo) {
-    this.SrvPermissions.getListModulos().subscribe((res) => {
-      this.filteredOptions = res.data.filter(
-        (item: any) => item.nombre_modulo === this.selectedModulo
-      );
-    });
-  } else {
-    this.filteredOptions = [];
   }
-}
 
-guardarPermisos() {
-  this.loadingpermissions = true;
-  // Filtrar los permisos seleccionados
-  const permisosSeleccionados = this.filteredOptions
-    .filter((opcion) => opcion.seleccionado)
-    .map((opcion) => ({
+  usuariosModulos(user_id: number) {
+    return this.SrvPermissions.getListPermisosPorUsuario(user_id).pipe(
+      map((res) => res.data.map((permiso: any) => permiso.opcion_id))
+    );
+  }
+
+  filterOptionsByModulo() {
+    if (this.selectedModulo) {
+      this.usuariosModulos(this.selectionUser).subscribe((opcionesUsuario) => {
+        this.SrvPermissions.getListModulos().subscribe((res) => {
+          this.filteredOptions = res.data.filter(
+            (item: any) =>
+              item.nombre_modulo === this.selectedModulo &&
+              !opcionesUsuario.includes(item.opcion_id)
+          );
+        });
+      });
+    } else {
+      this.filteredOptions = [];
+    }
+  }
+
+  seleccionarTodo: boolean = false;
+
+  seleccionarTodasOpciones(event: any) {
+    this.filteredOptions.forEach((opcion) => {
+      opcion.seleccionado = event.checked;
+      opcion.per_editar = event.checked;
+      opcion.per_ver = event.checked;
+    });
+  }
+
+  modulosDisponibles: any[] = [];
+  selectionModulo: string = '';
+  permisosUsuario: any[] = [];
+
+  loadUserPermissions() {
+    if (this.selectionUser) {
+      this.SrvPermissions.getListPermisosPorUsuario(
+        this.selectionUser
+      ).subscribe((res) => {
+        const permisos = res.data;
+
+        // Extraer los módulos únicos
+        this.modulosDisponibles = [
+          ...new Set(permisos.map((permiso: any) => permiso.nombre_modulo)),
+        ];
+
+        // Guardar permisos para filtrarlos por módulo
+        this.permisosUsuario = permisos;
+      });
+    }
+  }
+
+  loadPermissionsByModule() {
+    if (this.selectionModulo) {
+      this.filteredOptions = this.permisosUsuario
+        .filter(
+          (permiso: any) => permiso.nombre_modulo === this.selectionModulo
+        )
+        .map((permiso: any) => ({
+          opcion_id: permiso.opcion_id,
+          opcion_label: permiso.opcion_label,
+          per_editar: permiso.per_editar,
+          per_ver: permiso.per_ver,
+        }));
+    }
+  }
+
+  actualizarPermisos() {
+    this.loadingpermissions = true;
+
+    // Filtrar los permisos seleccionados
+    const permisosSeleccionados = this.filteredOptions.map((opcion) => ({
+      id: opcion.opcion_id,
       user_id: this.selectionUser,
       opcion_id: opcion.opcion_id,
-      per_editar: opcion.per_editar || false,
-      per_ver: opcion.per_ver || false,
+      per_editar: opcion.per_editar,
+      per_ver: opcion.per_ver,
     }));
 
-  // Validar si hay un usuario seleccionado
-  if (!this.selectionUser) {
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'Seleccione un usuario',
+    console.log(permisosSeleccionados);
+
+    permisosSeleccionados.forEach((permiso) => {
+      this.SrvPermissions.postEditPermisos(permiso).subscribe(
+        (response) => {
+          this.loadingpermissions = false;
+          console.log(response);
+
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Permisos actualizados correctamente',
+          });
+        },
+        (error) => {
+          this.loadingpermissions = false;
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al actualizar los permisos',
+          });
+        }
+      );
     });
-    this.loadingpermissions = false;
-    return;
   }
 
-  // Validar si hay al menos una opción seleccionada
-  if (permisosSeleccionados.length === 0) {
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'Seleccione al menos una opción',
+  guardarPermisos() {
+    this.loadingpermissions = true;
+    // Filtrar los permisos seleccionados
+    const permisosSeleccionados = this.filteredOptions
+      .filter((opcion) => opcion.seleccionado)
+      .map((opcion) => ({
+        user_id: this.selectionUser,
+        opcion_id: opcion.opcion_id,
+        per_editar: opcion.per_editar || false,
+        per_ver: opcion.per_ver || false,
+      }));
+
+    // Validar si hay un usuario seleccionado
+    if (!this.selectionUser) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Seleccione un usuario',
+      });
+      this.loadingpermissions = false;
+      return;
+    }
+
+    // Validar si hay al menos una opción seleccionada
+    if (permisosSeleccionados.length === 0) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Seleccione al menos una opción',
+      });
+      this.loadingpermissions = false;
+      return;
+    }
+
+    // Llamar al servicio para guardar los permisos seleccionados
+    permisosSeleccionados.forEach((permiso) => {
+      this.SrvPermissions.postCreatePermisos(permiso).subscribe(
+        (response) => {
+          this.loadingpermissions = false;
+          console.log(response);
+
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Permisos guardados correctamente',
+          });
+        },
+        (error) => {
+          this.loadingpermissions = false;
+          console.error('Error al guardar permisos:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Hubo un problema al guardar los permisos',
+          });
+          console.error('Error al guardar permisos:', error);
+        }
+      );
     });
-    this.loadingpermissions = false;
-    return;
   }
-
-  // Llamar al servicio para guardar los permisos seleccionados
-  permisosSeleccionados.forEach((permiso) => {
-    this.SrvPermissions.postCreatePermisos(permiso).subscribe(
-      (response) => {
-        this.loadingpermissions = false;
-        console.log(response);
-         
-        
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Permisos guardados correctamente',
-        });
-      },
-      (error) => {
-        this.loadingpermissions = false;
-        console.error('Error al guardar permisos:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Hubo un problema al guardar los permisos',
-        });
-        console.error('Error al guardar permisos:', error);
-      }
-    );
-  });
-}
-
-seleccionarTodo: boolean = false;
-
-seleccionarTodasOpciones(event: any) {
-  this.filteredOptions.forEach(opcion => {
-    opcion.seleccionado = event.checked;
-    opcion.per_editar = event.checked;
-    opcion.per_ver = event.checked;
-  });
-}
-
-
-
-
 }
