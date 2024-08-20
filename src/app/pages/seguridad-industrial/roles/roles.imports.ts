@@ -21,6 +21,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { BlockUIModule } from 'primeng/blockui';
 import { ScrollerModule } from 'primeng/scroller';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
+
 //Importar tablas de primeng
 
 export const PRIMENG_MODULES = [

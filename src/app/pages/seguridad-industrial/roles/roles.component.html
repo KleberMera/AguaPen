@@ -120,217 +120,64 @@
     <div class="card">
       <h2>Permisos</h2>
 
-      <div class="flex justify-content-center">
-        <p-button
-          label="Asignar"
-          (click)="visibleAsignacion = true"
-          icon="pi pi-pencil"
-        ></p-button>
-        &nbsp; &nbsp; &nbsp;
-        <p-button
-          label="Actualizar"
-          icon="pi pi-refresh"
-          (click)="visibleActualizacion = true"
-        ></p-button>
+      <div class="formgroup-inline center">
+        <div class="field">
+          <p-button
+            label="Asignar"
+            (click)="visibleAsignacion = true"
+            icon="pi pi-pencil"
+            severity="secondary"
+            [raised]="true"
+          ></p-button>
+        </div>
+
+        <div class="field">
+          <p-button
+            label="Actualizar"
+            icon="pi pi-refresh"
+            (click)="visibleActualizacion = true"
+        severity="secondary"
+            [raised]="true"
+          ></p-button>
+        </div>
       </div>
 
-      @if (visibleAsignacion){
-      <div>
-        &nbsp;
-        <div class="field">
-          <label>Usuarios: </label>
-          &nbsp;
-          <p-dropdown
-            [options]="opciones_usuarios"
-            [(ngModel)]="selectionUser"
-            placeholder="Selecciona un usuario"
-            [showClear]="true"
-            required
-          ></p-dropdown>
-        </div>
-        @if (selectionUser) {
-
-        <div>
-          <label for="modulos">Módulos: </label>
-          <p-dropdown
-            [options]="opciones_modulos"
-            [(ngModel)]="selectedModulo"
-            placeholder="Seleccione un módulo"
-            [showClear]="true"
-            (onChange)="filterOptionsByModulo()"
-          ></p-dropdown>
-        </div>
-        }
-
-        <div *ngIf="filteredOptions.length">
-          <h3>Opciones del Módulo: {{ selectedModulo }}</h3>
-
-          <p-scrollPanel [style]="{ width: '100%', height: '425px' }">
+      <h2>Listado de Usuarios</h2>
+      <div *ngIf="users.length > 0">
+        <div
+          *ngFor="let user of users"
+          class="flex align-items-center justify-content-between p-2"
+        >
+          <div class="flex align-items-center">
+            <p-avatar
+              [label]="getInitial(user.nombres)"
+              styleClass="mr-2"
+              size="xlarge"
+              shape="circle"
+            ></p-avatar>
             <div>
-              <p-checkbox
-                [(ngModel)]="seleccionarTodo"
-                (onChange)="seleccionarTodasOpciones($event)"
-                label="Seleccionar Todo"
-                binary="true"
-              ></p-checkbox>
+              <div>{{ user.nombres }}</div>
+              <div>{{ user.apellidos }}</div>
             </div>
-            <p-table [value]="filteredOptions">
-              <ng-template pTemplate="header">
-                <tr>
-                  <th>Seleccionar</th>
-                  <th>Pantallas</th>
-                  <th>Permitir Editar</th>
-                  <th>Permitir Ver</th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-opcion>
-                <tr>
-                  <td>
-                    <p-checkbox
-                      [(ngModel)]="opcion.seleccionado"
-                      binary="true"
-                    ></p-checkbox>
-                  </td>
-                  <td>{{ opcion.opcion_label }}</td>
-                  <td>
-                    <p-checkbox
-                      [(ngModel)]="opcion.per_editar"
-                      binary="true"
-                    ></p-checkbox>
-                  </td>
-                  <td>
-                    <p-checkbox
-                      [(ngModel)]="opcion.per_ver"
-                      binary="true"
-                    ></p-checkbox>
-                  </td>
-                </tr>
-              </ng-template>
-            </p-table>
-            &nbsp;
-          </p-scrollPanel>
-
-          <p-button
-            label="Guardar Permisos"
-            (click)="guardarPermisos()"
-            [loading]="loadingpermissions"
-          ></p-button>
+          </div>
+          <button
+            pButton
+            icon="pi pi-trash"
+            class="p-button-danger"
+            (click)="confirmDeleteUser(user.id)"
+          ></button>
         </div>
       </div>
-      }
-
-      <div *ngIf="visibleActualizacion">
-        &nbsp;
-        <div class="field">
-          <label for="usuarios">Usuarios:</label>
-          <p-dropdown
-            [options]="opciones_usuarios"
-            [(ngModel)]="selectionUser"
-            placeholder="Selecciona un usuario"
-            [showClear]="true"
-            (onChange)="loadUserPermissions()"
-            required
-          ></p-dropdown>
-        </div>
-
-        <div *ngIf="modulosDisponibles?.length">
-          <label for="modulos">Módulos:</label>
-          <p-dropdown
-            [options]="modulosDisponibles"
-            [(ngModel)]="selectionModulo"
-            placeholder="Selecciona un módulo"
-            [showClear]="true"
-            (onChange)="loadPermissionsByModule()"
-            required
-          ></p-dropdown>
-        </div>
-
-        <div *ngIf="filteredOptions?.length">
-          <h3>Opciones del Módulo:</h3>
-          <p-scrollPanel [style]="{ width: '100%', height: '425px' }">
-            <p-table [value]="filteredOptions">
-              <ng-template pTemplate="header">
-                <tr>
-                  <th>Pantallas</th>
-                  <th>Permitir Editar</th>
-                  <th>Permitir Ver</th>
-                  <th>Eliminar</th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-opcion>
-                <tr>
-                  <td>{{ opcion.opcion_label }}</td>
-                  <td>
-                    <p-checkbox
-                      [(ngModel)]="opcion.per_editar"
-                      [binary]="true"
-                      [ngModel]="opcion.per_editar === 1"
-                    ></p-checkbox>
-                  </td>
-                  <td>
-                    <p-checkbox
-                      [(ngModel)]="opcion.per_ver"
-                      [binary]="true"
-                      [ngModel]="opcion.per_ver === 1"
-                    ></p-checkbox>
-                  </td>
-                  <td>
-                    <p-button
-                      label="Eliminar"
-                      icon="pi pi-trash"
-                      (click)="eliminarPermisos(opcion)"
-                    ></p-button>
-                  </td>
-                </tr>
-              </ng-template>
-            </p-table>
-          </p-scrollPanel>
-          <p-button
-            label="Actualizar Permisos"
-            (click)="actualizarPermisos()"
-            [loading]="loadingpermissions"
-          ></p-button>
-        </div>
+      <div *ngIf="users.length === 0" class="loading-container">
+        <p>No hay usuarios registrados</p>
+        <p-progressSpinner
+          ariaLabel="loading"
+          styleClass="w-4rem h-4rem"
+          strokeWidth="8"
+          fill="var(--surface-ground)"
+        ></p-progressSpinner>
       </div>
     </div>
-  </div>
-</div>
-
-<div class="card">
-  <h2>Listado de Usuarios</h2>
-  <div *ngIf="users.length > 0">
-    <div
-      *ngFor="let user of users"
-      class="flex align-items-center justify-content-between p-2"
-    >
-      <div class="flex align-items-center">
-        <p-avatar
-          [label]="getInitial(user.nombres)"
-          styleClass="mr-2"
-          size="xlarge"
-          shape="circle"
-        ></p-avatar>
-        <div>
-          <div>{{ user.nombres }}</div>
-          <div>{{ user.apellidos }}</div>
-        </div>
-      </div>
-      <button
-        pButton
-        icon="pi pi-trash"
-        class="p-button-danger"
-        (click)="confirmDeleteUser(user.id)"
-      ></button>
-    </div>
-  </div>
-  <div *ngIf="users.length === 0" class="loading-container">
-    <p>No hay usuarios registrados</p>
-    <p-progressSpinner
-      ariaLabel="loading"
-      styleClass="w-4rem h-4rem"
-      strokeWidth="8"
-      fill="var(--surface-ground)"
-    ></p-progressSpinner>
   </div>
 </div>
 
@@ -349,7 +196,178 @@
   </div>
 </p-blockUI>
 
-                
+<p-dialog
+  [(visible)]="visibleAsignacion"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '40rem' }"
+>
+  <ng-template pTemplate="header">
+    <span class="font-semibold">Asignar Permisos</span>
+  </ng-template>
+
+  <div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label>Usuarios: </label>
+
+      <p-dropdown
+        [options]="opciones_usuarios"
+        [(ngModel)]="selectionUser"
+        placeholder="Selecciona un usuario"
+        [showClear]="true"
+        required
+      ></p-dropdown>
+    </div>
+    @if (selectionUser) {
+
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="modulos">Módulos: </label>
+      <p-dropdown
+        [options]="opciones_modulos"
+        [(ngModel)]="selectedModulo"
+        placeholder="Seleccione un módulo"
+        [showClear]="true"
+        (onChange)="filterOptionsByModulo()"
+      ></p-dropdown>
+    </div>
+    }
+
+    <h3>Opciones del Módulo: {{ selectedModulo }}</h3>
+
+    <div>
+      <p-checkbox
+        [(ngModel)]="seleccionarTodo"
+        (onChange)="seleccionarTodasOpciones($event)"
+        label="Seleccionar Todo"
+        binary="true"
+      ></p-checkbox>
+    </div>
+    <p-table [value]="filteredOptions">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Seleccionar</th>
+          <th>Pantallas</th>
+          <th>Permitir Editar</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-opcion>
+        <tr>
+          <td>
+            <p-checkbox
+              [(ngModel)]="opcion.seleccionado"
+              binary="true"
+            ></p-checkbox>
+          </td>
+          <td>{{ opcion.opcion_label }}</td>
+          <td>
+            <p-checkbox
+              [(ngModel)]="opcion.per_editar"
+              binary="true"
+            ></p-checkbox>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Cancelar"
+      [text]="true"
+      severity="secondary"
+      (onClick)="visibleAsignacion = false"
+      (onClick)="limpiarDatos()"
+    ></p-button>
+    <p-button
+      label="Guardar Permisos"
+      (click)="guardarPermisos()"
+      [loading]="loadingpermissions"
+    ></p-button>
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  [(visible)]="visibleActualizacion"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '40rem' }"
+>
+  <ng-template pTemplate="header">
+    <span class="font-semibold">Actualizar Permisos</span>
+  </ng-template>
+
+  <div class="field">
+    <label for="usuarios">Usuarios:</label>
+    <p-dropdown
+      [options]="opciones_usuarios"
+      [(ngModel)]="selectionUser"
+      placeholder="Selecciona un usuario"
+      [showClear]="true"
+      (onChange)="loadUserPermissions()"
+      required
+    ></p-dropdown>
+  </div>
+
+  <div *ngIf="modulosDisponibles?.length">
+    <label for="modulos">Módulos:</label>
+    <p-dropdown
+      [options]="modulosDisponibles"
+      [(ngModel)]="selectionModulo"
+      placeholder="Selecciona un módulo"
+      [showClear]="true"
+      (onChange)="loadPermissionsByModule()"
+      required
+    ></p-dropdown>
+  </div>
+
+  <h3>Opciones del Módulo:</h3>
+
+  <p-table [value]="filteredOptions">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Pantallas</th>
+        <th>Permitir Editar</th>
+       
+        <th>Eliminar</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-opcion>
+      <tr>
+        <td>{{ opcion.opcion_label }}</td>
+        <td>
+          <p-checkbox
+            [(ngModel)]="opcion.per_editar"
+            [binary]="true"
+            [ngModel]="opcion.per_editar === 1"
+          ></p-checkbox>
+        </td>
+
+        <td>
+          <p-button
+            severity="danger"
+            icon="pi pi-trash"
+            (click)="eliminarPermisos(opcion)"
+          ></p-button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Cancelar"
+      [text]="true"
+      severity="secondary"
+      (onClick)="visibleActualizacion = false"
+      (onClick)="limpiarDatos()"
+    ></p-button>
+    <p-button
+      label="Actualizar Permisos"
+      (click)="actualizarPermisos()"
+      [loading]="loadingpermissions"
+    ></p-button>
+  </ng-template>
+</p-dialog>
 
 <p-toast
   [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"

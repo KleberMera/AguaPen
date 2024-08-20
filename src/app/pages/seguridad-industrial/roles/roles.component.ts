@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { PRIMENG_MODULES } from './roles.imports';
 import { usersAdmin } from '../../../interfaces/users.interfaces';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -42,12 +42,10 @@ export default class UsuariosRolesComponent implements OnInit {
     password: '',
   };
 
-  constructor(
-    private authService: AuthService,
-    private messageService: MessageService,
-    private confirmationService: ConfirmationService,
-    private SrvPermissions: PermisosService
-  ) {}
+  private authService = inject(AuthService);
+  private messageService = inject(MessageService);
+  private confirmationService = inject(ConfirmationService);
+  private SrvPermissions = inject(PermisosService);
 
   ngOnInit() {
     this.loadingMessage = 'Cargando datos...';
@@ -96,23 +94,6 @@ export default class UsuariosRolesComponent implements OnInit {
         }
       });
       this.opciones_usuarios = Array.from(uniqueUsuarios.values());
-    });
-  }
-
-  loadModulos() {
-    this.SrvPermissions.getListModulos().subscribe((res) => {
-      console.log(res.data);
-
-      const uniqueModulos = new Map();
-      res.data.forEach((item: any) => {
-        if (!uniqueModulos.has(item.nombre_modulo)) {
-          uniqueModulos.set(item.nombre_modulo, {
-            label: item.nombre_modulo,
-            value: item.nombre_modulo,
-          });
-        }
-      });
-      this.opciones_modulos = Array.from(uniqueModulos.values());
     });
   }
 
@@ -201,6 +182,23 @@ export default class UsuariosRolesComponent implements OnInit {
     return name ? name.charAt(0).toUpperCase() : '';
   }
 
+  loadModulos() {
+    this.SrvPermissions.getListModulos().subscribe((res) => {
+      console.log(res.data);
+
+      const uniqueModulos = new Map();
+      res.data.forEach((item: any) => {
+        if (!uniqueModulos.has(item.nombre_modulo)) {
+          uniqueModulos.set(item.nombre_modulo, {
+            label: item.nombre_modulo,
+            value: item.nombre_modulo,
+          });
+        }
+      });
+      this.opciones_modulos = Array.from(uniqueModulos.values());
+    });
+  }
+
   usuariosModulos(user_id: number) {
     return this.SrvPermissions.getListPermisosPorUsuario(user_id).pipe(
       map((res) => res.data.map((permiso: any) => permiso.opcion_id))
@@ -239,7 +237,7 @@ export default class UsuariosRolesComponent implements OnInit {
 
   loadUserPermissions() {
     console.log('seleccionUser', this.selectionUser);
-    
+
     if (this.selectionUser) {
       this.SrvPermissions.getListPermisosPorUsuario(
         this.selectionUser
@@ -271,8 +269,7 @@ export default class UsuariosRolesComponent implements OnInit {
           per_editar: permiso.per_editar,
           per_ver: permiso.per_ver,
         }));
-        console.log('modulos de permisos', this.filteredOptions);
-        
+      console.log('modulos de permisos', this.filteredOptions);
     }
   }
 
@@ -287,13 +284,14 @@ export default class UsuariosRolesComponent implements OnInit {
         per_editar: opcion.per_editar,
         per_ver: opcion.per_ver,
       };
-console.log(updatedPermiso);
+      console.log(updatedPermiso);
 
       this.SrvPermissions.postEditPermisos(updatedPermiso).subscribe(
         (response) => {
           console.log(response);
-          
+
           this.loadingpermissions = false;
+          this.limpiarDatos();
           this.messageService.add({
             severity: 'success',
             summary: 'Éxito',
@@ -321,9 +319,9 @@ console.log(updatedPermiso);
         user_id: this.selectionUser,
         opcion_id: opcion.opcion_id,
         per_editar: opcion.per_editar || false,
-        per_ver: opcion.per_ver || false,
+        per_ver: true,
       }));
-console.log(permisosSeleccionados);
+    console.log(permisosSeleccionados);
 
     // Validar si hay un usuario seleccionado
     if (!this.selectionUser) {
@@ -353,6 +351,7 @@ console.log(permisosSeleccionados);
         (response) => {
           this.loadingpermissions = false;
           console.log(response);
+          this.limpiarDatos();
 
           this.messageService.add({
             severity: 'success',
@@ -374,7 +373,6 @@ console.log(permisosSeleccionados);
     });
   }
 
-
   eliminarPermisos(opcion: any) {
     this.confirmationService.confirm({
       message: '¿Está seguro de eliminar este permiso?',
@@ -386,55 +384,33 @@ console.log(permisosSeleccionados);
     });
   }
 
-  eliminarPermisosSeleccionados(opcion: any) {    
+  eliminarPermisosSeleccionados(opcion: any) {
     this.loadingpermissions = true;
-    const permisosSeleccionados = [
-      {
-        permiso_id: opcion.permiso_id,
-      },
-    ];
-console.log(permisosSeleccionados);
+    const permisosSeleccionados = opcion.permiso_id;
+    this.SrvPermissions.requestdeletePermisos(permisosSeleccionados).subscribe(
+      (response) => {
+        console.log(response);
+        
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Permisos eliminados correctamente',
+        });
+        this.loadingpermissions = false;
+        this.loadPermissionsByModule();
+        this.limpiarDatos();
+      }
+    );
+  }
 
-    // Validar si hay un usuario seleccionado
-    if (!this.selectionUser) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Seleccione un usuario',
-      });
-      this.loadingpermissions = false;
-      return;
-    }
-
-    // Validar si hay al menos una opción seleccionada
-    if (permisosSeleccionados.length === 0) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Seleccione al menos una opción',
-      });
-      this.loadingpermissions = false;
-      return;
-    }
-
-    permisosSeleccionados.forEach((permiso) => {
-      this.SrvPermissions.requestdeletePermisos(permiso.permiso_id).subscribe(
-        (response) => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Permisos eliminados correctamente',
-          });
-          this.loadPermissionsByModule();
-        },
-        (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Error al eliminar los permisos',
-          });
-        }
-      );
-    });
+  //Una vez guardado los permisos o actualizados, limpiar todo
+  limpiarDatos() {
+    this.selectedModulo = '';
+    this.seleccionarTodo = false;
+    this.filteredOptions = [];
+    this.permisosUsuario = [];
+    this.selectionUser = null;
+    this.visibleAsignacion = false;
+    this.visibleActualizacion = false;
   }
 }
