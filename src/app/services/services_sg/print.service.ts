@@ -50,7 +50,7 @@ export class PrintService {
     this.srvCounReports.listCountReports().subscribe((response) => {
       // Acceder al primer objeto en el array de datos
       const reportCount = response.data[0];
-      console.log(reportCount);
+  
     
       let reportNumber: number = 0;  // Inicializar como tipo número
     
@@ -574,7 +574,7 @@ export class PrintService {
     this.srvCounReports.listCountReports().subscribe((response) => {
       // Acceder al primer objeto en el array de datos
       const reportCount = response.data[0];
-      console.log(reportCount);
+
     
       let reportNumber: number = 0;  // Inicializar como tipo número
     
@@ -691,7 +691,7 @@ export class PrintService {
     this.srvCounReports.listCountReports().subscribe((response) => {
       // Acceder al primer objeto en el array de datos
       const reportCount = response.data[0];
-      console.log(reportCount);
+
     
       let reportNumber: number = 0;  // Inicializar como tipo número
     

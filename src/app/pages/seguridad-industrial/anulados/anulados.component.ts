@@ -57,7 +57,6 @@ export default class AnuladosComponent {
   // Manejar el cambio de categoría
   onCategoryChange() {
     if (this.selectedCategory) {
-      console.log('Categoría seleccionada:', this.selectedCategory);
 
       if (this.selectedCategory === 'trabajadores') {
         this.srvList.getReportsTrabajadores().subscribe((res: any) => {
@@ -144,7 +143,7 @@ export default class AnuladosComponent {
     this.listReports = reports.filter(
       (report: any) => report.estado_registro === 0
     );
-    console.log(this.listReports);
+
 
     this.filteredReports = this.listReports;
     this.uniqueItems = this.extractUniqueItems(this.listReports, optionLabel);

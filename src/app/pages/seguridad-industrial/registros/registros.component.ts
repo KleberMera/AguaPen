@@ -456,7 +456,7 @@
         // Ahora puedes suscribirte al observable
         observable.subscribe(
           (response: any) => {
-            console.log('Imagen subida correctamente:', response);
+          //  console.log('Imagen subida correctamente:', response);
         
           },
           (error: any) => {

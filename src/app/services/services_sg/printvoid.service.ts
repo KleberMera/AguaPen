@@ -29,7 +29,7 @@ export class PrintvoidService {
     this.srvCounReports.listCountReports().subscribe((response) => {
       // Acceder al primer objeto en el array de datos
       const reportCount = response.data[0];
-      console.log(reportCount);
+
 
       let reportNumber: number = 0;  // Inicializar como tipo número
 
@@ -137,7 +137,7 @@ export class PrintvoidService {
 
       // Paso 4: Actualizar el contador en el servidor
       this.srvCounReports.updateCountReports(reportCount).subscribe(() => {
-        console.log("El contador ha sido actualizado en el servidor.");
+      
       });
     });
     }

@@ -43,7 +43,7 @@ export default class DashboardComponent implements OnInit {
     this.fetchData();
     this.fetchAreas();
     this.fetchVehiculos(); 
-    console.log(this.totalvehiculos);
+
   }
 
   dataUser(){

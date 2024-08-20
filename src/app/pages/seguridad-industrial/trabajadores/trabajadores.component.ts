@@ -56,14 +56,14 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   async getUserRole() {
     try {
       const res = await this.srvAuth.viewDataUser().toPromise();
-      console.log(res);
+
       
       const user_id = res.data.id;
-      console.log(user_id);
+
      if (user_id){
         const permisos = await this.srvPermisos.getListPermisosPorUsuario(user_id).toPromise();
         const data = permisos.data;
-        console.log(data);
+
 
         //Recorrer la data
         data.forEach((permiso: any) => {
@@ -103,7 +103,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
       this.areaOptions = this.getUniqueOptions(res.data, 'tx_area');
       this.cargoOptions = this.getUniqueOptions(res.data, 'tx_cargo');
       this.filteredCargoOptions = this.cargoOptions;
-      console.log(this.ListUsersWorkers);
+
       
     } catch (error) {
       this.srvMensajes.add({

@@ -57,7 +57,6 @@ export default class ReportesComponent implements OnInit {
         this.filteredReports = this.listReports;
         this.uniqueUsers = this.extractUniqueUsers(this.listReports);
         this.uniqueProducts = this.extractUniqueProducts(this.listReports);
-console.log(this.listReports);
 
         this.loading = false;
       });
@@ -149,7 +148,7 @@ console.log(this.listReports);
       this.filteredReports = this.listReports;
     }
 
-    console.log(this.filteredReports);
+
   }
   
 

@@ -48,7 +48,7 @@ export default class ReportesUsuariosComponent implements OnInit {
 
       this.filteredReports = this.listReports;
       this.uniqueUsers = this.getUniqueUsers(this.listReports);
-      console.log(this.listReports);
+
 
 
       

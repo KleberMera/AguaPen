@@ -83,8 +83,6 @@ export default class UsuariosRolesComponent implements OnInit {
   loadUsers() {
     this.authService.listUsers().subscribe((response) => {
       this.users = response.data; // Adjust based on your API response structure
-      console.log(this.users);
-
       const uniqueUsuarios = new Map();
       this.users.forEach((item: any) => {
         if (!uniqueUsuarios.has(item.nombres)) {
@@ -185,7 +183,7 @@ export default class UsuariosRolesComponent implements OnInit {
 
   loadModulos() {
     this.SrvPermissions.getListModulos().subscribe((res) => {
-      console.log(res.data);
+
 
       const uniqueModulos = new Map();
       res.data.forEach((item: any) => {
@@ -237,7 +235,6 @@ export default class UsuariosRolesComponent implements OnInit {
   permisosUsuario: any[] = [];
 
   loadUserPermissions() {
-    console.log('seleccionUser', this.selectionUser);
 
     if (this.selectionUser) {
       this.SrvPermissions.getListPermisosPorUsuario(
@@ -252,7 +249,7 @@ export default class UsuariosRolesComponent implements OnInit {
 
         // Guardar permisos para filtrarlos por módulo
         this.permisosUsuario = permisos;
-        console.log('permisosUsuario', this.permisosUsuario);
+
       });
     }
   }
@@ -270,7 +267,7 @@ export default class UsuariosRolesComponent implements OnInit {
           per_editar: permiso.per_editar,
           per_ver: permiso.per_ver,
         }));
-      console.log('modulos de permisos', this.filteredOptions);
+
     }
   }
 
@@ -285,11 +282,10 @@ export default class UsuariosRolesComponent implements OnInit {
         per_editar: opcion.per_editar,
         per_ver: opcion.per_ver,
       };
-      console.log(updatedPermiso);
 
       this.SrvPermissions.postEditPermisos(updatedPermiso).subscribe(
         (response) => {
-          console.log(response);
+
 
           this.loadingpermissions = false;
           this.limpiarDatos();
@@ -322,7 +318,7 @@ export default class UsuariosRolesComponent implements OnInit {
         per_editar: opcion.per_editar || false,
         per_ver: true,
       }));
-    console.log(permisosSeleccionados);
+
 
     // Validar si hay un usuario seleccionado
     if (!this.selectionUser) {
@@ -351,7 +347,7 @@ export default class UsuariosRolesComponent implements OnInit {
       this.SrvPermissions.postCreatePermisos(permiso).subscribe(
         (response) => {
           this.loadingpermissions = false;
-          console.log(response);
+
           this.limpiarDatos();
 
           this.messageService.add({
@@ -362,13 +358,13 @@ export default class UsuariosRolesComponent implements OnInit {
         },
         (error) => {
           this.loadingpermissions = false;
-          console.error('Error al guardar permisos:', error);
+
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
             detail: 'Hubo un problema al guardar los permisos',
           });
-          console.error('Error al guardar permisos:', error);
+
         }
       );
     });
@@ -390,7 +386,7 @@ export default class UsuariosRolesComponent implements OnInit {
     const permisosSeleccionados = opcion.permiso_id;
     this.SrvPermissions.requestdeletePermisos(permisosSeleccionados).subscribe(
       (response) => {
-        console.log(response);
+
         
         this.messageService.add({
           severity: 'success',
