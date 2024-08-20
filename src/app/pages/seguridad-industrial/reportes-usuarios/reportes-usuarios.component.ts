@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { PrintService } from '../../../services/print.service';
-import { ListService } from '../../../services/list.service';
+import { PrintService } from '../../../services/services_sg/print.service';
+import { ListService } from '../../../services/services_sg/list.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 import { FormsModule } from '@angular/forms';

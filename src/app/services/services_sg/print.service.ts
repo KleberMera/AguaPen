@@ -4,7 +4,9 @@ import 'jspdf-autotable'; // Asegúrate de que este paquete está instalado
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { AuthService } from './auth.service';
+
+
+import { AuthService } from '../services_auth/auth.service';
 import { CountreportsService } from './countreports.service';
 
 @Injectable({

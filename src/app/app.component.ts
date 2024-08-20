@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { PrimeNGConfig } from 'primeng/api';
-import { AuthService } from './services/auth.service';
+
 
 @Component({
   selector: 'app-root',

@@ -11,7 +11,7 @@ import { filter, Subscription } from 'rxjs';
 import { ToolbarComponent } from '../../components/toolbar/toolbar.component';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
-import { LayoutService } from '../../services/layout.service';
+import { LayoutService } from '../../services/gen/layout.service';
 
 
 const PRIMEMG_MODULES = [SplitterModule];

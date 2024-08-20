@@ -1,8 +1,9 @@
 import { Component, inject, Input } from '@angular/core';
-import { LayoutService } from '../../services/layout.service';
-import { MenuService } from '../../services/menu.service';
+import { LayoutService } from '../../services/gen/layout.service';
+
 import { MessageService } from 'primeng/api';
 import { MessagesModule } from 'primeng/messages';
+import { MenuService } from '../../services/gen/menu.service';
 @Component({
   selector: 'app-themes',
   standalone: true,

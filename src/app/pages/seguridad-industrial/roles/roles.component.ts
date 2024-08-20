@@ -5,10 +5,11 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../../services/auth.service';
-import { PermisosService } from '../../../services/permisos.service';
+
+import { PermisosService } from '../../../services/services_auth/permisos.service';
 import { Permisos } from '../../../interfaces/permisos.interfaces';
 import { map } from 'rxjs';
+import { AuthService } from '../../../services/services_auth/auth.service';
 
 @Component({
   selector: 'app-usuarios-roles',

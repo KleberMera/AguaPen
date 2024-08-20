@@ -1,9 +1,10 @@
 import { CanActivateFn, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { AuthService } from '../services/auth.service';
-import { PermisosService } from '../services/permisos.service';
+
+import { PermisosService } from '../services/services_auth/permisos.service';
 import { Observable, of } from 'rxjs';
 import { map, catchError, switchMap } from 'rxjs/operators';
+import { AuthService } from '../services/services_auth/auth.service';
 
 export const permissionsGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
   const authService = inject(AuthService);

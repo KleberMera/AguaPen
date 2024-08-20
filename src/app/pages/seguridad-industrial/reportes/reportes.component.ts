@@ -1,12 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { PrintService } from '../../../services/print.service';
+import { PrintService } from '../../../services/services_sg/print.service';
 import { Subscription } from 'rxjs';
 import { FieldsetModule } from 'primeng/fieldset';
-import { ListService } from '../../../services/list.service';
+import { ListService } from '../../../services/services_sg/list.service';
 import { FormsModule } from '@angular/forms';
 import { PRIMEMG_MODULES } from './reportes.imports';
-import { ReporteService } from '../../../services/reporte.service';
+import { ReporteService } from '../../../services/services_sg/reporte.service';
 
 
 @Component({

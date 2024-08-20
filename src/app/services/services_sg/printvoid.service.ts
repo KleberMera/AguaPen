@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { AuthService } from './auth.service';
+
 import { map, Observable } from 'rxjs';
 import jsPDF from 'jspdf';
 import { CountreportsService } from './countreports.service';
+
 
 @Injectable({
   providedIn: 'root',

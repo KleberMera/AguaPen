@@ -1,12 +1,13 @@
 import { ChangeDetectorRef, Component, HostBinding, Input } from '@angular/core';
 import { filter, Subscription } from 'rxjs';
-import { LayoutService } from '../../services/layout.service';
+import { LayoutService } from '../../services/gen/layout.service';
 import { NavigationEnd, Router } from '@angular/router';
-import { MenuService } from '../../services/menu.service';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MenuModule } from 'primeng/menu';
+import { MenuService } from '../../services/gen/menu.service';
 
 
 @Component({

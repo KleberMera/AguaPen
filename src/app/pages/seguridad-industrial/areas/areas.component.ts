@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Area } from '../../../interfaces/areas.interfaces';
-import { RegisterService } from '../../../services/register.service';
-import { ListService } from '../../../services/list.service';
+import { RegisterService } from '../../../services/services_sg/register.service';
+import { ListService } from '../../../services/services_sg/list.service';
 import { PRIMENG_MODULES } from './areas.imports';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DeleteService } from '../../../services/delete.service';
+import { DeleteService } from '../../../services/services_sg/delete.service';
 
 @Component({
   selector: 'app-areas',

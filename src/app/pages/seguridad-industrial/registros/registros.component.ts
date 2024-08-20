@@ -1,7 +1,7 @@
-  import { PrintService } from '../../../services/print.service';
+  import { PrintService } from '../../../services/services_sg/print.service';
   import { Component, inject, OnInit } from '@angular/core';
-  import { RegisterDetailsService } from '../../../services/register-details.service';
-  import { ListService } from '../../../services/list.service';
+  import { RegisterDetailsService } from '../../../services/services_sg/register-details.service';
+  import { ListService } from '../../../services/services_sg/list.service';
   import {  ConfirmationService, MessageService } from 'primeng/api';
   import { formatDate } from '@angular/common';
   import { FileUpload } from 'primeng/fileupload';
@@ -14,8 +14,8 @@
   import { PRIMEMG_MODULES } from './registros.imports';
   import { User } from '../../../interfaces/users.interfaces';
   import { details } from '../../../interfaces/details.interfaces';
-  import { UploadimageService } from '../../../services/uploadimage.service';
-  import { ReporteService } from '../../../services/reporte.service';
+  import { UploadimageService } from '../../../services/services_sg/uploadimage.service';
+  import { ReporteService } from '../../../services/services_sg/reporte.service';
 
   @Component({
     selector: 'app-registros',

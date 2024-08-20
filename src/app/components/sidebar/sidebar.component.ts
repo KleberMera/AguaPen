@@ -9,14 +9,15 @@ import { NavigationEnd, Router } from '@angular/router';
 
 import { CommonModule } from '@angular/common';
 import { ImageModule } from 'primeng/image';
-import { AuthService } from '../../services/auth.service';
+
 import { ConfirmationService, MessageService, MenuItem } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { filter } from 'rxjs';
 import { MenuModule } from 'primeng/menu';
 import { MenuComponent } from '../menu/menu.component';
-import { LayoutService } from '../../services/layout.service';
+import { LayoutService } from '../../services/gen/layout.service';
+import { AuthService } from '../../services/services_auth/auth.service';
 
 const PRIME_MODULES = [
   SidebarModule,

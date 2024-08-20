@@ -1,13 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { PRIMEMG_MODULES } from './edit-delete.imports';
-import { ListService } from '../../../services/list.service';
+import { ListService } from '../../../services/services_sg/list.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Product } from '../../../interfaces/products.interfaces';
 import { MessageService } from 'primeng/api';
-import { DeleteService } from '../../../services/delete.service';
-import { RegisterDetailsService } from '../../../services/register-details.service';
-import { RegisterService } from '../../../services/register.service';
+import { DeleteService } from '../../../services/services_sg/delete.service';
+import { RegisterDetailsService } from '../../../services/services_sg/register-details.service';
+import { RegisterService } from '../../../services/services_sg/register.service';
 
 @Component({
   selector: 'app-edit-delete',

@@ -3,12 +3,10 @@ import { PRIMEMG_MODULES } from './anulados.imports';
 import { FormsModule } from '@angular/forms';
 import { FieldsetModule } from 'primeng/fieldset';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { ListService } from '../../../services/list.service';
-import { PrintService } from '../../../services/print.service';
+import { ListService } from '../../../services/services_sg/list.service';
+import { PrintService } from '../../../services/services_sg/print.service';
 import { CommonModule } from '@angular/common';
-import { PrintvoidService } from '../../../services/printvoid.service';
-import { CountdataService } from '../../../services/countdata.service';
-import { CountreportsService } from '../../../services/countreports.service';
+import { PrintvoidService } from '../../../services/services_sg/printvoid.service';
 
 @Component({
   selector: 'app-anulados',

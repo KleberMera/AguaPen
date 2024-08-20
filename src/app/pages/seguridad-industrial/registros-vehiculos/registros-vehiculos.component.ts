@@ -1,11 +1,11 @@
-import { PrintService } from '../../../services/print.service';
+import { PrintService } from '../../../services/services_sg/print.service';
 import { Component, inject } from '@angular/core';
 import { PrimeModules } from './registros-vehiculos.import';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { Vehiculo } from '../../../interfaces/vehicles.interfaces';
 import { Product } from '../../../interfaces/products.interfaces';
-import { RegisterDetailsService } from '../../../services/register-details.service';
-import { ListService } from '../../../services/list.service';
+import { RegisterDetailsService } from '../../../services/services_sg/register-details.service';
+import { ListService } from '../../../services/services_sg/list.service';
 import { registerVehiculos } from '../../../interfaces/registers.interfaces';
 import { formatDate } from '@angular/common';
 import { detailVehiculos } from '../../../interfaces/details.interfaces';

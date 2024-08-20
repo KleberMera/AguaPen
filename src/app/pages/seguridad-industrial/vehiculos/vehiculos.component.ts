@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { PRIMENG_MODULES } from './vehiculos.import';
 import { Vehiculo } from '../../../interfaces/vehicles.interfaces';
-import { RegisterService } from '../../../services/register.service';
-import { ListService } from '../../../services/list.service';
+import { RegisterService } from '../../../services/services_sg/register.service';
+import { ListService } from '../../../services/services_sg/list.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { FormsModule } from '@angular/forms';
-import { DeleteService } from '../../../services/delete.service';
+import { DeleteService } from '../../../services/services_sg/delete.service';
 
 @Component({
   selector: 'app-vehiculos',

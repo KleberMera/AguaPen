@@ -4,16 +4,16 @@ import { FormsModule } from '@angular/forms';
 import { formatDate } from '@angular/common';
 
 // Services and interfaces for the app
-import { RegisterService } from '../../../services/register.service';
+import { RegisterService } from '../../../services/services_sg/register.service';
 
-import { ListService } from '../../../services/list.service';
+import { ListService } from '../../../services/services_sg/list.service';
 
 // Imports for PrimeNG
 import { PRIMENG_MODULES } from './productos.import';
 // Providers for PrimeNG
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Product } from '../../../interfaces/products.interfaces';
-import { DeleteService } from '../../../services/delete.service';
+import { DeleteService } from '../../../services/services_sg/delete.service';
 
 @Component({
   selector: 'app-productos',

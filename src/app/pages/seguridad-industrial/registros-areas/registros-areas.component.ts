@@ -1,4 +1,4 @@
-import { PrintService } from '../../../services/print.service';
+import { PrintService } from '../../../services/services_sg/print.service';
 // Imports of Angular
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -7,8 +7,8 @@ import { formatDate } from '@angular/common';
 
 // Services and interfaces of the app
 import { registerArea } from '../../../interfaces/registers.interfaces';
-import { RegisterDetailsService } from '../../../services/register-details.service';
-import { ListService } from '../../../services/list.service';
+import { RegisterDetailsService } from '../../../services/services_sg/register-details.service';
+import { ListService } from '../../../services/services_sg/list.service';
 
 // Imports of PrimeNG
 import { PrimeModules } from './registros-areas.import';
