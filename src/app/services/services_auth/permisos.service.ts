@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
+import { tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -20,10 +21,13 @@ export class PermisosService {
   }
 
 
-  //Listado de Permisos por id de Usuario
   getListPermisosPorUsuario(userId: number) {
     const url = `${this.environment}permisosmenus/${userId}`;
-    return this.http.get<any>(url);
+    return this.http.get<any>(url).pipe(
+      tap((res: any) => {
+        localStorage.setItem('userPermissions', JSON.stringify(res.data));
+      })
+    );
   }
 
 
