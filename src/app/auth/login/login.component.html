@@ -1,7 +1,7 @@
 <body>
   <div class="login-container flex flex-column align-items-center">
-    <img src="assets/iconapp.webp" alt="Logo" />
-    <h2 class="font-semibold text-2xl text-primary">Aguapen App</h2>
+    <img src="assets/iconapp.webp" alt="Logo"  />
+    <h2 class="font-semibold text-5xl text-primary title">Aguapen App</h2>
     <form [formGroup]="loginForm" (ngSubmit)="getLogin()" class="w-full">
       <div class="p-field">
         <label for="username">Usuario:</label>
@@ -39,9 +39,16 @@
       </div>
       
     </form>
+    <app-footer></app-footer>
+
+ 
   </div>
+
+  
 
   <p-toast
     [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
   ></p-toast>
 </body>
+
+

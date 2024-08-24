@@ -14,6 +14,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { DividerModule } from 'primeng/divider';
 import { AuthService } from '../../services/services_auth/auth.service';
+import { FooterComponent } from '../../components/footer/footer.component';
 
 const PRIMEMG_MODULES = [
   ToastModule,
@@ -26,7 +27,7 @@ const PRIMEMG_MODULES = [
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [PRIMEMG_MODULES, RouterLink, ReactiveFormsModule],
+  imports: [PRIMEMG_MODULES, RouterLink, ReactiveFormsModule, FooterComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   providers: [MessageService],

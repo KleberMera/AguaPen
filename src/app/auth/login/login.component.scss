@@ -7,7 +7,7 @@ $background-color: #1e1e1e;
 $input-background-color: #2e2e2e;
 $box-shadow-color: rgba(0, 0, 0, 0.5);
 $font-family: Arial, sans-serif;
-
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
 // Global Styles
 body {
   font-family: $font-family;
@@ -32,6 +32,7 @@ body {
   h2 {
     color: $secondary-color;
     margin-bottom: 20px;
+    font-family: "Lobster", sans-serif;
   }
 
   label {
@@ -44,6 +45,7 @@ body {
   img {
     max-width: 150px;
     margin-bottom: 20px;
+    border-radius: 10%;
   }
 
   .p-field {
@@ -60,4 +62,6 @@ body {
       text-decoration: underline;
     }
   }
+
+  
 }
