@@ -7,7 +7,7 @@ $background-color: #1e1e1e;
 $input-background-color: #2e2e2e;
 $box-shadow-color: rgba(0, 0, 0, 0.5);
 $font-family: Arial, sans-serif;
-@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Lobster&display=swap");
 // Global Styles
 body {
   font-family: $font-family;
@@ -17,12 +17,11 @@ body {
   justify-content: center;
   align-items: center;
   background-color: #121212; // Un color de fondo para toda la página
- 
 }
 
 .login-container {
   background-color: $background-color;
-  padding: 60px;
+  padding: 50px;
   border-radius: 8px;
   box-shadow: 0 0 10px $box-shadow-color;
   text-align: center;
@@ -44,7 +43,7 @@ body {
 
   img {
     max-width: 150px;
-    margin-bottom: 20px;
+
     border-radius: 10%;
   }
 
@@ -52,16 +51,4 @@ body {
     margin-bottom: 16px;
   }
 
-  a {
-    color: $primary-color;
-    text-decoration: none;
-    margin-top: 10px;
-    display: block;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  
 }

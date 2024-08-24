@@ -2,6 +2,24 @@
   <div class="col-12 xl:col-6">
     <div class="card">
       <h2>Registro de Usuarios</h2>
+      <p-dropdown
+      id="dropdown"
+      [options]="dropdownOptions"
+      [(ngModel)]="selectedUser"
+      optionLabel="tx_nombre"
+      [filter]="true"
+      filterBy="tx_nombre"
+      [showClear]="true"
+      placeholder="Seleccionar o escribir Usuario"
+      (onChange)="selectUser($event)"
+    
+    >
+      <ng-template let-user pTemplate="item">
+        <div class="flex align-items-center gap-2">
+          <div>{{ user.tx_nombre }} ({{ user.tx_cedula }})</div>
+        </div>
+      </ng-template>
+    </p-dropdown>
       <form (ngSubmit)="registerUser()">
         <div class="field">
           <label for="nombres">Nombres</label>
@@ -57,7 +75,7 @@
             pInputText
             [(ngModel)]="newUser.telefono"
             name="telefono"
-            required
+            
           />
           <div *ngIf="!validateTelefono()" class="p-error">
             Teléfono debe tener 10 dígitos

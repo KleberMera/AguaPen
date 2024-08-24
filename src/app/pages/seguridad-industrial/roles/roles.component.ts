@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { PRIMENG_MODULES } from './roles.imports';
-import { usersAdmin } from '../../../interfaces/users.interfaces';
+import { User, usersAdmin } from '../../../interfaces/users.interfaces';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 import { FormsModule } from '@angular/forms';
@@ -10,6 +10,7 @@ import { PermisosService } from '../../../services/services_auth/permisos.servic
 import { Permisos } from '../../../interfaces/permisos.interfaces';
 import { map } from 'rxjs';
 import { AuthService } from '../../../services/services_auth/auth.service';
+import { ListService } from '../../../services/services_sg/list.service';
 
 @Component({
   selector: 'app-usuarios-roles',
@@ -32,6 +33,10 @@ export default class UsuariosRolesComponent implements OnInit {
   permisos: Permisos[] = [];
   visibleAsignacion: boolean = false;
   visibleActualizacion: boolean = false;
+  ListUsers: User[] = [];
+  dropdownOptions: User[] = [];
+  selectedUser: User | null = null;
+  filteredUsers: User[] = [];
   newUser: usersAdmin = {
     id: 0,
     cedula: '',
@@ -47,12 +52,58 @@ export default class UsuariosRolesComponent implements OnInit {
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
   private SrvPermissions = inject(PermisosService);
+  private srvList = inject(ListService);
 
   ngOnInit() {
     this.loadingMessage = 'Cargando datos...';
     this.loadUsers();
     this.loadModulos();
+    this.getListUsuarios();
   }
+
+  async getListUsuarios(): Promise<void> {
+    try {
+      const res = await this.srvList.getListUsuarios().toPromise();
+      this.ListUsers = res.data.filter((user: User) => user.dt_status === 1);
+      console.log(this.ListUsers);
+
+      this.filteredUsers = this.ListUsers;
+      this.dropdownOptions = this.ListUsers;
+    } catch (error) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Error al cargar usuarios',
+      });
+    }
+  }
+
+  selectUser(event: any): void {
+    const user = event.value;
+    if (user) {
+      this.selectedUser = user;
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Usuario seleccionado',
+        detail: `Has seleccionado a ${this.capitalize(user.tx_nombre)}`,
+      });
+  
+      // Separar nombres y apellidos, capitalizando la primera letra de cada palabra
+      const nombresArray = user.tx_nombre.split(' ');
+      this.newUser.apellidos = `${this.capitalize(nombresArray[0])} ${this.capitalize(nombresArray[1])}`;
+      this.newUser.nombres = `${this.capitalize(nombresArray[2])} ${this.capitalize(nombresArray[3])}`;
+  
+      this.newUser.cedula = user.tx_cedula;
+      this.newUser.email = user.tx_correo;
+      this.newUser.usuario = user.tx_cedula;
+      this.newUser.password = user.tx_cedula;
+    }
+  }
+  
+  capitalize(text: string): string {
+    return text.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+  }
+  
 
   registerUser() {
     if (this.validateForm()) {
@@ -80,28 +131,12 @@ export default class UsuariosRolesComponent implements OnInit {
     }
   }
 
-  loadUsers() {
-    this.authService.listUsers().subscribe((response) => {
-      this.users = response.data; // Adjust based on your API response structure
-      const uniqueUsuarios = new Map();
-      this.users.forEach((item: any) => {
-        if (!uniqueUsuarios.has(item.nombres)) {
-          uniqueUsuarios.set(item.nombres, {
-            label: `${item.nombres} ${item.apellidos}`,
-            value: item.id,
-          });
-        }
-      });
-      this.opciones_usuarios = Array.from(uniqueUsuarios.values());
-    });
-  }
-
   validateForm(): boolean {
     return (
       this.validateNombres() &&
       this.validateApellidos() &&
       this.validateCedula() &&
-      this.validateTelefono() &&
+      //  this.validateTelefono() &&
       this.validateEmail()
     );
   }
@@ -133,6 +168,23 @@ export default class UsuariosRolesComponent implements OnInit {
     const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
     return emailPattern.test(this.newUser.email);
   }
+
+  loadUsers() {
+    this.authService.listUsers().subscribe((response) => {
+      this.users = response.data; // Adjust based on your API response structure
+      const uniqueUsuarios = new Map();
+      this.users.forEach((item: any) => {
+        if (!uniqueUsuarios.has(item.nombres)) {
+          uniqueUsuarios.set(item.nombres, {
+            label: `${item.nombres} ${item.apellidos}`,
+            value: item.id,
+          });
+        }
+      });
+      this.opciones_usuarios = Array.from(uniqueUsuarios.values());
+    });
+  }
+
   confirmDeleteUser(userId: number) {
     this.confirmationService.confirm({
       message: '¿Está seguro de eliminar este usuario?',
@@ -165,6 +217,7 @@ export default class UsuariosRolesComponent implements OnInit {
   }
 
   private resetForm() {
+    // Resetea los datos del formulario
     this.newUser = {
       id: 0,
       cedula: '',
@@ -175,6 +228,11 @@ export default class UsuariosRolesComponent implements OnInit {
       usuario: '',
       password: '',
     };
+
+    // limpirar selecciones de usuarios y permisos
+    this.selectedUser = null;
+
+
   }
 
   getInitial(name: string): string {
@@ -183,8 +241,6 @@ export default class UsuariosRolesComponent implements OnInit {
 
   loadModulos() {
     this.SrvPermissions.getListModulos().subscribe((res) => {
-
-
       const uniqueModulos = new Map();
       res.data.forEach((item: any) => {
         if (!uniqueModulos.has(item.nombre_modulo)) {
@@ -235,7 +291,6 @@ export default class UsuariosRolesComponent implements OnInit {
   permisosUsuario: any[] = [];
 
   loadUserPermissions() {
-
     if (this.selectionUser) {
       this.SrvPermissions.getListPermisosPorUsuario(
         this.selectionUser
@@ -249,7 +304,6 @@ export default class UsuariosRolesComponent implements OnInit {
 
         // Guardar permisos para filtrarlos por módulo
         this.permisosUsuario = permisos;
-
       });
     }
   }
@@ -267,7 +321,6 @@ export default class UsuariosRolesComponent implements OnInit {
           per_editar: permiso.per_editar,
           per_ver: permiso.per_ver,
         }));
-
     }
   }
 
@@ -285,8 +338,6 @@ export default class UsuariosRolesComponent implements OnInit {
 
       this.SrvPermissions.postEditPermisos(updatedPermiso).subscribe(
         (response) => {
-
-
           this.loadingpermissions = false;
           this.limpiarDatos();
           this.messageService.add({
@@ -318,7 +369,6 @@ export default class UsuariosRolesComponent implements OnInit {
         per_editar: opcion.per_editar || false,
         per_ver: true,
       }));
-
 
     // Validar si hay un usuario seleccionado
     if (!this.selectionUser) {
@@ -364,7 +414,6 @@ export default class UsuariosRolesComponent implements OnInit {
             summary: 'Error',
             detail: 'Hubo un problema al guardar los permisos',
           });
-
         }
       );
     });
@@ -386,8 +435,6 @@ export default class UsuariosRolesComponent implements OnInit {
     const permisosSeleccionados = opcion.permiso_id;
     this.SrvPermissions.requestdeletePermisos(permisosSeleccionados).subscribe(
       (response) => {
-
-        
         this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
