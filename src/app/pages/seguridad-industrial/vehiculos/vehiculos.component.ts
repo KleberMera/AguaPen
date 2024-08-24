@@ -68,7 +68,18 @@ export default class VehiculosComponent {
       placa: '',
       tipo: '',
       descripcion: '',
+      estado: 0,
     };
+  }
+
+  set estadoBoolean(value: boolean) {
+    if (this.selectedVehiculo) {
+      this.selectedVehiculo.estado = value ? 1 : 0;
+    }
+  }
+
+  get estadoBoolean(): boolean {
+    return this.selectedVehiculo ? this.selectedVehiculo.estado === 1 : false;
   }
 
   private async addVehiculo() {

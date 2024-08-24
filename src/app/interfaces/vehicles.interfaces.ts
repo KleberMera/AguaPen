@@ -3,4 +3,5 @@ export interface Vehiculo {
   placa : string;
   tipo : string;
   descripcion : string;
+  estado : number;
 }
