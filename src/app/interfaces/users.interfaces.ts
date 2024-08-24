@@ -4,6 +4,7 @@ export interface User {
   tx_cedula: string;
   tx_area: string;
   tx_cargo: string;
+  dt_status: number;
 
 }
 

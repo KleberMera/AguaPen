@@ -91,9 +91,21 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
       tx_cedula: '',
       tx_area: '',
       tx_cargo: '',
+      dt_status: 0,
       
     };
   }
+
+  get estadoBoolean(): boolean {
+    return this.currentUser ? this.currentUser.dt_status === 1 : false;
+  }
+
+  set estadoBoolean(value: boolean) {
+    if (this.currentUser) {
+      this.currentUser.dt_status = value ? 1 : 0;
+    }
+  }
+
 
   async getListUsuarios() {
     this.loading = true;
@@ -158,6 +170,8 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   }
 
   async saveUser() {
+    console.log(this.currentUser);
+    
     if (this.validateUser(this.currentUser)) {
       this.loadingSave = true;
       try {

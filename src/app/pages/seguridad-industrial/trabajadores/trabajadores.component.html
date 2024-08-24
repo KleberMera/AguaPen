@@ -79,6 +79,7 @@
         <th>Cédula</th>
         <th>Área</th>
         <th>Cargo</th>
+        <th>Estado</th>
 
         @if (per_editar === 1) {
         <th>Acción</th>
@@ -92,6 +93,16 @@
         <td>{{ user.tx_cedula }}</td>
         <td>{{ user.tx_area }}</td>
         <td>{{ user.tx_cargo }}</td>
+       @if (user.dt_status === 1) {
+        <td>
+          <p-tag value="Activo" severity="success"></p-tag>
+        </td>
+        }
+        @else {
+        <td>
+          <p-tag value="Inactivo" severity="danger"></p-tag>
+        </td>
+        }
 
         @if (per_editar === 1) {
         <td>
@@ -133,6 +144,11 @@
     [style]="{ width: '30rem' }"
   >
     <div class="p-fluid">
+      <div class="p-field">
+        <label for="dt_status" class="font-semibold w-6rem">Estado:</label>
+        <p-inputSwitch [(ngModel)]="estadoBoolean"></p-inputSwitch>
+      </div>
+      
       <div class="p-field">
         <label for="tx_nombre">Nombre</label>
         <input

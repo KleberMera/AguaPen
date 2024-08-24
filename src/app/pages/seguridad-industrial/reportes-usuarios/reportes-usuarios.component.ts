@@ -180,15 +180,13 @@ export default class ReportesUsuariosComponent implements OnInit {
 
   
 
-  setImageUrl(report: any): string | null {
-    if (report.imagen) {
-      // Aquí, la URL es simplemente la concatenación del host con el alias y el nombre del archivo
-      const image = `${this.environment}imagenes/${report.imagen.split('\\').pop()}`;
-      console.log('url de la imagen',  image);
-      return image
-    }
-    return null;
+ // Método que obtiene las imágenes
+ setImageUrl(report: any): string | null {
+  if (report.imagen) {
+    return `${this.environment}${report.imagen}`;
   }
+  return null;
+}
 
   showImage(): void {
 

@@ -1,6 +1,6 @@
 import { FieldsetModule } from 'primeng/fieldset';
 import { TableModule } from 'primeng/table';
-
+import { TagModule } from 'primeng/tag';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
@@ -13,7 +13,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { CheckboxModule } from 'primeng/checkbox';
-
+import { InputSwitchModule } from 'primeng/inputswitch';
 export const PRIMENG_MODULES = [
   FieldsetModule,
   TableModule,
@@ -29,4 +29,6 @@ export const PRIMENG_MODULES = [
   CheckboxModule,
   InputGroupModule,
   InputGroupAddonModule,
+  TagModule,
+  InputSwitchModule
 ];
