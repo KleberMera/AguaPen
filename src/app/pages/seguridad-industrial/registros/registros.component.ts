@@ -73,7 +73,7 @@
     async getListUsuarios(): Promise<void> {
       try {
         const res = await this.srvList.getListUsuarios().toPromise();
-        this.ListUsers = res.data;
+        this.ListUsers = res.data.filter((user: User) => user.dt_status === 1);
         this.filteredUsers = this.ListUsers;
         this.dropdownOptions = this.ListUsers;
       } catch (error) {
