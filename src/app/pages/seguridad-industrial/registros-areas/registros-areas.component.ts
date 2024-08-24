@@ -1,3 +1,4 @@
+import { filter } from 'rxjs';
 import { PrintService } from '../../../services/services_sg/print.service';
 // Imports of Angular
 import { Component, inject } from '@angular/core';
@@ -71,7 +72,7 @@ export default class RegxAreaComponent {
   async getListAreas(): Promise<void> {
     try {
       const res = await this.srvList.getListAreas().toPromise();
-      this.ListAreas = res.data;
+      this.ListAreas = res.data.filter((area: Area) => area.estado === 1);
       this.filteredAreas = this.ListAreas;
       this.dropdownOptions = this.ListAreas;
     } catch (error) {

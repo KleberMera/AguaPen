@@ -53,8 +53,6 @@ export class RegisterService {
     });
   }
 
-
-
   // Registro de Trabajadores
   postRegisterUsers(objUser: any) {
     const url = `${this.environment}usuariostrabajadores/mutate`;
@@ -66,7 +64,7 @@ export class RegisterService {
             tx_nombre: objUser.tx_nombre,
             tx_cedula: objUser.tx_cedula,
             tx_area: objUser.tx_area,
-            tx_cargo: objUser.tx_cargo,   
+            tx_cargo: objUser.tx_cargo,
             dt_status: objUser.dt_status,
           },
         },
@@ -103,6 +101,7 @@ export class RegisterService {
           operation: 'create',
           attributes: {
             nombre_area: objArea.nombre_area,
+            estado: objArea.estado,
           },
         },
       ],
@@ -119,13 +118,13 @@ export class RegisterService {
           key: objArea.id,
           attributes: {
             nombre_area: objArea.nombre_area,
+            estado: objArea.estado,
           },
         },
       ],
     });
   }
 
- 
   //Registrar Vehiculos
   postRegisterVehiculos(objVehiculo: any) {
     const url = `${this.environment}vehiculos/mutate`;
@@ -160,6 +159,4 @@ export class RegisterService {
       ],
     });
   }
-
-  
 }

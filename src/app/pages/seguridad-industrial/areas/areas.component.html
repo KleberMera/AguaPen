@@ -44,12 +44,22 @@
     <ng-template pTemplate="header">
       <tr>
         <th>Nombre del Área</th>
+        <th>Estado</th>
         <th>Acción</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-area>
       <tr>
         <td>{{ area.nombre_area }}</td>
+        @if (area.estado === 1) {
+          <td>
+            <p-tag value="Activo" severity="success"></p-tag>
+          </td>
+          } @else {
+          <td>
+            <p-tag value="Inactivo" severity="danger"></p-tag>
+          </td>
+          }
         <td>
           <div class="flex md:flex-row">
             <div>
@@ -89,6 +99,10 @@
   </ng-template>
   @if (selectedArea) {
   <div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="estado_area" class="font-semibold w-6rem">Estado:</label>
+      <p-inputSwitch [(ngModel)]="estadoBoolean"></p-inputSwitch>
+    </div>
     <div class="flex align-items-center gap-3 mb-3">
       <label for="nombre_area" class="font-semibold w-6rem"
         >Nombre del Área:</label

@@ -3,10 +3,10 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Area } from '../../../interfaces/areas.interfaces';
 import { RegisterService } from '../../../services/services_sg/register.service';
 import { ListService } from '../../../services/services_sg/list.service';
-import { PRIMENG_MODULES } from './areas.imports';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { DeleteService } from '../../../services/services_sg/delete.service';
+import { PRIMENG_MODULES } from './areas.imports';
 
 @Component({
   selector: 'app-areas',
@@ -67,7 +67,18 @@ export default class AreasComponent {
     return {
       id: 0,
       nombre_area: '',
+      estado: 0,
     };
+  }
+
+  set estadoBoolean(value: boolean) {
+    if (this.selectedArea) {
+      this.selectedArea.estado = value ? 1 : 0;
+    }
+  }
+
+  get estadoBoolean(): boolean {
+    return this.selectedArea ? this.selectedArea.estado === 1 : false;
   }
 
   private async addArea() {
@@ -115,7 +126,9 @@ export default class AreasComponent {
   }
 
   async saveArea() {
-    if (!this.selectedArea) return;
+   
+    
+   if (!this.selectedArea) return;
 
     this.loadingSave = true;
     try {
