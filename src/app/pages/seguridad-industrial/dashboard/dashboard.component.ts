@@ -18,7 +18,7 @@ import { CountdataService } from '../../../services/services_sg/countdata.servic
 })
 export default class DashboardComponent implements OnInit {
   nombres: string | null = '';
-  usuario_id: string | null = '';
+  usuario_id: string = '';
   apellidos: string | null = '';
   totalvehiculos: string = '';
   totalProductos: string = '';
@@ -53,6 +53,8 @@ export default class DashboardComponent implements OnInit {
       const parsedUser = JSON.parse(user);
       this.nombres = parsedUser.nombres;
       this.usuario_id = parsedUser.id;
+      console.log(this.usuario_id);
+      
       this.apellidos = parsedUser.apellidos;
     }
   }
