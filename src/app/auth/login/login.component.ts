@@ -33,6 +33,7 @@ const PRIMEMG_MODULES = [
   providers: [MessageService],
 })
 export default class LoginComponent {
+  imgUrl: string = 'assets/iconapp.webp';
   loginForm: FormGroup;
   loading = false;
 

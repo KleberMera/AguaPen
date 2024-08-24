@@ -82,15 +82,11 @@ export const routes: Routes = [
         canActivate: [permissionsGuard],
       },
       {
-        path: `prueba`,
-        loadComponent: () => import('./modulo/prueba/prueba.component'),
+        path: `editpages`,
+        loadComponent: () => import('./tics/editpages/editpages.component'),
         canActivate: [permissionsGuard],
       },
-      {
-        path: 'prueba2',
-        loadComponent: () => import('./modulo/prueba2/prueba2.component'),
-        canActivate: [permissionsGuard],
-      },
+      
       {
         path: '**',
         redirectTo: '/home/dashboard',
