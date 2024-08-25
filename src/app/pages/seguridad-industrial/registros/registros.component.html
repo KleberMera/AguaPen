@@ -25,22 +25,23 @@
   </div>
   <div class="field col">
     <p-dropdown
-      id="dropdown"
-      [options]="dropdownOptions"
-      [(ngModel)]="selectedUser"
-      optionLabel="tx_nombre"
-      [filter]="true"
-      filterBy="tx_nombre"
-      [showClear]="true"
-      placeholder="Seleccionar o escribir Usuario"
-      (onChange)="selectUser($event)"
-    >
-      <ng-template let-user pTemplate="item">
-        <div class="flex align-items-center gap-2">
-          <div>{{ user.tx_nombre }} ({{ user.tx_cedula }})</div>
-        </div>
-      </ng-template>
-    </p-dropdown>
+    id="dropdown"
+    [options]="dropdownOptions"
+    [(ngModel)]="selectedUser"
+    optionLabel="tx_nombre"
+    [filter]="true"
+    filterBy="tx_nombre"
+    [showClear]="true"
+    placeholder="Seleccionar o escribir Usuario"
+    (onChange)="selectUser($event)"
+  >
+    <ng-template let-user pTemplate="item">
+      <div class="flex align-items-center gap-2">
+        <div>{{ user.tx_nombre }} ({{ user.tx_cedula }})</div>
+      </div>
+    </ng-template>
+  </p-dropdown>
+  
   </div>
 </div>
 

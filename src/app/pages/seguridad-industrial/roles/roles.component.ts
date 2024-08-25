@@ -33,10 +33,7 @@ export default class UsuariosRolesComponent implements OnInit {
   permisos: Permisos[] = [];
   visibleAsignacion: boolean = false;
   visibleActualizacion: boolean = false;
-  ListUsers: User[] = [];
-  dropdownOptions: User[] = [];
-  selectedUser: User | null = null;
-  filteredUsers: User[] = [];
+
   newUser: usersAdmin = {
     id: 0,
     cedula: '',
@@ -60,15 +57,15 @@ export default class UsuariosRolesComponent implements OnInit {
     this.loadModulos();
     this.getListUsuarios();
   }
+  ListUsers: User[] = [];
+  dropdownOptions: User[] = [];
+  selectedUser: User | null = null;
 
   async getListUsuarios(): Promise<void> {
     try {
       const res = await this.srvList.getListUsuarios().toPromise();
-      this.ListUsers = res.data.filter((user: User) => user.dt_status === 1);
-      console.log(this.ListUsers);
-
-      this.filteredUsers = this.ListUsers;
-      this.dropdownOptions = this.ListUsers;
+      this.dropdownOptions = res.data.filter((user: User) => user.dt_status === 1);
+      console.log(this.dropdownOptions);
     } catch (error) {
       this.messageService.add({
         severity: 'error',
@@ -87,21 +84,33 @@ export default class UsuariosRolesComponent implements OnInit {
         summary: 'Usuario seleccionado',
         detail: `Has seleccionado a ${this.capitalize(user.tx_nombre)}`,
       });
-  
-      // Separar nombres y apellidos, capitalizando la primera letra de cada palabra
-      const nombresArray = user.tx_nombre.split(' ');
-      this.newUser.apellidos = `${this.capitalize(nombresArray[0])} ${this.capitalize(nombresArray[1])}`;
-      this.newUser.nombres = `${this.capitalize(nombresArray[2])} ${this.capitalize(nombresArray[3])}`;
-  
-      this.newUser.cedula = user.tx_cedula;
-      this.newUser.email = user.tx_correo;
-      this.newUser.usuario = user.tx_cedula;
-      this.newUser.password = user.tx_cedula;
+
+      const [apellidos, nombres] = this.splitName(user.tx_nombre);
+
+      Object.assign(this.newUser, {
+        apellidos,
+        nombres,
+        cedula: user.tx_cedula,
+        email: user.tx_correo,
+        usuario: user.tx_cedula,
+        password: user.tx_cedula,
+      });
     }
   }
-  
+
+  splitName(fullName: string): [string, string] {
+    const nombresArray = fullName.split(' ').map(this.capitalize);
+    const apellidos = nombresArray.slice(0, 2).join(' ');
+    const nombres = nombresArray.slice(2).join(' ');
+    return [apellidos, nombres];
+  }
+
   capitalize(text: string): string {
     return text.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+  }
+
+  formatUserLabel(user: User): string {
+    return `${this.capitalize(user.tx_nombre)} (${user.tx_cedula})`;
   }
   
 

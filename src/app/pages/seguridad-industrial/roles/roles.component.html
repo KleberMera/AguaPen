@@ -12,14 +12,14 @@
       [showClear]="true"
       placeholder="Seleccionar o escribir Usuario"
       (onChange)="selectUser($event)"
-    
     >
       <ng-template let-user pTemplate="item">
         <div class="flex align-items-center gap-2">
-          <div>{{ user.tx_nombre }} ({{ user.tx_cedula }})</div>
+          <div>{{ formatUserLabel(user) }}</div>
         </div>
       </ng-template>
     </p-dropdown>
+    
       <form (ngSubmit)="registerUser()">
         <div class="field">
           <label for="nombres">Nombres</label>

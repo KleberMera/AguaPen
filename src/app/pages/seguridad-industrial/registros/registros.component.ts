@@ -73,9 +73,8 @@
     async getListUsuarios(): Promise<void> {
       try {
         const res = await this.srvList.getListUsuarios().toPromise();
-        this.ListUsers = res.data.filter((user: User) => user.dt_status === 1);
-        this.filteredUsers = this.ListUsers;
-        this.dropdownOptions = this.ListUsers;
+        this.dropdownOptions = res.data.filter((user: User) => user.dt_status === 1);
+        console.log(this.dropdownOptions);
       } catch (error) {
         this.messageService.add({
           severity: 'error',
@@ -84,7 +83,7 @@
         });
       }
     }
-
+    
     async getListProductos(): Promise<void> {
       try {
         const res = await this.srvList.getlistProducts().toPromise();
