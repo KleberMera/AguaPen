@@ -36,6 +36,9 @@
         [options]="areaOptions"
         [(ngModel)]="selectedArea"
         (onChange)="onAreaChange()"
+        
+      [filter]="true"
+     
         [showClear]="true"
         placeholder="Filtrar por área"
       ></p-dropdown>
@@ -45,6 +48,7 @@
         id="selectedCargo"
         [options]="filteredCargoOptions"
         [(ngModel)]="selectedCargo"
+           [filter]="true"
         placeholder="Filtrar por cargo"
       ></p-dropdown>
     </div>
