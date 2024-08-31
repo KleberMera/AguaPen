@@ -32,7 +32,7 @@ export const routes: Routes = [
       },
       {
         path: 'roles',
-        loadComponent: () => import('./seguridad-industrial/roles/roles.component'),
+        loadComponent: () => import('./tics/roles/roles.component'),
         canActivate: [permissionsGuard],
       },
       {

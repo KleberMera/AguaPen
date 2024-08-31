@@ -92,7 +92,7 @@ export default class UsuariosRolesComponent implements OnInit {
         nombres,
         cedula: user.tx_cedula,
         email: user.tx_correo,
-        usuario: user.tx_cedula,
+        usuario: user.dt_usuario,
         password: user.tx_cedula,
       });
     }
