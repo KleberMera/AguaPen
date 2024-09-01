@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 
 import { PermisosService } from '../../../services/services_auth/permisos.service';
 import { Permisos } from '../../../interfaces/permisos.interfaces';
-import { map } from 'rxjs';
+import { forkJoin, map } from 'rxjs';
 import { AuthService } from '../../../services/services_auth/auth.service';
 import { ListService } from '../../../services/services_sg/list.service';
 
@@ -335,8 +335,9 @@ export default class UsuariosRolesComponent implements OnInit {
 
   actualizarPermisos() {
     this.loadingpermissions = true;
-
-    this.filteredOptions.forEach((opcion) => {
+  
+    // Crear un array de observables para las solicitudes de actualización
+    const requests = this.filteredOptions.map((opcion) => {
       const updatedPermiso = {
         id: opcion.permiso_id,
         user_id: this.selectionUser,
@@ -344,31 +345,35 @@ export default class UsuariosRolesComponent implements OnInit {
         per_editar: opcion.per_editar,
         per_ver: opcion.per_ver,
       };
-
-      this.SrvPermissions.postEditPermisos(updatedPermiso).subscribe(
-        (response) => {
-          this.loadingpermissions = false;
-          this.limpiarDatos();
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Permisos actualizados correctamente',
-          });
-        },
-        (error) => {
-          this.loadingpermissions = false;
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Error al actualizar los permisos',
-          });
-        }
-      );
+  
+      return this.SrvPermissions.postEditPermisos(updatedPermiso);
     });
+  
+    // Usar forkJoin para esperar a que todas las solicitudes de actualización se completen
+    forkJoin(requests).subscribe(
+      (responses) => {
+        this.loadingpermissions = false;
+        this.limpiarDatos();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Permisos actualizados correctamente',
+        });
+      },
+      (error) => {
+        this.loadingpermissions = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al actualizar los permisos',
+        });
+      }
+    );
   }
 
   guardarPermisos() {
     this.loadingpermissions = true;
+  
     // Filtrar los permisos seleccionados
     const permisosSeleccionados = this.filteredOptions
       .filter((opcion) => opcion.seleccionado)
@@ -378,7 +383,7 @@ export default class UsuariosRolesComponent implements OnInit {
         per_editar: opcion.per_editar || false,
         per_ver: true,
       }));
-
+  
     // Validar si hay un usuario seleccionado
     if (!this.selectionUser) {
       this.messageService.add({
@@ -389,7 +394,7 @@ export default class UsuariosRolesComponent implements OnInit {
       this.loadingpermissions = false;
       return;
     }
-
+  
     // Validar si hay al menos una opción seleccionada
     if (permisosSeleccionados.length === 0) {
       this.messageService.add({
@@ -400,32 +405,32 @@ export default class UsuariosRolesComponent implements OnInit {
       this.loadingpermissions = false;
       return;
     }
-
-    // Llamar al servicio para guardar los permisos seleccionados
-    permisosSeleccionados.forEach((permiso) => {
-      this.SrvPermissions.postCreatePermisos(permiso).subscribe(
-        (response) => {
-          this.loadingpermissions = false;
-
-          this.limpiarDatos();
-
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Permisos guardados correctamente',
-          });
-        },
-        (error) => {
-          this.loadingpermissions = false;
-
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Hubo un problema al guardar los permisos',
-          });
-        }
-      );
-    });
+  
+    // Crear un array de observables para las solicitudes
+    const requests = permisosSeleccionados.map((permiso) =>
+      this.SrvPermissions.postCreatePermisos(permiso)
+    );
+  
+    // Usar forkJoin para ejecutar todas las solicitudes en paralelo y esperar a que todas se completen
+    forkJoin(requests).subscribe(
+      (responses) => {
+        this.loadingpermissions = false;
+        this.limpiarDatos();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Permisos guardados correctamente',
+        });
+      },
+      (error) => {
+        this.loadingpermissions = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Hubo un problema al guardar los permisos',
+        });
+      }
+    );
   }
 
   eliminarPermisos(opcion: any) {
