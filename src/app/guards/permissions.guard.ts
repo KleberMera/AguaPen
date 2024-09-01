@@ -10,7 +10,7 @@ export const permissionsGuard: CanActivateFn = (route: ActivatedRouteSnapshot, s
 
     // Recuperar los permisos desde localStorage
     const permisos = JSON.parse(localStorage.getItem('userPermissions') || '[]');
-    console.log(permisos);
+   
     
     
     const requiredRoute = state.url;

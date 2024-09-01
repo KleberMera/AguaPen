@@ -65,7 +65,7 @@ export default class UsuariosRolesComponent implements OnInit {
     try {
       const res = await this.srvList.getListUsuarios().toPromise();
       this.dropdownOptions = res.data.filter((user: User) => user.dt_status === 1);
-      console.log(this.dropdownOptions);
+
     } catch (error) {
       this.messageService.add({
         severity: 'error',

@@ -53,7 +53,7 @@ export default class DashboardComponent implements OnInit {
       const parsedUser = JSON.parse(user);
       this.nombres = parsedUser.nombres;
       this.usuario_id = parsedUser.id;
-      console.log(this.usuario_id);
+      
       
       this.apellidos = parsedUser.apellidos;
     }

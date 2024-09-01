@@ -169,7 +169,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   }
 
   async saveUser() {
-    console.log(this.currentUser);
+   
 
     if (this.validateUser(this.currentUser)) {
       this.loadingSave = true;

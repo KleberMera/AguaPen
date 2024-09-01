@@ -172,7 +172,7 @@ export default class AreasComponent {
   }
 
   private handleError(error: any, message: string): void {
-    console.error(message, error);
+  
     this.srvMensajes.add({
       severity: 'error',
       summary: 'Error',
