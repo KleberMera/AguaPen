@@ -168,6 +168,16 @@
       </div>
 
       <div class="p-field">
+        <label for="tx_correo">Correo</label>
+        <input
+          id="tx_correo"
+          type="text"
+          pInputText
+          [(ngModel)]="currentUser.tx_correo"
+        />
+      </div>
+
+      <div class="p-field">
         <label for="tx_area">Área</label>
 
         <p-dropdown

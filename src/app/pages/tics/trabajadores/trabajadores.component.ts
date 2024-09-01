@@ -93,6 +93,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
       tx_cedula: '',
       tx_area: '',
       tx_cargo: '',
+      tx_correo: '',
       dt_status: 0,
       dt_usuario: '',
     };
