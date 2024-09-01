@@ -353,10 +353,12 @@
     this.loadingMessage = 'Registrando Datos, espere un momento...';
 
     try {
+      const permisos = JSON.parse(localStorage.getItem('user') || '[]');
       // Asegúrate de que selectedUser no sea null antes de acceder a sus propiedades
       const registro: Registro = {
 
         id_usuario: this.selectedUser.id,  // Aquí `id_usuario` está asegurado de no ser `null`
+        id_user_registro : permisos.id,
         fecha_registro: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
         hora_registro: formatDate(new Date(), 'HH:mm', 'en-US'),
         observacion: this.observacion,

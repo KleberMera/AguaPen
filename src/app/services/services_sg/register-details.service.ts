@@ -24,6 +24,7 @@ export class RegisterDetailsService {
           operation: 'create',
           attributes: {
             id_usuario: objRegistro.id_usuario,
+            id_user_registro: objRegistro.id_user_registro,
             fecha_registro: objRegistro.fecha_registro,
             hora_registro: objRegistro.hora_registro,
             observacion: objRegistro.observacion,
@@ -59,6 +60,7 @@ export class RegisterDetailsService {
           operation: 'create',
           attributes: {
             id_area: objRegistro.id_area,
+            id_user_registro: objRegistro.id_user_registro,
             fecha_registro: objRegistro.fecha_registro,
             hora_registro: objRegistro.hora_registro,
             observacion: objRegistro.observacion,
@@ -78,6 +80,7 @@ export class RegisterDetailsService {
           operation: 'create',
           attributes: {
             id_vehiculo: objRegistro.id_vehiculo,
+            id_user_registro: objRegistro.id_user_registro,
             fecha_registro: objRegistro.fecha_registro,
             hora_registro: objRegistro.hora_registro,
             observacion: objRegistro.observacion,

@@ -383,9 +383,11 @@ private async procederConRegistro(): Promise<void> {
   this.loadingMessage = 'Registrando Datos, espere un momento...';
 
   try {
+    const permisos = JSON.parse(localStorage.getItem('user') || '[]');
     // Asegúrate de que selectedUser no sea null antes de acceder a sus propiedades
     const registro: registerArea = {
       id_area: this.selectedArea.id,
+      id_user_registro : permisos.id,
       fecha_registro: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
       hora_registro: formatDate(new Date(), 'HH:mm', 'en-US'),
       observacion: this.observacion,
@@ -405,6 +407,7 @@ private async procederConRegistro(): Promise<void> {
         detail: 'Se registraron los detalles con éxito',
       });
       await this.getListProductos();
+      this.clearForm();
     } else {
       this.messageService.add({
         severity: 'error',
