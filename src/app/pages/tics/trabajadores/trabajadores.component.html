@@ -36,9 +36,7 @@
         [options]="areaOptions"
         [(ngModel)]="selectedArea"
         (onChange)="onAreaChange()"
-        
-      [filter]="true"
-     
+        [filter]="true"
         [showClear]="true"
         placeholder="Filtrar por área"
       ></p-dropdown>
@@ -48,7 +46,7 @@
         id="selectedCargo"
         [options]="filteredCargoOptions"
         [(ngModel)]="selectedCargo"
-           [filter]="true"
+        [filter]="true"
         placeholder="Filtrar por cargo"
       ></p-dropdown>
     </div>
@@ -97,18 +95,15 @@
         <td>{{ user.tx_cedula }}</td>
         <td>{{ user.tx_area }}</td>
         <td>{{ user.tx_cargo }}</td>
-       @if (user.dt_status === 1) {
+        @if (user.dt_status === 1) {
         <td>
           <p-tag value="Activo" severity="success"></p-tag>
         </td>
-        }
-        @else {
+        } @else {
         <td>
           <p-tag value="Inactivo" severity="danger"></p-tag>
         </td>
-        }
-
-        @if (per_editar === 1) {
+        } @if (per_editar === 1) {
         <td>
           <div class="flex md:flex-row">
             <div>
@@ -145,14 +140,14 @@
     [(visible)]="dialogVisible"
     [modal]="true"
     [responsive]="true"
-    [style]="{ width: '30rem' }"
+    [style]="{ width: '35rem' }"
   >
     <div class="p-fluid">
       <div class="p-field">
         <label for="dt_status" class="font-semibold w-6rem">Estado:</label>
         <p-inputSwitch [(ngModel)]="estadoBoolean"></p-inputSwitch>
       </div>
-      
+
       <div class="p-field">
         <label for="tx_nombre">Nombre</label>
         <input
@@ -171,25 +166,42 @@
           [(ngModel)]="currentUser.tx_cedula"
         />
       </div>
+
       <div class="p-field">
         <label for="tx_area">Área</label>
-        <input
+
+        <p-dropdown
           id="tx_area"
-          type="text"
-          pInputText
+          [options]="areaOptions"
           [(ngModel)]="currentUser.tx_area"
-        />
-      </div>
-      <div class="p-field">
-        <label for="tx_cargo">Cargo</label>
-        <input
-          id="tx_cargo"
-          type="text"
-          pInputText
-          [(ngModel)]="currentUser.tx_cargo"
-        />
+          (onChange)="onAreaChange()"
+          [editable]="true"
+          [showClear]="true"
+          placeholder="Seleccionar cargo o escribir"
+        ></p-dropdown>
       </div>
 
+      <div class="p-field">
+        <label for="tx_cargo">Cargo</label>
+
+        <p-dropdown
+          id="tx_cargo"
+          [options]="filteredCargoOptions"
+          [(ngModel)]="currentUser.tx_cargo"
+           [editable]="true"
+          [showClear]="true"
+          placeholder="Seleccionar cargo o escribir"
+        ></p-dropdown>
+      </div>
+      <div class="p-field">
+        <label for="dt_usuario">Usuario (Alias)</label>
+        <input
+          id="dt_usuario"
+          type="text"
+          pInputText
+          [(ngModel)]="currentUser.dt_usuario"
+        />
+      </div>
     </div>
     <p-footer>
       <div>

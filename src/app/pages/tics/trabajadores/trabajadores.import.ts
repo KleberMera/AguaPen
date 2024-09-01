@@ -14,6 +14,7 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 export const PRIMENG_MODULES = [
   FieldsetModule,
   TableModule,
@@ -30,5 +31,6 @@ export const PRIMENG_MODULES = [
   InputGroupModule,
   InputGroupAddonModule,
   TagModule,
-  InputSwitchModule
+  InputSwitchModule,
+  AutoCompleteModule
 ];

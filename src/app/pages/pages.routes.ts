@@ -22,7 +22,7 @@ export const routes: Routes = [
       },
       {
         path: 'trabajadores',
-        loadComponent: () => import('./seguridad-industrial/trabajadores/trabajadores.component'),
+        loadComponent: () => import('./tics/trabajadores/trabajadores.component'),
         canActivate: [permissionsGuard],
       },
       {

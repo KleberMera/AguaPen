@@ -5,6 +5,7 @@ export interface User {
   tx_area: string;
   tx_cargo: string;
   dt_status: number;
+  dt_usuario: string;
 
 }
 

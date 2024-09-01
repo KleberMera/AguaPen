@@ -57,23 +57,25 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     try {
       const res = await this.srvAuth.viewDataUser().toPromise();
 
-      
       const user_id = res.data.id;
 
-     if (user_id){
-        const permisos = await this.srvPermisos.getListPermisosPorUsuario(user_id).toPromise();
+      if (user_id) {
+        const permisos = await this.srvPermisos
+          .getListPermisosPorUsuario(user_id)
+          .toPromise();
         const data = permisos.data;
-
 
         //Recorrer la data
         data.forEach((permiso: any) => {
-          if (permiso.modulo_id === 2 && permiso.opcion_label === 'Trabajadores'){
+          if (
+            permiso.modulo_id === 2 &&
+            permiso.opcion_label === 'Trabajadores'
+          ) {
             this.per_editar = permiso.per_editar;
-          
           }
         });
       }
-     
+
       this.getListUsuarios();
     } catch (error) {
       this.srvMensajes.add({
@@ -92,7 +94,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
       tx_area: '',
       tx_cargo: '',
       dt_status: 0,
-      
+      dt_usuario: '',
     };
   }
 
@@ -106,7 +108,6 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     }
   }
 
-
   async getListUsuarios() {
     this.loading = true;
     try {
@@ -115,8 +116,6 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
       this.areaOptions = this.getUniqueOptions(res.data, 'tx_area');
       this.cargoOptions = this.getUniqueOptions(res.data, 'tx_cargo');
       this.filteredCargoOptions = this.cargoOptions;
-
-      
     } catch (error) {
       this.srvMensajes.add({
         severity: 'error',
@@ -171,7 +170,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
 
   async saveUser() {
     console.log(this.currentUser);
-    
+
     if (this.validateUser(this.currentUser)) {
       this.loadingSave = true;
       try {
@@ -240,6 +239,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     }
     this.selectedCargo = '';
   }
+  
 
   handleResponse(res: any, successMessage: string) {
     if (
