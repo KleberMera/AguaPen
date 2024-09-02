@@ -14,6 +14,8 @@ import { PRIMENG_MODULES } from './productos.import';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Product } from '../../../interfaces/products.interfaces';
 import { DeleteService } from '../../../services/services_sg/delete.service';
+import { AuthService } from '../../../services/services_auth/auth.service';
+import { PermisosService } from '../../../services/services_auth/permisos.service';
 
 @Component({
   selector: 'app-productos',
@@ -32,6 +34,7 @@ export default class ProductosComponent implements OnInit {
   loading: boolean = true;
   loadingSave: boolean = false;
   dialogVisible: boolean = false;
+  per_editar: number = 0;
 
   // Services injected
   private srvList = inject(ListService);
@@ -39,10 +42,47 @@ export default class ProductosComponent implements OnInit {
   private srvMensajes = inject(MessageService);
   private srvConfirm = inject(ConfirmationService);
   private srvDelete = inject(DeleteService);
+  private srvAuth = inject(AuthService);
+  private srvPermisos = inject(PermisosService);
 
   ngOnInit(): void {
-    this.listProductos();
+     this.getUserRole();
     
+  }
+
+  async getUserRole() {
+    try {
+      const res = await this.srvAuth.viewDataUser().toPromise();
+
+      const user_id = res.data.id;
+
+      if (user_id) {
+        const permisos = await this.srvPermisos
+          .getListPermisosPorUsuario(user_id)
+          .toPromise();
+        const data = permisos.data;
+
+        //Recorrer la data
+        data.forEach((permiso: any) => {
+          if (
+            permiso.modulo_id === 1 &&
+            permiso.opcion_label === 'Productos'
+          ) {
+            this.per_editar = permiso.per_editar;
+            console.log(this.per_editar);
+            
+          }
+        });
+      }
+
+      await this.listProductos();
+    } catch (error) {
+      this.srvMensajes.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Ocurrió un error al obtener el rol del usuario.',
+      });
+    }
   }
 
   private async listProductos() {
