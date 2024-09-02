@@ -8,7 +8,6 @@ import { FormsModule } from '@angular/forms';
 import { PRIMEMG_MODULES } from './reportes.imports';
 import { ReporteService } from '../../../services/services_sg/reporte.service';
 
-
 @Component({
   selector: 'app-reportes',
   standalone: true,
@@ -27,8 +26,10 @@ export default class ReportesComponent implements OnInit {
   endDate: string | null = null; // Fecha de fin para el filtrado por fecha+
   loading: boolean = true; // Indica si se está cargando datos
   uniqueProducts: any[] = []; // Lista de productos únicos
+  uniqueUsersRegistered: any[] = []; // Lista de usuarios únicos que hicieron el registro
   selectedProduct: any | null = null; // Producto seleccionado
-  
+  selectedReport: any | null = null; // Reporte seleccionado
+
   private subscriptions: Subscription = new Subscription(); // Manejo de suscripciones
 
   constructor(
@@ -51,12 +52,14 @@ export default class ReportesComponent implements OnInit {
     const reportSubscription = this.srvList
       .getReportsTrabajadores()
       .subscribe((res: any) => {
-        this.listReports = res.data.filter((report : any) => report.estado_registro === 1);
-     
-        
+        this.listReports = res.data.filter(
+          (report: any) => report.estado_registro === 1
+        );
+
         this.filteredReports = this.listReports;
         this.uniqueUsers = this.extractUniqueUsers(this.listReports);
         this.uniqueProducts = this.extractUniqueProducts(this.listReports);
+        this.uniqueUsersRegistered = this.extractUniqueUsersRegistered(this.listReports);
 
         this.loading = false;
       });
@@ -84,53 +87,41 @@ export default class ReportesComponent implements OnInit {
     });
     return Array.from(productsMap.values());
   }
-  
-  // Buscar reportes por cédula
-  searchReport() {
-    if (this.searchQuery.trim() === '') {
-      this.filteredReports = this.listReports;
-      return;
-    }
 
-    this.filteredReports = this.listReports.filter(
-      (report) =>
-        report.cedula &&
-        report.cedula.toLowerCase().includes(this.searchQuery.toLowerCase())
-    );
-
-    if (this.filteredReports.length > 0) {
-      this.selectedUser = this.filteredReports[0];
-      this.srvMessage.add({
-        severity: 'success',
-        summary: 'Usuario encontrado',
-        detail: `Se encontraron ${this.filteredReports.length} datos de reportes`,
-      });
-    } else {
-      this.selectedUser = null;
-      this.srvMessage.add({
-        severity: 'error',
-        summary: 'Usuario no encontrado',
-        detail: 'No se encontraron usuarios con ese criterio de búsqueda',
-      });
-    }
-  }
-
-  // Limpiar búsqueda por cédula
-  clearSearch() {
-    this.searchQuery = '';
-    this.filteredReports = this.listReports;
+  extractUniqueUsersRegistered(reports: any[]): any[] {
+    const usersMap = new Map();
+    reports.forEach((report) => {
+      if (!usersMap.has(report.nombre_completo)) {
+        usersMap.set(report.nombre_completo, report);
+      }
+    });
+    return Array.from(usersMap.values());
   }
 
   // Filtrar reportes por nombre de usuario seleccionado
   filterReportsByName() {
     if (this.selectedUser) {
+      this.filteredReports = this.listReports.filter(
+        (report) =>
+          report.nombre
+            .toLowerCase()
+            .includes(this.selectedUser.nombre.toLowerCase()) ||
+          report.cedula
+            .toLowerCase()
+            .includes(this.selectedUser.cedula.toLowerCase())
+      );
+    } else {
+      this.filteredReports = this.listReports;
+    }
+  }
+
+  // Filtrar reportes por nombre de usuario que hizo el registro
+  filterReportsByUserRegistered() {
+    if (this.selectedReport) {
       this.filteredReports = this.listReports.filter((report) =>
-        report.nombre
+        report.nombre_completo
           .toLowerCase()
-          .includes(this.selectedUser.nombre.toLowerCase()) || 
-        report.cedula
-          .toLowerCase()
-          .includes(this.selectedUser.cedula.toLowerCase())
+          .includes(this.selectedReport.nombre_completo.toLowerCase())
       );
     } else {
       this.filteredReports = this.listReports;
@@ -147,35 +138,46 @@ export default class ReportesComponent implements OnInit {
     } else {
       this.filteredReports = this.listReports;
     }
-
-
   }
-  
 
   filterReportsByDate() {
     if (this.startDate && this.endDate) {
       const start = new Date(this.startDate);
       const end = new Date(this.endDate);
-  
+
       this.filteredReports = this.listReports.filter((report) => {
         const reportDate = new Date(report.fecha_registro);
         const isWithinDateRange = reportDate >= start && reportDate <= end;
-        
+
         const matchesUser = this.selectedUser
-          ? report.nombre.toLowerCase().includes(this.selectedUser.nombre.toLowerCase())
+          ? report.nombre
+              .toLowerCase()
+              .includes(this.selectedUser.nombre.toLowerCase())
           : true;
-  
+
         const matchesProduct = this.selectedProduct
-          ? report.nombre_producto.toLowerCase().includes(this.selectedProduct.nombre_producto.toLowerCase())
+          ? report.nombre_producto
+              .toLowerCase()
+              .includes(this.selectedProduct.nombre_producto.toLowerCase())
           : true;
-  
-        return isWithinDateRange && matchesUser && matchesProduct;
+
+        const matchesUserRegistered = this.selectedReport
+          ? report.nombre_completo
+              .toLowerCase()
+              .includes(this.selectedReport.nombre_completo.toLowerCase())
+          : true;
+
+        return (
+          isWithinDateRange &&
+          matchesUser &&
+          matchesProduct &&
+          matchesUserRegistered
+        );
       });
     } else {
       this.filteredReports = this.listReports;
     }
   }
-  
 
   // Limpiar filtro de fechas
   clearDateFilter() {
@@ -186,8 +188,6 @@ export default class ReportesComponent implements OnInit {
 
   // Exportar la tabla de reportes a PDF
   exportToPDF(): void {
-   
-    
     if (this.listReports.length > 0) {
       this.srvPrint.exportToPDF(this.filteredReports);
       this.srvMessage.add({
@@ -209,9 +209,6 @@ export default class ReportesComponent implements OnInit {
     this.srvPrint.printElement('reportTable');
   }
 
-
-
-
   downloadGeneralReport() {
     // Validar si se ha seleccionado un producto
     if (!this.selectedProduct || !this.selectedProduct.nombre_producto) {
@@ -222,7 +219,7 @@ export default class ReportesComponent implements OnInit {
       });
       return;
     }
-  
+
     // Validar si se ha seleccionado al menos un reporte después de aplicar filtros
     if (!this.filteredReports || this.filteredReports.length === 0) {
       this.srvMessage.add({
@@ -232,7 +229,7 @@ export default class ReportesComponent implements OnInit {
       });
       return;
     }
-  
+
     // Validar si las fechas están definidas y son válidas
     if (!this.startDate || !this.endDate) {
       this.srvMessage.add({
@@ -242,7 +239,7 @@ export default class ReportesComponent implements OnInit {
       });
       return;
     }
-  
+
     const start = new Date(this.startDate);
     const end = new Date(this.endDate);
     if (start > end) {
@@ -253,9 +250,10 @@ export default class ReportesComponent implements OnInit {
       });
       return;
     }
-  
+
     // Si todas las validaciones pasan, generar el reporte
-    this.srvReport.RepGeneral(this.filteredReports)
+    this.srvReport
+      .RepGeneral(this.filteredReports)
       .then(() => {
         this.srvMessage.add({
           severity: 'success',
@@ -272,4 +270,4 @@ export default class ReportesComponent implements OnInit {
         });
       });
   }
-}  
+}

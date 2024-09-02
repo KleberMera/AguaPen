@@ -11,7 +11,7 @@ import { PrimeNGConfig } from 'primeng/api';
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-  title = 'AguaPen';
+  title = 'Aguapen App';
 
 
   constructor(private primengConfig: PrimeNGConfig) {}

@@ -1,5 +1,23 @@
 <div class="formgroup-inline">
-
+  <div class="field">
+    <p-dropdown
+      id="dropdown"
+      [options]="uniqueUsersRegistered"
+      [(ngModel)]="selectedReport"
+      optionLabel="nombre_completo"
+      [filter]="true"
+      filterBy="nombre_completo"
+      [showClear]="true"
+      placeholder="Seleccionar o escribir Usuario que hizo el registro"
+      (onChange)="filterReportsByUserRegistered()"
+    >
+      <ng-template let-user pTemplate="item">
+        <div class="flex align-items-center gap-2">
+          <div>{{ user.nombre_completo }}</div>
+        </div>
+      </ng-template>
+    </p-dropdown>
+  </div>
   <div class="field">
     <p-dropdown
       id="dropdown"
@@ -131,12 +149,14 @@
     <p-table [value]="filteredReports">
       <ng-template pTemplate="header">
         <tr>
-          <th>ID</th>
+          <th>N°</th>
+          <th>Usuario</th>
           <th>Codigo</th>
           <th pSortableColumn="fecha_registro">
             Fecha
             <p-sortIcon field="fecha_registro"></p-sortIcon>
           </th>
+
           <th>Nombre</th>
           <th>Producto</th>
           <th>Cantidad</th>
@@ -145,6 +165,7 @@
       <ng-template pTemplate="body" let-report>
         <tr>
           <td>{{ report.id_tbl_registros }}</td>
+          <td>{{ report.nombre_completo }}</td>
           <td>{{ report.codigo_producto }}</td>
           <td>{{ report.fecha_registro }}</td>
           <td>{{ report.nombre }}</td>

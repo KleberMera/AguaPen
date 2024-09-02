@@ -93,7 +93,8 @@
   <p-table [value]="filteredReports">
     <ng-template pTemplate="header">
       <tr>
-        <th>ID</th>
+        <th>N°</th>
+        <th>Usuario</th>
         <th>Codigo</th>
         <th pSortableColumn="fecha_registro">
           Fecha
@@ -113,13 +114,16 @@
     </ng-template>
     <ng-template pTemplate="body" let-report>
       <tr>
-        @switch (selectedCategory) { @case ('trabajadores') {
+        @switch (selectedCategory) {
+        @case ('trabajadores') {
         <td>{{ report.id_tbl_registros }}</td>
         } @case ('areas') {
         <td>{{ report.id_tbl_registros_areas }}</td>
         } @case ('vehiculos') {
         <td>{{ report.id_tbl_registros_vehiculos }}</td>
-        } }
+        }
+       }
+        <td>{{ report.nombre_completo }}</td>
         <td>{{ report.codigo_producto }}</td>
         <td>{{ report.fecha_registro }}</td>
         @switch (selectedCategory) { @case ('trabajadores') {

@@ -73,7 +73,7 @@
     @if (filterUsers(searchTerm, selectedArea, selectedCargo).length > 0) {
     <ng-template pTemplate="header">
       <tr>
-        <th>ID</th>
+        <th>N°</th>
         <th pSortableColumn="tx_nombre">
           Nombre
           <p-sortIcon field="tx_nombre"></p-sortIcon>
@@ -81,7 +81,10 @@
         <th>Cédula</th>
         <th>Área</th>
         <th>Cargo</th>
-        <th>Estado</th>
+        <th pSortableColumn="dt_status">
+          Estado
+          <p-sortIcon field="dt_status"></p-sortIcon>
+        </th>
 
         @if (per_editar === 1) {
         <th>Acción</th>

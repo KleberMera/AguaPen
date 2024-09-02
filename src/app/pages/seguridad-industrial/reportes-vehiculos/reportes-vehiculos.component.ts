@@ -19,7 +19,10 @@ export default class ReportesVehiculosComponent {
   listReports: any[] = [];
   filteredReports: any[] = [];
   uniqueVehiculos: any[] = [];
+  uniqueUsersRegistered: any[] = [];
   selectedVehiculo: any | null = null;
+    selectedReport: any | null = null;
+
   startDate: string | null = null;
   endDate: string | null = null;
   loading: boolean = true;
@@ -43,6 +46,7 @@ export default class ReportesVehiculosComponent {
         this.listReports = res.data.filter((report : any) => report.estado_registro === 1);
         this.filteredReports = this.listReports;
         this.uniqueVehiculos = this.extractUniqueVehiculos(this.listReports);
+        this.uniqueUsersRegistered = this.extractUniqueUsersRegistered(this.listReports);
 
        
         this.loading = false;
@@ -63,9 +67,34 @@ export default class ReportesVehiculosComponent {
     return Array.from(vehiculoMap.values());
   }
 
+ 
+
   clearSearch() {
     this.selectedVehiculo = null;
     this.filteredReports = this.listReports;
+  }
+  extractUniqueUsersRegistered(reports: any[]): any[] {
+    const usersMap = new Map();
+    reports.forEach((report) => {
+      if (!usersMap.has(report.nombre_completo)) {
+        usersMap.set(report.nombre_completo, report);
+      }
+    });
+    return Array.from(usersMap.values());
+  }
+
+ 
+  // Filtrar reportes por nombre de usuario que hizo el registro
+  filterReportsByUserRegistered() {
+    if (this.selectedReport) {
+      this.filteredReports = this.listReports.filter((report) =>
+        report.nombre_completo
+          .toLowerCase()
+          .includes(this.selectedReport.nombre_completo.toLowerCase())
+      );
+    } else {
+      this.filteredReports = this.listReports;
+    }
   }
 
   filterReportsByNameAREA() {
@@ -81,6 +110,8 @@ export default class ReportesVehiculosComponent {
       this.filteredReports = this.listReports;
     }
   }
+
+  
 
   // Filtrar reportes por rango de fechas
   filterReportsByDate() {

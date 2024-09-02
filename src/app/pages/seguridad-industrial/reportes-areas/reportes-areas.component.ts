@@ -18,6 +18,9 @@ export default class AreasComponent implements OnInit, OnDestroy {
   listAreas: any[] = [];
   listReports: any[] = [];
   filteredReports: any[] = [];
+
+  uniqueUsersRegistered: any[] = [];
+  selectedReport: any | null = null;
   uniqueAreas: any[] = [];
   selectedArea: any | null = null;
   startDate: string | null = null;
@@ -46,6 +49,7 @@ export default class AreasComponent implements OnInit, OnDestroy {
         //this.listReports = res.data;
         this.filteredReports = this.listReports;
         this.uniqueAreas = this.extractUniqueAreas(this.listReports);
+         this.uniqueUsersRegistered = this.extractUniqueUsersRegistered(this.listReports);
       
         this.loading = false;
         
@@ -64,6 +68,30 @@ export default class AreasComponent implements OnInit, OnDestroy {
       }
     });
     return Array.from(areasMap.values());
+  }
+
+  extractUniqueUsersRegistered(reports: any[]): any[] {
+    const usersMap = new Map();
+    reports.forEach((report) => {
+      if (!usersMap.has(report.nombre_completo)) {
+        usersMap.set(report.nombre_completo, report);
+      }
+    });
+    return Array.from(usersMap.values());
+  }
+
+ 
+  // Filtrar reportes por nombre de usuario que hizo el registro
+  filterReportsByUserRegistered() {
+    if (this.selectedReport) {
+      this.filteredReports = this.listReports.filter((report) =>
+        report.nombre_completo
+          .toLowerCase()
+          .includes(this.selectedReport.nombre_completo.toLowerCase())
+      );
+    } else {
+      this.filteredReports = this.listReports;
+    }
   }
 
   clearSearch() {
