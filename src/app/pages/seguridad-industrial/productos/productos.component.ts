@@ -69,7 +69,7 @@ export default class ProductosComponent implements OnInit {
             permiso.opcion_label === 'Productos'
           ) {
             this.per_editar = permiso.per_editar;
-            console.log(this.per_editar);
+         
             
           }
         });

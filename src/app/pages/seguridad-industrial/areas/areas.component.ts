@@ -58,7 +58,7 @@ export default class AreasComponent {
             permiso.opcion_label === 'Areas'
           ) {
             this.per_editar = permiso.per_editar;
-            console.log(this.per_editar);
+          
             
           }
         });

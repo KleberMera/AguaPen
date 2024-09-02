@@ -57,7 +57,7 @@ export default class VehiculosComponent {
             permiso.opcion_label === 'Vehiculos'
           ) {
             this.per_editar = permiso.per_editar;
-            console.log(this.per_editar);
+           
             
           }
         });

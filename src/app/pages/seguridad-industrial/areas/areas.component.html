@@ -11,7 +11,7 @@
       />
     </p-inputGroup>
   </div>
- @if (per_editar === 1) {
+  @if (per_editar === 1) {
   <div class="flex align-items-center gap-2 mb-3">
     <p-button
       label="Nuevo"
@@ -20,7 +20,7 @@
       (click)="openAddAreaDialog()"
     />
   </div>
- }
+  }
 </div>
 
 @if (loading) {
@@ -47,44 +47,43 @@
       <tr>
         <th>Nombre del Área</th>
         <th>Estado</th>
-       @if (per_editar === 1) {
+        @if (per_editar === 1) {
         <th>Acción</th>
-       }
+        }
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-area>
       <tr>
         <td>{{ area.nombre_area }}</td>
         @if (area.estado === 1) {
-          <td>
-            <p-tag value="Activo" severity="success"></p-tag>
-          </td>
-          } @else {
-          <td>
-            <p-tag value="Inactivo" severity="danger"></p-tag>
-          </td>
-          }
-        @if (per_editar === 1) {
-          <td>
-            <div class="flex md:flex-row">
-              <div>
-                <p-button
-                  icon="pi pi-pencil"
-                  class="mr-2"
-                  [rounded]="true"
-                  (click)="openEditAreaDialog(area)"
-                />
-              </div>
-              <div>
-                <p-button
-                  icon="pi pi-trash"
-                  [rounded]="true"
-                  severity="danger"
-                  (click)="deleteArea(area)"
-                />
-              </div>
+        <td>
+          <p-tag value="Activo" severity="success"></p-tag>
+        </td>
+        } @else {
+        <td>
+          <p-tag value="Inactivo" severity="danger"></p-tag>
+        </td>
+        } @if (per_editar === 1) {
+        <td>
+          <div class="flex md:flex-row">
+            <div>
+              <p-button
+                icon="pi pi-pencil"
+                class="mr-2"
+                [rounded]="true"
+                (click)="openEditAreaDialog(area)"
+              />
             </div>
-          </td>
+            <div>
+              <p-button
+                icon="pi pi-trash"
+                [rounded]="true"
+                severity="danger"
+                (click)="deleteArea(area)"
+              />
+            </div>
+          </div>
+        </td>
         }
       </tr>
     </ng-template>
