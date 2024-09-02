@@ -1,36 +1,12 @@
 <div class="formgrid grid">
   <div class="field col">
-    <p-inputGroup>
-      <button
-        type="button"
-        pButton
-        icon="pi pi-search"
-        (click)="searchUser()"
-      ></button>
-      <input
-        id="searchInput"
-        type="text"
-        pInputText
-        placeholder="Buscar por Cédula"
-        [(ngModel)]="searchQuery"
-      />
-      <button
-        type="button"
-        pButton
-        icon="pi pi-times"
-        class="p-button-danger"
-        (click)="clearSearch()"
-      ></button>
-    </p-inputGroup>
-  </div>
-  <div class="field col">
     <p-dropdown
     id="dropdown"
     [options]="dropdownOptions"
     [(ngModel)]="selectedUser"
     optionLabel="tx_nombre"
     [filter]="true"
-    filterBy="tx_nombre"
+    filterBy="tx_nombre,tx_cedula"
     [showClear]="true"
     placeholder="Seleccionar o escribir Usuario"
     (onChange)="selectUser($event)"
