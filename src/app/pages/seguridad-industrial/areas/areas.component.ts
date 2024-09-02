@@ -7,6 +7,8 @@ import { ListService } from '../../../services/services_sg/list.service';
 import { FormsModule } from '@angular/forms';
 import { DeleteService } from '../../../services/services_sg/delete.service';
 import { PRIMENG_MODULES } from './areas.imports';
+import { AuthService } from '../../../services/services_auth/auth.service';
+import { PermisosService } from '../../../services/services_auth/permisos.service';
 
 @Component({
   selector: 'app-areas',
@@ -23,15 +25,53 @@ export default class AreasComponent {
   loading: boolean = true;
   loadingSave: boolean = false;
   dialogVisible: boolean = false;
+  per_editar: number = 0;
 
   private srvReg = inject(RegisterService);
   private srvList = inject(ListService);
   private srvMensajes = inject(MessageService);
   private srvConfirm = inject(ConfirmationService);
   private srvDelete = inject(DeleteService);
+  private srvAuth = inject(AuthService);
+  private srvPermisos = inject(PermisosService);
 
   ngOnInit(): void {
-    this.listAreas();
+    this.getUserRole();
+  }
+
+  async getUserRole() {
+    try {
+      const res = await this.srvAuth.viewDataUser().toPromise();
+
+      const user_id = res.data.id;
+
+      if (user_id) {
+        const permisos = await this.srvPermisos
+          .getListPermisosPorUsuario(user_id)
+          .toPromise();
+        const data = permisos.data;
+
+        //Recorrer la data
+        data.forEach((permiso: any) => {
+          if (
+            permiso.modulo_id === 1 &&
+            permiso.opcion_label === 'Areas'
+          ) {
+            this.per_editar = permiso.per_editar;
+            console.log(this.per_editar);
+            
+          }
+        });
+      }
+
+      await this.listAreas();
+    } catch (error) {
+      this.srvMensajes.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Ocurrió un error al obtener el rol del usuario.',
+      });
+    }
   }
 
   private async listAreas() {

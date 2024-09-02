@@ -11,6 +11,7 @@
       />
     </p-inputGroup>
   </div>
+ @if (per_editar === 1) {
   <div class="flex align-items-center gap-2 mb-3">
     <p-button
       label="Nuevo"
@@ -19,6 +20,7 @@
       (click)="openAddAreaDialog()"
     />
   </div>
+ }
 </div>
 
 @if (loading) {
@@ -45,7 +47,9 @@
       <tr>
         <th>Nombre del Área</th>
         <th>Estado</th>
+       @if (per_editar === 1) {
         <th>Acción</th>
+       }
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-area>
@@ -60,26 +64,28 @@
             <p-tag value="Inactivo" severity="danger"></p-tag>
           </td>
           }
-        <td>
-          <div class="flex md:flex-row">
-            <div>
-              <p-button
-                icon="pi pi-pencil"
-                class="mr-2"
-                [rounded]="true"
-                (click)="openEditAreaDialog(area)"
-              />
+        @if (per_editar === 1) {
+          <td>
+            <div class="flex md:flex-row">
+              <div>
+                <p-button
+                  icon="pi pi-pencil"
+                  class="mr-2"
+                  [rounded]="true"
+                  (click)="openEditAreaDialog(area)"
+                />
+              </div>
+              <div>
+                <p-button
+                  icon="pi pi-trash"
+                  [rounded]="true"
+                  severity="danger"
+                  (click)="deleteArea(area)"
+                />
+              </div>
             </div>
-            <div>
-              <p-button
-                icon="pi pi-trash"
-                [rounded]="true"
-                severity="danger"
-                (click)="deleteArea(area)"
-              />
-            </div>
-          </div>
-        </td>
+          </td>
+        }
       </tr>
     </ng-template>
   </p-table>
