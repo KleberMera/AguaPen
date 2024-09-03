@@ -56,9 +56,8 @@ export default class LoginComponent {
 
       this.srvAuth.login(dataLogin).subscribe({
         next: (res: any) => {
-        
-          
           this.loading = false;
+
           if (res && res.usuario) {
             this.srvMensajes.add({
               severity: 'success',
@@ -68,11 +67,13 @@ export default class LoginComponent {
             // Redirigir al usuario a la página de inicio
             this.router.navigate(['home']);
           } else {
+            console.log(res);
+
             this.loading = false;
             this.srvMensajes.add({
               severity: 'error',
               summary: 'Error',
-              detail: res.mensaje || 'Error al iniciar sesión',
+              detail: res.message,
             });
           }
         },
