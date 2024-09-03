@@ -52,6 +52,7 @@ export class AuthService {
             email: objUser.email,
             usuario: objUser.usuario,
             password: objUser.password,
+            estado: objUser.estado,
            
           },
         },
@@ -74,12 +75,16 @@ export class AuthService {
             email: objUser.email,
             usuario: objUser.usuario,
             password: objUser.password,
+            estado: objUser.estado,
            
           },
         },
       ],
     });
   }
+
+
+
 
   //Delete Users
   deleteUser(id: number) {

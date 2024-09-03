@@ -19,5 +19,6 @@ export interface usersAdmin {
   email: string;
   usuario: string;
   password: string;
+  estado: number;
 
 }

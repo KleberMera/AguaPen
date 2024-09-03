@@ -43,6 +43,7 @@ export default class UsuariosRolesComponent implements OnInit {
     email: '',
     usuario: '',
     password: '',
+    estado: 1,
   };
 
   private authService = inject(AuthService);
@@ -64,8 +65,9 @@ export default class UsuariosRolesComponent implements OnInit {
   async getListUsuarios(): Promise<void> {
     try {
       const res = await this.srvList.getListUsuarios().toPromise();
-      this.dropdownOptions = res.data.filter((user: User) => user.dt_status === 1);
-
+      this.dropdownOptions = res.data.filter(
+        (user: User) => user.dt_status === 1
+      );
     } catch (error) {
       this.messageService.add({
         severity: 'error',
@@ -112,7 +114,6 @@ export default class UsuariosRolesComponent implements OnInit {
   formatUserLabel(user: User): string {
     return `${this.capitalize(user.tx_nombre)} (${user.tx_cedula})`;
   }
-  
 
   registerUser() {
     if (this.validateForm()) {
@@ -194,14 +195,37 @@ export default class UsuariosRolesComponent implements OnInit {
     });
   }
 
-  confirmDeleteUser(userId: number) {
-    this.confirmationService.confirm({
-      message: '¿Está seguro de eliminar este usuario?',
-      header: 'Confirmación de Eliminación',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.deleteUser(userId);
-      },
+  UpdateUser(userId: number) {
+    this.users.forEach((user: any) => {
+      if (user.id === userId) {
+        let userSelected = user;
+
+        //Cambiar el estado del usuario
+        if (userSelected.estado === 0) {
+          userSelected.estado = 1;
+        } else {
+          userSelected.estado = 0;
+        }
+        this.authService.updateUser(userSelected).subscribe(
+          (response) => {
+            console.log(response);
+
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Usuario actualizado exitosamente',
+            });
+            this.loadUsers(); // Refresca la lista de usuarios
+          },
+          (error) => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Error al actualizar el usuario',
+            });
+          }
+        );
+      }
     });
   }
 
@@ -236,12 +260,11 @@ export default class UsuariosRolesComponent implements OnInit {
       email: '',
       usuario: '',
       password: '',
+      estado: 1,
     };
 
     // limpirar selecciones de usuarios y permisos
     this.selectedUser = null;
-
-
   }
 
   getInitial(name: string): string {
@@ -335,7 +358,7 @@ export default class UsuariosRolesComponent implements OnInit {
 
   actualizarPermisos() {
     this.loadingpermissions = true;
-  
+
     // Crear un array de observables para las solicitudes de actualización
     const requests = this.filteredOptions.map((opcion) => {
       const updatedPermiso = {
@@ -345,10 +368,10 @@ export default class UsuariosRolesComponent implements OnInit {
         per_editar: opcion.per_editar,
         per_ver: opcion.per_ver,
       };
-  
+
       return this.SrvPermissions.postEditPermisos(updatedPermiso);
     });
-  
+
     // Usar forkJoin para esperar a que todas las solicitudes de actualización se completen
     forkJoin(requests).subscribe(
       (responses) => {
@@ -373,7 +396,7 @@ export default class UsuariosRolesComponent implements OnInit {
 
   guardarPermisos() {
     this.loadingpermissions = true;
-  
+
     // Filtrar los permisos seleccionados
     const permisosSeleccionados = this.filteredOptions
       .filter((opcion) => opcion.seleccionado)
@@ -383,7 +406,7 @@ export default class UsuariosRolesComponent implements OnInit {
         per_editar: opcion.per_editar || false,
         per_ver: true,
       }));
-  
+
     // Validar si hay un usuario seleccionado
     if (!this.selectionUser) {
       this.messageService.add({
@@ -394,7 +417,7 @@ export default class UsuariosRolesComponent implements OnInit {
       this.loadingpermissions = false;
       return;
     }
-  
+
     // Validar si hay al menos una opción seleccionada
     if (permisosSeleccionados.length === 0) {
       this.messageService.add({
@@ -405,12 +428,12 @@ export default class UsuariosRolesComponent implements OnInit {
       this.loadingpermissions = false;
       return;
     }
-  
+
     // Crear un array de observables para las solicitudes
     const requests = permisosSeleccionados.map((permiso) =>
       this.SrvPermissions.postCreatePermisos(permiso)
     );
-  
+
     // Usar forkJoin para ejecutar todas las solicitudes en paralelo y esperar a que todas se completen
     forkJoin(requests).subscribe(
       (responses) => {
