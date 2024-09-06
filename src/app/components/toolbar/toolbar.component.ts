@@ -48,10 +48,8 @@ export class ToolbarComponent implements OnInit {
   private messageService = inject(MessageService);
 
   public layoutService = inject(LayoutService);
-  
-  ngOnInit(): void {
-    
-  }
+
+  ngOnInit(): void {}
 
   logout(event: Event) {
     this.confirmationService.confirm({
@@ -75,7 +73,6 @@ export class ToolbarComponent implements OnInit {
   }
 
   signOut() {
-
     this.srvAuth.logout().subscribe((res) => {
       this.messageService.add({
         severity: 'info',
@@ -84,14 +81,11 @@ export class ToolbarComponent implements OnInit {
       });
       this.router.navigate(['/auth']);
     });
-    
   }
 
   dataUser() {
     this.srvAuth.viewDataUser().subscribe((res: any) => {
       if (res) {
-      
-        
         this.user = res.data;
         this.loading = false;
       } else {
@@ -101,8 +95,7 @@ export class ToolbarComponent implements OnInit {
           detail: 'No se pudo obtener la información del usuario.',
         });
       }
-    }
-  );
+    });
   }
 
   updateUser(event: Event) {
@@ -114,6 +107,17 @@ export class ToolbarComponent implements OnInit {
         severity: 'error',
         summary: 'Error',
         detail: 'Las contraseñas no coinciden.',
+      });
+      return;
+    }
+
+    //Validar que la contraseña no sea igual al usuario
+    if (this.user.usuario === this.password) {
+      this.loadingUpdate = false;
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'La contraseña no puede ser igual al usuario.',
       });
       return;
     }
