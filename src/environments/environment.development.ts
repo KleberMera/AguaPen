@@ -4,8 +4,8 @@ export const environment = {
   //aguapenApi: 'http://192.168.1.30:80/api/',
 
 
-  imageApi: 'https://aguapenrestapi-arvnq.ondigitalocean.app',
-  //imageApi: 'http://127.0.0.1:8000',
+ //imageApi: 'https://aguapenrestapi-arvnq.ondigitalocean.app',
+  imageApi: 'http://127.0.0.1:8000',
   //imageApi: 'http://192.168.1.30:80/',
 
 
