@@ -407,7 +407,7 @@ private async procederConRegistro(): Promise<void> {
         detail: 'Se registraron los detalles con éxito',
       });
       await this.getListProductos();
-      this.clearForm();
+     
     } else {
       this.messageService.add({
         severity: 'error',
