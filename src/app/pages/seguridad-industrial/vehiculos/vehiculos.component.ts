@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { PRIMENG_MODULES } from './vehiculos.import';
-import { Vehiculo } from '../../../interfaces/vehicles.interfaces';
+import { Vehiculo } from '../../../models/vehicles.interfaces';
 import { RegisterService } from '../../../services/services_sg/register.service';
 import { ListService } from '../../../services/services_sg/list.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -42,7 +42,7 @@ export default class VehiculosComponent {
     try {
       const res = await this.srvAuth.viewDataUser().toPromise();
 
-      const user_id = res.data.id;
+      const user_id = res?.data.id;
 
       if (user_id) {
         const permisos = await this.srvPermisos

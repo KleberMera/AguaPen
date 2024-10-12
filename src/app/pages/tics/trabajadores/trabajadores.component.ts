@@ -5,7 +5,7 @@ import { ListService } from '../../../services/services_sg/list.service';
 
 // Services and interfaces of the app
 import { RegisterService } from '../../../services/services_sg/register.service';
-import { User } from '../../../interfaces/users.interfaces';
+import { User } from '../../../models/users.interfaces';
 
 // Imports of PrimeNG
 import { PRIMENG_MODULES } from './trabajadores.import';
@@ -57,7 +57,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     try {
       const res = await this.srvAuth.viewDataUser().toPromise();
 
-      const user_id = res.data.id;
+      const user_id = res?.data.id;
 
       if (user_id) {
         const permisos = await this.srvPermisos

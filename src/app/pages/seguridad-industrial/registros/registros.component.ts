@@ -7,13 +7,13 @@ import { formatDate } from '@angular/common';
 import { FileUpload } from 'primeng/fileupload';
 
 import { FormsModule } from '@angular/forms';
-import { Registro } from '../../../interfaces/registers.interfaces';
-import { Product } from '../../../interfaces/products.interfaces';
+import { Registro } from '../../../models/registers.interfaces';
+import { Product } from '../../../models/products.interfaces';
 import { ViewChild } from '@angular/core';
 
 import { PRIMEMG_MODULES } from './registros.imports';
-import { User } from '../../../interfaces/users.interfaces';
-import { details } from '../../../interfaces/details.interfaces';
+import { User } from '../../../models/users.interfaces';
+import { details } from '../../../models/details.interfaces';
 import { UploadimageService } from '../../../services/services_sg/uploadimage.service';
 import { ReporteService } from '../../../services/services_sg/reporte.service';
 

@@ -1,10 +1,11 @@
-
 import { Injectable, inject } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment.development';
+import { Auth } from '../../models/auth.models';
+import { MutatePayload, UserAttributes, viewDataUser } from '../../models/users.interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -18,46 +19,21 @@ export class AuthService {
 
   private http = inject(HttpClient);
 
-  login(objLogin: any): Observable<any> {
+  login(objLogin: Auth): Observable<any> {
     const url = `${this.environment}login`;
-    return this.http
-      .post(url, {
-        usuario: objLogin.usuario,
-        password: objLogin.password,
+    return this.http.post<Auth>(url, objLogin).pipe(
+      tap((response: any) => {
+        if (response && response.usuario) {
+          this.setUser(response.usuario, response.token); // Pasar el token
+          this.setToken(response.token);
+        }
       })
-      .pipe(
-        tap((response: any) => {
-          if (response && response.usuario) {
-            this.setUser(response.usuario, response.token); // Pasar el token
-            this.setToken(response.token);
-          }
-        })
-      );
+    );
   }
 
-
-
-  updateUser(objUser: any) {
+  updateUser(objUser: MutatePayload) {
     const url = `${this.environment}users/mutate`;
-    return this.http.post(url, {
-      mutate: [
-        {
-          operation: 'update',
-          key: objUser.id,
-          attributes: {
-            cedula: objUser.cedula,
-            telefono: objUser.telefono,
-            nombres: objUser.nombres,
-            apellidos: objUser.apellidos,
-            email: objUser.email,
-            usuario: objUser.usuario,
-            password: objUser.password,
-            estado: objUser.estado,
-           
-          },
-        },
-      ],
-    });
+    return this.http.post<MutatePayload>(url, objUser);
   }
 
   // Registro de Usuarios Admin
@@ -76,15 +52,11 @@ export class AuthService {
             usuario: objUser.usuario,
             password: objUser.password,
             estado: objUser.estado,
-           
           },
         },
       ],
     });
   }
-
-
-
 
   //Delete Users
   deleteUser(id: number) {
@@ -100,17 +72,17 @@ export class AuthService {
     const url = `${this.environment}allusers`;
     const token = this.getToken();
     const headers = { Authorization: `Bearer ${token}` };
-    return this.http.get<any>(url,  { headers });
+    return this.http.get<any>(url, { headers });
   }
 
-  viewDataUser(): Observable<any> {
+  viewDataUser(): Observable<viewDataUser> {
     const url = `${this.environment}user`;
     const token = this.getToken();
     const headers = { Authorization: `Bearer ${token}` };
-  
+
     return new Observable((observer) => {
       try {
-        this.http.get<any>(url, { headers }).subscribe({
+        this.http.get<viewDataUser>(url, { headers }).subscribe({
           next: (res) => {
             observer.next(res);
             observer.complete();
@@ -118,20 +90,18 @@ export class AuthService {
           error: (err) => {
             this.clearAuthData(); // Limpiar localStorage en caso de error
             observer.error(err);
-          
+
             this.router.navigate(['/auth']);
-            
-          }
+          },
         });
-      } catch (error : any) {
+      } catch (error: any) {
         this.clearAuthData(); // Limpiar localStorage en caso de excepción
         observer.error(error);
-    
+
         this.router.navigate(['/auth']);
       }
     });
   }
-  
 
   verifyCedula(cedula: string) {
     const url = `${this.environment}verifycedula`;

@@ -12,7 +12,7 @@ import { ListService } from '../../../services/services_sg/list.service';
 import { PRIMENG_MODULES } from './productos.import';
 // Providers for PrimeNG
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Product } from '../../../interfaces/products.interfaces';
+import { Product } from '../../../models/products.interfaces';
 import { DeleteService } from '../../../services/services_sg/delete.service';
 import { AuthService } from '../../../services/services_auth/auth.service';
 import { PermisosService } from '../../../services/services_auth/permisos.service';
@@ -54,7 +54,7 @@ export default class ProductosComponent implements OnInit {
     try {
       const res = await this.srvAuth.viewDataUser().toPromise();
 
-      const user_id = res.data.id;
+      const user_id = res?.data.id;
 
       if (user_id) {
         const permisos = await this.srvPermisos

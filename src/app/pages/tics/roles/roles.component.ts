@@ -1,16 +1,18 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { PRIMENG_MODULES } from './roles.imports';
-import { User, usersAdmin } from '../../../interfaces/users.interfaces';
+
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import { PermisosService } from '../../../services/services_auth/permisos.service';
-import { Permisos } from '../../../interfaces/permisos.interfaces';
+
 import { forkJoin, map } from 'rxjs';
 import { AuthService } from '../../../services/services_auth/auth.service';
 import { ListService } from '../../../services/services_sg/list.service';
+import { User, usersAdmin } from '../../../models/users.interfaces';
+import { Permisos } from '../../../models/permisos.interfaces';
 
 @Component({
   selector: 'app-usuarios-roles',

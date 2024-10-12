@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Area } from '../../../interfaces/areas.interfaces';
+import { Area } from '../../../models/areas.model';
 import { RegisterService } from '../../../services/services_sg/register.service';
 import { ListService } from '../../../services/services_sg/list.service';
 
@@ -43,7 +43,9 @@ export default class AreasComponent {
     try {
       const res = await this.srvAuth.viewDataUser().toPromise();
 
-      const user_id = res.data.id;
+      const user_id = res?.data.id;
+      console.log(user_id);
+      
 
       if (user_id) {
         const permisos = await this.srvPermisos

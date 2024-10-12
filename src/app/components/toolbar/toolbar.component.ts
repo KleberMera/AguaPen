@@ -15,6 +15,12 @@ import { CommonModule } from '@angular/common';
 import { PRIMENG_MODULES } from './toolbar.import';
 import { LayoutService } from '../../services/gen/layout.service';
 import { AuthService } from '../../services/services_auth/auth.service';
+import {
+  MutateOperation,
+  MutatePayload,
+  UserAttributes,
+  viewDataUser,
+} from '../../models/users.interfaces';
 
 @Component({
   selector: 'app-toolbar',
@@ -27,7 +33,7 @@ import { AuthService } from '../../services/services_auth/auth.service';
 export class ToolbarComponent implements OnInit {
   visible: boolean = false;
   loadingUpdate: boolean = false;
-  user: any = {}; // Initialize user object
+  user!: UserAttributes; // Initialize user object
   checked: boolean = false;
   items!: MenuItem[];
   imgUrl: string = 'assets/ICONO-AGUAPEN.webp';
@@ -84,9 +90,10 @@ export class ToolbarComponent implements OnInit {
   }
 
   dataUser() {
-    this.srvAuth.viewDataUser().subscribe((res: any) => {
-      if (res) {
-        this.user = res.data;
+    this.srvAuth.viewDataUser().subscribe((res) => {
+      if (res.data) {
+        const { id, cedula, telefono, nombres, apellidos, email, usuario, estado, password} = res.data; 
+        this.user = {id, cedula, telefono, nombres, apellidos, email, usuario, estado, password};
         this.loading = false;
       } else {
         this.messageService.add({
@@ -97,6 +104,7 @@ export class ToolbarComponent implements OnInit {
       }
     });
   }
+  
 
   updateUser(event: Event) {
     this.loadingUpdate = true;
@@ -130,13 +138,20 @@ export class ToolbarComponent implements OnInit {
       acceptLabel: 'Aceptar',
       rejectLabel: 'No',
       accept: () => {
-        const updatedUser = { ...this.user };
+        const payload: MutatePayload = {
+          mutate: [
+            {
+              operation: 'update', // Es una operación de actualización
+              key: this.user.id as number, // El id del usuario
+              attributes: {
+                ...this.user,
+                ...(this.changePassword ? { password: this.password } : {}), // Asignar nueva contraseña solo si es necesario
+              },
+            },
+          ],
+        };
 
-        if (this.changePassword) {
-          updatedUser.password = this.password;
-        }
-
-        this.srvAuth.updateUser(updatedUser).subscribe((res: any) => {
+        this.srvAuth.updateUser(payload).subscribe((res: any) => {
           // Show success message
           this.messageService.add({
             severity: 'success',
