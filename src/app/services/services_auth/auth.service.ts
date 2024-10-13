@@ -5,57 +5,35 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment.development';
 import { Auth } from '../../models/auth.models';
-import { MutatePayload, UserAttributes, viewDataUser } from '../../models/users.interfaces';
+import {
+  MutatePayloadCreate,
+  MutatePayloadUpdate,
+  viewDataUser,
+} from '../../models/users.interfaces';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private environment = environment.aguapenApi;
-  private userSubject = new BehaviorSubject<any>(this.getStoredUser());
   private tokenKey = 'auth_token';
-  user$ = this.userSubject.asObservable();
   private router = inject(Router);
+  private readonly http = inject(HttpClient);
 
-  private http = inject(HttpClient);
-
-  login(objLogin: Auth): Observable<any> {
+  login(objLogin: Auth) {
     const url = `${this.environment}login`;
-    return this.http.post<Auth>(url, objLogin).pipe(
-      tap((response: any) => {
-        if (response && response.usuario) {
-          this.setUser(response.usuario, response.token); // Pasar el token
-          this.setToken(response.token);
-        }
-      })
-    );
+    return this.http.post<Auth>(url, objLogin);
   }
 
-  updateUser(objUser: MutatePayload) {
+  updateUser(objUser: MutatePayloadUpdate) {
     const url = `${this.environment}users/mutate`;
-    return this.http.post<MutatePayload>(url, objUser);
+    return this.http.post<MutatePayloadUpdate>(url, objUser);
   }
 
   // Registro de Usuarios Admin
-  createUser(objUser: any) {
+  createUser(objUser: MutatePayloadCreate) {
     const url = `${this.environment}users/mutate`;
-    return this.http.post(url, {
-      mutate: [
-        {
-          operation: 'create',
-          attributes: {
-            cedula: objUser.cedula,
-            telefono: objUser.telefono,
-            nombres: objUser.nombres,
-            apellidos: objUser.apellidos,
-            email: objUser.email,
-            usuario: objUser.usuario,
-            password: objUser.password,
-            estado: objUser.estado,
-          },
-        },
-      ],
-    });
+    return this.http.post<MutatePayloadCreate>(url, objUser);
   }
 
   //Delete Users
@@ -128,7 +106,7 @@ export class AuthService {
 
   setUser(user: any, token: string) {
     user.token = token; // Añadir el token al objeto de usuario
-    this.userSubject.next(user);
+
     localStorage.setItem('user', JSON.stringify(user));
   }
 
@@ -166,7 +144,6 @@ export class AuthService {
     return !!this.getToken();
   }
   clearAuthData() {
-    this.userSubject.next(null);
     localStorage.removeItem('user');
     localStorage.removeItem(this.tokenKey);
   }

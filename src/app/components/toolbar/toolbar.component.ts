@@ -8,18 +8,14 @@ import {
 import { ConfirmationService, MessageService, MenuItem } from 'primeng/api';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-
-import { Subscription } from 'rxjs';
 import { ThemesComponent } from '../themes/themes.component';
 import { CommonModule } from '@angular/common';
 import { PRIMENG_MODULES } from './toolbar.import';
 import { LayoutService } from '../../services/gen/layout.service';
 import { AuthService } from '../../services/services_auth/auth.service';
 import {
-  MutateOperation,
-  MutatePayload,
+  MutatePayloadUpdate,
   UserAttributes,
-  viewDataUser,
 } from '../../models/users.interfaces';
 
 @Component({
@@ -138,7 +134,7 @@ export class ToolbarComponent implements OnInit {
       acceptLabel: 'Aceptar',
       rejectLabel: 'No',
       accept: () => {
-        const payload: MutatePayload = {
+        const payload: MutatePayloadUpdate = {
           mutate: [
             {
               operation: 'update', // Es una operación de actualización

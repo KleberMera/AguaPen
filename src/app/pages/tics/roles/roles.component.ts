@@ -11,7 +11,11 @@ import { PermisosService } from '../../../services/services_auth/permisos.servic
 import { forkJoin, map } from 'rxjs';
 import { AuthService } from '../../../services/services_auth/auth.service';
 import { ListService } from '../../../services/services_sg/list.service';
-import { User, usersAdmin } from '../../../models/users.interfaces';
+import {
+  MutatePayloadCreate,
+  User,
+  UserAttributes,
+} from '../../../models/users.interfaces';
 import { Permisos } from '../../../models/permisos.interfaces';
 
 @Component({
@@ -23,7 +27,7 @@ import { Permisos } from '../../../models/permisos.interfaces';
   providers: [MessageService, ConfirmationService],
 })
 export default class UsuariosRolesComponent implements OnInit {
-  users: usersAdmin[] = [];
+  users: UserAttributes[] = [];
   opciones_modulos: any[] = [];
   opciones_usuarios: any[] = [];
   selectionUser: any = null;
@@ -36,7 +40,7 @@ export default class UsuariosRolesComponent implements OnInit {
   visibleAsignacion: boolean = false;
   visibleActualizacion: boolean = false;
 
-  newUser: usersAdmin = {
+  newUser: UserAttributes = {
     id: 0,
     cedula: '',
     telefono: '',
@@ -120,7 +124,19 @@ export default class UsuariosRolesComponent implements OnInit {
   registerUser() {
     if (this.validateForm()) {
       this.loading = true;
-      this.authService.createUser(this.newUser).subscribe(
+
+      const payload: MutatePayloadCreate = {
+        mutate: [
+          {
+            operation: 'create',
+            attributes: {
+              ...this.newUser,
+            },
+          },
+        ],
+      };
+
+      this.authService.createUser(payload).subscribe(
         (response) => {
           this.messageService.add({
             severity: 'success',

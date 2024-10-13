@@ -9,7 +9,7 @@ export interface User {
   dt_usuario: string;
 }
 
-export interface usersAdmin {
+export interface UserAttributes {
   id: number;
   cedula: string;
   telefono: string;
@@ -21,32 +21,25 @@ export interface usersAdmin {
   estado: number;
 }
 
-export interface UserAttributes {
-  id: number;
-  cedula: string;
-  telefono: string;
-  nombres: string;
-  apellidos: string;
-  email: string;
-  usuario: string;
-  password: string;
-  estado: string;
-}
-
 export interface viewDataUser {
   data: UserAttributes;
 }
 
-// Define el tipo para las operaciones permitidas
-export type OperationType = 'create' | 'update';
-
-// Cambia el operation para que sea siempre 'create'
-export interface MutateOperation {
-  operation: 'update'; // operation es siempre 'create'
-  key: UserAttributes['id']; // El id de UserAttributes
-  attributes: Omit<UserAttributes, 'id'>; // Omitimos el id de los atributos
+export interface MutateOperationUpdate {
+  operation: 'update';
+  key: UserAttributes['id'];
+  attributes: Omit<UserAttributes, 'id'>;
 }
 
-export interface MutatePayload {
-  mutate: MutateOperation[];
+export interface MutateOperationCreate {
+  operation: 'create';
+  attributes: UserAttributes;
+}
+
+export interface MutatePayloadUpdate {
+  mutate: MutateOperationUpdate[];
+}
+
+export interface MutatePayloadCreate {
+  mutate: MutateOperationCreate[];
 }

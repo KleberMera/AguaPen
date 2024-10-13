@@ -66,6 +66,8 @@ export default class LoginComponent {
             });
             // Redirigir al usuario a la página de inicio
             this.router.navigate(['home']);
+            this.srvAuth.setUser(res.usuario, res.token);
+            this.srvAuth.setToken(res.token);
           } else {
             console.log(res);
 
