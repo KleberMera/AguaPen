@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment.development';
 import { Auth } from '../../models/auth.models';
@@ -10,6 +10,7 @@ import {
   MutatePayloadUpdate,
   viewDataUser,
 } from '../../models/users.interfaces';
+import { error } from 'pdf-lib';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,6 @@ import {
 export class AuthService {
   private environment = environment.aguapenApi;
   private tokenKey = 'auth_token';
-  private router = inject(Router);
   private readonly http = inject(HttpClient);
 
   login(objLogin: Auth) {
@@ -57,28 +57,7 @@ export class AuthService {
     const url = `${this.environment}user`;
     const token = this.getToken();
     const headers = { Authorization: `Bearer ${token}` };
-
-    return new Observable((observer) => {
-      try {
-        this.http.get<viewDataUser>(url, { headers }).subscribe({
-          next: (res) => {
-            observer.next(res);
-            observer.complete();
-          },
-          error: (err) => {
-            this.clearAuthData(); // Limpiar localStorage en caso de error
-            observer.error(err);
-
-            this.router.navigate(['/auth']);
-          },
-        });
-      } catch (error: any) {
-        this.clearAuthData(); // Limpiar localStorage en caso de excepción
-        observer.error(error);
-
-        this.router.navigate(['/auth']);
-      }
-    });
+    return this.http.get<viewDataUser>(url, { headers });
   }
 
   verifyCedula(cedula: string) {
@@ -112,28 +91,12 @@ export class AuthService {
 
   getToken(): any {
     const token = localStorage.getItem(this.tokenKey);
-    if (token) {
-      try {
-        const parsedToken = JSON.parse(token);
-        const storedUser = this.getStoredUser();
-
-        // Verificar si el token es válido y corresponde al usuario almacenado
-        if (
-          parsedToken &&
-          storedUser &&
-          storedUser.token === parsedToken &&
-          parsedToken !== '[object][object]'
-        ) {
-          return parsedToken;
-        }
-      } catch (error) {
-        console.error('Error parsing token:', error);
-      }
+    if (token && token !== '[object][object]') {
+      const parsedToken = JSON.parse(token);
+      return parsedToken;
     }
 
-    // Si el token es inválido, eliminar todo del localStorage y cerrar sesión
-    this.clearAuthData();
-    return null;
+    return this.clearAuthData();
   }
 
   setToken(tokenKey: string) {
@@ -146,6 +109,7 @@ export class AuthService {
   clearAuthData() {
     localStorage.removeItem('user');
     localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem('userPermissions');
   }
 
   logout(): Observable<any> {
@@ -154,9 +118,20 @@ export class AuthService {
     const headers = { Authorization: `Bearer ${token}` };
 
     return this.http.post(url, {}, { headers }).pipe(
-      tap(() => {
+      tap((res) => {
         this.clearAuthData();
+        console.log("Datos eliminados");
+        
       })
     );
+  }
+
+  tokenuser() {
+    const user = localStorage.getItem('user');
+    if (user) {
+      const parsedUser = JSON.parse(user);
+      const token = parsedUser.token;
+      return token;
+    }
   }
 }

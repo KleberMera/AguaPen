@@ -198,7 +198,7 @@ export class SidebarComponent implements OnInit {
   }
 
   signOut() {
-    this.srvAuth.clearAuthData();
+   // this.srvAuth.clearAuthData();
     this.router.navigate(['/auth']);
   }
 

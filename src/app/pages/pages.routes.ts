@@ -1,4 +1,4 @@
-import { permissionsGuard } from './../guards/permissions.guard';
+import { permissionsGuard } from '../core/guards/permissions.guard';
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [

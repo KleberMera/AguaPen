@@ -1,5 +1,5 @@
 import { Routes } from "@angular/router";
-import { authinverseGuard } from "../guards/authinverse.guard";
+import { authinverseGuard } from "../core/guards/authinverse.guard";
 
 export const routes : Routes = [
     {

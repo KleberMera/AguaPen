@@ -9,6 +9,10 @@ export interface User {
   dt_usuario: string;
 }
 
+export interface viewDataUser {
+  data: UserAttributes;
+}
+
 export interface UserAttributes {
   id: number;
   cedula: string;
@@ -19,10 +23,6 @@ export interface UserAttributes {
   usuario: string;
   password: string;
   estado: number;
-}
-
-export interface viewDataUser {
-  data: UserAttributes;
 }
 
 export interface MutateOperationUpdate {

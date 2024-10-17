@@ -76,12 +76,15 @@ export class ToolbarComponent implements OnInit {
 
   signOut() {
     this.srvAuth.logout().subscribe((res) => {
+      console.log(res);
+      
+      this.router.navigate(['/auth']);
       this.messageService.add({
         severity: 'info',
         summary: 'Confirmado',
         detail: res.message,
       });
-      this.router.navigate(['/auth']);
+     
     });
   }
 
