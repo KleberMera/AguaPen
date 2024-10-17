@@ -2,14 +2,13 @@
   <div class="login-container flex flex-column align-items-center">
     <img src="{{ imgUrl }}" alt="Logo" />
     <h2 class="font-semibold text-5xl text-primary title">Aguapen App</h2>
-    <form [formGroup]="formLogin()"
-    (ngSubmit)="onSubmit()" class="w-full">
+    <form [formGroup]="formLogin()" (ngSubmit)="onSubmit()" class="w-full">
       <div class="p-field">
         <label for="username">Usuario:</label>
         <input
           pInputText
           formControlName="usuario"
-              type="usuario"
+          type="usuario"
           required
           class="w-full"
         />
@@ -30,10 +29,9 @@
       <p-divider class="my-2"></p-divider>
       <div class="flex justify-content-center gap-2">
         <p-button
-        type="submit"
-            [disabled]="formLogin().invalid"
+          type="submit"
+          [disabled]="formLogin().invalid"
           label="Ingresar"
-          
           icon="pi pi-sign-in"
           [loading]="loading"
           class="p-button-primary w-full"
