@@ -66,7 +66,7 @@ export class ReporteService {
   // Método para obtener la información del usuario
   private dataUser(): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.authService.viewDataUser().subscribe(
+      this.authService.getLoginUser().subscribe(
         (res: any) => {
           if (res && res.data) {
             this.user = res.data;

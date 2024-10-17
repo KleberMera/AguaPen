@@ -4,7 +4,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment.development';
-import { Auth } from '../../models/auth.models';
+import { Auth, localStorageUser } from '../../models/auth.models';
 import {
   MutatePayloadCreate,
   MutatePayloadUpdate,
@@ -25,15 +25,22 @@ export class AuthService {
     return this.http.post<Auth>(url, objLogin);
   }
 
-  updateUser(objUser: MutatePayloadUpdate) {
-    const url = `${this.environment}users/mutate`;
-    return this.http.post<MutatePayloadUpdate>(url, objUser);
+  listUsers(): Observable<any> {
+    const url = `${this.environment}allusers`;
+    const token = this.getToken();
+    const headers = { Authorization: `Bearer ${token}` };
+    return this.http.get<any>(url, { headers });
   }
 
   // Registro de Usuarios Admin
   createUser(objUser: MutatePayloadCreate) {
     const url = `${this.environment}users/mutate`;
     return this.http.post<MutatePayloadCreate>(url, objUser);
+  }
+
+  updateUser(objUser: MutatePayloadUpdate) {
+    const url = `${this.environment}users/mutate`;
+    return this.http.post<MutatePayloadUpdate>(url, objUser);
   }
 
   //Delete Users
@@ -46,46 +53,20 @@ export class AuthService {
     });
   }
 
-  listUsers(): Observable<any> {
-    const url = `${this.environment}allusers`;
-    const token = this.getToken();
-    const headers = { Authorization: `Bearer ${token}` };
-    return this.http.get<any>(url, { headers });
-  }
-
-  viewDataUser(): Observable<viewDataUser> {
+  getLoginUser(): Observable<viewDataUser> {
     const url = `${this.environment}user`;
     const token = this.getToken();
     const headers = { Authorization: `Bearer ${token}` };
     return this.http.get<viewDataUser>(url, { headers });
   }
 
-  verifyCedula(cedula: string) {
-    const url = `${this.environment}verifycedula`;
-    return this.http.post(url, { cedula });
-  }
-
-  resetPasswordByCedula(
-    cedula: string,
-    newPassword: string,
-    newPasswordConfirmation: string
-  ) {
-    const url = `${this.environment}resetpassword`;
-    return this.http.post(url, {
-      cedula: cedula,
-      new_password: newPassword,
-      new_password_confirmation: newPasswordConfirmation,
-    });
-  }
-
-  public getStoredUser(): any {
+  public getStoredUser(): localStorageUser {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   }
 
-  setUser(user: any, token: string) {
+  setUser(user: localStorageUser, token: string) {
     user.token = token; // Añadir el token al objeto de usuario
-
     localStorage.setItem('user', JSON.stringify(user));
   }
 
@@ -120,18 +101,35 @@ export class AuthService {
     return this.http.post(url, {}, { headers }).pipe(
       tap((res) => {
         this.clearAuthData();
-        console.log("Datos eliminados");
-        
+        console.log('Datos eliminados');
       })
     );
   }
 
-  tokenuser() {
+  /*tokenuser() {
     const user = localStorage.getItem('user');
     if (user) {
       const parsedUser = JSON.parse(user);
       const token = parsedUser.token;
       return token;
     }
-  }
+  }*/
+
+  /*  resetPasswordByCedula(
+    cedula: string,
+    newPassword: string,
+    newPasswordConfirmation: string
+  ) {
+    const url = `${this.environment}resetpassword`;
+    return this.http.post(url, {
+      cedula: cedula,
+      new_password: newPassword,
+      new_password_confirmation: newPasswordConfirmation,
+    });
+  }*/
+
+  /*verifyCedula(cedula: string) {
+    const url = `${this.environment}verifycedula`;
+    return this.http.post(url, { cedula });
+  }*/
 }

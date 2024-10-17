@@ -89,7 +89,7 @@ export class ToolbarComponent implements OnInit {
   }
 
   dataUser() {
-    this.srvAuth.viewDataUser().subscribe((res) => {
+    this.srvAuth.getLoginUser().subscribe((res) => {
       if (res.data) {
         const { id, cedula, telefono, nombres, apellidos, email, usuario, estado, password} = res.data; 
         this.user = {id, cedula, telefono, nombres, apellidos, email, usuario, estado, password};

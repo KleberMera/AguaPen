@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import {
-  FormBuilder,
+  FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
@@ -27,74 +27,50 @@ const PRIMEMG_MODULES = [
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [PRIMEMG_MODULES, RouterLink, ReactiveFormsModule, FooterComponent],
+  imports: [PRIMEMG_MODULES, ReactiveFormsModule, FooterComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   providers: [MessageService],
 })
 export default class LoginComponent {
   imgUrl: string = 'assets/iconapp.webp';
-  loginForm: FormGroup;
   loading = false;
+  formLogin = signal<FormGroup>(
+    new FormGroup({
+      usuario: new FormControl('', [Validators.required]),
+      password: new FormControl('', [Validators.required]),
+    })
+  );
 
   private srvAuth = inject(AuthService);
   private srvMensajes = inject(MessageService);
   private router = inject(Router);
 
-  constructor(private fb: FormBuilder) {
-    this.loginForm = this.fb.group({
-      usuario: ['', Validators.required],
-      password: ['', Validators.required],
-    });
-  }
-
-  getLogin() {
+  async onSubmit() {
     this.loading = true;
-
-    if (this.loginForm.valid) {
-      const dataLogin = this.loginForm.value;
-
-      this.srvAuth.login(dataLogin).subscribe({
-        next: (res: any) => {
-          this.loading = false;
-
-          if (res && res.usuario) {
-            this.srvMensajes.add({
-              severity: 'success',
-              summary: 'Login',
-              detail: 'Inicio de sesión exitoso',
-            });
-            // Redirigir al usuario a la página de inicio
-            this.router.navigate(['home']);
-            this.srvAuth.setUser(res.usuario, res.token);
-            this.srvAuth.setToken(res.token);
-          } else {
-            console.log(res);
-
-            this.loading = false;
-            this.srvMensajes.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: res.message,
-            });
-          }
-        },
-        error: (err) => {
-          this.loading = false;
+    if (this.formLogin().valid) {
+      try {
+        const res: any = await this.srvAuth.login(this.formLogin().value).toPromise();
+        if (res.token) {
+          this.srvAuth.setUser(res.usuario, res.token);
+          this.srvAuth.setToken(res.token);
           this.srvMensajes.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Error al iniciar sesión',
+            severity: 'success',
+            summary: 'Login',
+            detail: 'Inicio de sesión exitoso',
           });
-        },
-      });
-    } else {
-      this.loading = false;
-      this.srvMensajes.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Usuario o clave no introducido',
-      });
+          this.loading = false;
+          //Ir al dashboard
+          this.router.navigate(['/home']);
+        }
+      } catch (err: any) {
+        this.loading = false;
+        this.srvMensajes.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al iniciar sesión',
+        });
+      }
     }
   }
 }

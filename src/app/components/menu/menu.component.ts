@@ -41,7 +41,7 @@ export class MenuComponent implements OnInit {
 
   dataUser() {
     this.loading = true;
-    this.srvAuth.viewDataUser().subscribe((res: any) => {
+    this.srvAuth.getLoginUser().subscribe((res: any) => {
       if (res) {
         this.user_id = res.data.id;
 

@@ -41,7 +41,7 @@ export default class AreasComponent {
 
   async getUserRole() {
     try {
-      const res = await this.srvAuth.viewDataUser().toPromise();
+      const res = await this.srvAuth.getLoginUser().toPromise();
 
       const user_id = res?.data.id;
       console.log(user_id);

@@ -3,13 +3,9 @@ export interface Auth {
   password: string;
 }
 
-export interface Root {
-  usuario: Usuario;
-  token: string;
-}
-
-export interface Usuario {
+export interface localStorageUser {
   id: number;
   nombres: string;
   apellidos: string;
+  token: string;
 }

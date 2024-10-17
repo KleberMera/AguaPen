@@ -28,7 +28,7 @@ export class PrintService {
   // Método para obtener datos del usuario y devolver una promesa
   private dataUser(): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.authService.viewDataUser().subscribe(
+      this.authService.getLoginUser().subscribe(
         (res: any) => {
           if (res) {
             this.user = res.data;

@@ -55,7 +55,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
 
   async getUserRole() {
     try {
-      const res = await this.srvAuth.viewDataUser().toPromise();
+      const res = await this.srvAuth.getLoginUser().toPromise();
 
       const user_id = res?.data.id;
 
