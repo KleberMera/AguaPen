@@ -13,14 +13,14 @@
   </div>
 
   @if (per_editar === 1) {
-    <div class=" ">
-      <p-button
-        label="Nuevo"
-        icon="pi pi-plus"
-        severity="success"
-        (click)="openAddProductDialog()"
-      />
-    </div>
+  <div class=" ">
+    <p-button
+      label="Nuevo"
+      icon="pi pi-plus"
+      severity="success"
+      (click)="openAddProductDialog()"
+    />
+  </div>
   }
 </div>
 
@@ -35,19 +35,14 @@
   ></p-progressSpinner>
 </div>
 } @else { &nbsp;
-<div class="">
-  <div>
-    <app-table 
-      [data]="filterProducts(searchTerm)" 
-      [rowsPerPageOptions]="[10, 20, 30, 40]"
-      [columns]="columnsProducts"
-      [editable]="per_editar === 1"
-      (onEdit)="openEditProductDialog($event)"
-      (onDelete)="deleteProduct($event)"
-    ></app-table>
-  </div>
-  
-</div>
+<app-table
+  [data]="filterProducts(searchTerm)"
+  [rowsPerPageOptions]="[10, 20, 30, 40]"
+  [columns]="columnsProducts"
+  [editable]="per_editar === 1"
+  (onEdit)="openEditProductDialog($event)"
+  (onDelete)="deleteProduct($event)"
+></app-table>
 }
 
 <p-dialog
@@ -58,88 +53,109 @@
 >
   <ng-template pTemplate="header">
     <span class="font-semibold">
-      {{ selectedProduct?.id === 0 ? "Agregar Producto" : "Editar Producto" }}
+      {{
+        productForm().get("id")?.value === null
+          ? "Agregar Producto"
+          : "Editar Producto"
+      }}
     </span>
   </ng-template>
-  @if (selectedProduct) {
-  <div>
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="estado_producto" class="font-semibold w-6rem">Estado:</label>
-      <p-inputSwitch [(ngModel)]="estadoBoolean"></p-inputSwitch>
-    </div>
-    
-    
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="codigo_producto" class="font-semibold w-6rem">Código:</label>
-      <input
-        id="codigo_producto"
-        pInputText
-        class="flex-auto"
-        [(ngModel)]="selectedProduct.codigo_producto"
-        disabled
-      />
+
+  <form [formGroup]="productForm()">
+    <div>
+      <div class="flex align-items-center gap-3 mb-3">
+        <label for="estado_producto" class="font-semibold w-6rem"
+          >Estado:</label
+        >
+        <p-tag
+          [severity]="
+            productForm().get('estado_producto')?.value ? 'success' : 'danger'
+          "
+          (click)="toggleEstado()"
+        >
+          {{
+            productForm().get("estado_producto")?.value ? "Activo" : "Inactivo"
+          }}
+        </p-tag>
+      </div>
+
+      <div class="flex align-items-center gap-3 mb-3">
+        <label for="codigo_producto" class="font-semibold w-6rem"
+          >Código:</label
+        >
+        <input
+          id="codigo_producto"
+          pInputText
+          class="flex-auto"
+          formControlName="codigo_producto"
+        />
+      </div>
+
+      <div class="flex align-items-center gap-3 mb-3">
+        <label for="nombre_producto" class="font-semibold w-6rem"
+          >Nombre del Producto:</label
+        >
+        <input
+          id="nombre_producto"
+          pInputText
+          class="flex-auto"
+          formControlName="nombre_producto"
+        />
+        
+      </div>
+
+      <div class="flex align-items-center gap-3 mb-3">
+        <label for="fecha_producto" class="font-semibold w-6rem">Fecha:</label>
+        <input
+          id="fecha_producto"
+          type="date"
+          pInputText
+          class="flex-auto"
+          formControlName="fecha_producto"
+        />
+      </div>
+
+      <div class="flex align-items-center gap-3 mb-3">
+        <label for="hora_producto" class="font-semibold w-6rem">Hora:</label>
+        <input
+          id="hora_producto"
+          type="time"
+          pInputText
+          class="flex-auto"
+          formControlName="hora_producto"
+        />
+      </div>
+
+      <div class="flex align-items-center gap-3 mb-3">
+        <label for="stock_producto" class="font-semibold w-6rem">Stock:</label>
+        <input
+          id="stock_producto"
+          pInputText
+          type="number"
+          class="flex-auto"
+          formControlName="stock_producto"
+        />
+      </div>
     </div>
 
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="nombre_producto" class="font-semibold w-6rem"
-        >Nombre del Producto:
-      </label>
-      <input
-        id="nombre_producto"
-        pInputText
-        class="flex-auto"
-        [(ngModel)]="selectedProduct.nombre_producto"
-      />
+    <div class="p-dialog-footer">
+      <button
+        pButton
+        label="Cancelar"
+        class="p-button-text"
+        (click)="dialogVisible = false"
+        [disabled]="loadingSave"
+      ></button>
+      <button
+        pButton
+        label="Guardar"
+        class="p-button-primary"
+        (click)="saveProduct()"
+        [loading]="loadingSave"
+        [disabled]="productForm().invalid || loadingSave"
+      ></button>
     </div>
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="fecha_producto" class="font-semibold w-6rem">Fecha: </label>
-      <input
-        id="fecha_producto"
-        type="date"
-        pInputText
-        class="flex-auto"
-        [(ngModel)]="selectedProduct.fecha_producto"
-      />
-    </div>
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="hora_producto" class="font-semibold w-6rem">Hora:</label>
-      <input
-        id="hora_producto"
-        type="time"
-        pInputText
-        class="flex-auto"
-        [(ngModel)]="selectedProduct.hora_producto"
-      />
-    </div>
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="stock_producto" class="font-semibold w-6rem">Stock: </label>
-      <input
-        id="stock_producto"
-        pInputText
-        type="number"
-        class="flex-auto"
-        [(ngModel)]="selectedProduct.stock_producto"
-      />
-    </div>
-  </div>
-
-  <div class="p-dialog-footer">
-    <button
-      pButton
-      label="Cancelar"
-      class="p-button-text"
-      (click)="dialogVisible = false"
-      [disabled]="loadingSave"
-    ></button>
-    <button
-      pButton
-      label="Guardar"
-      class="p-button-primary"
-      (click)="saveProduct()"
-      [loading]="loadingSave"
-    ></button>
-  </div>
-  }
+  </form>
 </p-dialog>
 
 <p-toast

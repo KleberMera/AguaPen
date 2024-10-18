@@ -1,43 +1,37 @@
 // Imports for Angular
-import { Component, OnInit, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { formatDate } from '@angular/common';
-
-// Services and interfaces for the app
+import { Component, inject, signal } from '@angular/core';
+import {FormGroup,FormsModule, ReactiveFormsModule,
+} from '@angular/forms';
+import { CommonModule, formatDate } from '@angular/common';
 import { RegisterService } from '../../../services/services_sg/register.service';
-
 import { ListService } from '../../../services/services_sg/list.service';
-
-// Imports for PrimeNG
-import { PRIMENG_MODULES } from './productos.import';
-// Providers for PrimeNG
+import { PRIMENG_MODULES, ProductForm } from './productos.import';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { columnsProducts, Product } from '../../../models/products.interfaces';
 import { DeleteService } from '../../../services/services_sg/delete.service';
-import { AuthService } from '../../../services/services_auth/auth.service';
 import { PermisosService } from '../../../services/services_auth/permisos.service';
 import { TableComponent } from '../../../components/data/table/table.component';
-import { lsUserPermissions } from '../../../models/auth.models';
 
 @Component({
   selector: 'app-productos',
   standalone: true,
-  imports: [FormsModule, PRIMENG_MODULES, TableComponent],
+  imports: [FormsModule,PRIMENG_MODULES,TableComponent,ReactiveFormsModule,CommonModule],
   templateUrl: './productos.component.html',
   styleUrl: './productos.component.scss',
   providers: [MessageService, ConfirmationService],
 })
-export default class ProductosComponent implements OnInit {
+export default class ProductosComponent {
+  productForm = signal<FormGroup>(ProductForm());
   columnsProducts = columnsProducts;
   // List of products
   listProduct: Product[] = [];
   searchTerm: string = '';
-  selectedProduct: Product | null = null;
+  selectedProduct!: Product;
   // Loading state
   loading: boolean = true;
   loadingSave: boolean = false;
   dialogVisible: boolean = false;
-  per_editar: number = 0;
+  per_editar!: number;
 
   // Services injected
   private srvList = inject(ListService);
@@ -45,42 +39,30 @@ export default class ProductosComponent implements OnInit {
   private srvMensajes = inject(MessageService);
   private srvConfirm = inject(ConfirmationService);
   private srvDelete = inject(DeleteService);
-  private srvAuth = inject(AuthService);
   private srvPermisos = inject(PermisosService);
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getUserRole();
   }
 
   async getUserRole() {
     try {
-      const userPermissions = this.srvPermisos.getLsUserPermissions();
-      const data = userPermissions;
-      //Recorrer la data
-      data.forEach((permiso: lsUserPermissions) => {
-        if (permiso.modulo_id === 1 && permiso.opcion_label === 'Productos') {
-          this.per_editar = permiso.per_editar;
-        }
-      });
-
+      const per_editar = this.srvPermisos.getPermissionEditar('Productos');
+      this.per_editar = per_editar;
       await this.listProductos();
-    } catch (error) {
-      this.srvMensajes.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Ocurrió un error al obtener el rol del usuario.',
-      });
+    } catch (err: any) {
+      console.error(err.error);
     }
   }
 
-  private async listProductos() {
+  async listProductos() {
     this.loading = true;
     try {
       const res = await this.srvList.getlistProducts().toPromise();
       this.listProduct = res.data;
+      this.loading = false;
     } catch (error) {
       this.handleError(error, 'Error al cargar productos:');
-    } finally {
       this.loading = false;
     }
   }
@@ -94,61 +76,39 @@ export default class ProductosComponent implements OnInit {
     );
   }
 
-  openAddProductDialog() {
-    this.selectedProduct = this.createNewProduct();
-    this.dialogVisible = true;
-  }
-
-  openEditProductDialog(product: Product) {
-    this.selectedProduct = { ...product };
-    this.selectedProduct.hora_producto = formatDate(
-      new Date(),
-      'HH:mm',
-      'en-US'
-    );
-    this.dialogVisible = true;
-  }
-
-  get estadoBoolean(): boolean {
-    return this.selectedProduct
-      ? this.selectedProduct.estado_producto === 1
-      : false;
-  }
-
-  set estadoBoolean(value: boolean) {
-    if (this.selectedProduct) {
-      this.selectedProduct.estado_producto = value ? 1 : 0;
-    }
-  }
-
-  private createNewProduct(): Product {
-    // Obtener el último producto ordenando por el campo codigo_producto
+  getNextProductCode(): string {
     const lastProduct = this.listProduct.sort((a, b) =>
       a.codigo_producto > b.codigo_producto ? -1 : 1
     )[0];
 
-    // Determinar el último código de producto y calcular el siguiente código
     const lastCode = lastProduct ? lastProduct.codigo_producto : '000';
-    const nextCode = (parseInt(lastCode, 10) + 1).toString().padStart(3, '0');
-
-    return {
-      id: 0,
-      codigo_producto: nextCode, // Asignar el siguiente código
-      nombre_producto: '',
-      fecha_producto: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
-      hora_producto: formatDate(new Date(), 'HH:mm', 'en-US'),
-      stock_producto: 0,
-      cantidad: 0,
-      estado_producto: 0,
-    };
+    return (parseInt(lastCode, 10) + 1).toString().padStart(3, '0');
   }
 
-  private async addProduct() {
-    if (!this.validateProduct()) return;
+  openAddProductDialog() {
+    this.productForm().reset();
+    this.productForm().get('codigo_producto')?.enable();
+    const nextCode = this.getNextProductCode();
+    this.productForm().patchValue({
+      codigo_producto: nextCode,
+      fecha_producto: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
+      hora_producto: formatDate(new Date(), 'HH:mm', 'en-US'),
+      estado_producto: 1,
+    });
+    this.dialogVisible = true;
+  }
 
+  openEditProductDialog(product: Product) {
+    this.productForm().patchValue({
+      ...product, hora_producto: formatDate(new Date(), 'HH:mm', 'en-US'), // Asignar hora actual
+    });
+    this.dialogVisible = true;
+  }
+
+  async addProduct() {
     try {
       const res = await this.srvReg
-        .postRegisterProducts(this.selectedProduct!)
+        .postRegisterProducts(this.productForm().value)
         .toPromise();
       this.handleResponse(res, 'Agregado');
     } catch (error) {
@@ -156,12 +116,9 @@ export default class ProductosComponent implements OnInit {
     }
   }
 
-  private async editProduct() {
-    if (!this.validateProduct()) return;
+  async editProduct() {
     try {
-      const res = await this.srvReg
-        .postEditProducts(this.selectedProduct!)
-        .toPromise();
+      const res = await this.srvReg.postEditProducts(this.productForm().value).toPromise();
       this.handleResponse(res, 'Editado');
     } catch (error) {
       this.handleError(error, 'Error al editar producto');
@@ -169,18 +126,13 @@ export default class ProductosComponent implements OnInit {
   }
 
   deleteProduct(product: Product) {
-    this.srvConfirm.confirm({
-      message: '¿Está seguro de eliminar el producto?',
-      header: 'Confirmación',
+    this.srvConfirm.confirm({ message: '¿Está seguro de eliminar el producto?', header: 'Confirmación',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Eliminar',
       accept: async () => {
         try {
-          const res = await this.srvDelete
-            .requestdeleteProducts(product.id)
-            .toPromise();
+          const res = await this.srvDelete.requestdeleteProducts(product.id).toPromise();
           this.handleResponse(res, 'Eliminado');
-
           await this.listProductos();
         } catch (error) {
           this.handleError(error, 'Error al eliminar producto');
@@ -190,23 +142,22 @@ export default class ProductosComponent implements OnInit {
   }
 
   async saveProduct() {
-    if (!this.selectedProduct) return;
-
-    this.loadingSave = true;
-    try {
-      this.selectedProduct.id === 0
-        ? await this.addProduct()
-        : await this.editProduct();
-      this.dialogVisible = false;
-      await this.listProductos();
-    } catch (error) {
-      this.handleError(error, 'Error al guardar el producto');
-    } finally {
-      this.loadingSave = false;
-    }
+    if(!this.productForm().valid) return;
+     this.loadingSave = true;
+     try {
+       this.productForm().get('id')?.value === null
+         ? await this.addProduct()
+         : await this.editProduct();
+       this.dialogVisible = false;
+       await this.listProductos();
+     } catch (error) {
+       this.handleError(error, 'Error al guardar el producto');
+     } finally {
+       this.loadingSave = false;
+     }
   }
 
-  private handleResponse(res: any, successMessage: string) {
+  handleResponse(res: any, successMessage: string) {
     if (
       (res.created && res.created.length > 0) ||
       (res.updated && res.updated.length > 0) ||
@@ -220,40 +171,7 @@ export default class ProductosComponent implements OnInit {
     }
   }
 
-  private validateProduct(): boolean {
-    if (this.selectedProduct!.stock_producto < 0) {
-      this.srvMensajes.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'El stock debe ser mayor o igual a 0',
-      });
-      return false;
-    }
-
-    if (this.selectedProduct!.nombre_producto.trim() === '') {
-      this.srvMensajes.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'El nombre del producto es obligatorio',
-      });
-      return false;
-    }
-
-    // La lógica del estado ahora depende del estado del switch
-    if (!this.estadoBoolean) {
-      this.selectedProduct!.estado_producto = 0;
-    } else if (this.selectedProduct!.stock_producto > 0) {
-      this.selectedProduct!.estado_producto = 1;
-    } else if (this.selectedProduct!.stock_producto <= 0) {
-      this.selectedProduct!.estado_producto = 0;
-    } else if (this.estadoBoolean) {
-      this.selectedProduct!.estado_producto = 1;
-    }
-
-    return true;
-  }
-
-  private handleError(error: any, message: string): void {
+  handleError(error: any, message: string): void {
     console.error(message, error);
     this.srvMensajes.add({
       severity: 'error',
@@ -263,4 +181,12 @@ export default class ProductosComponent implements OnInit {
     this.loading = false;
     this.loadingSave = false;
   }
+
+  toggleEstado() {
+    const currentValue = this.productForm().get('estado_producto')?.value;
+    this.productForm().patchValue({
+      estado_producto: currentValue ? 0 : 1, // Cambia de 1 a 0 o de 0 a 1
+    });
+  }
+  
 }

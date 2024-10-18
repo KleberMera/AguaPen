@@ -13,12 +13,13 @@ import { Column } from '../../../models/auth.models';
 export class TableComponent {
   @Input() data: any[] = [];
   @Input() columns: Column[] = [];
-  @Input() editable: boolean = false;
+  @Input() editable!: boolean;
   @Input() rowsPerPageOptions: number[] = [];
-  isActive!: boolean;
+  
 
   @Output() onEdit = new EventEmitter<any>();
   @Output() onDelete = new EventEmitter<any>();
+  isActive!: boolean;
 
   editItem(item: any) {
     this.onEdit.emit(item);

@@ -29,9 +29,15 @@ export class PermisosService {
   }
 
   getLsUserPermissions() {
-    const userPermissions = localStorage.getItem(this.permissions);
-    return userPermissions ? JSON.parse(userPermissions) : [];
+    return JSON.parse(localStorage.getItem('permissions') || '[]');
   }
+  
+  getPermissionEditar(modulo_label: string){
+    const userPermissions = JSON.parse(localStorage.getItem(this.permissions) || '[]');
+    const permiso = userPermissions.find((permiso:any) => permiso.modulo_id === 1 && permiso.opcion_label === modulo_label);
+    return permiso ? permiso.per_editar : false;
+  }
+  
 
   getListModulos() {
     const url = `${this.environment}allmodulos`;

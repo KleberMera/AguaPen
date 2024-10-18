@@ -15,7 +15,7 @@ import { PasswordModule } from 'primeng/password';
 import { DividerModule } from 'primeng/divider';
 import { AuthService } from '../../services/services_auth/auth.service';
 import { FooterComponent } from '../../components/layout/footer/footer.component';
-
+import { Auth } from '../../models/auth.models';
 
 const PRIMEMG_MODULES = [
   ToastModule,
@@ -51,7 +51,8 @@ export default class LoginComponent {
     this.loading = true;
     if (this.formLogin().valid) {
       try {
-        const res: any = await this.srvAuth.login(this.formLogin().value).toPromise();
+        const loginData: Auth = this.formLogin().value;
+        const res: any = await this.srvAuth.login(loginData).toPromise();
         if (res.token) {
           this.srvAuth.setUser(res.usuario, res.token);
           this.srvAuth.setToken(res.token);
