@@ -1,9 +1,16 @@
+export interface Column {
+  field: string;
+  header: string;
+  sortable?: boolean;
+}
+
+
 export interface Auth {
   usuario: string;
   password: string;
 }
 
-export interface localStorageUser {
+export interface lsUser {
   id: number;
   nombres: string;
   apellidos: string;
@@ -11,7 +18,7 @@ export interface localStorageUser {
 }
 
 
-export interface LsUserPermissions {
+export interface lsUserPermissions {
   nombre_modulo: string;
   modulo_id: number;
   nombre_menu: string;

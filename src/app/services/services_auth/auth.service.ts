@@ -4,7 +4,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment.development';
-import { Auth, localStorageUser } from '../../models/auth.models';
+import { Auth, lsUser } from '../../models/auth.models';
 import {
   MutatePayloadCreate,
   MutatePayloadUpdate,
@@ -60,12 +60,12 @@ export class AuthService {
     return this.http.get<viewDataUser>(url, { headers });
   }
 
-  public getStoredUser(): localStorageUser {
+  public getStoredUser(): lsUser {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   }
 
-  setUser(user: localStorageUser, token: string) {
+  setUser(user: lsUser, token: string) {
     user.token = token; // Añadir el token al objeto de usuario
     localStorage.setItem('user', JSON.stringify(user));
   }

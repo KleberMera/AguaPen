@@ -8,15 +8,15 @@ import {
 import { ConfirmationService, MessageService, MenuItem } from 'primeng/api';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ThemesComponent } from '../themes/themes.component';
+
 import { CommonModule } from '@angular/common';
 import { PRIMENG_MODULES } from './toolbar.import';
-import { LayoutService } from '../../services/gen/layout.service';
-import { AuthService } from '../../services/services_auth/auth.service';
-import {
-  MutatePayloadUpdate,
-  UserAttributes,
-} from '../../models/users.interfaces';
+
+
+import { ThemesComponent } from '../../themes/themes.component';
+import { AuthService } from '../../../services/services_auth/auth.service';
+import { LayoutService } from '../../../services/gen/layout.service';
+import { MutatePayloadUpdate, UserAttributes } from '../../../models/users.interfaces';
 
 @Component({
   selector: 'app-toolbar',
@@ -90,7 +90,7 @@ export class ToolbarComponent implements OnInit {
 
   dataUser() {
     this.srvAuth.getLoginUser().subscribe((res) => {
-      if (res.data) {
+      if (res.data) {  
         const { id, cedula, telefono, nombres, apellidos, email, usuario, estado, password} = res.data; 
         this.user = {id, cedula, telefono, nombres, apellidos, email, usuario, estado, password};
         this.loading = false;

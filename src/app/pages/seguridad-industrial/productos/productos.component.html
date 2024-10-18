@@ -36,71 +36,17 @@
 </div>
 } @else { &nbsp;
 <div class="">
-  <p-table
-    [value]="filterProducts(searchTerm)"
-    [paginator]="true"
-    [rows]="20"
-    [rowsPerPageOptions]="[20, 30, 40, 50]"
-    [scrollable]="true"
-    [resizableColumns]="true"
-  >
-    >
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Codigo</th>
-        <th pSortableColumn="nombre_producto">
-          Nombre del Producto
-          <p-sortIcon field="nombre_producto"></p-sortIcon>
-        </th>
-        <th pSortableColumn="stock_producto">
-          Stock
-          <p-sortIcon field="stock_producto"></p-sortIcon>
-        </th>
-        <th>Estado</th>
-       @if (per_editar === 1) {
-        <th>Acción</th>
-       }
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-product>
-      <tr>
-        <td>{{ product.codigo_producto }}</td>
-        <td>{{ product.nombre_producto }}</td>
-        <td>{{ product.stock_producto }}</td>
-        @if (product.estado_producto === 1) {
-        <td>
-          <p-tag value="Activo" severity="success"></p-tag>
-        </td>
-        } @else {
-        <td>
-          <p-tag value="Inactivo" severity="danger"></p-tag>
-        </td>
-        }
-      @if (per_editar === 1) {
-        <td>
-          <div class="flex md:flex-row">
-            <div>
-              <p-button
-                icon="pi pi-pencil"
-                class="mr-2"
-                [rounded]="true"
-                (click)="openEditProductDialog(product)"
-              />
-            </div>
-            <div>
-              <p-button
-                icon="pi pi-trash"
-                [rounded]="true"
-                severity="danger"
-                (click)="deleteProduct(product)"
-              />
-            </div>
-          </div>
-        </td>
-      }
-      </tr>
-    </ng-template>
-  </p-table>
+  <div>
+    <app-table 
+      [data]="filterProducts(searchTerm)" 
+      [rowsPerPageOptions]="[10, 20, 30, 40]"
+      [columns]="columnsProducts"
+      [editable]="per_editar === 1"
+      (onEdit)="openEditProductDialog($event)"
+      (onDelete)="deleteProduct($event)"
+    ></app-table>
+  </div>
+  
 </div>
 }
 

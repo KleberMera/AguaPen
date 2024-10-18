@@ -12,20 +12,23 @@ import { ListService } from '../../../services/services_sg/list.service';
 import { PRIMENG_MODULES } from './productos.import';
 // Providers for PrimeNG
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Product } from '../../../models/products.interfaces';
+import { columnsProducts, Product } from '../../../models/products.interfaces';
 import { DeleteService } from '../../../services/services_sg/delete.service';
 import { AuthService } from '../../../services/services_auth/auth.service';
 import { PermisosService } from '../../../services/services_auth/permisos.service';
+import { TableComponent } from '../../../components/data/table/table.component';
+import { lsUserPermissions } from '../../../models/auth.models';
 
 @Component({
   selector: 'app-productos',
   standalone: true,
-  imports: [FormsModule, PRIMENG_MODULES],
+  imports: [FormsModule, PRIMENG_MODULES, TableComponent],
   templateUrl: './productos.component.html',
   styleUrl: './productos.component.scss',
   providers: [MessageService, ConfirmationService],
 })
 export default class ProductosComponent implements OnInit {
+  columnsProducts = columnsProducts;
   // List of products
   listProduct: Product[] = [];
   searchTerm: string = '';
@@ -46,34 +49,19 @@ export default class ProductosComponent implements OnInit {
   private srvPermisos = inject(PermisosService);
 
   ngOnInit(): void {
-     this.getUserRole();
-    
+    this.getUserRole();
   }
 
   async getUserRole() {
     try {
-      const res = await this.srvAuth.getLoginUser().toPromise();
-
-      const user_id = res?.data.id;
-
-      if (user_id) {
-        const permisos = await this.srvPermisos
-          .getListPermisosPorUsuario(user_id)
-          .toPromise();
-        const data = permisos.data;
-
-        //Recorrer la data
-        data.forEach((permiso: any) => {
-          if (
-            permiso.modulo_id === 1 &&
-            permiso.opcion_label === 'Productos'
-          ) {
-            this.per_editar = permiso.per_editar;
-         
-            
-          }
-        });
-      }
+      const userPermissions = this.srvPermisos.getLsUserPermissions();
+      const data = userPermissions;
+      //Recorrer la data
+      data.forEach((permiso: lsUserPermissions) => {
+        if (permiso.modulo_id === 1 && permiso.opcion_label === 'Productos') {
+          this.per_editar = permiso.per_editar;
+        }
+      });
 
       await this.listProductos();
     } catch (error) {
@@ -90,8 +78,6 @@ export default class ProductosComponent implements OnInit {
     try {
       const res = await this.srvList.getlistProducts().toPromise();
       this.listProduct = res.data;
-     
-      
     } catch (error) {
       this.handleError(error, 'Error al cargar productos:');
     } finally {
@@ -101,9 +87,10 @@ export default class ProductosComponent implements OnInit {
 
   filterProducts(query: string): Product[] {
     const lowerQuery = query.toLowerCase();
-    return this.listProduct.filter((product) =>
-      product.nombre_producto.toLowerCase().includes(lowerQuery)
-      || product.codigo_producto.toLowerCase().includes(lowerQuery)
+    return this.listProduct.filter(
+      (product) =>
+        product.nombre_producto.toLowerCase().includes(lowerQuery) ||
+        product.codigo_producto.toLowerCase().includes(lowerQuery)
     );
   }
 
@@ -123,7 +110,9 @@ export default class ProductosComponent implements OnInit {
   }
 
   get estadoBoolean(): boolean {
-    return this.selectedProduct ? this.selectedProduct.estado_producto === 1 : false;
+    return this.selectedProduct
+      ? this.selectedProduct.estado_producto === 1
+      : false;
   }
 
   set estadoBoolean(value: boolean) {
@@ -137,11 +126,11 @@ export default class ProductosComponent implements OnInit {
     const lastProduct = this.listProduct.sort((a, b) =>
       a.codigo_producto > b.codigo_producto ? -1 : 1
     )[0];
-  
+
     // Determinar el último código de producto y calcular el siguiente código
     const lastCode = lastProduct ? lastProduct.codigo_producto : '000';
     const nextCode = (parseInt(lastCode, 10) + 1).toString().padStart(3, '0');
-  
+
     return {
       id: 0,
       codigo_producto: nextCode, // Asignar el siguiente código
@@ -153,13 +142,10 @@ export default class ProductosComponent implements OnInit {
       estado_producto: 0,
     };
   }
-  
-  
 
   private async addProduct() {
     if (!this.validateProduct()) return;
-  
-   
+
     try {
       const res = await this.srvReg
         .postRegisterProducts(this.selectedProduct!)
@@ -169,7 +155,6 @@ export default class ProductosComponent implements OnInit {
       this.handleError(error, 'Error al agregar producto');
     }
   }
-  
 
   private async editProduct() {
     if (!this.validateProduct()) return;
@@ -254,16 +239,16 @@ export default class ProductosComponent implements OnInit {
       return false;
     }
 
-        // La lógica del estado ahora depende del estado del switch
-  if (!this.estadoBoolean) {
-    this.selectedProduct!.estado_producto = 0;
-  } else if (this.selectedProduct!.stock_producto > 0) {
-    this.selectedProduct!.estado_producto = 1;
-  } else if (this.selectedProduct!.stock_producto <= 0) {
-    this.selectedProduct!.estado_producto = 0;
-  } else if (this.estadoBoolean) {
-    this.selectedProduct!.estado_producto = 1;
-  }
+    // La lógica del estado ahora depende del estado del switch
+    if (!this.estadoBoolean) {
+      this.selectedProduct!.estado_producto = 0;
+    } else if (this.selectedProduct!.stock_producto > 0) {
+      this.selectedProduct!.estado_producto = 1;
+    } else if (this.selectedProduct!.stock_producto <= 0) {
+      this.selectedProduct!.estado_producto = 0;
+    } else if (this.estadoBoolean) {
+      this.selectedProduct!.estado_producto = 1;
+    }
 
     return true;
   }

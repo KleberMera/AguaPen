@@ -4,15 +4,14 @@ import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PermisosService {
-
   private environment = environment.aguapenApi;
 
   //injector
   private http = inject(HttpClient);
-
+  private permissions = 'userPermissions';
 
   //Listado de Permisos
   getListPermisos() {
@@ -20,22 +19,24 @@ export class PermisosService {
     return this.http.get<any>(url);
   }
 
-
   getListPermisosPorUsuario(userId: number) {
     const url = `${this.environment}permisosmenus/${userId}`;
     return this.http.get<any>(url).pipe(
       tap((res: any) => {
-        localStorage.setItem('userPermissions', JSON.stringify(res.data));
+        localStorage.setItem(this.permissions, JSON.stringify(res.data));
       })
     );
   }
 
+  getLsUserPermissions() {
+    const userPermissions = localStorage.getItem(this.permissions);
+    return userPermissions ? JSON.parse(userPermissions) : [];
+  }
 
   getListModulos() {
     const url = `${this.environment}allmodulos`;
     return this.http.get<any>(url);
   }
-
 
   postEditPermisos(objPermiso: any) {
     const url = `${this.environment}permisos/mutate`;
@@ -66,7 +67,6 @@ export class PermisosService {
             opcion_id: objPermiso.opcion_id,
             per_editar: objPermiso.per_editar,
             per_ver: objPermiso.per_ver,
-           
           },
         },
       ],
@@ -82,6 +82,4 @@ export class PermisosService {
       },
     });
   }
-
-
 }

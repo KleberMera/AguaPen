@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { LayoutService } from '../../services/gen/layout.service';
+
 import { AvatarModule } from 'primeng/avatar';
+import { LayoutService } from '../../../services/gen/layout.service';
 
 @Component({
   selector: 'app-footer',

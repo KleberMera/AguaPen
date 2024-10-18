@@ -8,17 +8,18 @@ import { SplitterModule } from 'primeng/splitter';
 
 
 import { filter, Subscription } from 'rxjs';
-import { ToolbarComponent } from '../../components/toolbar/toolbar.component';
+
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
-import { FooterComponent } from '../../components/footer/footer.component';
+
 import { LayoutService } from '../../services/gen/layout.service';
+import { FooterComponent } from '../../components/layout/footer/footer.component';
+import { ToolbarComponent } from '../../components/layout/toolbar/toolbar.component';
 
 
 const PRIMEMG_MODULES = [SplitterModule];
 const COMPONENTS = [
   ToolbarComponent,
   SidebarComponent,
-  ToolbarComponent,
   FooterComponent,
 ];
 
