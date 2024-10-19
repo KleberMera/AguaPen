@@ -1,0 +1,33 @@
+<!-- reusable-dialog.component.html -->
+<p-dialog
+  [(visible)]="dialogVisible"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: dialogWidth }"
+>
+  <ng-template pTemplate="header">
+    <span class="font-semibold">{{ dialogTitle }}</span>
+  </ng-template>
+
+  <form [formGroup]="formGroup">
+    <ng-content></ng-content> <!-- Placeholders for dynamic form fields -->
+  </form>
+
+  <div class="p-dialog-footer">
+    <button
+      pButton
+      label="Cancelar"
+      class="p-button-text"
+      (click)="dialogVisible = false"
+      [disabled]="loading"
+    ></button>
+    <button
+      pButton
+      label="Guardar"
+      class="p-button-primary"
+      (click)="onSave()"
+      [loading]="loading"
+      [disabled]="formGroup.invalid || loading"
+    ></button>
+  </div>
+</p-dialog>

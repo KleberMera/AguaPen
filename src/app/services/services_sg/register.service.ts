@@ -1,56 +1,25 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
+import { PayloadProductCreate, PayloadProductUpdate } from '../../models/products.interfaces';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RegisterService {
   private environment = environment.aguapenApi;
-
-  //injector
   private http = inject(HttpClient);
 
-  constructor() {}
-
   // Registro de Productos
-  postRegisterProducts(objProduct: any) {
+  postRegisterProducts(objProduct: PayloadProductCreate) {
     const url = `${this.environment}productos/mutate`;
-    return this.http.post(url, {
-      mutate: [
-        {
-          operation: 'create',
-          attributes: {
-            codigo_producto: objProduct.codigo_producto,
-            nombre_producto: objProduct.nombre_producto,
-            fecha_producto: objProduct.fecha_producto,
-            hora_producto: objProduct.hora_producto,
-            stock_producto: objProduct.stock_producto,
-            estado_producto: objProduct.estado_producto,
-          },
-        },
-      ],
-    });
+    return this.http.post<PayloadProductCreate>(url,  objProduct);
   }
 
   // Edición de Productos
-  postEditProducts(objProduct: any) {
+  postEditProducts(objProduct: PayloadProductUpdate) {
     const url = `${this.environment}productos/mutate`;
-    return this.http.post(url, {
-      mutate: [
-        {
-          operation: 'update',
-          key: objProduct.id,
-          attributes: {
-            nombre_producto: objProduct.nombre_producto,
-            fecha_producto: objProduct.fecha_producto,
-            hora_producto: objProduct.hora_producto,
-            stock_producto: objProduct.stock_producto,
-            estado_producto: objProduct.estado_producto,
-          },
-        },
-      ],
-    });
+    return this.http.post<PayloadProductUpdate>(url, objProduct);
   }
 
   // Registro de Trabajadores

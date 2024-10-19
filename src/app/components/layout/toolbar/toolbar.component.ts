@@ -1,32 +1,18 @@
-import {
-  Component,
-  ElementRef,
-  inject,
-  signal,
-  ViewChild,
-} from '@angular/core';
+import {Component, ElementRef, inject, signal, ViewChild} from '@angular/core';
 import { ConfirmationService, MessageService, MenuItem } from 'primeng/api';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-
 import { CommonModule } from '@angular/common';
 import { PRIMENG_MODULES, UpdatePayload, UserForm } from './toolbar.import';
-
 import { ThemesComponent } from '../../themes/themes.component';
 import { AuthService } from '../../../services/services_auth/auth.service';
 import { LayoutService } from '../../../services/gen/layout.service';
-import { MutatePayloadUpdate } from '../../../models/users.interfaces';
+
 
 @Component({
   selector: 'app-toolbar',
   standalone: true,
-  imports: [
-    PRIMENG_MODULES,
-    FormsModule,
-    CommonModule,
-    ThemesComponent,
-    ReactiveFormsModule,
-  ],
+  imports: [ PRIMENG_MODULES, FormsModule, CommonModule, ThemesComponent, ReactiveFormsModule ],
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss'],
   providers: [ConfirmationService, MessageService],

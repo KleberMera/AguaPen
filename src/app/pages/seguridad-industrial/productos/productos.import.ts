@@ -17,6 +17,7 @@ import { RippleModule } from 'primeng/ripple';
 import { TagModule } from 'primeng/tag';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { PayloadProductCreate, PayloadProductUpdate } from '../../../models/products.interfaces';
 export const PRIMENG_MODULES = [
   FieldsetModule,
   TableModule,
@@ -36,23 +37,3 @@ export const PRIMENG_MODULES = [
   TagModule,
   InputSwitchModule
 ];
-
-
-
-export function ProductForm(): FormGroup {
-  return new FormGroup({
-    id: new FormControl(null), // ID del producto, opcional si es un nuevo producto
-    codigo_producto: new FormControl({ value: '', disabled: true }), // Deshabilitado por defecto
-    nombre_producto: new FormControl('', [
-      Validators.required,
-      Validators.minLength(3),
-    ]),
-    fecha_producto: new FormControl('', Validators.required),
-    hora_producto: new FormControl('', Validators.required),
-    stock_producto: new FormControl(0, [
-      Validators.required,
-      Validators.min(0),
-    ]),
-    estado_producto: new FormControl(1),
-  });
-}

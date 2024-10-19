@@ -4,17 +4,19 @@ import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, formatDate } from '@angular/common';
 import { RegisterService } from '../../../services/services_sg/register.service';
 import { ListService } from '../../../services/services_sg/list.service';
-import { PRIMENG_MODULES, ProductForm } from './productos.import';
+import { PRIMENG_MODULES} from './productos.import';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { columnsProducts, Product } from '../../../models/products.interfaces';
 import { DeleteService } from '../../../services/services_sg/delete.service';
 import { PermisosService } from '../../../services/services_auth/permisos.service';
 import { TableComponent } from '../../../components/data/table/table.component';
+import { createProductPayload, ProductForm, updateProductPayload } from '../../../core/payloads/products.payload';
+import { DialogComponent } from '../../../components/data/dialog/dialog.component';
 
 @Component({
   selector: 'app-productos',
   standalone: true,
-  imports: [FormsModule,PRIMENG_MODULES,TableComponent,ReactiveFormsModule,CommonModule],
+  imports: [FormsModule,PRIMENG_MODULES,TableComponent,ReactiveFormsModule,CommonModule, DialogComponent],
   templateUrl: './productos.component.html',
   styleUrl: './productos.component.scss',
   providers: [MessageService, ConfirmationService],
@@ -85,6 +87,7 @@ export default class ProductosComponent {
   }
 
   openAddProductDialog() {
+    this.dialogVisible = true;
     this.productForm().reset();
     this.productForm().get('codigo_producto')?.enable();
     const nextCode = this.getNextProductCode();
@@ -94,21 +97,21 @@ export default class ProductosComponent {
       hora_producto: formatDate(new Date(), 'HH:mm', 'en-US'),
       estado_producto: 1,
     });
-    this.dialogVisible = true;
+    
   }
 
   openEditProductDialog(product: Product) {
+    this.dialogVisible = true;
     this.productForm().patchValue({
       ...product, hora_producto: formatDate(new Date(), 'HH:mm', 'en-US'), // Asignar hora actual
     });
-    this.dialogVisible = true;
+    
   }
 
   async addProduct() {
     try {
-      const res = await this.srvReg
-        .postRegisterProducts(this.productForm().value)
-        .toPromise();
+      const payload = createProductPayload(this.productForm());
+      const res = await this.srvReg.postRegisterProducts(payload).toPromise();
       this.handleResponse(res, 'Agregado');
     } catch (error) {
       this.handleError(error, 'Error al agregar producto');
@@ -117,7 +120,8 @@ export default class ProductosComponent {
 
   async editProduct() {
     try {
-      const res = await this.srvReg.postEditProducts(this.productForm().value).toPromise();
+      const payload = updateProductPayload(this.productForm());
+      const res = await this.srvReg.postEditProducts(payload).toPromise();
       this.handleResponse(res, 'Editado');
     } catch (error) {
       this.handleError(error, 'Error al editar producto');
@@ -144,9 +148,7 @@ export default class ProductosComponent {
     if(!this.productForm().valid) return;
      this.loadingSave = true;
      try {
-       this.productForm().get('id')?.value === null
-         ? await this.addProduct()
-         : await this.editProduct();
+       this.productForm().get('id')?.value === null ? await this.addProduct() : await this.editProduct();
        this.dialogVisible = false;
        await this.listProductos();
      } catch (error) {

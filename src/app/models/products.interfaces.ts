@@ -9,6 +9,26 @@ export interface Product {
   estado_producto: number;
 }
 
+export interface MutateProductUpdate {
+  operation: 'update';
+  key: Product['id'];
+  attributes: Omit<Product, 'id'>;
+}
+
+export interface MutateProductCreate {
+  operation: 'create';
+  attributes: Product;
+}
+
+export interface PayloadProductUpdate {
+  mutate: MutateProductUpdate[];
+}
+
+export interface PayloadProductCreate {
+  mutate: MutateProductCreate[];
+}
+
+
 
 export const columnsProducts = [
   { field: "codigo_producto", header: "Codigo" },

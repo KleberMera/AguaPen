@@ -1,9 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { PRIMEMG_MODULES } from './edit-delete.imports';
 import { ListService } from '../../../services/services_sg/list.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Product } from '../../../models/products.interfaces';
 import { MessageService } from 'primeng/api';
 import { DeleteService } from '../../../services/services_sg/delete.service';
 import { RegisterDetailsService } from '../../../services/services_sg/register-details.service';
@@ -131,7 +130,7 @@ export default class EditDeleteComponent {
             stock_producto: product.stock_producto,
           };
 
-          this.srvReg.postEditProducts(updatedProducts).subscribe(
+          /*this.srvReg.postEditProducts(updatedProducts).subscribe(
             () => {},
             (error) => {
               this.messageService.add({
@@ -140,7 +139,7 @@ export default class EditDeleteComponent {
                 detail: 'Hubo un problema al actualizar el producto',
               });
             }
-          );
+          );*/
         }
       });
     });
