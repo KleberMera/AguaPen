@@ -61,58 +61,50 @@
     ></p-progressSpinner>
   </div>
   } @else {
-  <div class="p-fluid">
+  <form [formGroup]="userForm()" class="p-fluid">
     <div class="p-field">
       <label for="cedula">Cédula</label>
-      <input
-        id="cedula"
-        type="text"
-        pInputText
-        [(ngModel)]="user.cedula"
-        disabled
-      />
+      <input id="cedula" pInputText formControlName="cedula" />
     </div>
     <div class="p-field">
       <label for="telefono">Teléfono</label>
-      <input id="telefono" type="text" pInputText [(ngModel)]="user.telefono" />
+      <input id="telefono" pInputText formControlName="telefono" />
     </div>
     <div class="p-field">
       <label for="nombres">Nombres</label>
-      <input id="nombres" type="text" pInputText [(ngModel)]="user.nombres" />
+      <input id="nombres" pInputText formControlName="nombres" />
     </div>
     <div class="p-field">
       <label for="apellidos">Apellidos</label>
-      <input
-        id="apellidos"
-        type="text"
-        pInputText
-        [(ngModel)]="user.apellidos"
-      />
+      <input id="apellidos" pInputText formControlName="apellidos" />
     </div>
     <div class="p-field">
       <label for="email">Correo</label>
-      <input id="email" type="email" pInputText [(ngModel)]="user.email" />
+      <input id="email" type="email" pInputText formControlName="email" />
     </div>
     <div class="p-field">
       <label for="usuario">Usuario</label>
-      <input id="usuario" type="text" pInputText [(ngModel)]="user.usuario" />
+      <input id="usuario" pInputText formControlName="usuario" />
     </div>
-
     <div class="p-field">
       <p-checkbox
         label="Cambiar Contraseña"
-        [(ngModel)]="changePassword"
+        (click)="
+          changePassword === true
+            ? (changePassword = false)
+            : (changePassword = true)
+        "
+        (click)="togglePassword()"
         [binary]="true"
       ></p-checkbox>
     </div>
-
     @if (changePassword) {
     <div>
       <div class="p-field">
         <label for="newPassword">Nueva Contraseña</label>
         <p-password
           id="newPassword"
-          [(ngModel)]="password"
+          formControlName="password"
           [feedback]="false"
           [toggleMask]="true"
         />
@@ -121,24 +113,24 @@
         <label for="confirmPassword">Confirmar Contraseña</label>
         <p-password
           id="confirmPassword"
-          [(ngModel)]="confirmPassword"
+          formControlName="confirmPassword"
           [feedback]="false"
           [toggleMask]="true"
         />
       </div>
     </div>
     }
-  </div>
+  </form>
 
   }
-  <p-footer>
+  <p-footer >
     <div>
       <button
         pButton
         label="Cancelar"
         class="p-button-text"
         icon="pi pi-times"
-        (click)="visible = false"
+        (click)="visible = false && (changePassword = false)"
       ></button>
       <button
         pButton

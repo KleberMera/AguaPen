@@ -1,7 +1,6 @@
 // Imports for Angular
 import { Component, inject, signal } from '@angular/core';
-import {FormGroup,FormsModule, ReactiveFormsModule,
-} from '@angular/forms';
+import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, formatDate } from '@angular/common';
 import { RegisterService } from '../../../services/services_sg/register.service';
 import { ListService } from '../../../services/services_sg/list.service';

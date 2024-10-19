@@ -2,41 +2,45 @@ import {
   Component,
   ElementRef,
   inject,
-  OnInit,
+  signal,
   ViewChild,
 } from '@angular/core';
 import { ConfirmationService, MessageService, MenuItem } from 'primeng/api';
-import { FormsModule } from '@angular/forms';
+import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { CommonModule } from '@angular/common';
-import { PRIMENG_MODULES } from './toolbar.import';
-
+import { PRIMENG_MODULES, UpdatePayload, UserForm } from './toolbar.import';
 
 import { ThemesComponent } from '../../themes/themes.component';
 import { AuthService } from '../../../services/services_auth/auth.service';
 import { LayoutService } from '../../../services/gen/layout.service';
-import { MutatePayloadUpdate, UserAttributes } from '../../../models/users.interfaces';
+import { MutatePayloadUpdate } from '../../../models/users.interfaces';
 
 @Component({
   selector: 'app-toolbar',
   standalone: true,
-  imports: [PRIMENG_MODULES, FormsModule, CommonModule, ThemesComponent],
+  imports: [
+    PRIMENG_MODULES,
+    FormsModule,
+    CommonModule,
+    ThemesComponent,
+    ReactiveFormsModule,
+  ],
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss'],
   providers: [ConfirmationService, MessageService],
 })
-export class ToolbarComponent implements OnInit {
+export class ToolbarComponent {
+  userForm = signal<FormGroup>(UserForm());
   visible: boolean = false;
   loadingUpdate: boolean = false;
-  user!: UserAttributes; // Initialize user object
   checked: boolean = false;
   items!: MenuItem[];
   imgUrl: string = 'assets/ICONO-AGUAPEN.webp';
-  changePassword: boolean = false; // Para controlar el checkbox
-  password: string = ''; // Nueva contraseña
-  confirmPassword: string = ''; // Confirmar nueva contraseña
+  changePassword!: boolean; // Para controlar el checkbox
   loading: boolean = true;
+  password!: string;
 
   @ViewChild('menubutton') menuButton!: ElementRef;
 
@@ -48,10 +52,7 @@ export class ToolbarComponent implements OnInit {
   private srvAuth = inject(AuthService);
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
-
   public layoutService = inject(LayoutService);
-
-  ngOnInit(): void {}
 
   logout(event: Event) {
     this.confirmationService.confirm({
@@ -63,72 +64,81 @@ export class ToolbarComponent implements OnInit {
       accept: () => {
         this.signOut();
       },
-      reject: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Denegado',
-          detail: 'Cancelado',
-          life: 3000,
-        });
-      },
     });
   }
 
-  signOut() {
-    this.srvAuth.logout().subscribe((res) => {
-      console.log(res);
-      
-      this.router.navigate(['/auth']);
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Confirmado',
-        detail: res.message,
-      });
-     
+  async signOut() {
+    const res = await this.srvAuth.logout().toPromise();
+    console.log(res.message);
+    this.router.navigate(['/auth']);
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Confirmado',
+      detail: res.message,
     });
   }
 
-  dataUser() {
-    this.srvAuth.getLoginUser().subscribe((res) => {
-      if (res.data) {  
-        const { id, cedula, telefono, nombres, apellidos, email, usuario, estado, password} = res.data; 
-        this.user = {id, cedula, telefono, nombres, apellidos, email, usuario, estado, password};
+  async dataUser() {
+    try {
+      const res = await this.srvAuth.getLoginUser().toPromise();
+      if (res?.data) {
+        this.userForm().patchValue(res.data);
+        this.password = res.data.password;
         this.loading = false;
-      } else {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'No se pudo obtener la información del usuario.',
-        });
       }
+    } catch (error) {
+      console.error('Error al obtener el usuario:', error);
+      this.loading = false;
+    }
+  }
+
+  togglePassword() {
+    const passwordValue = this.changePassword ? '' : this.password;
+    this.userForm().patchValue({
+      password: passwordValue,
+      confirmPassword: passwordValue,
     });
   }
-  
 
-  updateUser(event: Event) {
-    this.loadingUpdate = true;
-    // Validar si la nueva contraseña coincide
-    if (this.changePassword && this.password !== this.confirmPassword) {
-      this.loadingUpdate = false;
+  validateUserForm(): boolean {
+    if (this.changePassword && this.userForm().get('password')?.value !== this.userForm().get('confirmPassword')?.value) {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
         detail: 'Las contraseñas no coinciden.',
       });
-      return;
+      return false;
     }
-
-    //Validar que la contraseña no sea igual al usuario
-    if (this.user.usuario === this.password) {
-      this.loadingUpdate = false;
+    if (this.userForm().get('usuario')?.value === this.userForm().get('password')?.value) {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
         detail: 'La contraseña no puede ser igual al usuario.',
       });
+      return false;
+    }
+    //Verificar si el formulario es válido
+    if (!this.userForm().valid) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'El formulario no es válido.',
+      });
+      return false;
+    }
+    return true;
+    
+      
+  }
+  
+  updateUser(event: Event) {
+    this.loadingUpdate = true;
+    // Llamar a la función de validación
+    if (!this.validateUserForm()) {
+      this.loadingUpdate = false;
       return;
     }
-
+  
     this.confirmationService.confirm({
       target: event.target as EventTarget,
       message: '¿Está seguro de que desea actualizar los datos del usuario?',
@@ -137,43 +147,20 @@ export class ToolbarComponent implements OnInit {
       acceptLabel: 'Aceptar',
       rejectLabel: 'No',
       accept: () => {
-        const payload: MutatePayloadUpdate = {
-          mutate: [
-            {
-              operation: 'update', // Es una operación de actualización
-              key: this.user.id as number, // El id del usuario
-              attributes: {
-                ...this.user,
-                ...(this.changePassword ? { password: this.password } : {}), // Asignar nueva contraseña solo si es necesario
-              },
-            },
-          ],
-        };
-
+        const payload = UpdatePayload(this.userForm(), this.changePassword);
         this.srvAuth.updateUser(payload).subscribe((res: any) => {
-          // Show success message
+          // Mostrar mensaje de éxito
           this.messageService.add({
             severity: 'success',
             summary: 'Actualización',
             detail: 'Cambios guardados.',
           });
-
-          this.visible = false; // Close dialog
+          this.visible = false;
           this.loadingUpdate = false;
-
-          // Si se cambió la contraseña, cerrar sesión
           if (this.changePassword) {
             this.signOut();
           }
         });
-      },
-      reject: () => {
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Cancelad0',
-          detail: 'Actualización cancelada.',
-        });
-        this.loadingUpdate = false;
       },
     });
   }
@@ -186,4 +173,5 @@ export class ToolbarComponent implements OnInit {
       life: 3000,
     });
   }
+  
 }
