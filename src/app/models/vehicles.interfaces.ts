@@ -5,3 +5,10 @@ export interface Vehiculo {
   descripcion : string;
   estado : number;
 }
+
+export const columnsVehiculos = [
+  { field: "placa", header: "Placa" },
+  { field: "tipo", header: "Tipo" },
+  { field: "descripcion", header: "Descripción" },
+  { field: "estado", header: "Estado" },
+];

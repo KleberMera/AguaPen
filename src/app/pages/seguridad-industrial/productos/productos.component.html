@@ -1,27 +1,11 @@
-<div class="flex lg:flex-row gap-2">
-  <div>
-    <p-inputGroup>
-      <p-inputGroupAddon>
-        <i class="pi pi-search"></i>
-      </p-inputGroupAddon>
-      <input
-        pInputText
-        placeholder="Buscar por nombre"
-        [(ngModel)]="searchTerm"
-      />
-    </p-inputGroup>
-  </div>
-
-  @if (per_editar === 1) {
-  <div class=" ">
-    <p-button
-      label="Nuevo"
-      icon="pi pi-plus"
-      severity="success"
-      (click)="openAddProductDialog()"
-    />
-  </div>
-  }
+<div class="flex lg:flex-row gap-4">
+  <app-search
+  [placeholder]="'Buscar por nombre'"
+  (searchChange)="onSearchTermChange($event)"
+  [editable]="per_editar === 1"
+  (onSearch)="filterProducts(searchTerm)"
+  (onAdd)="openAddProductDialog()"
+></app-search>
 </div>
 
 @if (loading) {

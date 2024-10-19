@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { PRIMENG_MODULES } from './vehiculos.import';
-import { Vehiculo } from '../../../models/vehicles.interfaces';
+import { columnsVehiculos, Vehiculo } from '../../../models/vehicles.interfaces';
 import { RegisterService } from '../../../services/services_sg/register.service';
 import { ListService } from '../../../services/services_sg/list.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -8,16 +8,19 @@ import { FormsModule } from '@angular/forms';
 import { DeleteService } from '../../../services/services_sg/delete.service';
 import { AuthService } from '../../../services/services_auth/auth.service';
 import { PermisosService } from '../../../services/services_auth/permisos.service';
+import { SearchComponent } from '../../../components/data/search/search.component';
+import { TableComponent } from '../../../components/data/table/table.component';
 
 @Component({
   selector: 'app-vehiculos',
   standalone: true,
-  imports: [PRIMENG_MODULES,FormsModule],
+  imports: [PRIMENG_MODULES,FormsModule, SearchComponent, TableComponent],
   templateUrl: './vehiculos.component.html',
   styleUrl: './vehiculos.component.scss',
   providers: [MessageService, ConfirmationService],
 })
 export default class VehiculosComponent {
+  columnsVehiculos = columnsVehiculos;
   listVehiculo: Vehiculo[] = [];
   searchTerm: string = '';
   selectedVehiculo: Vehiculo | null = null;
@@ -30,8 +33,11 @@ export default class VehiculosComponent {
   private srvMensajes = inject(MessageService);
   private srvConfirm = inject(ConfirmationService);
   private srvDelete = inject(DeleteService);
-  private srvAuth = inject(AuthService);
   private srvPermisos = inject(PermisosService);
+
+  onSearchTermChange(searchTerm: string) {
+    this.searchTerm = searchTerm;
+  }
 
   ngOnInit(): void {
     this.getUserRole();
@@ -40,36 +46,11 @@ export default class VehiculosComponent {
 
   async getUserRole() {
     try {
-      const res = await this.srvAuth.getLoginUser().toPromise();
-
-      const user_id = res?.data.id;
-
-      if (user_id) {
-        const permisos = await this.srvPermisos
-          .getListPermisosPorUsuario(user_id)
-          .toPromise();
-        const data = permisos.data;
-
-        //Recorrer la data
-        data.forEach((permiso: any) => {
-          if (
-            permiso.modulo_id === 1 &&
-            permiso.opcion_label === 'Vehiculos'
-          ) {
-            this.per_editar = permiso.per_editar;
-           
-            
-          }
-        });
-      }
-
+      const per_editar = this.srvPermisos.getPermissionEditar('Vehiculos');
+      this.per_editar = per_editar;
       await this.listVehiculos();
-    } catch (error) {
-      this.srvMensajes.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Ocurrió un error al obtener el rol del usuario.',
-      });
+    } catch (err: any) {
+      console.error(err.error);
     }
   }
 
@@ -88,7 +69,7 @@ export default class VehiculosComponent {
   filterVehiculos(query: string): Vehiculo[] {
     const lowerQuery = query.toLowerCase();
     return this.listVehiculo.filter((vehiculo) =>
-      vehiculo.descripcion.toLowerCase().includes(lowerQuery)
+      vehiculo.placa.toLowerCase().includes(lowerQuery)
     );
   }
 

@@ -1,28 +1,12 @@
-<div class="flex lg:flex-row gap-2">
-  <div>
-    <p-inputGroup>
-      <p-inputGroupAddon>
-        <i class="pi pi-search"></i>
-      </p-inputGroupAddon>
-      <input
-        pInputText
-        placeholder="Buscar por descripción"
-        [(ngModel)]="searchTerm"
-      />
-    </p-inputGroup>
-  </div>
-  @if (per_editar === 1) {
-    <div class="flex align-items-center gap-2 mb-3">
-      <p-button
-        label="Nuevo"
-        icon="pi pi-plus"
-        severity="success"
-        (click)="openAddVehiculoDialog()"
-      />
-    </div>
-  }
+<div class="flex lg:flex-row gap-4">
+  <app-search
+  [placeholder]="'Buscar por nombre'"
+  (searchChange)="onSearchTermChange($event)"
+  [editable]="per_editar === 1"
+  (onSearch)="filterVehiculos(searchTerm)"
+  (onAdd)="openAddVehiculoDialog()"
+></app-search>
 </div>
-
 @if (loading) {
 <div class="loading-container">
   <p>Cargando vehículos...</p>
@@ -34,66 +18,15 @@
   ></p-progressSpinner>
 </div>
 } @else {
-<div>
-  <p-table
-    [value]="filterVehiculos(searchTerm)"
-    [paginator]="true"
-    [rows]="20"
-    [rowsPerPageOptions]="[20, 30, 40, 50]"
-    [scrollable]="true"
-    [resizableColumns]="true"
-  >
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Placa</th>
-        <th>Tipo</th>
-        <th>Descripción</th>
-        <th>Estado</th>
-         @if (per_editar === 1) {
-          <th>Acción</th>
-         }
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-vehiculo>
-      <tr>
-        <td>{{ vehiculo.placa }}</td>
-        <td>{{ vehiculo.tipo }}</td>
-        <td>{{ vehiculo.descripcion }}</td>
-        @if (vehiculo.estado === 1) {
-          <td>
-            <p-tag value="Activo" severity="success"></p-tag>
-          </td>
-          } @else {
-          <td>
-            <p-tag value="Inactivo" severity="danger"></p-tag>
-          </td>
-          }
-          @if (per_editar === 1) {
-            <td>
-              <div class="flex md:flex-row">
-                <div>
-                  <p-button
-                    icon="pi pi-pencil"
-                    class="mr-2"
-                    [rounded]="true"
-                    (click)="openEditVehiculoDialog(vehiculo)"
-                  />
-                </div>
-                <div>
-                  <p-button
-                    icon="pi pi-trash"
-                    [rounded]="true"
-                    severity="danger"
-                    (click)="deleteVehiculo(vehiculo)"
-                  />
-                </div>
-              </div>
-            </td>
-          }
-      </tr>
-    </ng-template>
-  </p-table>
-</div>
+  &nbsp;
+  <app-table
+    [data]="filterVehiculos(searchTerm)"
+    [rowsPerPageOptions]="[10, 20, 30, 40]"
+    [columns]="columnsVehiculos"
+    [editable]="per_editar === 1"
+    (onEdit)="openEditVehiculoDialog($event)"
+    (onDelete)="deleteVehiculo($event)"
+  ></app-table>
 }
 
 <p-dialog

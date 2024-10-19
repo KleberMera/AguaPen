@@ -1,1 +1,21 @@
-<p>search works!</p>
+<p-inputGroup>
+  <p-inputGroupAddon>
+    <i class="pi pi-search"></i>
+  </p-inputGroupAddon>
+  <input
+    pInputText
+    [placeholder]="placeholder"
+    [(ngModel)]="searchTerm"
+    (ngModelChange)="onSearchChange()"
+  />
+
+  <div *ngIf="editable">
+    &nbsp;
+    <p-button
+      label="Nuevo"
+      icon="pi pi-plus"
+      severity="success"
+      (click)="handleAdd()"
+    ></p-button>
+  </div>
+</p-inputGroup>

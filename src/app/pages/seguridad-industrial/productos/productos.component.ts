@@ -12,11 +12,12 @@ import { PermisosService } from '../../../services/services_auth/permisos.servic
 import { TableComponent } from '../../../components/data/table/table.component';
 import { createProductPayload, ProductForm, updateProductPayload } from '../../../core/payloads/products.payload';
 import { DialogComponent } from '../../../components/data/dialog/dialog.component';
+import { SearchComponent } from '../../../components/data/search/search.component';
 
 @Component({
   selector: 'app-productos',
   standalone: true,
-  imports: [FormsModule,PRIMENG_MODULES,TableComponent,ReactiveFormsModule,CommonModule, DialogComponent],
+  imports: [FormsModule,PRIMENG_MODULES,TableComponent,ReactiveFormsModule,CommonModule, DialogComponent, SearchComponent],
   templateUrl: './productos.component.html',
   styleUrl: './productos.component.scss',
   providers: [MessageService, ConfirmationService],
@@ -33,7 +34,6 @@ export default class ProductosComponent {
   loadingSave: boolean = false;
   dialogVisible: boolean = false;
   per_editar!: number;
-
   // Services injected
   private srvList = inject(ListService);
   private srvReg = inject(RegisterService);
@@ -42,6 +42,10 @@ export default class ProductosComponent {
   private srvDelete = inject(DeleteService);
   private srvPermisos = inject(PermisosService);
 
+  onSearchTermChange(searchTerm: string) {
+    this.searchTerm = searchTerm;
+  }
+  
   ngOnInit() {
     this.getUserRole();
   }
