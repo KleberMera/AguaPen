@@ -9,13 +9,15 @@
     (ngModelChange)="onSearchChange()"
   />
 
-  <div *ngIf="editable">
-    &nbsp;
-    <p-button
-      label="Nuevo"
-      icon="pi pi-plus"
-      severity="success"
-      (click)="handleAdd()"
-    ></p-button>
-  </div>
+  @if (editable) {
+    <div>
+      &nbsp;
+      <p-button
+        label="Nuevo"
+        icon="pi pi-plus"
+        severity="success"
+        (click)="handleAdd()"
+      ></p-button>
+    </div>
+  }
 </p-inputGroup>

@@ -1,23 +1,23 @@
 // Imports for Angular
 import { Component, inject, signal } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule, formatDate } from '@angular/common';
+import { formatDate } from '@angular/common';
 import { RegisterService } from '../../../services/services_sg/register.service';
 import { ListService } from '../../../services/services_sg/list.service';
 import { PRIMENG_MODULES} from './productos.import';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { columnsProducts, Product } from '../../../models/products.interfaces';
+import { columnsProducts, fieldsFormsProducts, Product } from '../../../models/products.interfaces';
 import { DeleteService } from '../../../services/services_sg/delete.service';
 import { PermisosService } from '../../../services/services_auth/permisos.service';
 import { TableComponent } from '../../../components/data/table/table.component';
 import { createProductPayload, ProductForm, updateProductPayload } from '../../../core/payloads/products.payload';
-import { DialogComponent } from '../../../components/data/dialog/dialog.component';
 import { SearchComponent } from '../../../components/data/search/search.component';
+import { FormsComponent } from "../../../components/data/forms/forms.component";
 
 @Component({
   selector: 'app-productos',
   standalone: true,
-  imports: [FormsModule,PRIMENG_MODULES,TableComponent,ReactiveFormsModule,CommonModule, DialogComponent, SearchComponent],
+  imports: [FormsModule, PRIMENG_MODULES, TableComponent, ReactiveFormsModule, SearchComponent, FormsComponent],
   templateUrl: './productos.component.html',
   styleUrl: './productos.component.scss',
   providers: [MessageService, ConfirmationService],
@@ -25,6 +25,7 @@ import { SearchComponent } from '../../../components/data/search/search.componen
 export default class ProductosComponent {
   productForm = signal<FormGroup>(ProductForm());
   columnsProducts = columnsProducts;
+  fields = fieldsFormsProducts;
   // List of products
   listProduct: Product[] = [];
   searchTerm: string = '';
@@ -91,7 +92,6 @@ export default class ProductosComponent {
   }
 
   openAddProductDialog() {
-    this.dialogVisible = true;
     this.productForm().reset();
     this.productForm().get('codigo_producto')?.enable();
     const nextCode = this.getNextProductCode();
@@ -101,7 +101,7 @@ export default class ProductosComponent {
       hora_producto: formatDate(new Date(), 'HH:mm', 'en-US'),
       estado_producto: 1,
     });
-    
+    this.dialogVisible = true;
   }
 
   openEditProductDialog(product: Product) {
@@ -187,11 +187,4 @@ export default class ProductosComponent {
     this.loadingSave = false;
   }
 
-  toggleEstado() {
-    const currentValue = this.productForm().get('estado_producto')?.value;
-    this.productForm().patchValue({
-      estado_producto: currentValue ? 0 : 1, // Cambia de 1 a 0 o de 0 a 1
-    });
-  }
-  
 }

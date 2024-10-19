@@ -16,8 +16,6 @@ import { InputIconModule } from 'primeng/inputicon';
 import { RippleModule } from 'primeng/ripple';
 import { TagModule } from 'primeng/tag';
 import { InputSwitchModule } from 'primeng/inputswitch';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { PayloadProductCreate, PayloadProductUpdate } from '../../../models/products.interfaces';
 export const PRIMENG_MODULES = [
   FieldsetModule,
   TableModule,
@@ -37,4 +35,6 @@ export const PRIMENG_MODULES = [
   TagModule,
   InputSwitchModule
 ];
+
+
 

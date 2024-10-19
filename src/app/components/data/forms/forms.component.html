@@ -1,0 +1,48 @@
+<form [formGroup]="formGroup">
+    @for (field of fields; track field.id) {
+      <div class="flex align-items-center gap-3 mb-3">
+        <label [for]="field.id" class="font-semibold w-6rem">{{ field.label }}:</label>
+          
+        @switch (field.type) {
+          @case ('estado') {
+            <p-tag [severity]="formGroup.get(field.controlName)?.value ? 'success' : 'danger'" 
+            (click)="toggleEstado(field.controlName)">
+              {{ formGroup.get(field.controlName)?.value ? 'Activo' : 'Inactivo' }}
+            </p-tag>
+          }
+          @case ('text') {
+            <input [id]="field.id" pInputText class="flex-auto" [formControlName]="field.controlName" />
+          }
+          @case ('number') {
+            <input [id]="field.id" type="number" pInputText class="flex-auto" [formControlName]="field.controlName" />
+          }
+          @case ('date') {
+            <input [id]="field.id" type="date" pInputText class="flex-auto" [formControlName]="field.controlName" />
+          }
+
+          @case ('time') {
+            <input [id]="field.id" type="time" pInputText class="flex-auto" [formControlName]="field.controlName" />
+          }
+        }
+      </div>
+    }
+  
+    <!-- Botones de acción -->
+    <div class="p-dialog-footer">
+      <button
+        pButton
+        label="Cancelar"
+        class="p-button-text"
+        (click)="formCancel.emit()"
+        [disabled]="loading"
+      ></button>
+      <button
+        pButton
+        label="Guardar"
+        class="p-button-primary"
+        (click)="formSubmit.emit()"
+        [loading]="loading"
+        [disabled]="formGroup.invalid || loading"
+      ></button>
+    </div>
+  </form>
