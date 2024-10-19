@@ -37,3 +37,4 @@ export const PRIMENG_MODULES = [
   TagModule,
   InputSwitchModule
 ];
+
