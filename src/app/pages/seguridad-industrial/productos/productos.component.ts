@@ -23,72 +23,77 @@ import { FormsComponent } from "../../../components/data/forms/forms.component";
   providers: [MessageService, ConfirmationService],
 })
 export default class ProductosComponent {
-  productForm = signal<FormGroup>(ProductForm());
-  columnsProducts = columnsProducts;
-  fields = fieldsFormsProducts;
-  // List of products
-  listProduct: Product[] = [];
-  searchTerm: string = '';
-  selectedProduct!: Product;
-  // Loading state
-  loading: boolean = true;
-  loadingSave: boolean = false;
-  dialogVisible: boolean = false;
-  per_editar!: number;
-  // Services injected
-  private srvList = inject(ListService);
-  private srvReg = inject(RegisterService);
-  private srvMensajes = inject(MessageService);
-  private srvConfirm = inject(ConfirmationService);
-  private srvDelete = inject(DeleteService);
-  private srvPermisos = inject(PermisosService);
-
-  onSearchTermChange(searchTerm: string) {
-    this.searchTerm = searchTerm;
-  }
+  // Signals
+  readonly productForm = signal<FormGroup>(ProductForm());
+  readonly columnsProducts = columnsProducts;
+  readonly fields = fieldsFormsProducts;
   
+  // State
+  protected listProduct = signal<Product[]>([]);
+  protected searchTerm = signal<string>('');
+  protected loading = signal<boolean>(true);
+  protected loadingSave = signal<boolean>(false);
+  protected dialogVisible = signal<boolean>(false);
+  protected per_editar = signal<number>(0);
+  // Services injected
+ // Injected services
+ private readonly srvList = inject(ListService);
+ private readonly srvReg = inject(RegisterService);
+ private readonly srvMensajes = inject(MessageService);
+ private readonly srvConfirm = inject(ConfirmationService);
+ private readonly srvDelete = inject(DeleteService);
+ private readonly srvPermisos = inject(PermisosService);;
+
+ protected onSearchTermChange(term: string): void {
+  this.searchTerm.set(term);
+}
   ngOnInit() {
     this.getUserRole();
   }
 
-  async getUserRole() {
+  protected async getUserRole(): Promise<void> {
     try {
-      const per_editar = this.srvPermisos.getPermissionEditar('Productos');
-      this.per_editar = per_editar;
+      const perEditar = this.srvPermisos.getPermissionEditar('Productos');
+      this.per_editar.set(perEditar);
       await this.listProductos();
-    } catch (err: any) {
-      console.error(err.error);
+    } catch (error: unknown) {
+      this.handleError(error, 'Error al obtener permisos');
     }
   }
-
-  async listProductos() {
-    this.loading = true;
+  
+  protected async listProductos(): Promise<void> {
+    this.loading.set(true);
     try {
-      const res = await this.srvList.getlistProducts().toPromise();
-      this.listProduct = res.data;
-      this.loading = false;
-    } catch (error) {
-      this.handleError(error, 'Error al cargar productos:');
-      this.loading = false;
+      const response = await this.srvList.getlistProducts().toPromise();
+      if (response?.data) {
+        this.listProduct.set(response.data);
+      }
+    } catch (error: unknown) {
+      this.handleError(error, 'Error al cargar productos');
+    } finally {
+      this.loading.set(false);
     }
   }
 
   filterProducts(query: string): Product[] {
     const lowerQuery = query.toLowerCase();
-    return this.listProduct.filter(
+    return this.listProduct().filter(
       (product) =>
         product.nombre_producto.toLowerCase().includes(lowerQuery) ||
         product.codigo_producto.toLowerCase().includes(lowerQuery)
     );
   }
 
-  getNextProductCode(): string {
-    const lastProduct = this.listProduct.sort((a, b) =>
-      a.codigo_producto > b.codigo_producto ? -1 : 1
+  private getNextProductCode(): string {
+    const products = this.listProduct();
+    if (!products.length) return '001';
+
+    const lastProduct = [...products].sort((a, b) =>
+      b.codigo_producto.localeCompare(a.codigo_producto)
     )[0];
 
-    const lastCode = lastProduct ? lastProduct.codigo_producto : '000';
-    return (parseInt(lastCode, 10) + 1).toString().padStart(3, '0');
+    const nextCode = parseInt(lastProduct.codigo_producto, 10) + 1;
+    return nextCode.toString().padStart(3, '0');
   }
 
   openAddProductDialog() {
@@ -101,11 +106,11 @@ export default class ProductosComponent {
       hora_producto: formatDate(new Date(), 'HH:mm', 'en-US'),
       estado_producto: 1,
     });
-    this.dialogVisible = true;
+    this.dialogVisible.set(true);
   }
 
   openEditProductDialog(product: Product) {
-    this.dialogVisible = true;
+    this.dialogVisible.set(true);
     this.productForm().patchValue({
       ...product, hora_producto: formatDate(new Date(), 'HH:mm', 'en-US'), // Asignar hora actual
     });
@@ -149,16 +154,29 @@ export default class ProductosComponent {
   }
 
   async saveProduct() {
-    if(!this.productForm().valid) return;
-     this.loadingSave = true;
+    const form = this.productForm();
+    if (!form.valid) return;
+    const nombreProducto = form.get('nombre_producto')?.value?.trim().toLowerCase();
+    const currentId = form.get('id')?.value;
+    // Busca si existe un producto con el mismo nombre pero diferente ID
+    const existingProduct = this.listProduct().find( product =>  product.nombre_producto.toLowerCase() === nombreProducto && 
+        product.id !== currentId
+    );
+
+    if (existingProduct) {
+      this.srvMensajes.add({ severity: 'error', summary: 'Error', detail: 'Ya existe un producto con este nombre' });
+      return;
+    }
+  
+    this.loadingSave.set(true);
      try {
-       this.productForm().get('id')?.value === null ? await this.addProduct() : await this.editProduct();
-       this.dialogVisible = false;
+       currentId  === null ? await this.addProduct() : await this.editProduct();
+       this.dialogVisible.set(false);
        await this.listProductos();
-     } catch (error) {
+     } catch (error: unknown) {
        this.handleError(error, 'Error al guardar el producto');
      } finally {
-       this.loadingSave = false;
+      this.loadingSave.set(false);
      }
   }
 
@@ -183,8 +201,8 @@ export default class ProductosComponent {
       summary: 'Error',
       detail: 'Ocurrió un error al procesar la solicitud',
     });
-    this.loading = false;
-    this.loadingSave = false;
+    this.loading.set(false);
+    this.loadingSave.set(false);
   }
 
 }

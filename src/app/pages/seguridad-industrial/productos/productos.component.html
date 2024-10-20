@@ -1,13 +1,13 @@
 <div class="flex lg:flex-row gap-4">
   <app-search
     [placeholder]="'Buscar por nombre'"
-    [editable]="per_editar === 1"
+    [editable]="per_editar() === 1"
     (searchChange)="onSearchTermChange($event)"
     (onAdd)="openAddProductDialog()"
   ></app-search>
 </div>
 
-@if (loading) {
+@if (loading()) {
   <div class="loading-container">
     <p>Cargando productos...</p>
     <p-progressSpinner
@@ -18,18 +18,25 @@
     ></p-progressSpinner>
   </div>
 } @else {
-  @defer (when !loading) {
+  @defer (when !loading()) {
+    &nbsp;
     <app-table
-      [data]="filterProducts(searchTerm)"
+      [data]="filterProducts(searchTerm())"
       [columns]="columnsProducts"
       [rowsPerPageOptions]="[10, 20, 30, 40]"
-      [editable]="per_editar === 1"
+      [editable]="per_editar() === 1"
       (onEdit)="openEditProductDialog($event)"
       (onDelete)="deleteProduct($event)"
-    ></app-table>
+    >
+    @if (listProduct().length === 0) {
+      <div class="empty-state flex flex-col items-center justify-center p-6">
+        <p class="text-gray-500">No hay productos disponibles</p>
+      </div>
+    }
+  </app-table>
   } @loading {
-    <div class="loading-placeholder">
-      <p>Cargando tabla de productos...</p>
+    <div class="loading-placeholder flex flex-col items-center justify-center p-4">
+      <p class="text-gray-600 mb-2">Cargando tabla de productos...</p>
       <p-progressSpinner
         styleClass="w-3rem h-3rem"
         strokeWidth="4"
@@ -42,7 +49,7 @@
   }
 }
 
-@defer (when dialogVisible) {
+@defer (when dialogVisible()) {
   <p-dialog
     [(visible)]="dialogVisible"
     [modal]="true"
@@ -50,19 +57,17 @@
     [style]="{ width: '25rem' }"
   >
     <ng-template pTemplate="header">
-      @if (productForm().get("id")?.value === null) {
-        <span class="font-semibold">Agregar Producto</span>
-      } @else {
-        <span class="font-semibold">Editar Producto</span>
-      }
+      <span class="font-semibold ml-2">
+        {{ productForm().get('id')?.value === null ? 'Agregar' : 'Editar' }} Producto
+      </span>
     </ng-template>
 
     <app-forms
       [formGroup]="productForm()"
       [fields]="fields"
-      [loading]="loadingSave"
+      [loading]="loadingSave()"
       (formSubmit)="saveProduct()"
-      (formCancel)="dialogVisible = false"
+      (formCancel)="dialogVisible.set(false)"
     ></app-forms>
   </p-dialog>
 }
@@ -71,5 +76,6 @@
   <p-toast
     [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
   ></p-toast>
-  <p-confirmDialog />
+  <p-confirmDialog  acceptButtonStyleClass="p-button-danger"
+  rejectButtonStyleClass="p-button-text"/>
 }
