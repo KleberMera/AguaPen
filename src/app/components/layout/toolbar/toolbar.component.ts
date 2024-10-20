@@ -4,9 +4,10 @@ import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { PRIMENG_MODULES, UpdatePayload, UserForm } from './toolbar.import';
-import { ThemesComponent } from '../../themes/themes.component';
+
 import { AuthService } from '../../../services/services_auth/auth.service';
 import { LayoutService } from '../../../services/gen/layout.service';
+import { ThemesComponent } from '../themes/themes.component';
 
 
 @Component({

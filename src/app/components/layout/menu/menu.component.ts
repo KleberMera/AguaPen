@@ -1,15 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
-
-import { LayoutService } from '../../services/gen/layout.service';
 import { FormsModule } from '@angular/forms';
 import { MenuModule } from 'primeng/menu';
 import { MenuitemComponent } from '../menuitem/menuitem.component';
-
-import { Subscription, take } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { PermisosService } from '../../services/services_auth/permisos.service';
-import { AuthService } from '../../services/services_auth/auth.service';
+import { AuthService } from '../../../services/services_auth/auth.service';
+import { PermisosService } from '../../../services/services_auth/permisos.service';
+import { LayoutService } from '../../../services/gen/layout.service';
+
 
 @Component({
   selector: 'app-menu',
