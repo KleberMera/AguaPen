@@ -1,126 +1,115 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { PRIMENG_MODULES } from './vehiculos.import';
-import { columnsVehiculos, Vehiculo } from '../../../models/vehicles.interfaces';
+import { columnsVehiculos, fieldsFormsVehiculos, Vehiculo } from '../../../models/vehicles.interfaces';
 import { RegisterService } from '../../../services/services_sg/register.service';
 import { ListService } from '../../../services/services_sg/list.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { FormsModule } from '@angular/forms';
+import { FormGroup, FormsModule } from '@angular/forms';
 import { DeleteService } from '../../../services/services_sg/delete.service';
-import { AuthService } from '../../../services/services_auth/auth.service';
 import { PermisosService } from '../../../services/services_auth/permisos.service';
 import { SearchComponent } from '../../../components/data/search/search.component';
 import { TableComponent } from '../../../components/data/table/table.component';
-
+import { createVehiclePayload, updateVehiclePayload, VehicleForm } from '../../../core/payloads/vehicles.payload';
+import { FormsComponent } from '../../../components/data/forms/forms.component';
+const COMPONENTS_DATA = [SearchComponent, TableComponent, FormsComponent];
 @Component({
   selector: 'app-vehiculos',
   standalone: true,
-  imports: [PRIMENG_MODULES,FormsModule, SearchComponent, TableComponent],
+  imports: [PRIMENG_MODULES, COMPONENTS_DATA, FormsModule],
   templateUrl: './vehiculos.component.html',
   styleUrl: './vehiculos.component.scss',
   providers: [MessageService, ConfirmationService],
 })
 export default class VehiculosComponent {
-  columnsVehiculos = columnsVehiculos;
-  listVehiculo: Vehiculo[] = [];
-  searchTerm: string = '';
-  selectedVehiculo: Vehiculo | null = null;
-  loading: boolean = true;
-  loadingSave: boolean = false;
-  dialogVisible: boolean = false;
-  per_editar: number = 0;
-  private srvReg = inject(RegisterService);
-  private srvList = inject(ListService);
-  private srvMensajes = inject(MessageService);
-  private srvConfirm = inject(ConfirmationService);
-  private srvDelete = inject(DeleteService);
-  private srvPermisos = inject(PermisosService);
+  //Signals
+  readonly vehiclesForm = signal<FormGroup>(VehicleForm());
+  readonly columnsVehiculos = columnsVehiculos;
+  readonly fields = fieldsFormsVehiculos;
 
-  onSearchTermChange(searchTerm: string) {
-    this.searchTerm = searchTerm;
+  //State
+  protected listVehiculo = signal<Vehiculo[]>([]);
+  protected searchTerm = signal<string>('');
+  protected loading = signal<boolean>(true);
+  protected loadingSave = signal<boolean>(false);
+  protected dialogVisible = signal<boolean>(false);
+  protected per_editar = signal<number>(0);
+
+
+  private readonly srvReg = inject(RegisterService);
+  private readonly srvList = inject(ListService);
+  private readonly srvMensajes = inject(MessageService);
+  private readonly srvConfirm = inject(ConfirmationService);
+  private readonly srvDelete = inject(DeleteService);
+  private readonly srvPermisos = inject(PermisosService);
+
+  protected onSearchTermChange(term: string): void {
+    this.searchTerm.set(term);
   }
 
   ngOnInit(): void {
     this.getUserRole();
-    
   }
 
   async getUserRole() {
     try {
-      const per_editar = this.srvPermisos.getPermissionEditar('Vehiculos');
-      this.per_editar = per_editar;
+      const perEditar = this.srvPermisos.getPermissionEditar('Vehiculos');
+      this.per_editar.set(perEditar);
       await this.listVehiculos();
-    } catch (err: any) {
-      console.error(err.error);
+    } catch (error: unknown) {
+      this.handleError(error, 'Error al obtener permisos');
     }
   }
 
   private async listVehiculos() {
-    this.loading = true;
+    this.loading.set(true);
     try {
       const res = await this.srvList.getListVehiculos().toPromise();
-      this.listVehiculo = res.data;
+      this.listVehiculo.set(res.data)
     } catch (error) {
       this.handleError(error, 'Error al cargar vehículos:');
     } finally {
-      this.loading = false;
+      this.loading.set(false);
     }
   }
 
   filterVehiculos(query: string): Vehiculo[] {
     const lowerQuery = query.toLowerCase();
-    return this.listVehiculo.filter((vehiculo) =>
+    return this.listVehiculo().filter((vehiculo) =>
       vehiculo.placa.toLowerCase().includes(lowerQuery)
     );
   }
 
   openAddVehiculoDialog() {
-    this.selectedVehiculo = this.createNewVehiculo();
-    this.dialogVisible = true;
+    this.vehiclesForm().reset();
+    this.vehiclesForm().patchValue({
+      estado : 1,
+    });
+    this.dialogVisible.set(true);
   }
 
   openEditVehiculoDialog(vehiculo: Vehiculo) {
-    this.selectedVehiculo = { ...vehiculo };
-    this.dialogVisible = true;
+    this.dialogVisible.set(true);
+    this.vehiclesForm().patchValue({
+      ...vehiculo
+    });
   }
 
-  private createNewVehiculo(): Vehiculo {
-    return {
-      id: 0,
-      placa: '',
-      tipo: '',
-      descripcion: '',
-      estado: 0,
-    };
-  }
 
-  set estadoBoolean(value: boolean) {
-    if (this.selectedVehiculo) {
-      this.selectedVehiculo.estado = value ? 1 : 0;
-    }
-  }
-
-  get estadoBoolean(): boolean {
-    return this.selectedVehiculo ? this.selectedVehiculo.estado === 1 : false;
-  }
-
-  private async addVehiculo() {
-    if (!this.validateVehiculo()) return;
+  async addVehiculo() {
     try {
-      const res = await this.srvReg
-        .postRegisterVehiculos(this.selectedVehiculo!)
-        .toPromise();
+      const payload = createVehiclePayload(this.vehiclesForm());
+      console.log(payload);
+      const res = await this.srvReg.postRegisterVehiculos(payload).toPromise();
       this.handleResponse(res, 'Agregado');
     } catch (error) {
       this.handleError(error, 'Error al agregar vehículo');
     }
   }
 
-  private async editVehiculo() {
-    if (!this.validateVehiculo()) return;
+  async editVehiculo() {
     try {
-      const res = await this.srvReg
-        .postEditVehiculos(this.selectedVehiculo!)
-        .toPromise();
+      const payload = updateVehiclePayload(this.vehiclesForm());
+      const res = await this.srvReg.postEditVehiculos(payload).toPromise();
       this.handleResponse(res, 'Editado');
     } catch (error) {
       this.handleError(error, 'Error al editar vehículo');
@@ -128,16 +117,12 @@ export default class VehiculosComponent {
   }
 
   deleteVehiculo(vehiculo: Vehiculo) {
-    this.srvConfirm.confirm({
-      message: '¿Está seguro de eliminar el vehículo?',
-      header: 'Confirmación',
+    this.srvConfirm.confirm({ message: '¿Está seguro de eliminar el vehículo?', header: 'Confirmación',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Eliminar',
       accept: async () => {
         try {
-          const res = await this.srvDelete
-            .requestdeleteVehiculos(vehiculo.id)
-            .toPromise();
+          const res = await this.srvDelete.requestdeleteVehiculos(vehiculo.id).toPromise();
           this.handleResponse(res, 'Eliminado');
           await this.listVehiculos();
         } catch (error) {
@@ -148,20 +133,31 @@ export default class VehiculosComponent {
   }
 
   async saveVehiculo() {
-    if (!this.selectedVehiculo) return;
-
-    this.loadingSave = true;
-    try {
-      this.selectedVehiculo.id === 0
-        ? await this.addVehiculo()
-        : await this.editVehiculo();
-      this.dialogVisible = false;
-      await this.listVehiculos();
-    } catch (error) {
-      this.handleError(error, 'Error al guardar el vehículo');
-    } finally {
-      this.loadingSave = false;
+    const form = this.vehiclesForm();
+    if (!form.valid) return;
+    const placa = form.get('placa')?.value?.trim().toLowerCase();
+    const currentId = form.get('id')?.value;
+    // Busca si existe un vehiculo con el mismo placa pero diferente ID
+    const existingVehiculo = this.listVehiculo().find( vehiculo =>  vehiculo.placa.toLowerCase() === placa && 
+        vehiculo.id !== currentId
+    );
+    if (existingVehiculo) {
+      this.srvMensajes.add({ severity: 'error', summary: 'Error', detail: 'Ya existe un vehiculo con este placa' });
+      return;
     }
+
+    this.loadingSave.set(true);
+     try {
+      console.log(this.vehiclesForm().value);
+      
+       currentId  === null ? await this.addVehiculo() : await this.editVehiculo();
+       this.dialogVisible.set(false);
+       await this.listVehiculos();
+     } catch (error: unknown) {
+       this.handleError(error, 'Error al guardar el producto');
+     } finally {
+      this.loadingSave.set(false);
+     }
   }
 
   private handleResponse(res: any, successMessage: string) {
@@ -178,21 +174,7 @@ export default class VehiculosComponent {
     }
   }
 
-  private validateVehiculo(): boolean {
-    if (
-      this.selectedVehiculo!.placa.trim() === '' ||
-      this.selectedVehiculo!.descripcion.trim() === ''
-    ) {
-      this.srvMensajes.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'La placa y la descripción son obligatorias',
-      });
-      return false;
-    }
 
-    return true;
-  }
 
   private handleError(error: any, message: string): void {
     console.error(message, error);
@@ -201,7 +183,7 @@ export default class VehiculosComponent {
       summary: 'Error',
       detail: 'Ocurrió un error al procesar la solicitud',
     });
-    this.loading = false;
-    this.loadingSave = false;
+    this.loading.set(false);
+    this.loadingSave.set(false);
   }
 }

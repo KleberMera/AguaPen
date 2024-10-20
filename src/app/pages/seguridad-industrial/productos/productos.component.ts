@@ -35,14 +35,14 @@ export default class ProductosComponent {
   protected loadingSave = signal<boolean>(false);
   protected dialogVisible = signal<boolean>(false);
   protected per_editar = signal<number>(0);
-  // Services injected
+
  // Injected services
- private readonly srvList = inject(ListService);
- private readonly srvReg = inject(RegisterService);
- private readonly srvMensajes = inject(MessageService);
- private readonly srvConfirm = inject(ConfirmationService);
- private readonly srvDelete = inject(DeleteService);
- private readonly srvPermisos = inject(PermisosService);;
+  private readonly srvList = inject(ListService);
+  private readonly srvReg = inject(RegisterService);
+  private readonly srvMensajes = inject(MessageService);
+  private readonly srvConfirm = inject(ConfirmationService);
+  private readonly srvDelete = inject(DeleteService);
+  private readonly srvPermisos = inject(PermisosService);;
 
  protected onSearchTermChange(term: string): void {
   this.searchTerm.set(term);

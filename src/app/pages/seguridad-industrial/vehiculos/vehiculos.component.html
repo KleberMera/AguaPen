@@ -1,98 +1,81 @@
 <div class="flex lg:flex-row gap-4">
   <app-search
-  [placeholder]="'Buscar por nombre'"
-  (searchChange)="onSearchTermChange($event)"
-  [editable]="per_editar === 1"
-  (onSearch)="filterVehiculos(searchTerm)"
-  (onAdd)="openAddVehiculoDialog()"
-></app-search>
+    [placeholder]="'Buscar por nombre'"
+    [editable]="per_editar() === 1"
+    (searchChange)="onSearchTermChange($event)"
+    (onAdd)="openAddVehiculoDialog()"
+  ></app-search>
 </div>
-@if (loading) {
-<div class="loading-container">
-  <p>Cargando vehículos...</p>
-  <p-progressSpinner
-    ariaLabel="loading"
-    styleClass="w-4rem h-4rem"
-    strokeWidth="8"
-    fill="var(--surface-ground)"
-  ></p-progressSpinner>
-</div>
+
+@if (loading()) {
+  <div class="loading-container">
+    <p>Cargando vehículos...</p>
+    <p-progressSpinner
+      ariaLabel="loading"
+      styleClass="w-4rem h-4rem"
+      strokeWidth="8"
+      fill="var(--surface-ground)"
+    ></p-progressSpinner>
+  </div>
 } @else {
-  &nbsp;
-  <app-table
-    [data]="filterVehiculos(searchTerm)"
-    [rowsPerPageOptions]="[10, 20, 30, 40]"
-    [columns]="columnsVehiculos"
-    [editable]="per_editar === 1"
-    (onEdit)="openEditVehiculoDialog($event)"
-    (onDelete)="deleteVehiculo($event)"
-  ></app-table>
+  @defer (when !loading()) {
+    &nbsp;
+    <app-table
+      [data]="filterVehiculos(searchTerm())"
+      [columns]="columnsVehiculos"
+      [rowsPerPageOptions]="[10, 20, 30, 40]"
+      [editable]="per_editar() === 1"
+      (onEdit)="openEditVehiculoDialog($event)"
+      (onDelete)="deleteVehiculo($event)"
+    >
+    @if (listVehiculo().length === 0) {
+      <div class="empty-state flex flex-col items-center justify-center p-6">
+        <p class="text-gray-500">No hay vehículos disponibles</p>
+      </div>
+    }
+  </app-table>
+  } @loading {
+    <div class="loading-placeholder flex flex-col items-center justify-center p-4">
+      <p class="text-gray-600 mb-2">Cargando tabla de vehículos...</p>
+      <p-progressSpinner
+        styleClass="w-3rem h-3rem"
+        strokeWidth="4"
+      ></p-progressSpinner>
+    </div>
+  } @error {
+    <div class="error-message">
+      Error al cargar la tabla. Por favor, intente de nuevo.
+    </div>
+  }
 }
 
-<p-dialog
-  [(visible)]="dialogVisible"
-  [modal]="true"
-  [responsive]="true"
-  [style]="{ width: '25rem' }"
->
-  <ng-template pTemplate="header">
-    <span class="font-semibold">
-      {{ selectedVehiculo?.id === 0 ? "Agregar Vehículo" : "Editar Vehículo" }}
-    </span>
-  </ng-template>
-  @if (selectedVehiculo) {
-  <div>
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="estado_vehiculo" class="font-semibold w-6rem">Estado:</label>
-      <p-inputSwitch [(ngModel)]="estadoBoolean"></p-inputSwitch>
-    </div>
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="placa" class="font-semibold w-6rem">Placa:</label>
-      <input
-        id="placa"
-        pInputText
-        class="flex-auto"
-        [(ngModel)]="selectedVehiculo.placa"
-      />
-    </div>
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="tipo" class="font-semibold w-6rem">Tipo:</label>
-      <input
-        id="tipo"
-        pInputText
-        class="flex-auto"
-        [(ngModel)]="selectedVehiculo.tipo"
-      />
-    </div>
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="descripcion" class="font-semibold w-6rem">Descripción:</label>
-      <input
-        id="descripcion"
-        pInputText
-        class="flex-auto"
-        [(ngModel)]="selectedVehiculo.descripcion"
-      />
-    </div>
-    <div class="p-dialog-footer">
-      <button
-        pButton
-        label="Cancelar"
-        class="p-button-text"
-        (click)="dialogVisible = false"
-        [disabled]="loadingSave"
-      ></button>
-      <p-button
-        label="Guardar"
-        icon="pi pi-check"
-        [loading]="loadingSave"
-        (click)="saveVehiculo()"
-      />
-    </div>
-  </div>
-  }
-</p-dialog>
+@defer (when dialogVisible()) {
+  <p-dialog
+    [(visible)]="dialogVisible"
+    [modal]="true"
+    [responsive]="true"
+    [style]="{ width: '25rem' }"
+  >
+    <ng-template pTemplate="header">
+      <span class="font-semibold ml-2">
+        {{ vehiclesForm().get('id')?.value === null ? 'Agregar' : 'Editar' }} Vehiculo
+      </span>
+    </ng-template>
 
-<p-toast
-  [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
-></p-toast>
-<p-confirmDialog></p-confirmDialog>
+    <app-forms
+      [formGroup]="vehiclesForm()"
+      [fields]="fields"
+      [loading]="loadingSave()"
+      (formSubmit)="saveVehiculo()"
+      (formCancel)="dialogVisible.set(false)"
+    ></app-forms>
+  </p-dialog>
+}
+
+@defer {
+  <p-toast
+    [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
+  ></p-toast>
+  <p-confirmDialog  acceptButtonStyleClass="p-button-danger"
+  rejectButtonStyleClass="p-button-text"/>
+}

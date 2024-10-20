@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
 import { PayloadProductCreate, PayloadProductUpdate } from '../../models/products.interfaces';
+import { PayloadVehiculoCreate, PayloadVehiculoUpdate } from '../../models/vehicles.interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +21,18 @@ export class RegisterService {
   postEditProducts(objProduct: PayloadProductUpdate) {
     const url = `${this.environment}productos/mutate`;
     return this.http.post<PayloadProductUpdate>(url, objProduct);
+  }
+
+  //Registrar Vehiculos
+  postRegisterVehiculos(objVehiculo: PayloadVehiculoCreate) {
+    const url = `${this.environment}vehiculos/mutate`;
+    return this.http.post<PayloadVehiculoCreate>(url, objVehiculo);
+  }
+
+  //Editar Vehiculos
+  postEditVehiculos(objVehiculo: PayloadVehiculoUpdate) {
+    const url = `${this.environment}vehiculos/mutate`;
+    return this.http.post<PayloadVehiculoUpdate>(url, objVehiculo);
   }
 
   // Registro de Trabajadores
@@ -98,40 +111,5 @@ export class RegisterService {
     });
   }
 
-  //Registrar Vehiculos
-  postRegisterVehiculos(objVehiculo: any) {
-    const url = `${this.environment}vehiculos/mutate`;
-    return this.http.post(url, {
-      mutate: [
-        {
-          operation: 'create',
-          attributes: {
-            placa: objVehiculo.placa,
-            tipo: objVehiculo.tipo,
-            descripcion: objVehiculo.descripcion,
-            estado: objVehiculo.estado,
-          },
-        },
-      ],
-    });
-  }
-
-  //Editar Vehiculos
-  postEditVehiculos(objVehiculo: any) {
-    const url = `${this.environment}vehiculos/mutate`;
-    return this.http.post(url, {
-      mutate: [
-        {
-          operation: 'update',
-          key: objVehiculo.id,
-          attributes: {
-            placa: objVehiculo.placa,
-            tipo: objVehiculo.tipo,
-            descripcion: objVehiculo.descripcion,
-            estado: objVehiculo.estado,
-          },
-        },
-      ],
-    });
-  }
+  
 }

@@ -9,25 +9,30 @@ export interface Product {
   estado_producto: number;
 }
 
-export interface MutateProductUpdate {
-  operation: 'update';
+// Tipo base para las operaciones de mutación
+export type MutateOperation = 'create' | 'update';
+
+// Tipo base para las mutaciones
+interface BaseMutation<T extends MutateOperation, P> {
+  operation: T;
+  attributes: P;
+}
+
+// Mutación para crear
+export interface CreateMutation extends BaseMutation<'create', Product> {}
+
+// Mutación para actualizar
+export interface UpdateMutation extends BaseMutation<'update', Omit<Product, 'id'>> {
   key: Product['id'];
-  attributes: Omit<Product, 'id'>;
 }
 
-export interface MutateProductCreate {
-  operation: 'create';
-  attributes: Product;
+// Payloads
+export interface PayloadProduct<T> {
+  mutate: T[];
 }
 
-export interface PayloadProductUpdate {
-  mutate: MutateProductUpdate[];
-}
-
-export interface PayloadProductCreate {
-  mutate: MutateProductCreate[];
-}
-
+export type PayloadProductCreate = PayloadProduct<CreateMutation>;
+export type PayloadProductUpdate = PayloadProduct<UpdateMutation>;
 
 export const columnsProducts = [
   { field: "codigo_producto", header: "Codigo" },
