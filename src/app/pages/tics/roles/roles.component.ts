@@ -6,11 +6,11 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-import { PermisosService } from '../../../services/services_auth/permisos.service';
+import { PermisosService } from '../../../services/auth/permisos.service';
 
 import { forkJoin, map } from 'rxjs';
-import { AuthService } from '../../../services/services_auth/auth.service';
-import { ListService } from '../../../services/services_sg/list.service';
+import { AuthService } from '../../../services/auth/auth.service';
+import { ListService } from '../../../services/seguridad-industrial/list.service';
 import {
   MutatePayloadCreate,
   User,

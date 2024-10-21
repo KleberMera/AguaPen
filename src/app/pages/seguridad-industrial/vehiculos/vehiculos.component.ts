@@ -1,12 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { PRIMENG_MODULES } from './vehiculos.import';
 import { columnsVehiculos, fieldsFormsVehiculos, Vehiculo } from '../../../models/vehicles.model';
-import { RegisterService } from '../../../services/services_sg/register.service';
-import { ListService } from '../../../services/services_sg/list.service';
+import { RegisterService } from '../../../services/seguridad-industrial/register.service';
+import { ListService } from '../../../services/seguridad-industrial/list.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { FormGroup, FormsModule } from '@angular/forms';
-import { DeleteService } from '../../../services/services_sg/delete.service';
-import { PermisosService } from '../../../services/services_auth/permisos.service';
+import { DeleteService } from '../../../services/seguridad-industrial/delete.service';
+import { PermisosService } from '../../../services/auth/permisos.service';
 import { SearchComponent } from '../../../components/data/search/search.component';
 import { TableComponent } from '../../../components/data/table/table.component';
 import { createVehiclePayload, updateVehiclePayload, VehicleForm } from '../../../core/payloads/vehicles.payload';

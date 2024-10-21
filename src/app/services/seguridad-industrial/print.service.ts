@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 
-import { AuthService } from '../services_auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 import { CountreportsService } from './countreports.service';
 
 @Injectable({

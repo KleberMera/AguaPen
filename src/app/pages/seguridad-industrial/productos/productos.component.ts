@@ -2,13 +2,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { formatDate } from '@angular/common';
-import { RegisterService } from '../../../services/services_sg/register.service';
-import { ListService } from '../../../services/services_sg/list.service';
+import { RegisterService } from '../../../services/seguridad-industrial/register.service';
+import { ListService } from '../../../services/seguridad-industrial/list.service';
 import { PRIMENG_MODULES} from './productos.import';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { columnsProducts, fieldsFormsProducts, Product } from '../../../models/products.model';
-import { DeleteService } from '../../../services/services_sg/delete.service';
-import { PermisosService } from '../../../services/services_auth/permisos.service';
+import { DeleteService } from '../../../services/seguridad-industrial/delete.service';
+import { PermisosService } from '../../../services/auth/permisos.service';
 import { TableComponent } from '../../../components/data/table/table.component';
 import { createProductPayload, ProductForm, updateProductPayload } from '../../../core/payloads/products.payload';
 import { SearchComponent } from '../../../components/data/search/search.component';

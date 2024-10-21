@@ -1,11 +1,11 @@
-import { PrintService } from '../../../services/services_sg/print.service';
+import { PrintService } from '../../../services/seguridad-industrial/print.service';
 import { Component, inject } from '@angular/core';
 import { PrimeModules } from './registros-vehiculos.import';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { Vehiculo } from '../../../models/vehicles.model';
 import { Product } from '../../../models/products.model';
-import { RegisterDetailsService } from '../../../services/services_sg/register-details.service';
-import { ListService } from '../../../services/services_sg/list.service';
+import { RegisterDetailsService } from '../../../services/seguridad-industrial/register-details.service';
+import { ListService } from '../../../services/seguridad-industrial/list.service';
 import { registerVehiculos } from '../../../models/registers.model';
 import { formatDate } from '@angular/common';
 import { detailVehiculos } from '../../../models/details.model';

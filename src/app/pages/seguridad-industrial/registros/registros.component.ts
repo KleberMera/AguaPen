@@ -1,7 +1,7 @@
-import { PrintService } from '../../../services/services_sg/print.service';
+import { PrintService } from '../../../services/seguridad-industrial/print.service';
 import { Component, inject, OnInit } from '@angular/core';
-import { RegisterDetailsService } from '../../../services/services_sg/register-details.service';
-import { ListService } from '../../../services/services_sg/list.service';
+import { RegisterDetailsService } from '../../../services/seguridad-industrial/register-details.service';
+import { ListService } from '../../../services/seguridad-industrial/list.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { formatDate } from '@angular/common';
 import { FileUpload } from 'primeng/fileupload';
@@ -14,8 +14,8 @@ import { ViewChild } from '@angular/core';
 import { PRIMEMG_MODULES } from './registros.imports';
 import { User } from '../../../models/users.model';
 import { details } from '../../../models/details.model';
-import { UploadimageService } from '../../../services/services_sg/uploadimage.service';
-import { ReporteService } from '../../../services/services_sg/reporte.service';
+import { UploadimageService } from '../../../services/seguridad-industrial/uploadimage.service';
+import { ReporteService } from '../../../services/seguridad-industrial/reporte.service';
 
 @Component({
   selector: 'app-registros',

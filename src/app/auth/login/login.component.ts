@@ -13,7 +13,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { DividerModule } from 'primeng/divider';
-import { AuthService } from '../../services/services_auth/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
 import { FooterComponent } from '../../components/layout/footer/footer.component';
 import { Auth } from '../../models/auth.model';
 

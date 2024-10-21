@@ -1,5 +1,5 @@
 import { filter } from 'rxjs';
-import { PrintService } from '../../../services/services_sg/print.service';
+import { PrintService } from '../../../services/seguridad-industrial/print.service';
 // Imports of Angular
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -8,8 +8,8 @@ import { formatDate } from '@angular/common';
 
 // Services and interfaces of the app
 import { registerArea } from '../../../models/registers.model';
-import { RegisterDetailsService } from '../../../services/services_sg/register-details.service';
-import { ListService } from '../../../services/services_sg/list.service';
+import { RegisterDetailsService } from '../../../services/seguridad-industrial/register-details.service';
+import { ListService } from '../../../services/seguridad-industrial/list.service';
 
 // Imports of PrimeNG
 import { PrimeModules } from './registros-areas.import';

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { saveAs } from 'file-saver';
 import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
-import { AuthService } from '../services_auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 
 
 @Injectable({

@@ -5,8 +5,8 @@ import { MenuitemComponent } from '../menuitem/menuitem.component';
 import { Subscription } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { AuthService } from '../../../services/services_auth/auth.service';
-import { PermisosService } from '../../../services/services_auth/permisos.service';
+import { AuthService } from '../../../services/auth/auth.service';
+import { PermisosService } from '../../../services/auth/permisos.service';
 import { LayoutService } from '../../../services/gen/layout.service';
 
 

@@ -1,19 +1,19 @@
 // Imports of Angular
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ListService } from '../../../services/services_sg/list.service';
+import { ListService } from '../../../services/seguridad-industrial/list.service';
 
 // Services and interfaces of the app
-import { RegisterService } from '../../../services/services_sg/register.service';
+import { RegisterService } from '../../../services/seguridad-industrial/register.service';
 import { User } from '../../../models/users.model';
 
 // Imports of PrimeNG
 import { PRIMENG_MODULES } from './trabajadores.import';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { DeleteService } from '../../../services/services_sg/delete.service';
+import { DeleteService } from '../../../services/seguridad-industrial/delete.service';
 
-import { PermisosService } from '../../../services/services_auth/permisos.service';
-import { AuthService } from '../../../services/services_auth/auth.service';
+import { PermisosService } from '../../../services/auth/permisos.service';
+import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-usuarios-trabajadores',

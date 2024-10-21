@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { PRIMENG_MODULES, UpdatePayload, UserForm } from './toolbar.import';
 
-import { AuthService } from '../../../services/services_auth/auth.service';
+import { AuthService } from '../../../services/auth/auth.service';
 import { LayoutService } from '../../../services/gen/layout.service';
 import { ThemesComponent } from '../themes/themes.component';
 

@@ -3,9 +3,9 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { PRIMENG_MODULES } from './dashboard.imports';
 import { MenuItem, MessageService } from 'primeng/api';
-import { AuthService } from '../../services/services_auth/auth.service';
-import { ListService } from '../../services/services_sg/list.service';
-import { CountdataService } from '../../services/services_sg/countdata.service';
+import { AuthService } from '../../services/auth/auth.service';
+import { ListService } from '../../services/seguridad-industrial/list.service';
+import { CountdataService } from '../../services/seguridad-industrial/countdata.service';
 
 
 @Component({

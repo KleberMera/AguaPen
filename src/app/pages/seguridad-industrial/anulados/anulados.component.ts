@@ -3,10 +3,10 @@ import { PRIMEMG_MODULES } from './anulados.imports';
 import { FormsModule } from '@angular/forms';
 import { FieldsetModule } from 'primeng/fieldset';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { ListService } from '../../../services/services_sg/list.service';
-import { PrintService } from '../../../services/services_sg/print.service';
+import { ListService } from '../../../services/seguridad-industrial/list.service';
+import { PrintService } from '../../../services/seguridad-industrial/print.service';
 import { CommonModule } from '@angular/common';
-import { PrintvoidService } from '../../../services/services_sg/printvoid.service';
+import { PrintvoidService } from '../../../services/seguridad-industrial/printvoid.service';
 
 @Component({
   selector: 'app-anulados',

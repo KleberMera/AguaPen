@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ListService } from '../../../services/services_sg/list.service';
-import { PrintService } from '../../../services/services_sg/print.service';
+import { ListService } from '../../../services/seguridad-industrial/list.service';
+import { PrintService } from '../../../services/seguridad-industrial/print.service';
 import { MessageService } from 'primeng/api';
 import { PRIMEMG_MODULES } from './reportes-vehiculos.import';
 import { FormsModule } from '@angular/forms';

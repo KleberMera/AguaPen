@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { ListService } from '../../../services/services_sg/list.service';
+import { ListService } from '../../../services/seguridad-industrial/list.service';
 import { FormsModule } from '@angular/forms';
-import { PrintService } from '../../../services/services_sg/print.service';
+import { PrintService } from '../../../services/seguridad-industrial/print.service';
 import { Subscription } from 'rxjs';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { PRIMEMG_MODULES } from './reportes-area.import';

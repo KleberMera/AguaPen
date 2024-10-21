@@ -16,7 +16,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { filter } from 'rxjs';
 import { MenuModule } from 'primeng/menu';
 import { MenuComponent } from '../menu/menu.component';
-import { AuthService } from '../../../services/services_auth/auth.service';
+import { AuthService } from '../../../services/auth/auth.service';
 import { LayoutService } from '../../../services/gen/layout.service';
 
 
