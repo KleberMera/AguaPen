@@ -1,4 +1,4 @@
-export interface WorkER {
+export interface Worker {
   id: number;
   tx_nombre: string;
   tx_cedula: string;
@@ -18,11 +18,11 @@ interface BaseMutation<T extends MutateOperation, P> {
 }
 
 // Mutación para crear
-export interface CreateMutation extends BaseMutation<'create', WorkER> {}
+export interface CreateMutation extends BaseMutation<'create', Worker> {}
 
 // Mutación para actualizar
-export interface UpdateMutation extends BaseMutation<'update', Omit<WorkER, 'id'>> {
-  key: WorkER['id'];
+export interface UpdateMutation extends BaseMutation<'update', Omit<Worker, 'id'>> {
+  key: Worker['id'];
 }
 
 // Payloads
@@ -30,20 +30,21 @@ export interface PayloadWorkER<T> {
   mutate: T[];
 }
 
-export type PayloadWorkERCreate = PayloadWorkER<CreateMutation>;
-export type PayloadWorkERUpdate = PayloadWorkER<UpdateMutation>;
+export type PayloadWorkerCreate = PayloadWorkER<CreateMutation>;
+export type PayloadWorkerUpdate = PayloadWorkER<UpdateMutation>;
 
-export const columnsWorkER = [
+export const columnsWorker = [
+  { field: 'id', header: 'Nº' },
   { field: 'tx_nombre', header: 'Nombre' },
   { field: 'tx_cedula', header: 'Cédula' },
   { field: 'tx_area', header: 'Área' },
   { field: 'tx_cargo', header: 'Cargo' },
-  { field: 'tx_correo', header: 'Correo' },
   { field: 'dt_status', header: 'Estado' },
 ];
 
-export const fieldsFormsWorkER = [
+export const fieldsFormsWorker = [
   { id: 'dt_status', label: 'Estado', type: 'estado', controlName: 'dt_status' },
+  { id: 'dt_usuario', label: 'Usuario', type: 'text', controlName: 'dt_usuario' },
   { id: 'tx_nombre', label: 'Nombre', type: 'text', controlName: 'tx_nombre' },
   { id: 'tx_cedula', label: 'Cédula', type: 'text', controlName: 'tx_cedula' },
   { id: 'tx_area', label: 'Área', type: 'text', controlName: 'tx_area' },

@@ -31,7 +31,7 @@ export class TableComponent {
 
   // Verifica si el campo es un campo de estado
   isStatusField(field: string): boolean {
-    return field.startsWith('estado'); // Detecta cualquier campo que empiece por "estado"
+    return field.startsWith('estado',)  || field.startsWith('dt_status',);
   }
 
   // Devuelve el valor del estado en formato texto

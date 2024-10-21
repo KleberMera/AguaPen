@@ -16,7 +16,8 @@ import {
   UserAttributes,
 } from '../../../models/users.model';
 import { Permisos } from '../../../models/permisos.model';
-import { WorkER } from '../../../models/workers.model';
+import { Worker } from '../../../models/workers.model';
+
 
 @Component({
   selector: 'app-usuarios-roles',
@@ -64,15 +65,15 @@ export default class UsuariosRolesComponent implements OnInit {
     this.loadModulos();
     this.getListUsuarios();
   }
-  ListUsers: WorkER[] = [];
-  dropdownOptions: WorkER[] = [];
-  selectedUser: WorkER | null = null;
+  ListUsers: Worker[] = [];
+  dropdownOptions: Worker[] = [];
+  selectedUser: Worker | null = null;
 
   async getListUsuarios(): Promise<void> {
     try {
       const res = await this.srvList.getListUsuarios().toPromise();
       this.dropdownOptions = res.data.filter(
-        (user: WorkER) => user.dt_status === 1
+        (user: Worker) => user.dt_status === 1
       );
     } catch (error) {
       this.messageService.add({
@@ -117,7 +118,7 @@ export default class UsuariosRolesComponent implements OnInit {
     return text.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
   }
 
-  formatUserLabel(user: WorkER): string {
+  formatUserLabel(user: Worker): string {
     return `${this.capitalize(user.tx_nombre)} (${user.tx_cedula})`;
   }
 

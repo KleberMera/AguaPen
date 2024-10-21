@@ -1,39 +1,18 @@
-<div class="grid">
-  <div class="col-8">
-    <div class=" ">
-      <p-inputGroup>
-        <p-inputGroupAddon styleClass="pi pi-search" />
-        <input
-          id="searchTerm"
-          type="text"
-          pInputText
-          placeholder="Buscar..."
-          [(ngModel)]="searchTerm"
-        />
-      </p-inputGroup>
-    </div>
-  </div>
-  @if (per_editar === 1) {
-  <div class="flex align-items-center gap-2 mb-3">
-    <div class="col-3">
-      <div class=" ">
-        <p-button
-          icon="pi pi-plus"
-          severity="success"
-          (click)="showDialog(null)"
-        />
-      </div>
-    </div>
-  </div>
-  }
+<div class="flex lg:flex-row gap-4">
+  <app-search
+    [placeholder]="'Buscar por nombre'"
+    [editable]="per_editar() === 1"
+    (searchChange)="onSearchTermChange($event)"
+    (onAdd)="openAddWorkerDialog()"
+  ></app-search>
 </div>
-
+&nbsp;
 <div class="p-fluid">
   <div class="p-formgrid grid">
     <div class="col">
       <p-dropdown
         id="selectedArea"
-        [options]="areaOptions"
+        [options]="areaOptions()"
         [(ngModel)]="selectedArea"
         (onChange)="onAreaChange()"
         [filter]="true"
@@ -44,7 +23,7 @@
     <div class="col">
       <p-dropdown
         id="selectedCargo"
-        [options]="filteredCargoOptions"
+        [options]="filteredCargoOptions()"
         [(ngModel)]="selectedCargo"
         [filter]="true"
         placeholder="Filtrar por cargo"
@@ -52,9 +31,9 @@
     </div>
   </div>
 
-  @if (loading) {
-  <div class="loading-container p-d-flex p-jc-center p-ai-center p-flex-column">
-    <p>Cargando usuarios...</p>
+@if (loading()) {
+  <div class="loading-container">
+    <p>Cargando vehículos...</p>
     <p-progressSpinner
       ariaLabel="loading"
       styleClass="w-4rem h-4rem"
@@ -62,180 +41,65 @@
       fill="var(--surface-ground)"
     ></p-progressSpinner>
   </div>
-  } @else {
-  <p-table
-    [value]="filterUsers(searchTerm, selectedArea, selectedCargo)"
-    [tableStyle]="{ 'min-width': '60rem' }"
-    [paginator]="true"
-    [rows]="20"
-    [rowsPerPageOptions]="[20, 30, 40, 50]"
-  >
-    @if (filterUsers(searchTerm, selectedArea, selectedCargo).length > 0) {
-    <ng-template pTemplate="header">
-      <tr>
-        <th>N°</th>
-        <th pSortableColumn="tx_nombre">
-          Nombre
-          <p-sortIcon field="tx_nombre"></p-sortIcon>
-        </th>
-        <th>Cédula</th>
-        <th>Área</th>
-        <th>Cargo</th>
-        <th pSortableColumn="dt_status">
-          Estado
-          <p-sortIcon field="dt_status"></p-sortIcon>
-        </th>
-
-        @if (per_editar === 1) {
-        <th>Acción</th>
-        }
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-user>
-      <tr>
-        <td>{{ user.id }}</td>
-        <td>{{ user.tx_nombre }}</td>
-        <td>{{ user.tx_cedula }}</td>
-        <td>{{ user.tx_area }}</td>
-        <td>{{ user.tx_cargo }}</td>
-        @if (user.dt_status === 1) {
-        <td>
-          <p-tag value="Activo" severity="success"></p-tag>
-        </td>
-        } @else {
-        <td>
-          <p-tag value="Inactivo" severity="danger"></p-tag>
-        </td>
-        } @if (per_editar === 1) {
-        <td>
-          <div class="flex md:flex-row">
-            <div>
-              <button
-                pButton
-                icon="pi pi-pencil"
-                class="p-button-rounded p-button mr-2"
-                (click)="showDialog(user)"
-              ></button>
-            </div>
-            <div>
-              <p-button
-                icon="pi pi-trash"
-                [rounded]="true"
-                severity="danger"
-                (click)="deleteUsers(user)"
-              />
-            </div>
-          </div>
-        </td>
-        }
-      </tr>
-    </ng-template>
-    } @else {
-
-    <p>No hay trabajadores para mostrar</p>
-
+} @else {
+  @defer (when !loading()) {
+    &nbsp;
+    <app-table
+      [data]="filterUsers(searchTerm(), selectedArea(), selectedCargo())"
+      [columns]="columnsWorker"
+      [rowsPerPageOptions]="[10, 20, 30, 40]"
+      [editable]="per_editar() === 1"
+      (onEdit)="openEditWorkerDialog($event)"
+      (onDelete)="deleteUsers($event)"
+    >
+    @if (listWorker().length === 0) {
+      <div class="empty-state flex flex-col items-center justify-center p-6">
+        <p class="text-gray-500">No hay vehículos disponibles</p>
+      </div>
     }
-  </p-table>
+  </app-table>
+  } @loading {
+    <div class="loading-placeholder flex flex-col items-center justify-center p-4">
+      <p class="text-gray-600 mb-2">Cargando tabla de vehículos...</p>
+      <p-progressSpinner
+        styleClass="w-3rem h-3rem"
+        strokeWidth="4"
+      ></p-progressSpinner>
+    </div>
+  } @error {
+    <div class="error-message">
+      Error al cargar la tabla. Por favor, intente de nuevo.
+    </div>
   }
+}
 
+@defer (when dialogVisible()) {
   <p-dialog
-    header="Trabajador"
     [(visible)]="dialogVisible"
     [modal]="true"
     [responsive]="true"
-    [style]="{ width: '35rem' }"
+    [style]="{ width: '50rem' }"
   >
-    <div class="p-fluid">
-      <div class="p-field">
-        <label for="dt_status" class="font-semibold w-6rem">Estado:</label>
-        <p-inputSwitch [(ngModel)]="estadoBoolean"></p-inputSwitch>
-      </div>
+    <ng-template pTemplate="header">
+      <span class="font-semibold ml-2">
+        {{ workerForm().get('id')?.value === null ? 'Agregar' : 'Editar' }} Trabajador
+      </span>
+    </ng-template>
 
-      <div class="p-field">
-        <label for="tx_nombre">Nombre</label>
-        <input
-          id="tx_nombre"
-          type="text"
-          pInputText
-          [(ngModel)]="currentUser.tx_nombre"
-        />
-      </div>
-      <div class="p-field">
-        <label for="tx_cedula">Cédula</label>
-        <input
-          id="tx_cedula"
-          type="text"
-          pInputText
-          [(ngModel)]="currentUser.tx_cedula"
-        />
-      </div>
-
-      <div class="p-field">
-        <label for="tx_correo">Correo</label>
-        <input
-          id="tx_correo"
-          type="text"
-          pInputText
-          [(ngModel)]="currentUser.tx_correo"
-        />
-      </div>
-
-      <div class="p-field">
-        <label for="tx_area">Área</label>
-
-        <p-dropdown
-          id="tx_area"
-          [options]="areaOptions"
-          [(ngModel)]="currentUser.tx_area"
-          (onChange)="onAreaChange()"
-          [editable]="true"
-          [showClear]="true"
-          placeholder="Seleccionar cargo o escribir"
-        ></p-dropdown>
-      </div>
-
-      <div class="p-field">
-        <label for="tx_cargo">Cargo</label>
-
-        <p-dropdown
-          id="tx_cargo"
-          [options]="filteredCargoOptions"
-          [(ngModel)]="currentUser.tx_cargo"
-           [editable]="true"
-          [showClear]="true"
-          placeholder="Seleccionar cargo o escribir"
-        ></p-dropdown>
-      </div>
-      <div class="p-field">
-        <label for="dt_usuario">Usuario (Alias)</label>
-        <input
-          id="dt_usuario"
-          type="text"
-          pInputText
-          [(ngModel)]="currentUser.dt_usuario"
-        />
-      </div>
-    </div>
-    <p-footer>
-      <div>
-        <button
-          pButton
-          icon="pi pi-times"
-          class="p-button-text"
-          label="Cancelar"
-          (click)="dialogVisible = false"
-        ></button>
-        <button
-          pButton
-          label="Guardar"
-          (click)="saveUser()"
-          [loading]="loadingSave"
-        ></button>
-      </div>
-    </p-footer>
+    <app-forms
+      [formGroup]="workerForm()"
+      [fields]="fields"
+      [loading]="loadingSave()"
+      (formSubmit)="saveWorker()"
+      (formCancel)="dialogVisible.set(false)"
+    ></app-forms>
   </p-dialog>
-</div>
-<p-toast [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }">
-</p-toast>
+}
 
-<p-confirmDialog />
+@defer {
+  <p-toast
+    [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
+  ></p-toast>
+  <p-confirmDialog  acceptButtonStyleClass="p-button-danger"
+  rejectButtonStyleClass="p-button-text"/>
+}

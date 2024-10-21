@@ -1,9 +1,9 @@
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { PayloadWorkERCreate, PayloadWorkERUpdate } from "../../models/workers.model";
+import { PayloadWorkerCreate, PayloadWorkerUpdate } from "../../models/workers.model";
 
 
 
-export function WorkERForm(): FormGroup {
+export function WorkerForm(): FormGroup {
   return new FormGroup({
     id: new FormControl(null),
     tx_nombre: new FormControl('', Validators.required),
@@ -17,9 +17,9 @@ export function WorkERForm(): FormGroup {
 }
 
 
-export function createWorkERPayload(workERForm: FormGroup): PayloadWorkERCreate {
-  const formValue = { ...workERForm.value };
-  const payload: PayloadWorkERCreate = {
+export function createWorkerPayload(workerForm: FormGroup): PayloadWorkerCreate {
+  const formValue = { ...workerForm.value };
+  const payload: PayloadWorkerCreate = {
     mutate: [
       {
         operation: 'create', // Es una operación de creación
@@ -32,13 +32,13 @@ export function createWorkERPayload(workERForm: FormGroup): PayloadWorkERCreate 
   return payload;
 }
 
-export function updateWorkERPayload(workERForm: FormGroup): PayloadWorkERUpdate {
-  const formValue = { ...workERForm.value };
-  const payload: PayloadWorkERUpdate = {
+export function updateWorkerPayload(workerForm: FormGroup): PayloadWorkerUpdate {
+  const formValue = { ...workerForm.value };
+  const payload: PayloadWorkerUpdate = {
     mutate: [
       {
         operation: 'update', // Es una operación de actualización
-        key: workERForm.get('id')?.value, // El id del producto
+        key: workerForm.get('id')?.value, // El id del producto
         attributes: {
           ...formValue, // Copia de los valores del formulario
         },

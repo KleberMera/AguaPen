@@ -4,6 +4,7 @@ import { environment } from '../../../environments/environment.development';
 import { PayloadProductCreate, PayloadProductUpdate } from '../../models/products.model';
 import { PayloadVehiculoCreate, PayloadVehiculoUpdate } from '../../models/vehicles.model';
 import { PayloadAreaCreate, PayloadAreaUpdate } from '../../models/areas.model';
+import { PayloadWorkerCreate, PayloadWorkerUpdate } from '../../models/workers.model';
 
 @Injectable({
   providedIn: 'root',
@@ -49,49 +50,16 @@ export class RegisterService {
   }
 
   // Registro de Trabajadores
-  postRegisterUsers(objUser: any) {
+  postRegisterUsers(objUser: PayloadWorkerCreate) {
     const url = `${this.environment}usuariostrabajadores/mutate`;
-    return this.http.post(url, {
-      mutate: [
-        {
-          operation: 'create',
-          attributes: {
-            tx_nombre: objUser.tx_nombre,
-            tx_cedula: objUser.tx_cedula,
-            tx_area: objUser.tx_area,
-            tx_cargo: objUser.tx_cargo,
-            tx_correo: objUser.tx_correo,
-            dt_status: objUser.dt_status,
-            dt_usuario: objUser.dt_usuario,
-          },
-        },
-      ],
-    });
+    return this.http.post<PayloadWorkerCreate>(url, objUser );
   }
 
   // Edición de Trabajadores
-  postEditUsers(objUser: any) {
+  postEditUsers(objUser: PayloadWorkerUpdate) {
     const url = `${this.environment}usuariostrabajadores/mutate`;
-    return this.http.post(url, {
-      mutate: [
-        {
-          operation: 'update',
-          key: objUser.id,
-          attributes: {
-            tx_nombre: objUser.tx_nombre,
-            tx_cedula: objUser.tx_cedula,
-            tx_area: objUser.tx_area,
-            tx_cargo: objUser.tx_cargo,
-            tx_correo: objUser.tx_correo,
-            dt_status: objUser.dt_status,
-            dt_usuario: objUser.dt_usuario,
-          },
-        },
-      ],
-    });
+    return this.http.post<PayloadWorkerUpdate>(url,objUser );
   }
 
- 
 
-  
 }

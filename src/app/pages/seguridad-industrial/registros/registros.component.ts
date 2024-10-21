@@ -17,7 +17,8 @@ import { details } from '../../../models/details.model';
 import { UploadimageService } from '../../../services/seguridad-industrial/uploadimage.service';
 import { ReporteService } from '../../../services/seguridad-industrial/reporte.service';
 import { DropdownComponent } from '../../../components/data/dropdown/dropdown.component';
-import { WorkER } from '../../../models/workers.model';
+import { Worker } from '../../../models/workers.model';
+
 
 @Component({
   selector: 'app-registros',
@@ -30,12 +31,12 @@ import { WorkER } from '../../../models/workers.model';
 export default class RegistrosComponent {
   @ViewChild('fileUpload') fileUpload!: FileUpload;
   //users: User[] = [];
-  protected users = signal<WorkER[]>([]);
+  protected users = signal<Worker[]>([]);
   protected product = signal<Product[]>([]);
-  protected selectedUser = signal<WorkER | null>(null);
+  protected selectedUser = signal<Worker | null>(null);
   protected isInProgress = signal<boolean>(false);
 
-  filteredUsers: WorkER[] = [];
+  filteredUsers: Worker[] = [];
   searchQuery: string = '';
 
   showProductsTable: boolean = false;
@@ -103,7 +104,7 @@ export default class RegistrosComponent {
     }
   }
 
-  handleUserSelected(user: WorkER): void {
+  handleUserSelected(user: Worker): void {
     this.selectedUser.set(user);
     this.messageService.add({
       severity: 'info',

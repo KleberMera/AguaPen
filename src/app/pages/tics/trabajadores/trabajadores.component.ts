@@ -1,6 +1,6 @@
 // Imports of Angular
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { FormGroup, FormsModule } from '@angular/forms';
 import { ListService } from '../../../services/seguridad-industrial/list.service';
 
 // Services and interfaces of the app
@@ -13,31 +13,39 @@ import { DeleteService } from '../../../services/seguridad-industrial/delete.ser
 
 import { PermisosService } from '../../../services/auth/permisos.service';
 import { AuthService } from '../../../services/auth/auth.service';
-import { WorkER } from '../../../models/workers.model';
+
+import { createWorkerPayload, updateWorkerPayload, WorkerForm } from '../../../core/payloads/workers.payload';
+import { SearchComponent } from "../../../components/data/search/search.component";
+import { TableComponent } from "../../../components/data/table/table.component";
+import { columnsWorker, fieldsFormsWorker, Worker } from '../../../models/workers.model';
+import { FormsComponent } from "../../../components/data/forms/forms.component";
 
 @Component({
   selector: 'app-usuarios-trabajadores',
   standalone: true,
-  imports: [PRIMENG_MODULES, FormsModule],
+  imports: [PRIMENG_MODULES, FormsModule, SearchComponent, TableComponent, FormsComponent],
   templateUrl: './trabajadores.component.html',
   styleUrls: ['./trabajadores.component.scss'],
   providers: [MessageService, ConfirmationService],
 })
 export default class UsuariosTrabajadoresComponent implements OnInit {
-  loadingSave: boolean = false;
-  dialogVisible: boolean = false;
-  ListUsersWorkers: WorkER[] = [];
-  searchTerm: string = '';
-  selectedArea: string = '';
-  selectedCargo: string = '';
-  loading: boolean = true;
+  readonly workerForm = signal<FormGroup>(WorkerForm());
+  readonly columnsWorker = columnsWorker;
+  readonly fields = fieldsFormsWorker;
 
-  areaOptions: any[] = [];
-  cargoOptions: any[] = [];
-  filteredCargoOptions: any[] = [];
-  per_editar: number = 0;
+  protected listWorker = signal<Worker[]>([]);
+  protected searchTerm = signal<string>('');
+  protected loading = signal<boolean>(true);
+  protected loadingSave = signal<boolean>(false);
+  protected dialogVisible = signal<boolean>(false);
+  protected selectedCargo = signal<string>('');
+  protected selectedArea = signal<string>('');
 
-  currentUser: WorkER = this.createEmptyUser();
+  protected per_editar = signal<number>(0);
+ 
+  protected areaOptions = signal<any[]>([]);
+  protected cargoOptions = signal<any[]>([]);
+  protected filteredCargoOptions = signal<any[]>([]);
 
   private srvList = inject(ListService);
   private srvMensajes = inject(MessageService);
@@ -47,6 +55,9 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   private srvAuth = inject(AuthService);
   private srvPermisos = inject(PermisosService);
 
+  protected onSearchTermChange(term: string): void {
+    this.searchTerm.set(term);
+  }
   ngOnInit(): void {
     this.getUserRole();
   }
@@ -59,29 +70,28 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   }
 
   async getListUsuarios() {
-    this.loading = true;
+    this.loading.set(true);
     try {
       const res = await this.srvList.getListUsuarios().toPromise();
-      this.ListUsersWorkers = res.data;
-      this.areaOptions = this.getUniqueOptions(res.data, 'tx_area');
-      this.cargoOptions = this.getUniqueOptions(res.data, 'tx_cargo');
-      this.filteredCargoOptions = this.cargoOptions;
-    } catch (error) {
-      this.srvMensajes.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Ocurrió un error al cargar los usuarios.',
-      });
+      this.listWorker.set(res.data);
+      console.log(res.data);
+      
+      this.areaOptions.set(this.getUniqueOptions(res.data, 'tx_area'));
+      this.cargoOptions.set(this.getUniqueOptions(res.data, 'tx_cargo'));
+      this.filteredCargoOptions.set(this.cargoOptions());
+    } catch (error: unknown) {
+      this.handleError(error, 'Error al cargar productos');
     } finally {
-      this.loading = false;
+      this.loading.set(false);
     }
   }
 
 
   async getUserRole() {
     try {
-      const perEditar = this.srvPermisos.getPermissionEditar('Productos');
-      this.per_editar = perEditar;
+      const perEditar = this.srvPermisos.getPermissionEditar('Trabajadores');
+      this.per_editar.set(perEditar);
+      console.log(perEditar);
       await this.getListUsuarios();
     } catch (error: unknown) {
       this.handleError(error, 'Error al obtener permisos');
@@ -90,34 +100,10 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
 
  
 
-  createEmptyUser(): WorkER {
-    return {
-      id: 0,
-      tx_nombre: '',
-      tx_cedula: '',
-      tx_area: '',
-      tx_cargo: '',
-      tx_correo: '',
-      dt_status: 0,
-      dt_usuario: '',
-    };
-  }
 
-  get estadoBoolean(): boolean {
-    return this.currentUser ? this.currentUser.dt_status === 1 : false;
-  }
-
-  set estadoBoolean(value: boolean) {
-    if (this.currentUser) {
-      this.currentUser.dt_status = value ? 1 : 0;
-    }
-  }
-
-  
-
-  filterUsers(query: string, area: string, cargo: string): WorkER[] {
+  filterUsers(query: string, area: string, cargo: string): Worker[] {
     const lowerQuery = query.toLowerCase();
-    return this.ListUsersWorkers.filter((user) => {
+    return this.listWorker().filter((user) => {
       const matchName = user.tx_nombre?.toLowerCase().includes(lowerQuery);
       const matchCedula = user.tx_cedula?.toLowerCase().includes(lowerQuery);
       const matchArea = !area || user.tx_area === area;
@@ -126,90 +112,106 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     });
   }
 
-
-  
-  showDialog(user: WorkER | null) {
-    this.loadingSave = false; // Reiniciar el estado de loadingSave
-    if (user) {
-      this.currentUser = { ...user };
-    } else {
-      this.currentUser = this.createEmptyUser();
-    }
-    this.dialogVisible = true;
+  openAddWorkerDialog() {
+    this.workerForm().reset();
+    this.dialogVisible.set(true);
   }
 
-  async saveUser() {
-   
-
-    if (this.validateUser(this.currentUser)) {
-      this.loadingSave = true;
-      try {
-        if (this.currentUser.id > 0) {
-          await this.updateUser(this.currentUser);
-        } else {
-          await this.createUser(this.currentUser);
-        }
-        this.dialogVisible = false;
-        this.getListUsuarios();
-      } catch (error) {
-        this.handleError(error, 'Error al guardar usuario');
-      } finally {
-        this.loadingSave = false;
-      }
-    }
+  openEditWorkerDialog(workER: Worker) {
+    this.dialogVisible.set(true);
+    this.workerForm().patchValue({
+      ...workER
+    });
   }
 
-  validateUser(user: WorkER): boolean {
-    const requiredFields = ['tx_nombre', 'tx_cedula', 'tx_area', 'tx_cargo'];
-    for (const field of requiredFields) {
-      if (!user[field as keyof WorkER]) {
-        this.srvMensajes.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: `${field.replace('tx_', '')} es obligatorio.`,
-        });
-        return false;
-      }
-    }
-    return true;
-  }
-
-  async createUser(user: WorkER) {
+  async createUser() {
     try {
-      const res = await this.srvReg.postRegisterUsers(user).toPromise();
+      const payload = createWorkerPayload(this.workerForm());
+      const res = await this.srvReg.postRegisterUsers(payload).toPromise();
       this.handleResponse(res, 'Creación');
     } catch (error) {
       this.handleError(error, 'Error al crear usuario');
     }
   }
 
-  async updateUser(user: WorkER) {
+  async updateUser() {
     try {
-      const res = await this.srvReg.postEditUsers(user).toPromise();
+      const payload = updateWorkerPayload(this.workerForm());
+      const res = await this.srvReg.postEditUsers(payload).toPromise();
       this.handleResponse(res, 'Actualización');
     } catch (error) {
       this.handleError(error, 'Error al actualizar usuario');
     }
   }
 
-  onAreaChange() {
-    if (this.selectedArea) {
-      this.filteredCargoOptions = this.ListUsersWorkers.filter(
-        (user) => user.tx_area === this.selectedArea
-      ).map((user) => ({
-        label: user.tx_cargo,
-        value: user.tx_cargo,
-      }));
-      this.filteredCargoOptions = this.getUniqueOptions(
-        this.filteredCargoOptions,
-        'label'
-      );
-    } else {
-      this.filteredCargoOptions = this.cargoOptions;
+  deleteUsers(user: Worker) {
+    this.srvConfirm.confirm({ message: '¿Está seguro de eliminar el trabajador?', header: 'Confirmación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Eliminar',
+      accept: async () => {
+        try {
+          const res = await this.srvDelete.requestdeleteTrabajadores(user.id).toPromise();
+          this.handleResponse(res, 'Eliminado');
+          await this.getListUsuarios();
+        } catch (error) {
+          this.handleError(error, 'Error al eliminar producto');
+        }
+      },
+    });
+  }
+
+  
+  
+
+  async saveWorker() {
+    const form = this.workerForm();
+    if (!form.valid) return;
+  
+    const tx_cedula = form.get('tx_cedula')?.value?.trim().toLowerCase();
+    const dt_usuario = form.get('dt_usuario')?.value?.trim().toLowerCase();  // Obtener el valor de dt_usuario
+    const currentId = form.get('id')?.value;
+  
+    // Busca si existe un trabajador con el mismo tx_cedula pero diferente ID
+    const existingWorkerByCedula = this.listWorker().find(
+      worker => worker.tx_cedula.toLowerCase() === tx_cedula && worker.id !== currentId
+    );
+  
+    if (existingWorkerByCedula) {
+      this.srvMensajes.add({ severity: 'error', summary: 'Error', detail: 'Ya existe un trabajador con esta cédula' });
+      return;
     }
-    this.selectedCargo = '';
+  
+    // Busca si existe un trabajador con el mismo dt_usuario pero diferente ID
+    const existingWorkerByUsuario = this.listWorker().find(
+      worker => worker.dt_usuario.toLowerCase() === dt_usuario && worker.id !== currentId
+    );
+  
+    if (existingWorkerByUsuario) {
+      this.srvMensajes.add({ severity: 'error', summary: 'Error', detail: 'Ya existe un trabajador con este usuario' });
+      return;
+    }
+  
+    this.loadingSave.set(true);
+    try {
+      currentId === null ? await this.createUser() : await this.updateUser();
+      this.dialogVisible.set(false);
+      await this.getListUsuarios();
+    } catch (error: unknown) {
+      this.handleError(error, 'Error al guardar el trabajador');
+    } finally {
+      this.loadingSave.set(false);
+    }
   }
   
+  handleError(error: any, message: string): void {
+    this.srvMensajes.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Ocurrió un error al procesar la solicitud',
+    });
+    this.loading.set(false);
+    this.loadingSave.set(false);
+  }
 
   handleResponse(res: any, successMessage: string) {
     if (
@@ -225,34 +227,21 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     }
   }
 
-  handleError(error: any, message: string): void {
-    this.srvMensajes.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'Ocurrió un error al procesar la solicitud',
-    });
-    this.loading = false;
-    this.loadingSave = false;
+    
+  onAreaChange() {
+    const selectedAreaValue = this.selectedArea();
+    if (selectedAreaValue) {
+      const filteredOptions = this.listWorker().filter(
+        (user) => user.tx_area === selectedAreaValue
+      ).map((user) => ({
+        label: user.tx_cargo,
+        value: user.tx_cargo,
+      }));
+      this.filteredCargoOptions.set(this.getUniqueOptions(filteredOptions, 'label'));
+    } else {
+      this.filteredCargoOptions.set(this.cargoOptions());
+    }
+    this.selectedCargo.set('');
   }
-
-  deleteUsers(user: WorkER) {
-    this.srvConfirm.confirm({
-      message: '¿Está seguro de eliminar el trabajador?',
-      header: 'Confirmación',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Eliminar',
-      accept: async () => {
-        try {
-          const res = await this.srvDelete
-            .requestdeleteTrabajadores(user.id)
-            .toPromise();
-          this.handleResponse(res, 'Eliminado');
-
-          await this.getListUsuarios();
-        } catch (error) {
-          this.handleError(error, 'Error al eliminar producto');
-        }
-      },
-    });
+  
   }
-}
