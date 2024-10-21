@@ -6,7 +6,7 @@ import { RegisterService } from '../../../services/services_sg/register.service'
 import { ListService } from '../../../services/services_sg/list.service';
 import { PRIMENG_MODULES} from './productos.import';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { columnsProducts, fieldsFormsProducts, Product } from '../../../models/products.interfaces';
+import { columnsProducts, fieldsFormsProducts, Product } from '../../../models/products.model';
 import { DeleteService } from '../../../services/services_sg/delete.service';
 import { PermisosService } from '../../../services/services_auth/permisos.service';
 import { TableComponent } from '../../../components/data/table/table.component';

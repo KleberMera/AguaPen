@@ -7,7 +7,7 @@ import { formatDate } from '@angular/common';
 
 
 // Services and interfaces of the app
-import { registerArea } from '../../../models/registers.interfaces';
+import { registerArea } from '../../../models/registers.model';
 import { RegisterDetailsService } from '../../../services/services_sg/register-details.service';
 import { ListService } from '../../../services/services_sg/list.service';
 
@@ -15,8 +15,8 @@ import { ListService } from '../../../services/services_sg/list.service';
 import { PrimeModules } from './registros-areas.import';
 // Providers of PrimeNG
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { Product } from '../../../models/products.interfaces';
-import { detailAreas } from '../../../models/details.interfaces';
+import { Product } from '../../../models/products.model';
+import { detailAreas } from '../../../models/details.model';
 import { Area } from '../../../models/areas.model';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 

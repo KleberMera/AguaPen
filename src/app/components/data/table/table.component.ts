@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { PRIMENG_MODULES } from './table.imports';
 import { CommonModule } from '@angular/common';
-import { Column } from '../../../models/auth.models';
+import { Column } from '../../../models/auth.model';
 
 @Component({
   selector: 'app-table',

@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { PRIMENG_MODULES } from './vehiculos.import';
-import { columnsVehiculos, fieldsFormsVehiculos, Vehiculo } from '../../../models/vehicles.interfaces';
+import { columnsVehiculos, fieldsFormsVehiculos, Vehiculo } from '../../../models/vehicles.model';
 import { RegisterService } from '../../../services/services_sg/register.service';
 import { ListService } from '../../../services/services_sg/list.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -33,7 +33,6 @@ export default class VehiculosComponent {
   protected loadingSave = signal<boolean>(false);
   protected dialogVisible = signal<boolean>(false);
   protected per_editar = signal<number>(0);
-
 
   private readonly srvReg = inject(RegisterService);
   private readonly srvList = inject(ListService);
@@ -94,11 +93,9 @@ export default class VehiculosComponent {
     });
   }
 
-
   async addVehiculo() {
     try {
       const payload = createVehiclePayload(this.vehiclesForm());
-      console.log(payload);
       const res = await this.srvReg.postRegisterVehiculos(payload).toPromise();
       this.handleResponse(res, 'Agregado');
     } catch (error) {
@@ -173,8 +170,6 @@ export default class VehiculosComponent {
       });
     }
   }
-
-
 
   private handleError(error: any, message: string): void {
     console.error(message, error);

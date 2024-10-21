@@ -2,13 +2,13 @@ import { PrintService } from '../../../services/services_sg/print.service';
 import { Component, inject } from '@angular/core';
 import { PrimeModules } from './registros-vehiculos.import';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { Vehiculo } from '../../../models/vehicles.interfaces';
-import { Product } from '../../../models/products.interfaces';
+import { Vehiculo } from '../../../models/vehicles.model';
+import { Product } from '../../../models/products.model';
 import { RegisterDetailsService } from '../../../services/services_sg/register-details.service';
 import { ListService } from '../../../services/services_sg/list.service';
-import { registerVehiculos } from '../../../models/registers.interfaces';
+import { registerVehiculos } from '../../../models/registers.model';
 import { formatDate } from '@angular/common';
-import { detailVehiculos } from '../../../models/details.interfaces';
+import { detailVehiculos } from '../../../models/details.model';
 import { FormsModule } from '@angular/forms';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 

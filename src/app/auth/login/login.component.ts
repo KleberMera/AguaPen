@@ -15,7 +15,7 @@ import { PasswordModule } from 'primeng/password';
 import { DividerModule } from 'primeng/divider';
 import { AuthService } from '../../services/services_auth/auth.service';
 import { FooterComponent } from '../../components/layout/footer/footer.component';
-import { Auth } from '../../models/auth.models';
+import { Auth } from '../../models/auth.model';
 
 const PRIMEMG_MODULES = [
   ToastModule,

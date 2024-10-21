@@ -15,8 +15,8 @@ import {
   MutatePayloadCreate,
   User,
   UserAttributes,
-} from '../../../models/users.interfaces';
-import { Permisos } from '../../../models/permisos.interfaces';
+} from '../../../models/users.model';
+import { Permisos } from '../../../models/permisos.model';
 
 @Component({
   selector: 'app-usuarios-roles',

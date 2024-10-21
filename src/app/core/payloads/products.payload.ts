@@ -1,5 +1,5 @@
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { PayloadProductCreate, PayloadProductUpdate } from "../../models/products.interfaces";
+import { PayloadProductCreate, PayloadProductUpdate } from "../../models/products.model";
 
 export function ProductForm(): FormGroup {
     return new FormGroup({

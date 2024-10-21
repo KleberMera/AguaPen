@@ -1,5 +1,5 @@
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { PayloadVehiculoCreate, PayloadVehiculoUpdate } from "../../models/vehicles.interfaces";
+import { PayloadVehiculoCreate, PayloadVehiculoUpdate } from "../../models/vehicles.model";
 
 export function VehicleForm(): FormGroup {
   return new FormGroup({

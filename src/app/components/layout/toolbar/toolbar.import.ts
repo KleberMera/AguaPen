@@ -14,7 +14,7 @@ import { RippleModule } from 'primeng/ripple';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MutatePayloadUpdate } from '../../../models/users.interfaces';
+import { MutatePayloadUpdate } from '../../../models/users.model';
 export const PRIMENG_MODULES = [
   ToolbarModule,
   ButtonModule,

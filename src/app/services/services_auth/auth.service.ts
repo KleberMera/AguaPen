@@ -4,12 +4,12 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment.development';
-import { Auth, lsUser } from '../../models/auth.models';
+import { Auth, lsUser } from '../../models/auth.model';
 import {
   MutatePayloadCreate,
   MutatePayloadUpdate,
   viewDataUser,
-} from '../../models/users.interfaces';
+} from '../../models/users.model';
 import { error } from 'pdf-lib';
 
 @Injectable({

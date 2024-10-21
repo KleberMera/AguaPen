@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
-import { PayloadProductCreate, PayloadProductUpdate } from '../../models/products.interfaces';
-import { PayloadVehiculoCreate, PayloadVehiculoUpdate } from '../../models/vehicles.interfaces';
+import { PayloadProductCreate, PayloadProductUpdate } from '../../models/products.model';
+import { PayloadVehiculoCreate, PayloadVehiculoUpdate } from '../../models/vehicles.model';
+import { PayloadAreaCreate, PayloadAreaUpdate } from '../../models/areas.model';
 
 @Injectable({
   providedIn: 'root',
@@ -33,6 +34,18 @@ export class RegisterService {
   postEditVehiculos(objVehiculo: PayloadVehiculoUpdate) {
     const url = `${this.environment}vehiculos/mutate`;
     return this.http.post<PayloadVehiculoUpdate>(url, objVehiculo);
+  }
+
+   // Registar Areas
+   postRegisterAreas(objArea: PayloadAreaCreate) {
+    const url = `${this.environment}areas/mutate`;
+    return this.http.post<PayloadAreaCreate>(url, objArea);
+  }
+
+  // Editar Areas
+  postEditAreas(objArea: PayloadAreaUpdate) {
+    const url = `${this.environment}areas/mutate`;
+    return this.http.post<PayloadAreaUpdate>(url, objArea);
   }
 
   // Registro de Trabajadores
@@ -78,38 +91,7 @@ export class RegisterService {
     });
   }
 
-  // Registar Areas
-  postRegisterAreas(objArea: any) {
-    const url = `${this.environment}areas/mutate`;
-    return this.http.post(url, {
-      mutate: [
-        {
-          operation: 'create',
-          attributes: {
-            nombre_area: objArea.nombre_area,
-            estado: objArea.estado,
-          },
-        },
-      ],
-    });
-  }
-
-  // Editar Areas
-  postEditAreas(objArea: any) {
-    const url = `${this.environment}areas/mutate`;
-    return this.http.post(url, {
-      mutate: [
-        {
-          operation: 'update',
-          key: objArea.id,
-          attributes: {
-            nombre_area: objArea.nombre_area,
-            estado: objArea.estado,
-          },
-        },
-      ],
-    });
-  }
+ 
 
   
 }
