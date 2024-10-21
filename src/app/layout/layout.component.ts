@@ -11,10 +11,10 @@ import { filter, Subscription } from 'rxjs';
 
 
 
-import { LayoutService } from '../../services/gen/layout.service';
-import { FooterComponent } from '../../components/layout/footer/footer.component';
-import { ToolbarComponent } from '../../components/layout/toolbar/toolbar.component';
-import { SidebarComponent } from '../../components/layout/sidebar/sidebar.component';
+import { LayoutService } from '../services/gen/layout.service';
+import { FooterComponent } from '../components/layout/footer/footer.component';
+import { ToolbarComponent } from '../components/layout/toolbar/toolbar.component';
+import { SidebarComponent } from '../components/layout/sidebar/sidebar.component';
 
 
 const PRIMEMG_MODULES = [SplitterModule];
@@ -28,8 +28,8 @@ const COMPONENTS = [
   selector: 'app-home',
   standalone: true,
   imports: [PRIMEMG_MODULES, COMPONENTS, RouterOutlet, CommonModule, SidebarComponent],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss',
+  templateUrl: './layout.component.html',
+  styleUrl: './layout.component.scss',
 })
 export default class HomeComponent {
   overlayMenuOpenSubscription: Subscription;

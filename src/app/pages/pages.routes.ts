@@ -4,11 +4,11 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./home/home.component'),
+    loadComponent: () => import('../layout/layout.component'),
     children: [
       {
         path: 'dashboard',
-        loadComponent: () => import('./seguridad-industrial/dashboard/dashboard.component'),
+        loadComponent: () => import('./dashboard/dashboard.component'),
       },
       {
         path: `productos`,
