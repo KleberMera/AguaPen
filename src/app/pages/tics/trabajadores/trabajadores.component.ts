@@ -40,9 +40,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   protected dialogVisible = signal<boolean>(false);
   protected selectedCargo = signal<string>('');
   protected selectedArea = signal<string>('');
-
   protected per_editar = signal<number>(0);
- 
   protected areaOptions = signal<any[]>([]);
   protected cargoOptions = signal<any[]>([]);
   protected filteredCargoOptions = signal<any[]>([]);
@@ -62,7 +60,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     this.getUserRole();
   }
 
-    getUniqueOptions(data: any[], field: string): any[] {
+  getUniqueOptions(data: any[], field: string): any[] {
     return [...new Set(data.map((item) => item[field]))]
       .filter((value) => value != null)
       .map((value) => ({ label: value, value }))
@@ -74,8 +72,6 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     try {
       const res = await this.srvList.getListUsuarios().toPromise();
       this.listWorker.set(res.data);
-      console.log(res.data);
-      
       this.areaOptions.set(this.getUniqueOptions(res.data, 'tx_area'));
       this.cargoOptions.set(this.getUniqueOptions(res.data, 'tx_cargo'));
       this.filteredCargoOptions.set(this.cargoOptions());
@@ -91,15 +87,11 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     try {
       const perEditar = this.srvPermisos.getPermissionEditar('Trabajadores');
       this.per_editar.set(perEditar);
-      console.log(perEditar);
       await this.getListUsuarios();
     } catch (error: unknown) {
       this.handleError(error, 'Error al obtener permisos');
     }
   }
-
- 
-
 
   filterUsers(query: string, area: string, cargo: string): Worker[] {
     const lowerQuery = query.toLowerCase();
@@ -114,6 +106,9 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
 
   openAddWorkerDialog() {
     this.workerForm().reset();
+    this.workerForm().patchValue({
+      dt_status: 1,
+    });
     this.dialogVisible.set(true);
   }
 
@@ -160,9 +155,6 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     });
   }
 
-  
-  
-
   async saveWorker() {
     const form = this.workerForm();
     if (!form.valid) return;
@@ -173,7 +165,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   
     // Busca si existe un trabajador con el mismo tx_cedula pero diferente ID
     const existingWorkerByCedula = this.listWorker().find(
-      worker => worker.tx_cedula.toLowerCase() === tx_cedula && worker.id !== currentId
+      worker => worker.tx_cedula && worker.tx_cedula.toLowerCase() === tx_cedula && worker.id !== currentId
     );
   
     if (existingWorkerByCedula) {
@@ -183,7 +175,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   
     // Busca si existe un trabajador con el mismo dt_usuario pero diferente ID
     const existingWorkerByUsuario = this.listWorker().find(
-      worker => worker.dt_usuario.toLowerCase() === dt_usuario && worker.id !== currentId
+      worker => worker.dt_usuario && worker.dt_usuario.toLowerCase() === dt_usuario && worker.id !== currentId
     );
   
     if (existingWorkerByUsuario) {
@@ -227,7 +219,6 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     }
   }
 
-    
   onAreaChange() {
     const selectedAreaValue = this.selectedArea();
     if (selectedAreaValue) {
@@ -243,5 +234,5 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     }
     this.selectedCargo.set('');
   }
-  
+
   }
