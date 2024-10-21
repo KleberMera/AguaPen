@@ -1,18 +1,3 @@
-export interface User {
-  id: number;
-  tx_nombre: string;
-  tx_cedula: string;
-  tx_area: string;
-  tx_cargo: string;
-  tx_correo: string;
-  dt_status: number;
-  dt_usuario: string;
-}
-
-export interface viewDataUser {
-  data: UserAttributes;
-}
-
 export interface UserAttributes {
   id: number;
   cedula: string;
@@ -23,6 +8,11 @@ export interface UserAttributes {
   usuario: string;
   password: string;
   estado: number;
+}
+
+
+export interface viewDataUser {
+  data: UserAttributes;
 }
 
 export interface MutateOperationUpdate {

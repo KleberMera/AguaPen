@@ -12,11 +12,12 @@ import { Product } from '../../../models/products.model';
 import { ViewChild } from '@angular/core';
 
 import { PRIMEMG_MODULES } from './registros.imports';
-import { User } from '../../../models/users.model';
+
 import { details } from '../../../models/details.model';
 import { UploadimageService } from '../../../services/seguridad-industrial/uploadimage.service';
 import { ReporteService } from '../../../services/seguridad-industrial/reporte.service';
 import { DropdownComponent } from '../../../components/data/dropdown/dropdown.component';
+import { WorkER } from '../../../models/workers.model';
 
 @Component({
   selector: 'app-registros',
@@ -29,12 +30,12 @@ import { DropdownComponent } from '../../../components/data/dropdown/dropdown.co
 export default class RegistrosComponent {
   @ViewChild('fileUpload') fileUpload!: FileUpload;
   //users: User[] = [];
-  protected users = signal<User[]>([]);
+  protected users = signal<WorkER[]>([]);
   protected product = signal<Product[]>([]);
-  protected selectedUser = signal<User | null>(null);
+  protected selectedUser = signal<WorkER | null>(null);
   protected isInProgress = signal<boolean>(false);
 
-  filteredUsers: User[] = [];
+  filteredUsers: WorkER[] = [];
   searchQuery: string = '';
 
   showProductsTable: boolean = false;
@@ -59,36 +60,50 @@ export default class RegistrosComponent {
   private readonly uploadService = inject(UploadimageService);
 
   ngOnInit() {
-    this.loadData();
+    this.loadInitialData();
   }
 
-  async loadData(): Promise<void> {
+  async loadInitialData(): Promise<void> {
+    try {
+      this.loading = true;
+      this.loadingMessage = 'Cargando datos...';
+      await Promise.all([this.loadUsers(), this.loadProducts()]);
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  async loadUsers(): Promise<void> {
     this.loading = true;
-    this.loadingMessage = 'Cargando Data'
+    this.loadingMessage = 'Cargando Data';
     try {
       const response = await this.srvList.getListUsuarios().toPromise();
       if (response.data) {
         const data = response.data.filter((user: any) => user.dt_status === 1);
         this.users.set(data);
-        const res = await this.srvList.getlistProducts().toPromise();
-        if (res.data) {
-          const data = res.data
-            .filter(
-              (product: Product) =>
-                product.estado_producto === 1 && product.stock_producto > 0
-            )
-            .map((product: Product) => ({ ...product, cantidad: 1 }));
-          this.product.set(data);
-          this.loading = false;
-        }
+        this.loading = false;
       }
     } catch (error) {
-      //this.showError('Error al cargar usuarios');
       this.loading = false;
     }
   }
 
-  handleUserSelected(user: User): void {
+  async loadProducts() {
+    try {
+      const res = await this.srvList.getlistProducts().toPromise();
+      if (res.data) {
+        const data = res.data
+          .filter((product: Product) => product.estado_producto === 1 && product.stock_producto > 0 )
+          .map((product: Product) => ({ ...product, cantidad: 1 }));
+        this.product.set(data);
+        this.loading = false;
+      }
+    } catch (error) {
+      this.loading = false;
+    }
+  }
+
+  handleUserSelected(user: WorkER): void {
     this.selectedUser.set(user);
     this.messageService.add({
       severity: 'info',

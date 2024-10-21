@@ -5,7 +5,6 @@ import { ListService } from '../../../services/seguridad-industrial/list.service
 
 // Services and interfaces of the app
 import { RegisterService } from '../../../services/seguridad-industrial/register.service';
-import { User } from '../../../models/users.model';
 
 // Imports of PrimeNG
 import { PRIMENG_MODULES } from './trabajadores.import';
@@ -14,6 +13,7 @@ import { DeleteService } from '../../../services/seguridad-industrial/delete.ser
 
 import { PermisosService } from '../../../services/auth/permisos.service';
 import { AuthService } from '../../../services/auth/auth.service';
+import { WorkER } from '../../../models/workers.model';
 
 @Component({
   selector: 'app-usuarios-trabajadores',
@@ -26,9 +26,7 @@ import { AuthService } from '../../../services/auth/auth.service';
 export default class UsuariosTrabajadoresComponent implements OnInit {
   loadingSave: boolean = false;
   dialogVisible: boolean = false;
-  checked: boolean = false;
-
-  ListUsersWorkers: User[] = [];
+  ListUsersWorkers: WorkER[] = [];
   searchTerm: string = '';
   selectedArea: string = '';
   selectedCargo: string = '';
@@ -39,7 +37,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   filteredCargoOptions: any[] = [];
   per_editar: number = 0;
 
-  currentUser: User = this.createEmptyUser();
+  currentUser: WorkER = this.createEmptyUser();
 
   private srvList = inject(ListService);
   private srvMensajes = inject(MessageService);
@@ -53,40 +51,46 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     this.getUserRole();
   }
 
-  async getUserRole() {
+    getUniqueOptions(data: any[], field: string): any[] {
+    return [...new Set(data.map((item) => item[field]))]
+      .filter((value) => value != null)
+      .map((value) => ({ label: value, value }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }
+
+  async getListUsuarios() {
+    this.loading = true;
     try {
-      const res = await this.srvAuth.getLoginUser().toPromise();
-
-      const user_id = res?.data.id;
-
-      if (user_id) {
-        const permisos = await this.srvPermisos
-          .getListPermisosPorUsuario(user_id)
-          .toPromise();
-        const data = permisos.data;
-
-        //Recorrer la data
-        data.forEach((permiso: any) => {
-          if (
-            permiso.modulo_id === 2 &&
-            permiso.opcion_label === 'Trabajadores'
-          ) {
-            this.per_editar = permiso.per_editar;
-          }
-        });
-      }
-
-      this.getListUsuarios();
+      const res = await this.srvList.getListUsuarios().toPromise();
+      this.ListUsersWorkers = res.data;
+      this.areaOptions = this.getUniqueOptions(res.data, 'tx_area');
+      this.cargoOptions = this.getUniqueOptions(res.data, 'tx_cargo');
+      this.filteredCargoOptions = this.cargoOptions;
     } catch (error) {
       this.srvMensajes.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Ocurrió un error al obtener el rol del usuario.',
+        detail: 'Ocurrió un error al cargar los usuarios.',
       });
+    } finally {
+      this.loading = false;
     }
   }
 
-  createEmptyUser(): User {
+
+  async getUserRole() {
+    try {
+      const perEditar = this.srvPermisos.getPermissionEditar('Productos');
+      this.per_editar = perEditar;
+      await this.getListUsuarios();
+    } catch (error: unknown) {
+      this.handleError(error, 'Error al obtener permisos');
+    }
+  }
+
+ 
+
+  createEmptyUser(): WorkER {
     return {
       id: 0,
       tx_nombre: '',
@@ -109,26 +113,9 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     }
   }
 
-  async getListUsuarios() {
-    this.loading = true;
-    try {
-      const res = await this.srvList.getListUsuarios().toPromise();
-      this.ListUsersWorkers = res.data;
-      this.areaOptions = this.getUniqueOptions(res.data, 'tx_area');
-      this.cargoOptions = this.getUniqueOptions(res.data, 'tx_cargo');
-      this.filteredCargoOptions = this.cargoOptions;
-    } catch (error) {
-      this.srvMensajes.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Ocurrió un error al cargar los usuarios.',
-      });
-    } finally {
-      this.loading = false;
-    }
-  }
+  
 
-  filterUsers(query: string, area: string, cargo: string): User[] {
+  filterUsers(query: string, area: string, cargo: string): WorkER[] {
     const lowerQuery = query.toLowerCase();
     return this.ListUsersWorkers.filter((user) => {
       const matchName = user.tx_nombre?.toLowerCase().includes(lowerQuery);
@@ -139,27 +126,9 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     });
   }
 
-  getUniqueOptions(data: any[], field: string): any[] {
-    return [...new Set(data.map((item) => item[field]))]
-      .filter((value) => value != null)
-      .map((value) => ({ label: value, value }))
-      .sort((a, b) => a.label.localeCompare(b.label));
-  }
 
-  clearSearchTerm() {
-    this.searchTerm = '';
-  }
-
-  clearSelectedArea() {
-    this.selectedArea = '';
-    this.filteredCargoOptions = this.cargoOptions;
-  }
-
-  clearSelectedCargo() {
-    this.selectedCargo = '';
-  }
-
-  showDialog(user: User | null) {
+  
+  showDialog(user: WorkER | null) {
     this.loadingSave = false; // Reiniciar el estado de loadingSave
     if (user) {
       this.currentUser = { ...user };
@@ -190,10 +159,10 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     }
   }
 
-  validateUser(user: User): boolean {
+  validateUser(user: WorkER): boolean {
     const requiredFields = ['tx_nombre', 'tx_cedula', 'tx_area', 'tx_cargo'];
     for (const field of requiredFields) {
-      if (!user[field as keyof User]) {
+      if (!user[field as keyof WorkER]) {
         this.srvMensajes.add({
           severity: 'error',
           summary: 'Error',
@@ -205,7 +174,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     return true;
   }
 
-  async createUser(user: User) {
+  async createUser(user: WorkER) {
     try {
       const res = await this.srvReg.postRegisterUsers(user).toPromise();
       this.handleResponse(res, 'Creación');
@@ -214,7 +183,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     }
   }
 
-  async updateUser(user: User) {
+  async updateUser(user: WorkER) {
     try {
       const res = await this.srvReg.postEditUsers(user).toPromise();
       this.handleResponse(res, 'Actualización');
@@ -266,7 +235,7 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     this.loadingSave = false;
   }
 
-  deleteUsers(user: User) {
+  deleteUsers(user: WorkER) {
     this.srvConfirm.confirm({
       message: '¿Está seguro de eliminar el trabajador?',
       header: 'Confirmación',
