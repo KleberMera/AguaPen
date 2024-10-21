@@ -1,55 +1,47 @@
 <div class="formgrid grid">
   <div class="field col">
-    <p-dropdown
-    id="dropdown"
-    [options]="dropdownOptions"
-    [(ngModel)]="selectedUser"
-    optionLabel="tx_nombre"
-    [filter]="true"
-    filterBy="tx_nombre,tx_cedula"
-    [showClear]="true"
-    placeholder="Seleccionar o escribir Usuario"
-    (onChange)="selectUser($event)"
-  >
-    <ng-template let-user pTemplate="item">
-      <div class="flex align-items-center gap-2">
-        <div>{{ user.tx_nombre }} ({{ user.tx_cedula }})</div>
-      </div>
-    </ng-template>
-  </p-dropdown>
-  
+    <app-dropdown
+      [items]="users()"
+      optionLabel="tx_nombre"
+      secondaryLabel="tx_cedula"
+      placeholder="Seleccionar o Escribir Usuario"
+      (itemSelected)="handleUserSelected($event)"
+    ></app-dropdown>
   </div>
 </div>
 
 <div class="grid">
-  @if (selectedUser) {
+  @if (selectedUser()) {
   <div class="col-12 xl:col-6">
-    <p-card class="" header="Trabajador"   [style]="{ width: '100%', height: '100%' }">
+    <p-card
+      class=""
+      header="Trabajador"
+      [style]="{ width: '100%', height: '100%' }"
+    >
       <div>
         <div class="flex align-items-center gap-2 mb-3">
           <label class="font-bold">Nombre: </label>
-          <span class="flex-auto">{{ selectedUser.tx_nombre }}</span>
+          <span class="flex-auto">{{ selectedUser()?.tx_nombre }}</span>
         </div>
         <div class="flex align-items-center gap-3 mb-3">
           <label class="font-bold">Cédula:</label>
-          <span class="flex-auto">{{ selectedUser.tx_cedula }}</span>
+          <span class="flex-auto">{{ selectedUser()?.tx_cedula }}</span>
         </div>
         <div class="flex align-items-center gap-5 mb-3">
           <label class="font-bold">Área: </label>
-          <span class="flex-auto">{{ selectedUser.tx_area }}</span>
+          <span class="flex-auto">{{ selectedUser()?.tx_area }}</span>
         </div>
         <div class="flex align-items-center gap-4 mb-3">
           <label class="font-bold">Cargo: </label>
-          <span class="flex-auto">{{ selectedUser.tx_cargo }}</span>
+          <span class="flex-auto">{{ selectedUser()?.tx_cargo }}</span>
         </div>
-
       </div>
       <div class="footer">
         <div class="flex justify-content-end">
           <p-button
             icon="pi pi-plus"
-            [label]="isInProgress ? 'Limpiar' : 'Asignar'"
-            [severity]="isInProgress ? 'secondary' : 'success'"
+            [label]="isInProgress() ? 'Limpiar' : 'Asignar'"
+            [severity]="isInProgress() ? 'secondary' : 'success'"
             class="p-mr-2"
             (click)="toggleProducts()"
             (click)="grid = true"
@@ -61,7 +53,6 @@
             label="Registrar"
             (click)="register()"
           ></button>
-
         </div>
       </div>
     </p-card>
@@ -83,12 +74,12 @@
               [(ngModel)]="observacion"
             />
           </p-inputGroup>
-          <button  pButton
-          type="button"
-          label="Imagen"
-          (click)="visible = true">
-           
-          </button>
+          <button
+            pButton
+            type="button"
+            label="Imagen"
+            (click)="visible = true"
+          ></button>
         </div>
       </div>
       <p-scrollPanel
@@ -219,32 +210,34 @@
   </p-table>
 </div>
 
-
 }
 
+<p-dialog
+  header="Agregar Imagen"
+  [modal]="true"
+  [(visible)]="visible"
+  [style]="{ width: '25rem' }"
+>
+  <div class="p-fluid">
+    <p-fileUpload
+      #fileUpload
+      mode="basic"
+      chooseLabel="Seleccionar Imagen"
+      accept="image/*"
+      customUpload="true"
+      (onSelect)="onFileSelected($event)"
+    ></p-fileUpload>
 
-<p-dialog header="Agregar Imagen" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }">
-<div class="p-fluid">
-  <p-fileUpload
-  #fileUpload
-  mode="basic"
-  chooseLabel="Seleccionar Imagen"
-  accept="image/*"
+    @if (imagePreview) {
+    <img
+      [src]="imagePreview"
+      alt="Image Preview"
+      style="max-width: 300px; max-height: 300px"
+    />
 
-  customUpload="true"
-  (onSelect)="onFileSelected($event)"
-></p-fileUpload>
-
-@if (imagePreview) {
-  <img  [src]="imagePreview" alt="Image Preview" style="max-width: 300px; max-height: 300px;" />
-
-}
-</div>
-
+    }
+  </div>
 </p-dialog>
-
-
-
 
 <!-- Componente de carga -->
 <p-blockUI [blocked]="loading">
@@ -262,9 +255,6 @@
 </p-blockUI>
 <p-toast
   [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
-  
 ></p-toast>
 
 <p-confirmDialog></p-confirmDialog>
-
-

@@ -4,10 +4,7 @@
   <ul class="layout-menu">
     @for (item of model(); track item.label) {
     <ng-container>
-      <!-- MenuItems Component -->
       <app-menuitem [item]="item" [root]="true" />
-
-      <!-- Optional Separator -->
       @if (item.separator) {
       <li class="menu-separator"></li>
       }

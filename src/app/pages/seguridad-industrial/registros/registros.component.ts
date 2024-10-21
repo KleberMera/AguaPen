@@ -1,5 +1,5 @@
 import { PrintService } from '../../../services/seguridad-industrial/print.service';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, Signal, signal } from '@angular/core';
 import { RegisterDetailsService } from '../../../services/seguridad-industrial/register-details.service';
 import { ListService } from '../../../services/seguridad-industrial/list.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -16,24 +16,27 @@ import { User } from '../../../models/users.model';
 import { details } from '../../../models/details.model';
 import { UploadimageService } from '../../../services/seguridad-industrial/uploadimage.service';
 import { ReporteService } from '../../../services/seguridad-industrial/reporte.service';
+import { DropdownComponent } from '../../../components/data/dropdown/dropdown.component';
 
 @Component({
   selector: 'app-registros',
   standalone: true,
-  imports: [PRIMEMG_MODULES, FormsModule],
+  imports: [PRIMEMG_MODULES, FormsModule, DropdownComponent],
   templateUrl: './registros.component.html',
   styleUrl: './registros.component.scss',
   providers: [MessageService, ConfirmationService],
 })
-export default class RegistrosComponent implements OnInit {
+export default class RegistrosComponent {
   @ViewChild('fileUpload') fileUpload!: FileUpload;
+  //users: User[] = [];
+  protected users = signal<User[]>([]);
+  protected product = signal<Product[]>([]);
+  protected selectedUser = signal<User | null>(null);
+  protected isInProgress = signal<boolean>(false);
 
-  ListUsers: User[] = [];
-  ListProductos: Product[] = [];
   filteredUsers: User[] = [];
   searchQuery: string = '';
-  selectedUser: User | null = null;
-  dropdownOptions: User[] = [];
+
   showProductsTable: boolean = false;
   selectedProducts: Product[] = [];
   loading: boolean = false;
@@ -42,120 +45,65 @@ export default class RegistrosComponent implements OnInit {
   loadingMessage: string = '';
   grid: boolean = false;
   visible: boolean = false;
-  isInProgress: boolean = false;
+
   selectedFile: File | null = null;
 
   imagePreview: string | ArrayBuffer | null = null;
   idregistro: number = 0;
 
-  private reporte = inject(ReporteService);
-  private srvRegDet = inject(RegisterDetailsService);
-  private srvList = inject(ListService);
-  private PrintService = inject(PrintService);
-  private messageService = inject(MessageService);
-  private confirmationService = inject(ConfirmationService);
-  private uploadService = inject(UploadimageService);
+  private readonly srvRegDet = inject(RegisterDetailsService);
+  private readonly srvList = inject(ListService);
+  private readonly PrintService = inject(PrintService);
+  private readonly messageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService);
+  private readonly uploadService = inject(UploadimageService);
 
-  async ngOnInit(): Promise<void> {
-    await this.loadInitialData();
+  ngOnInit() {
+    this.loadData();
   }
 
-  async loadInitialData(): Promise<void> {
+  async loadData(): Promise<void> {
+    this.loading = true;
+    this.loadingMessage = 'Cargando Data'
     try {
-      this.loading = true;
-      this.loadingMessage = 'Cargando datos...';
-      await Promise.all([this.getListUsuarios(), this.getListProductos()]);
-  
-    } finally {
+      const response = await this.srvList.getListUsuarios().toPromise();
+      if (response.data) {
+        const data = response.data.filter((user: any) => user.dt_status === 1);
+        this.users.set(data);
+        const res = await this.srvList.getlistProducts().toPromise();
+        if (res.data) {
+          const data = res.data
+            .filter(
+              (product: Product) =>
+                product.estado_producto === 1 && product.stock_producto > 0
+            )
+            .map((product: Product) => ({ ...product, cantidad: 1 }));
+          this.product.set(data);
+          this.loading = false;
+        }
+      }
+    } catch (error) {
+      //this.showError('Error al cargar usuarios');
       this.loading = false;
     }
   }
 
-  async getListUsuarios(): Promise<void> {
-    try {
-      const res = await this.srvList.getListUsuarios().toPromise();
-      let userList = res.data.filter(
-        (user: User) => user.dt_status === 1
-      );
-
-      this.dropdownOptions = userList;
-    } catch (error) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Error al cargar usuarios',
-      });
-    }
-  }
-
-  async getListProductos(): Promise<void> {
-    try {
-      const res = await this.srvList.getlistProducts().toPromise();
-      //Trare los productos activos
-      this.ListProductos = res.data
-        .filter(
-          (product: Product) =>
-            product.estado_producto === 1 && product.stock_producto > 0
-        )
-        .map((product: Product) => ({
-          ...product,
-          cantidad: 1,
-        }));
-    } catch (error) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Error al cargar productos',
-      });
-    }
-  }
-
-  searchUser(): void {
-    
-    this.filteredUsers = this.searchQuery.trim()
-      ? this.ListUsers.filter((user) =>
-          user.tx_cedula?.toLowerCase().includes(this.searchQuery.toLowerCase())
-        )
-      : this.ListUsers;
-
+  handleUserSelected(user: User): void {
+    this.selectedUser.set(user);
     this.messageService.add({
-      severity: this.filteredUsers.length ? 'success' : 'error',
-      summary: this.filteredUsers.length
-        ? 'Usuario encontrado'
-        : 'Usuario no encontrado',
-      detail: this.filteredUsers.length
-        ? `Se encontraron ${this.filteredUsers.length} usuario(s)`
-        : 'No se encontraron usuarios con ese criterio de búsqueda',
+      severity: 'info',
+      summary: 'Usuario seleccionado',
+      detail: `Has seleccionado a ${user.tx_nombre}`,
     });
-
-    this.selectedUser = this.filteredUsers[0] || null;
-  }
-
-  clearSearch(): void {
-    this.searchQuery = '';
-    this.filteredUsers = this.ListUsers;
-    this.selectedUser = null;
-  }
-
-  selectUser(event: any): void {
-    const user = event.value;
-    if (user) {
-      this.selectedUser = user;
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Usuario seleccionado',
-        detail: `Has seleccionado a ${user.tx_nombre}`,
-      });
-    }
   }
 
   toggleProducts(): void {
     if (this.showProductsTable) {
       this.showProductsTable = false;
-      this.isInProgress = false;
+      this.isInProgress.set(false);
     } else {
       this.showProductsTable = true;
-      this.isInProgress = true;
+      this.isInProgress.set(true);
     }
   }
 
@@ -261,10 +209,10 @@ export default class RegistrosComponent implements OnInit {
   }
 
   async clearForm(): Promise<void> {
-    this.selectedUser = null;
+    //this.selectedUser() = null
     this.selectedProducts = [];
     this.showProductsTable = false;
-    this.ListProductos.forEach((product) => (product.cantidad = 1));
+    this.product().forEach((product) => (product.cantidad = 1));
     this.observacion = '';
 
     this.idregistro = 0;
@@ -300,7 +248,7 @@ export default class RegistrosComponent implements OnInit {
 
   filterProducts(query: string) {
     const lowerQuery = query.toLowerCase();
-    return this.ListProductos.filter(
+    return this.product().filter(
       (product) =>
         product.nombre_producto.toLowerCase().includes(lowerQuery) ||
         product.codigo_producto.toLowerCase().includes(lowerQuery)
@@ -348,7 +296,7 @@ export default class RegistrosComponent implements OnInit {
     );
   }
 
-  private async procederConRegistro(): Promise<void> {
+  /*private async procederConRegistro(): Promise<void> {
     if (!this.selectedUser) {
       this.messageService.add({
         severity: 'error',
@@ -364,8 +312,8 @@ export default class RegistrosComponent implements OnInit {
     try {
       const permisos = JSON.parse(localStorage.getItem('user') || '[]');
       // Asegúrate de que selectedUser no sea null antes de acceder a sus propiedades
-      const registro: Registro = {
-        id_usuario: this.selectedUser.id, // Aquí `id_usuario` está asegurado de no ser `null`
+     const registro: Registro = {
+        //id_usuario: this.selectedUser(), // Aquí `id_usuario` está asegurado de no ser `null`
         id_user_registro: permisos.id,
         fecha_registro: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
         hora_registro: formatDate(new Date(), 'HH:mm', 'en-US'),
@@ -402,7 +350,7 @@ export default class RegistrosComponent implements OnInit {
     } finally {
       this.loading = false;
     }
-  }
+  }*/
 
   async MsjAntRegist() {
     this.confirmationService.confirm({
@@ -410,7 +358,7 @@ export default class RegistrosComponent implements OnInit {
       header: 'Confirmación de Registro',
       icon: 'pi pi-exclamation-triangle',
       accept: async () => {
-        await this.procederConRegistro();
+        //        await this.procederConRegistro();
 
         this.exportData();
         await this.onUpload();
