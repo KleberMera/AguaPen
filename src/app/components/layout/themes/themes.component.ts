@@ -20,7 +20,9 @@ export class ThemesComponent {
 
   public layoutService = inject(LayoutService);
   public menuService = inject(MenuService);
-  private srvMessage = inject(MessageService);
+  ngOnInit() {
+    this.changeTheme('mdc-dark-indigo', 'dark');
+  }
   set theme(val: string) {
     this.layoutService.config.update((config) => ({
       ...config,

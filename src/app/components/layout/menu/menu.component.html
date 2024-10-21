@@ -1,26 +1,41 @@
+<!-- menu.component.html -->
+<div class="menu-wrapper">
+  @defer (when !loading()) {
+  <ul class="layout-menu">
+    @for (item of model(); track item.label) {
+    <ng-container>
+      <!-- MenuItems Component -->
+      <app-menuitem [item]="item" [root]="true" />
 
-
-@if (loading) {
+      <!-- Optional Separator -->
+      @if (item.separator) {
+      <li class="menu-separator"></li>
+      }
+    </ng-container>
+    }
+  </ul>
+  } @loading (minimum 300ms) {
   <div class="loading-container">
     <p>Cargando menú...</p>
     <p-progressSpinner
-      ariaLabel="loading"
+      ariaLabel="Cargando menú"
       styleClass="w-4rem h-4rem"
       strokeWidth="8"
       fill="var(--surface-ground)"
-    ></p-progressSpinner>
+    />
   </div>
-  } @else {
-    <ul class="layout-menu">
-      @for (item of model; track $index) {
-      <ng-container>
-        <app-menuitem [item]="item" [root]="true"></app-menuitem>
-        @if (item.separator) {
-        <li class="menu-separator"></li>
-        }
-      </ng-container>
-      }
-    </ul>
-    
-
+  } @error {
+  <div class="error-container">
+    <p-message
+      severity="error"
+      text="Error al cargar el menú. Por favor, intente nuevamente."
+    />
+  </div>
+  } @placeholder (minimum 300ms) {
+  <div class="placeholder-container">
+    <p-skeleton height="2rem" styleClass="mb-2" />
+    <p-skeleton width="80%" height="2rem" styleClass="mb-2" />
+    <p-skeleton width="70%" height="2rem" styleClass="mb-2" />
+  </div>
   }
+</div>
