@@ -49,5 +49,5 @@ export const fieldsFormsWorker = [
   { id: 'tx_cedula', label: 'Cédula', type: 'text', controlName: 'tx_cedula' },
   { id: 'tx_area', label: 'Área', type: 'text', controlName: 'tx_area' },
   { id: 'tx_cargo', label: 'Cargo', type: 'text', controlName: 'tx_cargo' },
-  { id: 'tx_correo', label: 'Correo', type: 'text', controlName: 'tx_correo' },
+  { id: 'tx_correo', label: 'Correo', type: 'text', controlName: 'tx_correo'},
 ];

@@ -12,7 +12,7 @@ export function WorkerForm(): FormGroup {
     tx_cargo: new FormControl('', Validators.required),
     tx_correo: new FormControl(''),
     dt_status: new FormControl(1),
-    dt_usuario: new FormControl('', Validators.required),
+    dt_usuario: new FormControl(''),
   });
 }
 

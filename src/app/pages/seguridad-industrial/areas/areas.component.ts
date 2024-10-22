@@ -55,7 +55,7 @@ export default class AreasComponent {
 
   async getUserRole() {
     try {
-      const perEditar = this.srvPermisos.getPermissionEditar('Vehiculos');
+      const perEditar = this.srvPermisos.getPermissionEditar('Areas');
       this.per_editar.set(perEditar);
       await this.listAreas();
     } catch (error: unknown) {
