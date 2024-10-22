@@ -14,16 +14,30 @@ import { DeleteService } from '../../../services/seguridad-industrial/delete.ser
 import { PermisosService } from '../../../services/auth/permisos.service';
 import { AuthService } from '../../../services/auth/auth.service';
 
-import { createWorkerPayload, updateWorkerPayload, WorkerForm } from '../../../core/payloads/workers.payload';
-import { SearchComponent } from "../../../components/data/search/search.component";
-import { TableComponent } from "../../../components/data/table/table.component";
-import { columnsWorker, fieldsFormsWorker, Worker } from '../../../models/workers.model';
-import { FormsComponent } from "../../../components/data/forms/forms.component";
+import {
+  createWorkerPayload,
+  updateWorkerPayload,
+  WorkerForm,
+} from '../../../core/payloads/workers.payload';
+import { SearchComponent } from '../../../components/data/search/search.component';
+import { TableComponent } from '../../../components/data/table/table.component';
+import {
+  columnsWorker,
+  fieldsFormsWorker,
+  Worker,
+} from '../../../models/workers.model';
+import { FormsComponent } from '../../../components/data/forms/forms.component';
 
 @Component({
   selector: 'app-usuarios-trabajadores',
   standalone: true,
-  imports: [PRIMENG_MODULES, FormsModule, SearchComponent, TableComponent, FormsComponent],
+  imports: [
+    PRIMENG_MODULES,
+    FormsModule,
+    SearchComponent,
+    TableComponent,
+    FormsComponent,
+  ],
   templateUrl: './trabajadores.component.html',
   styleUrls: ['./trabajadores.component.scss'],
   providers: [MessageService, ConfirmationService],
@@ -45,13 +59,12 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   protected cargoOptions = signal<any[]>([]);
   protected filteredCargoOptions = signal<any[]>([]);
 
-  private srvList = inject(ListService);
-  private srvMensajes = inject(MessageService);
-  private srvConfirm = inject(ConfirmationService);
-  private srvReg = inject(RegisterService);
-  private srvDelete = inject(DeleteService);
-  private srvAuth = inject(AuthService);
-  private srvPermisos = inject(PermisosService);
+  private readonly srvList = inject(ListService);
+  private readonly srvMensajes = inject(MessageService);
+  private readonly srvConfirm = inject(ConfirmationService);
+  private readonly srvReg = inject(RegisterService);
+  private readonly srvDelete = inject(DeleteService);
+  private readonly srvPermisos = inject(PermisosService);
 
   protected onSearchTermChange(term: string): void {
     this.searchTerm.set(term);
@@ -82,7 +95,6 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
     }
   }
 
-
   async getUserRole() {
     try {
       const perEditar = this.srvPermisos.getPermissionEditar('Trabajadores');
@@ -106,17 +118,13 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
 
   openAddWorkerDialog() {
     this.workerForm().reset();
-    this.workerForm().patchValue({
-      dt_status: 1,
-    });
+    this.workerForm().patchValue({ dt_status: 1,});
     this.dialogVisible.set(true);
   }
 
   openEditWorkerDialog(workER: Worker) {
     this.dialogVisible.set(true);
-    this.workerForm().patchValue({
-      ...workER
-    });
+    this.workerForm().patchValue({...workER,});
   }
 
   async createUser() {
@@ -140,7 +148,9 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   }
 
   deleteUsers(user: Worker) {
-    this.srvConfirm.confirm({ message: '¿Está seguro de eliminar el trabajador?', header: 'Confirmación',
+    this.srvConfirm.confirm({
+      message: '¿Está seguro de eliminar el trabajador?',
+      header: 'Confirmación',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Eliminar',
       accept: async () => {
@@ -158,31 +168,29 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   async saveWorker() {
     const form = this.workerForm();
     if (!form.valid) return;
-  
+
     const tx_cedula = form.get('tx_cedula')?.value?.trim().toLowerCase();
-    const dt_usuario = form.get('dt_usuario')?.value?.trim().toLowerCase();  // Obtener el valor de dt_usuario
+    const dt_usuario = form.get('dt_usuario')?.value?.trim().toLowerCase(); // Obtener el valor de dt_usuario
     const currentId = form.get('id')?.value;
-  
+
     // Busca si existe un trabajador con el mismo tx_cedula pero diferente ID
     const existingWorkerByCedula = this.listWorker().find(
-      worker => worker.tx_cedula && worker.tx_cedula.toLowerCase() === tx_cedula && worker.id !== currentId
-    );
-  
+      (worker) => worker.tx_cedula && worker.tx_cedula.toLowerCase() === tx_cedula && worker.id !== currentId);
+
     if (existingWorkerByCedula) {
-      this.srvMensajes.add({ severity: 'error', summary: 'Error', detail: 'Ya existe un trabajador con esta cédula' });
+      this.srvMensajes.add({ severity: 'error', summary: 'Error', detail: 'Ya existe un trabajador con esta cédula'});
       return;
     }
-  
+
     // Busca si existe un trabajador con el mismo dt_usuario pero diferente ID
     const existingWorkerByUsuario = this.listWorker().find(
-      worker => worker.dt_usuario && worker.dt_usuario.toLowerCase() === dt_usuario && worker.id !== currentId
-    );
-  
+      (worker) => worker.dt_usuario && worker.dt_usuario.toLowerCase() === dt_usuario && worker.id !== currentId);
+
     if (existingWorkerByUsuario) {
-      this.srvMensajes.add({ severity: 'error', summary: 'Error', detail: 'Ya existe un trabajador con este usuario' });
+      this.srvMensajes.add({ severity: 'error', summary: 'Error', detail: 'Ya existe un trabajador con este usuario',});
       return;
     }
-  
+
     this.loadingSave.set(true);
     try {
       currentId === null ? await this.createUser() : await this.updateUser();
@@ -194,13 +202,9 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
       this.loadingSave.set(false);
     }
   }
-  
-  handleError(error: any, message: string): void {
-    this.srvMensajes.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'Ocurrió un error al procesar la solicitud',
-    });
+
+  handleError(error: unknown, message: string): void {
+    this.srvMensajes.add({ severity: 'error',summary: 'Error', detail: 'Ocurrió un error al procesar la solicitud', });
     this.loading.set(false);
     this.loadingSave.set(false);
   }
@@ -222,17 +226,12 @@ export default class UsuariosTrabajadoresComponent implements OnInit {
   onAreaChange() {
     const selectedAreaValue = this.selectedArea();
     if (selectedAreaValue) {
-      const filteredOptions = this.listWorker().filter(
-        (user) => user.tx_area === selectedAreaValue
-      ).map((user) => ({
-        label: user.tx_cargo,
-        value: user.tx_cargo,
-      }));
+      const filteredOptions = this.listWorker().filter((user) => user.tx_area === selectedAreaValue)
+        .map((user) => ({ label: user.tx_cargo, value: user.tx_cargo, }));
       this.filteredCargoOptions.set(this.getUniqueOptions(filteredOptions, 'label'));
     } else {
       this.filteredCargoOptions.set(this.cargoOptions());
     }
     this.selectedCargo.set('');
   }
-
-  }
+}

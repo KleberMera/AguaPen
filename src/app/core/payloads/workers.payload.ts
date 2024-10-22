@@ -10,7 +10,7 @@ export function WorkerForm(): FormGroup {
     tx_cedula: new FormControl('', Validators.required),
     tx_area: new FormControl('', Validators.required),
     tx_cargo: new FormControl('', Validators.required),
-    tx_correo: new FormControl(''),
+    tx_correo: new FormControl('', Validators.email),
     dt_status: new FormControl(1),
     dt_usuario: new FormControl(''),
   });
@@ -18,7 +18,9 @@ export function WorkerForm(): FormGroup {
 
 
 export function createWorkerPayload(workerForm: FormGroup): PayloadWorkerCreate {
-  const formValue = { ...workerForm.value };
+  const tx_area = workerForm.get('tx_area')?.value?.value || workerForm.get('tx_area')?.value;
+  const tx_cargo = workerForm.get('tx_cargo')?.value?.value || workerForm.get('tx_cargo')?.value
+  const formValue = { ...workerForm.value, tx_area, tx_cargo};
   const payload: PayloadWorkerCreate = {
     mutate: [
       {
@@ -33,7 +35,9 @@ export function createWorkerPayload(workerForm: FormGroup): PayloadWorkerCreate 
 }
 
 export function updateWorkerPayload(workerForm: FormGroup): PayloadWorkerUpdate {
-  const formValue = { ...workerForm.value };
+  const tx_area = workerForm.get('tx_area')?.value?.value || workerForm.get('tx_area')?.value;
+  const tx_cargo = workerForm.get('tx_cargo')?.value?.value || workerForm.get('tx_cargo')?.value
+  const formValue = { ...workerForm.value, tx_area, tx_cargo};
   const payload: PayloadWorkerUpdate = {
     mutate: [
       {

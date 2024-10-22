@@ -1,3 +1,5 @@
+import { FormField } from "../components/data/forms/forms.model";
+
 export interface Area {
   id: number;
   nombre_area: string;
@@ -32,7 +34,7 @@ export interface Area {
    { field: "estado", header: "Estado" },
  ];
 
- export const fieldsFormsAreas = [
+ export const fieldsFormsAreas : FormField[]= [
    { id: 'estado', label: 'Estado', type: 'estado', controlName: 'estado' },
    { id: 'nombre_area', label: 'Nombre Area', type: 'text', controlName: 'nombre_area' },
  ];

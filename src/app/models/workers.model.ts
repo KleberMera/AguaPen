@@ -1,3 +1,5 @@
+import { FormField } from "../components/data/forms/forms.model";
+
 export interface Worker {
   id: number;
   tx_nombre: string;
@@ -42,12 +44,12 @@ export const columnsWorker = [
   { field: 'dt_status', header: 'Estado' },
 ];
 
-export const fieldsFormsWorker = [
+export const fieldsFormsWorker: FormField[] = [
   { id: 'dt_status', label: 'Estado', type: 'estado', controlName: 'dt_status' },
   { id: 'dt_usuario', label: 'Usuario', type: 'text', controlName: 'dt_usuario' },
   { id: 'tx_nombre', label: 'Nombre', type: 'text', controlName: 'tx_nombre' },
   { id: 'tx_cedula', label: 'Cédula', type: 'text', controlName: 'tx_cedula' },
-  { id: 'tx_area', label: 'Área', type: 'text', controlName: 'tx_area' },
-  { id: 'tx_cargo', label: 'Cargo', type: 'text', controlName: 'tx_cargo' },
+  { id: 'tx_area', label: 'Área', type: 'autocomplete', controlName: 'tx_area', options: 'areaOptions' },
+  { id: 'tx_cargo', label: 'Cargo', type: 'autocomplete', controlName: 'tx_cargo', options: 'cargoOptions' },
   { id: 'tx_correo', label: 'Correo', type: 'text', controlName: 'tx_correo'},
 ];

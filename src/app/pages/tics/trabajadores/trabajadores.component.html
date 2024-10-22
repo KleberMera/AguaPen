@@ -90,6 +90,7 @@
       [formGroup]="workerForm()"
       [fields]="fields"
       [loading]="loadingSave()"
+      [options]="{ areaOptions: areaOptions(), cargoOptions: cargoOptions() }"
       (formSubmit)="saveWorker()"
       (formCancel)="dialogVisible.set(false)"
     ></app-forms>

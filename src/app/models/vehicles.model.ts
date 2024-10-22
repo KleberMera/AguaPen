@@ -1,3 +1,5 @@
+import { FormField } from "../components/data/forms/forms.model";
+
 export interface Vehiculo {
   id: number;
   placa : string;
@@ -39,7 +41,7 @@ export const columnsVehiculos = [
   { field: "estado", header: "Estado" },
 ];
 
-export const fieldsFormsVehiculos = [
+export const fieldsFormsVehiculos: FormField[] = [
   { id: 'estado', label: 'Estado', type: 'estado', controlName: 'estado' },
   { id: 'placa', label: 'Placa', type: 'text', controlName: 'placa' },
   { id: 'tipo', label: 'Tipo', type: 'text', controlName: 'tipo' },
