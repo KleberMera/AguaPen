@@ -16,13 +16,21 @@ import { DividerModule } from 'primeng/divider';
 import { AuthService } from '../../services/auth/auth.service';
 import { FooterComponent } from '../../components/layout/footer/footer.component';
 import { Auth } from '../../models/auth.model';
-
+import { InputIconModule } from 'primeng/inputicon';
+import { IconFieldModule } from 'primeng/iconfield';
+import { FloatLabelModule } from "primeng/floatlabel"  
+import { ImageModule } from 'primeng/image';
 const PRIMEMG_MODULES = [
   ToastModule,
   ButtonModule,
   InputTextModule,
   PasswordModule,
   DividerModule,
+  InputIconModule,
+  IconFieldModule,
+  FloatLabelModule,
+  ImageModule
+  
 ];
 
 @Component({
@@ -66,6 +74,8 @@ export default class LoginComponent {
           this.router.navigate(['/home']);
         }
       } catch (err: any) {
+        console.log(err);
+        
         this.loading = false;
         this.srvMensajes.add({
           severity: 'error',
