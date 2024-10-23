@@ -30,6 +30,10 @@
     }"
   >
     <app-themes (click)="accionThemes()"></app-themes>
+    <button class="p-link layout-topbar-button" (click)="cache()">
+      <i class="pi pi-refresh"></i>
+      <span>Actualizar</span>
+    </button>
     <button
       class="p-link layout-topbar-button"
       (click)="visible = true"
@@ -123,7 +127,7 @@
   </form>
 
   }
-  <p-footer >
+  <p-footer>
     <div>
       <button
         pButton

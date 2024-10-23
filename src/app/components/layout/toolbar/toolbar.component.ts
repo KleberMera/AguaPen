@@ -8,6 +8,7 @@ import { PRIMENG_MODULES, UpdatePayload, UserForm } from './toolbar.import';
 import { AuthService } from '../../../services/auth/auth.service';
 import { LayoutService } from '../../../services/gen/layout.service';
 import { ThemesComponent } from '../themes/themes.component';
+import { toast } from 'ngx-sonner';
 
 
 @Component({
@@ -160,5 +161,13 @@ export class ToolbarComponent {
       life: 3000,
     });
   }
+
+
+  cache() {
+    //Limpiar todo el localStorage
+    localStorage.clear();
+    toast.success('Cache limpiado, recargar pantalla');
+  }
+
   
 }
