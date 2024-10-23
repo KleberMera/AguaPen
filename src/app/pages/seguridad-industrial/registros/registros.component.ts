@@ -1,29 +1,24 @@
 import { PrintService } from '../../../services/seguridad-industrial/print.service';
-import { Component, inject, OnInit, Signal, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RegisterDetailsService } from '../../../services/seguridad-industrial/register-details.service';
 import { ListService } from '../../../services/seguridad-industrial/list.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { formatDate } from '@angular/common';
 import { FileUpload } from 'primeng/fileupload';
-
 import { FormsModule } from '@angular/forms';
-import { Registro } from '../../../models/registers.model';
 import { Product } from '../../../models/products.model';
 import { ViewChild } from '@angular/core';
-
 import { PRIMEMG_MODULES } from './registros.imports';
-
 import { details } from '../../../models/details.model';
 import { UploadimageService } from '../../../services/seguridad-industrial/uploadimage.service';
-import { ReporteService } from '../../../services/seguridad-industrial/reporte.service';
-import { DropdownComponent } from '../../../components/data/dropdown/dropdown.component';
 import { Worker } from '../../../models/workers.model';
+import { Registro } from '../../../models/registers.model';
 
 
 @Component({
   selector: 'app-registros',
   standalone: true,
-  imports: [PRIMEMG_MODULES, FormsModule, DropdownComponent],
+  imports: [PRIMEMG_MODULES, FormsModule],
   templateUrl: './registros.component.html',
   styleUrl: './registros.component.scss',
   providers: [MessageService, ConfirmationService],
@@ -35,6 +30,8 @@ export default class RegistrosComponent {
   protected product = signal<Product[]>([]);
   protected selectedUser = signal<Worker | null>(null);
   protected isInProgress = signal<boolean>(false);
+  protected dropdownOptions = signal<Worker[]>([]);
+  protected id_usuario = signal<number>(0);
 
   filteredUsers: Worker[] = [];
   searchQuery: string = '';
@@ -82,6 +79,7 @@ export default class RegistrosComponent {
       if (response.data) {
         const data = response.data.filter((user: any) => user.dt_status === 1);
         this.users.set(data);
+        this.dropdownOptions.set(data);
         this.loading = false;
       }
     } catch (error) {
@@ -104,14 +102,21 @@ export default class RegistrosComponent {
     }
   }
 
-  handleUserSelected(user: Worker): void {
-    this.selectedUser.set(user);
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Usuario seleccionado',
-      detail: `Has seleccionado a ${user.tx_nombre}`,
-    });
+  selectUser(event: any): void {
+    const user = event.value;
+    if (user) {
+      this.selectedUser.set(user);
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Usuario seleccionado',
+        detail: `Has seleccionado a ${user.tx_nombre}`,
+      });
+    }
+    this.id_usuario.set(user.id);
+    console.log(this.id_usuario());
+    
   }
+
 
   toggleProducts(): void {
     if (this.showProductsTable) {
@@ -312,7 +317,7 @@ export default class RegistrosComponent {
     );
   }
 
-  /*private async procederConRegistro(): Promise<void> {
+  private async procederConRegistro(): Promise<void> {
     if (!this.selectedUser) {
       this.messageService.add({
         severity: 'error',
@@ -328,8 +333,9 @@ export default class RegistrosComponent {
     try {
       const permisos = JSON.parse(localStorage.getItem('user') || '[]');
       // Asegúrate de que selectedUser no sea null antes de acceder a sus propiedades
+      
      const registro: Registro = {
-        //id_usuario: this.selectedUser(), // Aquí `id_usuario` está asegurado de no ser `null`
+        id_usuario:  this.id_usuario(),
         id_user_registro: permisos.id,
         fecha_registro: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
         hora_registro: formatDate(new Date(), 'HH:mm', 'en-US'),
@@ -349,7 +355,7 @@ export default class RegistrosComponent {
           summary: 'Registro exitoso',
           detail: 'Se registraron los detalles con éxito',
         });
-        await this.getListProductos();
+        await this.loadProducts();
       } else {
         this.messageService.add({
           severity: 'error',
@@ -366,7 +372,7 @@ export default class RegistrosComponent {
     } finally {
       this.loading = false;
     }
-  }*/
+  }
 
   async MsjAntRegist() {
     this.confirmationService.confirm({
@@ -374,7 +380,7 @@ export default class RegistrosComponent {
       header: 'Confirmación de Registro',
       icon: 'pi pi-exclamation-triangle',
       accept: async () => {
-        //        await this.procederConRegistro();
+               await this.procederConRegistro();
 
         this.exportData();
         await this.onUpload();

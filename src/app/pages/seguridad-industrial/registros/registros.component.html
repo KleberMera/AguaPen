@@ -1,15 +1,25 @@
 <div class="formgrid grid">
   <div class="field col">
-    <app-dropdown
-      [items]="users()"
-      optionLabel="tx_nombre"
-      secondaryLabel="tx_cedula"
-      placeholder="Seleccionar o Escribir Usuario"
-      (itemSelected)="handleUserSelected($event)"
-    ></app-dropdown>
+    <p-dropdown
+    id="dropdown"
+    [options]="dropdownOptions()"
+    [(ngModel)]="selectedUser"
+    optionLabel="tx_nombre"
+    [filter]="true"
+    filterBy="tx_nombre,tx_cedula"
+    [showClear]="true"
+    placeholder="Seleccionar o escribir Usuario"
+    (onChange)="selectUser( $event)"
+  >
+    <ng-template let-user pTemplate="item">
+      <div class="flex align-items-center gap-2">
+        <div>{{ user.tx_nombre }} ({{ user.tx_cedula }})</div>
+      </div>
+    </ng-template>
+  </p-dropdown>
+  
   </div>
 </div>
-
 <div class="grid">
   @if (selectedUser()) {
   <div class="col-12 xl:col-6">
