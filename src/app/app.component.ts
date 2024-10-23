@@ -1,12 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { NgxSonnerToaster } from 'ngx-sonner';
 import { PrimeNGConfig } from 'primeng/api';
 
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet, RouterLink, NgxSonnerToaster],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

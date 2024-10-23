@@ -1,38 +1,43 @@
-<div class="login-containe p-4 shadow-2 border-round lg:w-6">
+<div class="login-container p-6 shadow-2 border-round lg:w-4">
   <div class="text-center mb-5">
-    <img src="{{ imgUrl }}" alt="Image" width="250" class="mb-3 rounded-xl" />
-    <div class="text-blue-500 text-4xl font-medium mb-3 font-lobster">
+    <img src="{{ imgUrl }}" alt="Image" width="200" class="mb-3 rounded-xl" />
+    <div class="text-blue-500 text-5xl font-medium mb-3 font-lobster">
       Aguapen App
     </div>
   </div>
 
-  <form [formGroup]="formLogin()" (ngSubmit)="onSubmit()">
+  <form [formGroup]="formLogin()" (ngSubmit)="onSubmit()" class="p-fluid">
+   <div class="p-field">
     <label for="usuario" class="block text-gray-400 font-medium mb-2"
-      >Usuario:
-    </label>
-    <input
-      id="usuario"
-      type="text"
-      placeholder="Ingrese su usuario"
-      pInputText
-      formControlName="usuario"
-      class="w-full mb-3"
-    />
+    >Usuario:
+  </label>
+  <input
+    id="usuario"
+    type="text"
+    placeholder="Ingrese su usuario"
+    pInputText
+    formControlName="usuario"
+    class="w-full mb-3"
+  />
+   </div>
 
-    <label for="password" class="block text-gray-400 font-medium mb-2"
-      >Contraseña:
-    </label>
-    <input
-      pPassword
-      id="password"
-      type="password"
-      feedback="false"
-      formControlName="password"
-      placeholder="Ingrese su contraseña"
-      class="w-full mb-3"
-    />
-
-    <button
+    <div class="p-field gap-3">
+      <label for="password" class="block text-gray-400 font-medium mb-2"
+        >Contraseña:
+      </label>
+      <p-password
+        id="password"
+        type="password"
+        feedback="false"
+        toggleMask="true"
+        formControlName="password"
+        placeholder="Ingrese su contraseña"
+        class="w-full mb-3"
+      />
+    </div>
+ &nbsp;
+    <div class="p-field ">
+      <button
       type="submit"
       [disabled]="formLogin().invalid"
       [loading]="loading"
@@ -40,12 +45,13 @@
       pRipple
       label="Ingresar"
       icon="pi pi-user"
-      class="w-full"
+      class="w-full mb-3"
     ></button>
+    </div>
   </form>
   <app-footer></app-footer>
 </div>
 
 <p-toast
-    [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
-  ></p-toast>
+  [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
+></p-toast>

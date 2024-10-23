@@ -18,8 +18,10 @@ import { FooterComponent } from '../../components/layout/footer/footer.component
 import { Auth } from '../../models/auth.model';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
-import { FloatLabelModule } from "primeng/floatlabel"  
+import { FloatLabelModule } from 'primeng/floatlabel';
 import { ImageModule } from 'primeng/image';
+import { HandleErrorService } from '../../services/gen/handle-error.service';
+import { toast } from 'ngx-sonner';
 const PRIMEMG_MODULES = [
   ToastModule,
   ButtonModule,
@@ -29,8 +31,7 @@ const PRIMEMG_MODULES = [
   InputIconModule,
   IconFieldModule,
   FloatLabelModule,
-  ImageModule
-  
+  ImageModule,
 ];
 
 @Component({
@@ -51,9 +52,9 @@ export default class LoginComponent {
     })
   );
 
-  private srvAuth = inject(AuthService);
-  private srvMensajes = inject(MessageService);
-  private router = inject(Router);
+  private readonly srvAuth = inject(AuthService);
+  private readonly  srvError = inject(HandleErrorService);
+  private readonly router = inject(Router);
 
   async onSubmit() {
     this.loading = true;
@@ -64,23 +65,17 @@ export default class LoginComponent {
         if (res.token) {
           this.srvAuth.setUser(res.usuario, res.token);
           this.srvAuth.setToken(res.token);
-          this.srvMensajes.add({
-            severity: 'success',
-            summary: 'Login',
-            detail: 'Inicio de sesión exitoso',
+          toast.success('Login exitoso',{
+            position: 'top-right', 
           });
           this.loading = false;
-          //Ir al dashboard
           this.router.navigate(['/home']);
         }
       } catch (err: any) {
-        console.log(err);
-        
+        const storeError = this.srvError.getError().error.message;
         this.loading = false;
-        this.srvMensajes.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Error al iniciar sesión',
+        toast.error(storeError, {
+          position: 'top-right',  
         });
       }
     }
