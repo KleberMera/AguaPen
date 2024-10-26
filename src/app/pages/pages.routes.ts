@@ -82,9 +82,9 @@ export const routes: Routes = [
         canActivate: [permissionsGuard],
       },
       {
-        path: `editpages`,
-        loadComponent: () => import('./tics/editpages/editpages.component'),
-        canActivate: [permissionsGuard],
+        path: `permisos`,
+        loadComponent: () => import('./tics/permissions/permissions.component'),
+        
       },
       
       {

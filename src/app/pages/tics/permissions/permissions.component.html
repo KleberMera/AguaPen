@@ -1,0 +1,62 @@
+@defer (when listUserApp().length > 0) {
+<div class="flex items-center gap-2">
+  <app-autocomplete
+    #autocompleteComp
+    [items]="listUserApp"
+    [config]="userConfig"
+    [placeholder]="'Seleccionar un Usuario'"
+    (itemSelected)="onUserSelected($event)"
+  ></app-autocomplete>
+
+  <button
+    pButton
+    pRipple
+    icon="pi pi-times"
+    class="p-button-danger"
+    (click)="onClearSelectedUser(autocompleteComp)"
+  >
+   
+  </button>
+</div>
+} @placeholder {
+<div class="flex justify-center items-center p-4">
+  <span class="loading loading-spinner loading-md"></span>
+  <span class="ml-2 text-center">Cargando Datos</span>
+</div>
+} @if (selectedUser()) {
+<div class="mt-4">
+  <p-tabView
+    styleClass="tabview-custom"
+    (activeIndexChange)="onTabChange($event)"
+  >
+    <p-tabPanel>
+      <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-2">
+          <i class="pi pi-user-plus"></i>
+          <span class="font-bold white-space-nowrap m-0">Asignar Permisos</span>
+        </div>
+      </ng-template>
+      <app-panel-assing [user]="selectedUser()" />
+    </p-tabPanel>
+
+    <p-tabPanel>
+      <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-2">
+          <i class="pi pi-user-edit"></i>
+          <span class="font-bold white-space-nowrap m-0"
+            >Actualizar Permisos</span
+          >
+        </div>
+      </ng-template>
+      @defer (when activeTab() === 1) {
+      <app-panel-update [user]="selectedUser()" />
+      } @placeholder {
+      <div class="flex justify-center items-center p-4">
+        <span class="loading loading-spinner loading-md"></span>
+        <span class="ml-2 text-center">Cargando panel de actualización...</span>
+      </div>
+      }
+    </p-tabPanel>
+  </p-tabView>
+</div>
+}

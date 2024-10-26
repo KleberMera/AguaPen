@@ -1,0 +1,11 @@
+@if (listModulesUser().length > 0) {
+  <!-- Contenido cuando hay datos -->
+  <div class="p-4">
+    {{ listModulesUser().length }} módulos encontrados
+  </div>
+} @else {
+  <div class="flex justify-center items-center p-4">
+    <!-- Contenido cuando no hay módulos -->
+    <span>No se encontraron módulos para el usuario.</span>
+  </div>
+}

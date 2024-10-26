@@ -1,0 +1,10 @@
+<p-autoComplete
+[(ngModel)]="selectedItem"
+[dropdown]="true"
+[placeholder]="placeholder"
+[suggestions]="filteredItems()"
+(completeMethod)="filterItems($event)"
+(onSelect)="onItemSelect()"
+[optionLabel]="config.labelFn"
+
+/>

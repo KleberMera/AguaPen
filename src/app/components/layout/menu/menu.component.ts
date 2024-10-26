@@ -2,15 +2,15 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MenuModule } from 'primeng/menu';
 import { MenuitemComponent } from '../menuitem/menuitem.component';
-import { Subscription } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { LayoutService } from '../../../services/gen/layout.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { PermisosService } from '../../../services/auth/permisos.service';
 import { MenuItem, Permiso } from './menu.models';
 import { SkeletonModule } from 'primeng/skeleton';
 import { MessageModule } from 'primeng/message';
+import { toast } from 'ngx-sonner';
+import { HandleErrorService } from '../../../services/gen/handle-error.service';
 @Component({
   selector: 'app-menu',
   standalone: true,
@@ -23,6 +23,7 @@ import { MessageModule } from 'primeng/message';
 export class MenuComponent{
   private readonly authService = inject(AuthService);
   private readonly permisosService = inject(PermisosService);
+  private readonly errorService = inject(HandleErrorService);
   protected userId = signal<number>(0);
   protected model = signal<MenuItem[]>([]);
   protected loading = signal(true);
@@ -56,8 +57,9 @@ export class MenuComponent{
           this.initializeMenu(permisos.data);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading menu data:', error);
+      toast.error(this.errorService.getError().error.message);
     } finally {
       this.loading.set(false);
     }

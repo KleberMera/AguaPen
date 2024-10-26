@@ -1,0 +1,11 @@
+:host ::ng-deep .tabview-custom {
+    i { 
+      color: var(--primary-color);
+    }
+    .p-tabview-nav-link {
+      padding: 1rem;
+    }
+    .p-tabview-nav-link:not(.p-disabled):focus {
+      box-shadow: inset 0 0 0 0.2rem var(--primary-color);
+    }
+  }
