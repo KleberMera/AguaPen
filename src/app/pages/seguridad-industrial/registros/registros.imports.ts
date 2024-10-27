@@ -16,6 +16,8 @@ import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
+import { AutocompleteConfig } from '../../../components/autocomplete/autocomple.model';
+import { Worker } from '../../../models/workers.model';
 export const  PRIMEMG_MODULES = [
 
   TableModule,
@@ -37,3 +39,14 @@ export const  PRIMEMG_MODULES = [
   FileUploadModule,
   DialogModule,
 ];
+
+
+
+// Configuración para usuarios
+export const userComponentConfigWorker: AutocompleteConfig<Worker> = {
+  labelFn: (user) => user.tx_nombre,
+  filterFn: (query: string, users: Worker[]) =>
+    users.filter(user =>
+      user.tx_nombre.toLowerCase().includes(query.toLowerCase())
+    )
+};

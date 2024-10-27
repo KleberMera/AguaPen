@@ -153,14 +153,7 @@ export class ToolbarComponent {
     });
   }
 
-  accionThemes() {
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Confirmado',
-      detail: 'Se ha cambiado el tema',
-      life: 3000,
-    });
-  }
+ 
 
 
   cache() {

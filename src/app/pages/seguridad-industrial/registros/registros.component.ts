@@ -8,25 +8,30 @@ import { FileUpload } from 'primeng/fileupload';
 import { FormsModule } from '@angular/forms';
 import { Product } from '../../../models/products.model';
 import { ViewChild } from '@angular/core';
-import { PRIMEMG_MODULES } from './registros.imports';
+import { PRIMEMG_MODULES, userComponentConfigWorker } from './registros.imports';
 import { details } from '../../../models/details.model';
 import { UploadimageService } from '../../../services/seguridad-industrial/uploadimage.service';
 import { Worker } from '../../../models/workers.model';
 import { Registro } from '../../../models/registers.model';
+import { AutocompleteComponent } from '../../../components/autocomplete/autocomplete.component';
+import { userComponentConfig } from '../../tics/permissions/permissions.imports';
+import { toast } from 'ngx-sonner';
 
 
 @Component({
   selector: 'app-registros',
   standalone: true,
-  imports: [PRIMEMG_MODULES, FormsModule],
+  imports: [PRIMEMG_MODULES, FormsModule, AutocompleteComponent],
   templateUrl: './registros.component.html',
   styleUrl: './registros.component.scss',
   providers: [MessageService, ConfirmationService],
 })
 export default class RegistrosComponent {
   @ViewChild('fileUpload') fileUpload!: FileUpload;
+
   //users: User[] = [];
   protected users = signal<Worker[]>([]);
+  userConfig = userComponentConfigWorker;
   protected product = signal<Product[]>([]);
   protected selectedUser = signal<Worker | null>(null);
   protected isInProgress = signal<boolean>(false);
@@ -102,20 +107,20 @@ export default class RegistrosComponent {
     }
   }
 
-  selectUser(event: any): void {
-    const user = event.value;
-    if (user) {
+  async onUserSelected(user: Worker) {
+    if (user.id) {
+      toast.success(`Seleccionado: ${user.tx_nombre}`);
+      
       this.selectedUser.set(user);
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Usuario seleccionado',
-        detail: `Has seleccionado a ${user.tx_nombre}`,
-      });
     }
-    this.id_usuario.set(user.id);
-    console.log(this.id_usuario());
-    
   }
+
+  async onClearSelectedUser(autocompleteComp: any) {
+    this.selectedUser.set(null);
+    autocompleteComp.clear(); // Llama a un método 'clear()' en app-autocomplete si está disponible
+    toast.info('Selección de usuario eliminada');
+  }
+  
 
 
   toggleProducts(): void {

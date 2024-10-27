@@ -26,9 +26,9 @@ export interface lsUserPermissions {
   opcion_label: string;
   opcion_icon: string;
   opcion_routerLink: string;
-  permiso_id?: number;
-  per_ver?: number;
-  per_editar?: number;
+  permiso_id: number;
+  per_ver: number;
+  per_editar: number;
 }
 
 export interface menuData {

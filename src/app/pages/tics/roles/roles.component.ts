@@ -388,7 +388,7 @@ export default class UsuariosRolesComponent implements OnInit {
         per_ver: opcion.per_ver,
       };
 
-      return this.SrvPermissions.postEditPermisos(updatedPermiso);
+      //return this.SrvPermissions.postEditPermisos(updatedPermiso);
     });
 
     // Usar forkJoin para esperar a que todas las solicitudes de actualización se completen

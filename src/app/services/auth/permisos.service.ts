@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
+import { PayloadPermissionsUpdate } from '../../models/permisos.model';
 
 @Injectable({
   providedIn: 'root',
@@ -44,22 +45,9 @@ export class PermisosService {
     return this.http.get<any>(url);
   }
 
-  postEditPermisos(objPermiso: any) {
+  postEditPermisos(objPermiso: PayloadPermissionsUpdate) {
     const url = `${this.environment}permisos/mutate`;
-    return this.http.post(url, {
-      mutate: [
-        {
-          operation: 'update',
-          key: objPermiso.id,
-          attributes: {
-            user_id: objPermiso.user_id,
-            opcion_id: objPermiso.opcion_id,
-            per_editar: objPermiso.per_editar,
-            per_ver: objPermiso.per_ver,
-          },
-        },
-      ],
-    });
+    return this.http.post<PayloadPermissionsUpdate>(url, objPermiso);
   }
 
   postCreatePermisos(objPermiso: any) {

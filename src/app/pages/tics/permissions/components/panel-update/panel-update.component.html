@@ -1,11 +1,62 @@
-@if (listModulesUser().length > 0) {
-  <!-- Contenido cuando hay datos -->
-  <div class="p-4">
-    {{ listModulesUser().length }} módulos encontrados
+<div class="container">
+  @if (groupedModules.length > 0) { @for (module of groupedModules; track module.nombre_modulo) {
+  <div class="module-section">
+    <h2 class="module-title">{{ module.nombre_modulo }}</h2>
+    @for (menu of module.menus; track menu) {
+    <div class="menu-section">
+      <h3 class="menu-title">{{ menu.nombre_menu }}</h3>
+      <div class="options-grid">
+        @for (opcion of menu.opciones; track opcion) {
+        <div class="option-card card">
+          <div class="option-header">
+            <span class="option-label">{{ opcion.opcion_label }}</span>
+            <i [class]="opcion.opcion_icon" class="option-icon"></i>
+          </div>
+
+          <div class="permission-row">
+            <span class="permission-label">Ver:</span>
+            <p-tag 
+              [severity]="opcion.per_ver === 1 ? 'success' : 'danger'"
+              (click)="onUpdate(opcion, 'ver', $event)"
+              [style]="{ cursor: 'pointer' }"
+            >
+              {{ opcion.per_ver === 1 ? 'Sí' : 'No' }}
+            </p-tag>
+          </div>
+          
+
+          <div class="permission-row">
+            <span class="permission-label">Editar:</span>
+            <p-tag 
+              [severity]="opcion.per_editar === 1 ? 'success' : 'danger'"
+              (click)="onUpdate(opcion, 'editar', $event)"
+              [style]="{ cursor: 'pointer' }"
+            >
+              {{ opcion.per_editar === 1 ? 'Sí' : 'No' }}
+            </p-tag>
+          </div>
+
+          <button pButton 
+          pRipple 
+          label="Eliminar" 
+          icon="pi pi-trash"
+          class="delete-button"
+          rounded ="true"
+          (click)="onDelete(opcion, $event)"
+          >
+         
+          </button>
+        </div>
+        }
+      </div>
+    </div>
+    }
   </div>
-} @else {
-  <div class="flex justify-center items-center p-4">
-    <!-- Contenido cuando no hay módulos -->
+  } } @else {
+  <div class="empty-state">
     <span>No se encontraron módulos para el usuario.</span>
   </div>
-}
+  }
+</div>
+
+<p-confirmDialog />

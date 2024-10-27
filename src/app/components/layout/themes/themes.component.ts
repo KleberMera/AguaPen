@@ -5,6 +5,7 @@ import { MessageService } from 'primeng/api';
 import { MessagesModule } from 'primeng/messages';
 import { LayoutService } from '../../../services/gen/layout.service';
 import { MenuService } from '../../../services/gen/menu.service';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-themes',
@@ -21,7 +22,7 @@ export class ThemesComponent {
   public layoutService = inject(LayoutService);
   public menuService = inject(MenuService);
   ngOnInit() {
-    this.changeTheme('mdc-dark-indigo', 'dark');
+   // this.changeTheme('mdc-dark-indigo', 'dark');
   }
   set theme(val: string) {
     this.layoutService.config.update((config) => ({
@@ -53,8 +54,10 @@ export class ThemesComponent {
   toggleTheme() {
     if (this.isDarkTheme) {
       this.changeTheme('lara-light-blue', 'light');
+      toast.success('Tema cambiado a Light');
     } else {
       this.changeTheme('mdc-dark-indigo', 'dark');
+      toast.success('Tema cambiado a Dark');
     }
     this.isDarkTheme = !this.isDarkTheme;
   }
