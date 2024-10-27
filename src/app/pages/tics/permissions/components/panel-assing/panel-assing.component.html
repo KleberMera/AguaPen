@@ -22,14 +22,25 @@
 
             <div class="permission-row">
               <span class="permission-label">Ver:</span>
-
-              {{ opcion.per_ver === 1 ? "Sí" : "No" }}
+              <p-tag 
+                [severity]="opcion.per_ver === 1 ? 'success' : 'danger'"
+                (click)="opcion.per_ver === 1 ? opcion.per_ver = 0 : opcion.per_ver = 1"
+                [style]="{ cursor: 'pointer' }"
+              >
+                {{ opcion.per_ver === 1 ? 'Sí' : 'No' }}
+              </p-tag>
             </div>
 
             <div class="permission-row">
               <span class="permission-label">Editar:</span>
-
-              {{ opcion.per_editar === 1 ? "Sí" : "No" }}
+              <p-tag 
+                [severity]="opcion.per_editar === 1 ? 'success' : 'danger'"
+                (click)="opcion.per_editar === 1 ? opcion.per_editar = 0 : opcion.per_editar = 1"
+               
+                [style]="{ cursor: 'pointer' }"
+              >
+                {{ opcion.per_editar === 1 ? 'Sí' : 'No' }}
+              </p-tag>
             </div>
 
             <button
@@ -39,6 +50,7 @@
               icon="pi pi-check"
               class="success-button"
               rounded="true"
+              (click)="onAssign(opcion)"
             ></button>
           </div>
           }

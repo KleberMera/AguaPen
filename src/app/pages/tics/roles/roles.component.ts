@@ -449,12 +449,12 @@ export default class UsuariosRolesComponent implements OnInit {
     }
 
     // Crear un array de observables para las solicitudes
-    const requests = permisosSeleccionados.map((permiso) =>
-      this.SrvPermissions.postCreatePermisos(permiso)
-    );
+    /*const requests = permisosSeleccionados.map((permiso) =>
+      //this.SrvPermissions.postCreatePermisos(permiso)
+    );*/
 
     // Usar forkJoin para ejecutar todas las solicitudes en paralelo y esperar a que todas se completen
-    forkJoin(requests).subscribe(
+    /*forkJoin(requests).subscribe(
       (responses) => {
         this.loadingpermissions = false;
         this.limpiarDatos();
@@ -472,7 +472,7 @@ export default class UsuariosRolesComponent implements OnInit {
           detail: 'Hubo un problema al guardar los permisos',
         });
       }
-    );
+    );*/
   }
 
   eliminarPermisos(opcion: any) {
