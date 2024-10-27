@@ -4,22 +4,14 @@ import { lsUserPermissions } from '../../../../../models/auth.model';
 import { PermisosService } from '../../../../../services/auth/permisos.service';
 import { HandleErrorService } from '../../../../../services/gen/handle-error.service';
 import { toast } from 'ngx-sonner';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { TagModule } from 'primeng/tag';
-import { Ripple } from 'primeng/ripple';
-
-import {
-  handlePermissionUpdate,
-  processPermissionPayload,
-} from './panel-update.model';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { groupModulesByName, SHARED_IMPORTS } from './panle-update.imports';
+import { handlePermissionUpdate, processPermissionPayload, showConfirmDialogPanelUpdate} from './panel-update.model';
 import { ConfirmationService } from 'primeng/api';
-import { showConfirmDialog } from './panle.sms';
+
 @Component({
   selector: 'app-panel-update',
   standalone: true,
-  imports: [TableModule, ButtonModule, TagModule, Ripple, ConfirmDialogModule],
+  imports: [SHARED_IMPORTS],
   templateUrl: './panel-update.component.html',
   styleUrl: './panel-update.component.scss',
   providers: [ConfirmationService],
@@ -47,83 +39,30 @@ export class PanelUpdateComponent {
       const res = await this.srvPermisos.getListPermisosPorUsuario(userId).toPromise();
       if (res.data) {
         this.listModulesUser.set(res.data);
-        console.log(this.listModulesUser());
-        this.groupedModules = this.groupModulesByName();
+        this.groupedModules = groupModulesByName(this.listModulesUser());
       }
     } catch (error) {
       const storeError = this.srvError.getError().error.message;
       toast.error(storeError);
     }
   }
-
-  // Agrupar módulos y menús con tipos explícitos
-  groupModulesByName() {
-    const modulesMap = new Map<
-      string,
-      {
-        nombre_modulo: string;
-        menus: Map<
-          string,
-          { nombre_menu: string; opciones: lsUserPermissions[] }
-        >;
-      }
-    >();
-
-    this.listModulesUser().forEach((item) => {
-      if (!modulesMap.has(item.nombre_modulo)) {
-        modulesMap.set(item.nombre_modulo, {
-          nombre_modulo: item.nombre_modulo,
-          menus: new Map(),
-        });
-      }
-      const module = modulesMap.get(item.nombre_modulo)!;
-
-      if (!module.menus.has(item.nombre_menu)) {
-        module.menus.set(item.nombre_menu, {
-          nombre_menu: item.nombre_menu,
-          opciones: [],
-        });
-      }
-      const menu = module.menus.get(item.nombre_menu)!;
-
-      menu.opciones.push(item);
-    });
-
-    return Array.from(modulesMap.values()).map((module) => ({
-      nombre_modulo: module.nombre_modulo,
-      menus: Array.from(module.menus.values()),
-    }));
-  }
-
   async onDelete(opcion: lsUserPermissions, event: Event) {
-    showConfirmDialog(
-      this.srvConfirm,
-      event,
+    showConfirmDialogPanelUpdate(
+      this.srvConfirm, event,
       async () => {
-        const res: any = await this.srvPermisos
-          .requestdeletePermisos(opcion.opcion_id)
-          .toPromise();
-
+        const id = opcion.permiso_id;
+        const res: any = await this.srvPermisos.requestdeletePermisos(id).toPromise();
         if (res.data) {
           toast.success('Opción eliminada correctamente');
           await this.getListModulesUser(this.user()!);
-        }
-      },
-      {
-        message: '¿Estás seguro de eliminar esta opción?',
-        header: 'Confirmación',
-      }
-    );
+        }},
+      { message: '¿Estás seguro de eliminar esta opción?', header: 'Confirmación'});
   }
 
   onUpdate(opcion: lsUserPermissions, tipo: 'ver' | 'editar', event: Event) {
     const userId = this.user()?.id;
     const currentUser = this.user();
-    handlePermissionUpdate(
-      event,
-      opcion,
-      tipo,
-      userId,
+    handlePermissionUpdate(event, opcion ,tipo, userId,
       this.srvConfirm,
       async (payload) => {
         try {
