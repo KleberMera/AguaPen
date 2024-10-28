@@ -8,13 +8,17 @@ import { groupModulesByName } from '../panel-update/panle-update.imports';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { PayloadPermissionsCreate } from '../../../../../models/permisos.model';
+import { showConfirmDialogPanelUpdate } from '../panel-update/panel-update.model';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-panel-assing',
   standalone: true,
-  imports: [TagModule, ButtonModule],
+  imports: [TagModule, ButtonModule, ConfirmDialogModule],
   templateUrl: './panel-assing.component.html',
   styleUrl: './panel-assing.component.scss',
+  providers: [ConfirmationService],
 })
 export class PanelAssingComponent {
   user = input.required<UserAttributes | null>();
@@ -22,6 +26,8 @@ export class PanelAssingComponent {
   protected listModulesUser = signal<lsUserPermissions[]>([]);
   private readonly srvPermisos = inject(PermisosService);
   private readonly srvError = inject(HandleErrorService);
+  private readonly srvConfirm = inject(ConfirmationService);
+ 
   groupedModules: Array<{
     nombre_modulo: string;
     menus: Array<{ nombre_menu: string; opciones: lsUserPermissions[] }>;
@@ -72,19 +78,30 @@ export class PanelAssingComponent {
     return missingModules;
   }
 
-  async onAssign(opcion: lsUserPermissions) {
-   
-  
-    // Asegura que per_editar y per_ver nunca sean undefined
-    const userId = this.user()?.id ;
+  async onAssign(opcion: lsUserPermissions, event: Event) {
+    showConfirmDialogPanelUpdate(
+      this.srvConfirm,
+      event,
+      async () => {
+        await this.requestCreatePermission(opcion);
+        
+      },
+      {
+        message: '¿Estás seguro de dar permisos a este módulo?',
+        header: 'Confirmación',
+      }
+    );
+  }
 
+  async requestCreatePermission(opcion: lsUserPermissions) {
+    const userId = this.user()?.id;
     const payload: PayloadPermissionsCreate = {
       mutate: [
         {
           operation: 'create',
           attributes: {
             id: 0,
-            user_id: userId  ?? 0,
+            user_id: userId ?? 0,
             opcion_id: opcion.opcion_id,
             per_editar: Boolean(opcion.per_editar ?? 0),
             per_ver: Boolean(opcion.per_ver ?? 0),
@@ -92,18 +109,17 @@ export class PanelAssingComponent {
         },
       ],
     };
-  
-    console.log('Payload para crear permisos:', payload);
     try {
-      const res = await this.srvPermisos.postCreatePermisos(payload).toPromise();
+      const res = await this.srvPermisos
+        .postCreatePermisos(payload)
+        .toPromise();
       console.log(res);
       this.getListModulesUser(this.user()!);
     } catch (error) {
-      
+      const storeError = this.srvError.getError().error.message;
+      toast.error(storeError);
     }
 
-
-    // Aquí iría la lógica para enviar el payload
-  }
   
+  }
 }
