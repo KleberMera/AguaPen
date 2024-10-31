@@ -12,7 +12,7 @@ import { forkJoin, map } from 'rxjs';
 import { AuthService } from '../../../services/auth/auth.service';
 import { ListService } from '../../../services/seguridad-industrial/list.service';
 import {
-  MutatePayloadCreate,
+  PayloadUserCreate,
   UserAttributes,
 } from '../../../models/users.model';
 import { Permisos } from '../../../models/permisos.model';
@@ -126,7 +126,7 @@ export default class UsuariosRolesComponent implements OnInit {
     if (this.validateForm()) {
       this.loading = true;
 
-      const payload: MutatePayloadCreate = {
+      const payload: PayloadUserCreate = {
         mutate: [
           {
             operation: 'create',

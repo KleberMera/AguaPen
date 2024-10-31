@@ -6,8 +6,8 @@ import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment.development';
 import { Auth, lsUser } from '../../models/auth.model';
 import {
-  MutatePayloadCreate,
-  MutatePayloadUpdate,
+  PayloadUserCreate,
+  PayloadUserUpdate,
   viewDataUser,
 } from '../../models/users.model';
 import { error } from 'pdf-lib';
@@ -33,14 +33,14 @@ export class AuthService {
   }
 
   // Registro de Usuarios Admin
-  createUser(objUser: MutatePayloadCreate) {
+  createUser(objUser: PayloadUserCreate) {
     const url = `${this.environment}users/mutate`;
-    return this.http.post<MutatePayloadCreate>(url, objUser);
+    return this.http.post<PayloadUserCreate>(url, objUser);
   }
 
-  updateUser(objUser: MutatePayloadUpdate) {
+  updateUser(objUser: PayloadUserUpdate) {
     const url = `${this.environment}users/mutate`;
-    return this.http.post<MutatePayloadUpdate>(url, objUser);
+    return this.http.post<PayloadUserUpdate>(url, objUser);
   }
 
   //Delete Users

@@ -4,13 +4,14 @@ import { lsUserPermissions } from '../../../../../models/auth.model';
 import { PermisosService } from '../../../../../services/auth/permisos.service';
 import { toast } from 'ngx-sonner';
 import { HandleErrorService } from '../../../../../services/gen/handle-error.service';
-import { groupModulesByName } from '../panel-update/panle-update.imports';
+
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { PayloadPermissionsCreate } from '../../../../../models/permisos.model';
-import { showConfirmDialogPanelUpdate } from '../panel-update/panel-update.model';
+import { showConfirmDialogPanelUpdate } from '../panel-update/core/panel-update.model';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { groupModulesByName } from '../panel-update/core/panle-update.imports';
 
 @Component({
   selector: 'app-panel-assing',

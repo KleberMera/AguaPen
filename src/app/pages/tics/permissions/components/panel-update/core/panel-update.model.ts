@@ -1,8 +1,8 @@
 import { ConfirmationService } from "primeng/api";
-import { lsUserPermissions } from "../../../../../models/auth.model";
-import { PayloadPermissionsUpdate } from "../../../../../models/permisos.model";
+import { lsUserPermissions } from "../../../../../../models/auth.model";
+import { PayloadPermissionsUpdate } from "../../../../../../models/permisos.model";
 import { toast } from "ngx-sonner";
-import { UserAttributes } from "../../../../../models/users.model";
+import { UserAttributes } from "../../../../../../models/users.model";
 
 export const generatePermissionPayload = (
   opcion: lsUserPermissions,
@@ -129,3 +129,4 @@ export const handlePermissionUpdate = ( event: Event, opcion: lsUserPermissions,
       }
     });
   };
+

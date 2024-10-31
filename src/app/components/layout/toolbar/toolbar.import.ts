@@ -14,7 +14,8 @@ import { RippleModule } from 'primeng/ripple';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MutatePayloadUpdate } from '../../../models/users.model';
+import { PayloadUserUpdate } from '../../../models/users.model';
+
 export const PRIMENG_MODULES = [
   ToolbarModule,
   ButtonModule,
@@ -48,11 +49,11 @@ export function UserForm(): FormGroup {
   });
 }
 
-export function UpdatePayload( userForm: FormGroup, changePassword: boolean): MutatePayloadUpdate {
+export function UpdatePayload( userForm: FormGroup, changePassword: boolean): PayloadUserUpdate {
   const formValue = { ...userForm.value };
   // Eliminar confirmPassword del objeto
   delete formValue.confirmPassword;
-  const payload: MutatePayloadUpdate = {
+  const payload: PayloadUserUpdate = {
     mutate: [
       {
         operation: 'update', // Es una operación de actualización

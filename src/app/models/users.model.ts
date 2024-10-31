@@ -8,6 +8,10 @@ export interface UserAttributes {
   usuario: string;
   password: string;
   estado: number;
+  email_verified_at?: string;
+  remember_token?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 
@@ -15,21 +19,28 @@ export interface viewDataUser {
   data: UserAttributes;
 }
 
-export interface MutateOperationUpdate {
-  operation: 'update';
+// Tipo base para las operaciones de mutación
+export type MutateOperation = 'create' | 'update';
+
+// Tipo base para las mutaciones
+interface BaseMutation<T extends MutateOperation, P> {
+  operation: T;
+  attributes: P;
+}
+
+
+// Mutación para crear
+export interface CreateMutation extends BaseMutation<'create', UserAttributes> {}
+
+// Mutación para actualizar
+export interface UpdateMutation extends BaseMutation<'update', Omit<UserAttributes, 'id'>> {
   key: UserAttributes['id'];
-  attributes: Omit<UserAttributes, 'id'>;
 }
 
-export interface MutateOperationCreate {
-  operation: 'create';
-  attributes: UserAttributes;
+// Payloads
+export interface PayloadUser<T> {
+  mutate: T[];
 }
 
-export interface MutatePayloadUpdate {
-  mutate: MutateOperationUpdate[];
-}
-
-export interface MutatePayloadCreate {
-  mutate: MutateOperationCreate[];
-}
+export type PayloadUserCreate = PayloadUser<CreateMutation>;
+export type PayloadUserUpdate = PayloadUser<UpdateMutation>;

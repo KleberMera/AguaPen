@@ -136,3 +136,12 @@
   color: #4a5568;
   font-size: 1.125rem;
 }
+
+/* En tu archivo de estilos .scss o .css */
+.avatar-button-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+}
+

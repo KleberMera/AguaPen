@@ -4,7 +4,10 @@ import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { Ripple } from 'primeng/ripple';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { lsUserPermissions } from '../../../../../models/auth.model';
+
+import { AvatarModule } from 'primeng/avatar';
+import { lsUserPermissions } from '../../../../../../models/auth.model';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 export const SHARED_IMPORTS = [
   TableModule,
@@ -12,6 +15,8 @@ export const SHARED_IMPORTS = [
   TagModule,
   Ripple,
   ConfirmDialogModule,
+  AvatarModule,
+  ProgressSpinnerModule
 ];
 
 

@@ -4,6 +4,9 @@ import { UserAttributes } from '../../../models/users.model';
 import { AuthService } from '../../../services/auth/auth.service';
 import { HandleErrorService } from '../../../services/gen/handle-error.service';
 import { toast } from 'ngx-sonner';
+import { lsUserPermissions } from '../../../models/auth.model';
+import { PermisosService } from '../../../services/auth/permisos.service';
+import { groupModulesByName } from './components/panel-update/core/panle-update.imports';
 @Component({
   selector: 'app-permissions',
   standalone: true,
@@ -14,20 +17,62 @@ import { toast } from 'ngx-sonner';
 export default class PermissionsComponent {
   protected listUserApp = signal<UserAttributes[]>([]);
   protected selectedUser = signal<UserAttributes | null>(null);
+  protected listModulesUser = signal<lsUserPermissions[]>([]);
+  protected groupedModules = signal<
+    Array<{
+      nombre_modulo: string;
+      menus: Array<{ nombre_menu: string; opciones: lsUserPermissions[] }>;
+    }>
+  >([]);
+
   activeTab = signal<number>(0);
   userConfig = userComponentConfig;
   clear = false;
   private readonly srvAuth = inject(AuthService);
   private readonly srvError = inject(HandleErrorService);
+  private readonly srvPermisos = inject(PermisosService);
 
   async onClearSelectedUser(autocompleteComp: any) {
     this.selectedUser.set(null);
-    autocompleteComp.clear(); // Llama a un método 'clear()' en app-autocomplete si está disponible
+    this.listModulesUser.set([]);
+    this.groupedModules.set([]);
+    autocompleteComp.clear();
     toast.info('Selección de usuario eliminada');
   }
 
   ngOnInit(): void {
     this.getListUserApp();
+  }
+  onUserChanged(updatedUser: UserAttributes) {
+    this.selectedUser.set(updatedUser);
+    if (updatedUser) {
+      this.getListModulesUser(updatedUser);
+    }
+  }
+
+  async getListModulesUser(user: UserAttributes) {
+    console.log('getListModulesUser');
+    console.log(user);
+
+    if (!user?.id) return;
+    console.log('user.id');
+    
+
+    try {
+      console.log('getListModulesUser');
+
+      const res = await this.srvPermisos
+        .getListPermisosPorUsuario(user.id)
+        .toPromise();
+
+      if (res.data) {
+        this.listModulesUser.set(res.data);
+        this.groupedModules.set(groupModulesByName(this.listModulesUser()));
+      }
+    } catch (error) {
+      const storeError = this.srvError.getError().error.message;
+      toast.error(storeError);
+    }
   }
 
   async getListUserApp() {
@@ -49,6 +94,7 @@ export default class PermissionsComponent {
       toast.success(`Seleccionado: ${user.nombres} ${user.apellidos}`);
       this.activeTab.set(0);
       this.selectedUser.set(user);
+      await this.getListModulesUser(user);
     }
   }
 

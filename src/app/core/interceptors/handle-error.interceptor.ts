@@ -14,7 +14,7 @@ export const handleErrorInterceptor: HttpInterceptorFn = (req, next) => {
       let errorMessage = '';
       handleErrorService.storeError(error);
       console.error(error);
-      if (error.status === 401) {
+      if (error.status === 401 || error.status == 0) {
         errorMessage = 'No tiene permisos para acceder a esta información';
         srvAuth.clearAuthData();
         router.navigate(['/auth']);
