@@ -11,6 +11,10 @@ export interface Worker {
   dt_usuario: string;
 }
 
+export interface redDataWorkers  {
+   data : Worker;
+}
+
 export type MutateOperation = 'create' | 'update';  
 
 // Tipo base para las mutaciones

@@ -7,6 +7,11 @@ import { toast } from 'ngx-sonner';
 import { lsUserPermissions } from '../../../models/auth.model';
 import { PermisosService } from '../../../services/auth/permisos.service';
 import { groupModulesByName } from './components/panel-update/core/panle-update.imports';
+
+interface groupedModules {
+    nombre_modulo: string;
+    menus: Array<{ nombre_menu: string; opciones: lsUserPermissions[] }>;
+}
 @Component({
   selector: 'app-permissions',
   standalone: true,
@@ -18,16 +23,12 @@ export default class PermissionsComponent {
   protected listUserApp = signal<UserAttributes[]>([]);
   protected selectedUser = signal<UserAttributes | null>(null);
   protected listModulesUser = signal<lsUserPermissions[]>([]);
-  protected groupedModules = signal<
-    Array<{
-      nombre_modulo: string;
-      menus: Array<{ nombre_menu: string; opciones: lsUserPermissions[] }>;
-    }>
-  >([]);
+  protected groupedModules = signal<Array<groupedModules>>([]);
+
 
   activeTab = signal<number>(0);
   userConfig = userComponentConfig;
-  clear = false;
+
   private readonly srvAuth = inject(AuthService);
   private readonly srvError = inject(HandleErrorService);
   private readonly srvPermisos = inject(PermisosService);
@@ -43,6 +44,7 @@ export default class PermissionsComponent {
   ngOnInit(): void {
     this.getListUserApp();
   }
+
   onUserChanged(updatedUser: UserAttributes) {
     this.selectedUser.set(updatedUser);
     if (updatedUser) {
@@ -51,20 +53,9 @@ export default class PermissionsComponent {
   }
 
   async getListModulesUser(user: UserAttributes) {
-    console.log('getListModulesUser');
-    console.log(user);
-
     if (!user?.id) return;
-    console.log('user.id');
-    
-
     try {
-      console.log('getListModulesUser');
-
-      const res = await this.srvPermisos
-        .getListPermisosPorUsuario(user.id)
-        .toPromise();
-
+      const res = await this.srvPermisos.getListPermissionsDropdown(user.id).toPromise();
       if (res.data) {
         this.listModulesUser.set(res.data);
         this.groupedModules.set(groupModulesByName(this.listModulesUser()));

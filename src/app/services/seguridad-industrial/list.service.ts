@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth/auth.service';
+import { Observable } from 'rxjs';
 
 
 @Injectable({
@@ -25,7 +26,7 @@ export class ListService {
   }
 
   //Listado de Usuarios-Trabajadores
-  getListUsuarios() {
+  getListUsuarios(): Observable<any> {
     const url = `${this.environment}allusersworkers`;
     const token = this.authSrv.getToken();
     const headers = { Authorization: `Bearer ${token}` };

@@ -53,7 +53,7 @@ export class PanelAssingComponent {
     const userId = user.id;
     try {
       const res = await this.srvPermisos
-        .getListPermisosPorUsuario(userId)
+        .getListPermissionsDropdown(userId)
         .toPromise();
       if (res.data) {
         this.listModulesUser.set(res.data);

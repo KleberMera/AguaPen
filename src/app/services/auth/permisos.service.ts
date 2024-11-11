@@ -29,6 +29,11 @@ export class PermisosService {
     );
   }
 
+  getListPermissionsDropdown(userId: number) {
+    const url = `${this.environment}permisosmenus/${userId}`;
+    return this.http.get<any>(url);
+  }
+
   getLsUserPermissions() {
     return JSON.parse(localStorage.getItem('permissions') || '[]');
   }

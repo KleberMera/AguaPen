@@ -1,24 +1,15 @@
 import { Component, inject, input, output, signal } from '@angular/core';
-import {
-  PayloadUserUpdate,
-  UserAttributes,
-} from '../../../../../models/users.model';
+import { UserAttributes } from '../../../../../models/users.model';
 import { lsUserPermissions } from '../../../../../models/auth.model';
 import { PermisosService } from '../../../../../services/auth/permisos.service';
-import { HandleErrorService } from '../../../../../services/gen/handle-error.service';
 import { toast } from 'ngx-sonner';
-
 import {
   handlePermissionUpdate,
   processPermissionPayload,
   showConfirmDialogPanelUpdate,
 } from './core/panel-update.model';
 import { ConfirmationService } from 'primeng/api';
-import { AuthService } from '../../../../../services/auth/auth.service';
-import {
-  groupModulesByName,
-  SHARED_IMPORTS,
-} from './core/panle-update.imports';
+import { SHARED_IMPORTS } from './core/panle-update.imports';
 import { PayloadupdateService } from './core/payloadupdate.service';
 
 @Component({
@@ -33,8 +24,12 @@ export class PanelUpdateComponent {
   user = input.required<UserAttributes | null>();
   userChanged = output<UserAttributes>();
   listModules = input.required<lsUserPermissions[]>();
-  groupedModules = input.required<Array<{ nombre_modulo: string;
-      menus: Array<{ nombre_menu: string; opciones: lsUserPermissions[] }>;}>>();
+  groupedModules = input.required<
+    Array<{
+      nombre_modulo: string;
+      menus: Array<{ nombre_menu: string; opciones: lsUserPermissions[] }>;
+    }>
+  >();
 
   protected listModulesUser = signal<lsUserPermissions[]>([]);
   private readonly srvPermisos = inject(PermisosService);
@@ -42,37 +37,55 @@ export class PanelUpdateComponent {
   private readonly srvPayload = inject(PayloadupdateService);
 
   async onDelete(opcion: lsUserPermissions, event: Event) {
-    showConfirmDialogPanelUpdate(this.srvConfirm,event,
+    showConfirmDialogPanelUpdate(
+      this.srvConfirm,
+      event,
       async () => {
         const id = opcion.permiso_id;
-        const res: any = await this.srvPermisos.requestdeletePermisos(id).toPromise();
+        const res: any = await this.srvPermisos
+          .requestdeletePermisos(id)
+          .toPromise();
         if (res.data) {
           toast.success('Opción eliminada correctamente');
           this.userChanged.emit(this.user()!);
         }
       },
-      { message: '¿Estás seguro de eliminar esta opción?', header: 'Confirmación' },
+      {
+        message: '¿Estás seguro de eliminar esta opción?',
+        header: 'Confirmación',
+      }
     );
   }
   onUpdate(opcion: lsUserPermissions, tipo: 'ver' | 'editar', event: Event) {
     const userId = this.user()?.id;
     const currentUser = this.user();
-    
-    handlePermissionUpdate(event,opcion, tipo, userId, this.srvConfirm,
+
+    handlePermissionUpdate(
+      event,
+      opcion,
+      tipo,
+      userId,
+      this.srvConfirm,
       async (payload) => {
         try {
           // Creamos una función que retorna una Promise
-          const refreshCallback = async (user: UserAttributes) => { this.userChanged.emit(user);
+          const refreshCallback = async (user: UserAttributes) => {
+            this.userChanged.emit(user);
             return Promise.resolve();
           };
 
-          await processPermissionPayload( payload, this.srvPermisos, currentUser, refreshCallback ); 
+          await processPermissionPayload(
+            payload,
+            this.srvPermisos,
+            currentUser,
+            refreshCallback
+          );
         } catch (error) {
           console.error('Error en la actualización:', error);
         }
       }
     );
-}
+  }
 
   getInitial(name: any): string {
     return name ? name.charAt(0).toUpperCase() : '';

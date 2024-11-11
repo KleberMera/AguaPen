@@ -1,3 +1,5 @@
+import { FormField } from "../components/data/forms/forms.model";
+
 export interface UserAttributes {
   id: number;
   cedula: string;
@@ -44,3 +46,27 @@ export interface PayloadUser<T> {
 
 export type PayloadUserCreate = PayloadUser<CreateMutation>;
 export type PayloadUserUpdate = PayloadUser<UpdateMutation>;
+
+
+export const columnsUsers = [
+  { field: 'id', header: 'Nº' },
+  { field: 'cedula', header: 'Cédula' },
+  { field: 'telefono', header: 'Telefono' },
+  { field: 'nombres', header: 'Nombre' },
+  { field: 'apellidos', header: 'Apellidos' },
+  { field: 'email', header: 'Email' },
+  { field: 'usuario', header: 'Usuario' },
+  { field: 'password', header: 'Contraseña' },
+  { field: 'estado', header: 'Estado' },
+];
+
+export const fieldsFormsUsers: FormField[] = [
+  { id: 'cedula', label: 'Cédula', type: 'text', controlName: 'cedula' },
+  { id: 'telefono', label: 'Telefono', type: 'text', controlName: 'telefono' },
+  { id: 'nombres', label: 'Nombre', type: 'text', controlName: 'nombres' },
+  { id: 'apellidos', label: 'Apellidos', type: 'text', controlName: 'apellidos' },
+  { id: 'email', label: 'Email', type: 'text', controlName: 'email' },
+  { id: 'usuario', label: 'Usuario', type: 'text', controlName: 'usuario' },
+  { id: 'password', label: 'Contraseña', type: 'text', controlName: 'password' },
+  { id: 'estado', label: 'Estado', type: 'estado', controlName: 'estado' },
+];

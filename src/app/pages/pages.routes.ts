@@ -86,6 +86,11 @@ export const routes: Routes = [
         loadComponent: () => import('./tics/permissions/permissions.component'),
         
       },
+      {
+        path: 'usuarios',
+        loadComponent: () => import('./tics/users/users.component'),
+       
+      },
       
       {
         path: '**',

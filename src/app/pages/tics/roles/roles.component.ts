@@ -136,6 +136,8 @@ export default class UsuariosRolesComponent implements OnInit {
           },
         ],
       };
+      console.log(payload);
+      
 
       this.authService.createUser(payload).subscribe(
         (response) => {

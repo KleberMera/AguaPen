@@ -1,0 +1,110 @@
+@defer (when users().length > 0) {
+<div class="flex items-center gap-2 mb-2">
+  <app-autocomplete
+    #autocompleteComp
+    [items]="users"
+    [config]="userConfig"
+    [placeholder]="'Seleccionar un Usuario'"
+    (itemSelected)="onUserSelected($event)"
+  ></app-autocomplete>
+
+  <button
+    pButton
+    pRipple
+    icon="pi pi-times"
+    class="p-button-danger"
+    (click)="onClearSelectedUser(autocompleteComp)"
+  ></button>
+
+  <!----bOTON DE GUARDAR-->
+  <button
+    label="Registrar"
+    pButton
+    pRipple
+    icon="pi pi-check"
+    class="p-button-success"
+    (click)="onSaveUser()"
+    [disabled]="userForm().invalid"
+  ></button>
+</div>
+} @placeholder {
+<div class="flex items-center justify-center p-4">
+  <i class="pi pi-spin pi-spinner text-2xl"></i>
+  <span class="ml-2 text-center">Cargando Datos...</span>
+</div>
+}
+
+<form [formGroup]="userForm()" class="">
+  <div class="p-fluid p-formgrid grid">
+    <div class="field md:col-6">
+      <label for="cedula">Cédula</label>
+      <input
+        pInputText
+        id="cedula"
+        formControlName="cedula"
+        placeholder="Ingrese número su cédula"
+      />
+    </div>
+
+    <div class="field md:col-6">
+      <label for="telefono">Teléfono</label>
+      <input
+        pInputText
+        id="telefono"
+        formControlName="telefono"
+        placeholder="Ingrese su número de teléfono"
+      />
+    </div>
+
+    <div class="field md:col-6">
+      <label for="nombres">Nombres</label>
+      <input
+        pInputText
+        id="nombres"
+        formControlName="nombres"
+        placeholder="Ingrese sus nombres"
+      />
+    </div>
+
+    <div class="field md:col-6">
+      <label for="apellidos">Apellidos</label>
+      <input
+        pInputText
+        id="apellidos"
+        formControlName="apellidos"
+        placeholder="Ingrese sus apellidos"
+      />
+    </div>
+
+    <div class="field md:col-6">
+      <label for="email">Email</label>
+      <input
+        pInputText
+        id="email"
+        formControlName="email"
+        placeholder="Ingrese su email"
+      />
+    </div>
+
+    <div class="field md:col-6">
+      <label for="usuario">Usuario</label>
+      <input
+        pInputText
+        id="usuario"
+        formControlName="usuario"
+        placeholder="Ingrese su usuario"
+      />
+    </div>
+
+    <div class="field md:col-6">
+      <label for="password">Contraseña</label>
+      <input
+        pInputText
+        type="password"
+        id="password"
+        formControlName="password"
+        placeholder="Ingrese su contraseña"
+      />
+    </div>
+  </div>
+</form>

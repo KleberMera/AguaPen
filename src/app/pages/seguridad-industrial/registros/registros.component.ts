@@ -84,7 +84,7 @@ export default class RegistrosComponent {
       if (response.data) {
         const data = response.data.filter((user: any) => user.dt_status === 1);
         this.users.set(data);
-        this.dropdownOptions.set(data);
+       // this.dropdownOptions.set(data);
         this.loading = false;
       }
     } catch (error) {
