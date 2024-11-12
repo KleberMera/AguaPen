@@ -3,7 +3,6 @@ import { AutocompleteComponent } from '../../../../../components/autocomplete/au
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
-import { userComponentConfigWorker } from '../../../../seguridad-industrial/registros/registros.imports';
 import { userComponentConfig } from '../../../permissions/permissions.imports';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -40,7 +39,7 @@ export class UpdatedComponent {
   protected selectedUser = signal<UserAttributes | null>(null);
   readonly userForm = signal<FormGroup>(UserForm());
   loading = signal(false);
-
+  showPassword: boolean = false;
   readonly fields = fieldsFormsUsers;
 
   //Injected
@@ -58,10 +57,7 @@ export class UpdatedComponent {
       this.selectedUser.set(user);
       this.showPassword = false;
       this.userForm().get('password')?.disable();
-
-      this.userForm().patchValue({
-        ...user,
-      });
+      this.userForm().patchValue({ ...user });
     }
   }
 
@@ -94,7 +90,6 @@ export class UpdatedComponent {
     autocompleteComp.clear(); // Llama a un método 'clear()' en app-autocomplete si está disponible
     toast.info('Selección de usuario eliminada');
     this.userForm().reset();
-   
     this.userForm().get('password')?.disable();
   }
 
@@ -138,7 +133,6 @@ export class UpdatedComponent {
     return null;
   }
   
-  showPassword: boolean = false;
   onResetPassword() {
     const user = this.selectedUser();
     if (user) {

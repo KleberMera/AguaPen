@@ -36,104 +36,65 @@
 
 <form [formGroup]="userForm()" class="mb-2">
   <div class="p-fluid p-formgrid grid">
-    <div class="field md:col-6">
+    <div class="field md:col-6 col-11">
       <label for="cedula">Cédula</label>
-      <input
-        pInputText
-        id="cedula"
-        formControlName="cedula"
-        placeholder="Ingrese número su cédula"
-      />
+      <input pInputText id="cedula" formControlName="cedula" placeholder="Ingrese número su cédula" />
       @if (getFieldError('cedula')) {
       <small class="text-red-500">{{ getFieldError("cedula") }}</small>
       }
     </div>
 
-    <div class="field md:col-6">
+    <div class="field md:col-6 col-11">
       <label for="telefono">Teléfono (Opcional)</label>
-      <input
-        pInputText
-        id="telefono"
-        formControlName="telefono"
-        placeholder="Ingrese su número de teléfono"
-      />
-
+      <input pInputText id="telefono" formControlName="telefono" placeholder="Ingrese su número de teléfono" />
       @if (getFieldError('telefono')) {
       <small class="text-red-500">{{ getFieldError("telefono") }}</small>
       }
     </div>
 
-    <div class="field md:col-6">
+    <div class="field md:col-6 col-11">
       <label for="nombres">Nombres</label>
-      <input
-        pInputText
-        id="nombres"
-        formControlName="nombres"
-        placeholder="Ingrese sus nombres"
-      />
-
+      <input pInputText id="nombres" formControlName="nombres" placeholder="Ingrese sus nombres" /> 
       @if (getFieldError('nombres')) {
       <small class="text-red-500">{{ getFieldError("nombres") }}</small>
       }
     </div>
 
-    <div class="field md:col-6">
+    <div class="field md:col-6 col-11">
       <label for="apellidos">Apellidos</label>
-      <input
-        pInputText
-        id="apellidos"
-        formControlName="apellidos"
-        placeholder="Ingrese sus apellidos"
-      />
+      <input pInputText id="apellidos" formControlName="apellidos" placeholder="Ingrese sus apellidos" />
       @if (getFieldError('apellidos')) {
       <small class="text-red-500">{{ getFieldError("apellidos") }}</small>
       }
     </div>
 
-    <div class="field md:col-6">
+    <div class="field md:col-6 col-11">
       <label for="email">Email</label>
-      <input
-        pInputText
-        id="email"
-        formControlName="email"
-        placeholder="Ingrese su email"
-      />
+      <input pInputText id="email" formControlName="email" placeholder="Ingrese su email" />
       @if (getFieldError('email')) {
       <small class="text-red-500">{{ getFieldError("email") }}</small>
       }
     </div>
 
-    <div class="field md:col-6">
+    <div class="field md:col-6 col-11">
       <label for="usuario">Usuario (Alias)</label>
-      <input
-        pInputText
-        id="usuario"
-        formControlName="usuario"
-        placeholder="Ingrese su usuario"
-      />
+      <input pInputText id="usuario" formControlName="usuario" placeholder="Ingrese su usuario" />
       @if (getFieldError('usuario')) {
       <small class="text-red-500">{{ getFieldError("usuario") }}</small>
       }
     </div>
 
-    <div class="field md:col-6">
+    <div class="field md:col-6 col-11">
       <label for="password">Contraseña</label>
-      <p-password
-        id="password"
-        type="password"
-        feedback="false"
-        [toggleMask]="showPassword"
-        formControlName="password"
-        placeholder="Ingrese su contraseña"
-        class="w-full mb-3"
-      />
+      <p-password 
+      feedback="false" [toggleMask]="showPassword"
+      id="password" type="password" formControlName="password" placeholder="Ingrese su contraseña"  />
       @if (getFieldError('password')) {
       <small class="text-red-500">{{ getFieldError("password") }}</small>
       }
     </div>
 
-    <div class="field md:col-6">
-      <!----Reset Password Button---->
+    <div class="field md:col-6 col-11">
       <label for="password">Resetear Contraseña</label>
       <button
         pButton

@@ -138,33 +138,6 @@ export class RegisterComponent {
     }
   }
 
-  hasRequiredFields(field: string) {
-    const control = this.userForm().get(field);
-    return control?.hasError('required') && control?.touched;
-  }
-
-  hasMinLength(field: string) {
-    const control = this.userForm().get(field);
-    return control?.hasError('minlength') && control?.touched;
-  }
-
-  hasMaxLength(field: string) {
-    const control = this.userForm().get(field);
-    return control?.hasError('maxlength') && control?.touched;
-  }
-
-  hasPattern(field: string) {
-    const control = this.userForm().get(field);
-    return control?.hasError('pattern') && control?.touched;
-  }
-
-  hasEmail(field: string) {
-    const control = this.userForm().get(field);
-    return control?.hasError('email') && control?.touched;
-  }
-
-  
-
   getFieldError(field: string): string | null {
     const control = this.userForm().get(field);
   
