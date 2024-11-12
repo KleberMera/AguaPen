@@ -1,6 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MenuModule } from 'primeng/menu';
+import { Component, inject, signal } from '@angular/core';
 import { MenuitemComponent } from '../menuitem/menuitem.component';
 import { MessageService } from 'primeng/api';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -14,7 +12,7 @@ import { HandleErrorService } from '../../../services/gen/handle-error.service';
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [ MenuComponent, FormsModule, MenuModule, MenuitemComponent, ProgressSpinnerModule,
+  imports: [  MenuitemComponent, ProgressSpinnerModule,
     SkeletonModule, MessageModule ],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.scss',

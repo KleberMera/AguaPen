@@ -44,17 +44,9 @@
         formControlName="cedula"
         placeholder="Ingrese número su cédula"
       />
-      @if (hasRequiredFields('cedula')) {
-      <small class="text-red-500">Este campo es requerido.</small>
-      } @if (hasMinLength('cedula')) {
-      <small class="text-red-500">La cédula debe tener 10 caracteres.</small>
-      } @if (hasMaxLength('cedula')) {
-      <small class="text-red-500">
-        La cédula no debe tener más de 10 caracteres.</small
-      >
-      } @if (hasPattern('cedula')) {
-      <small class="text-red-500"> La cédula debe ser numérico.</small>
-      }
+      @if (getFieldError('cedula')) {
+        <small class="text-red-500">{{ getFieldError("cedula") }}</small>
+        }
     </div>
 
     <div class="field md:col-6">
@@ -65,18 +57,9 @@
         formControlName="telefono"
         placeholder="Ingrese su número de teléfono"
       />
-
-      @if (hasMinLength('telefono')) {
-      <small class="text-red-500">El teléfono debe tener 10 caracteres.</small>
-      } @if (hasMaxLength('telefono')) {
-      <small class="text-red-500"
-        > El teléfono no debe tener más de 10 caracteres.</small
-      >
-      }
-
-      @if (hasPattern('telefono')) {
-      <small class="text-red-500"> El teléfono debe ser numérico.</small>
-      }
+      @if (getFieldError('telefono')) {
+        <small class="text-red-500">{{ getFieldError("telefono") }}</small>
+        }
     </div>
 
     <div class="field md:col-6">
@@ -87,10 +70,9 @@
         formControlName="nombres"
         placeholder="Ingrese sus nombres"
       />
-
-      @if (hasRequiredFields('nombres')) {
-        <small class="text-red-500">Este campo es requerido.</small>
-      }
+      @if (getFieldError('nombres')) {
+        <small class="text-red-500">{{ getFieldError("nombres") }}</small>
+        }
     </div>
 
     <div class="field md:col-6">
@@ -101,9 +83,9 @@
         formControlName="apellidos"
         placeholder="Ingrese sus apellidos"
       />
-      @if (hasRequiredFields('apellidos')) {
-        <small class="text-red-500">Este campo es requerido.</small>
-      }
+      @if (getFieldError('apellidos')) {
+        <small class="text-red-500">{{ getFieldError("apellidos") }}</small>
+        }
     </div>
 
     <div class="field md:col-6">
@@ -114,12 +96,9 @@
         formControlName="email"
         placeholder="Ingrese su email"
       />
-      @if (hasEmail('email')) {
-      <small class="text-red-500">El email no es válido.</small>
-      }
-      @if (hasRequiredFields('email')) {
-        <small class="text-red-500">Este campo es requerido.</small>
-      }
+      @if (getFieldError('email')) {
+        <small class="text-red-500">{{ getFieldError("email") }}</small>
+        }
     </div>
 
     <div class="field md:col-6">
@@ -130,30 +109,25 @@
         formControlName="usuario"
         placeholder="Ingrese su usuario"
       />
-      @if (hasRequiredFields('usuario')) {
-        <small class="text-red-500">Este campo es requerido.</small>
-      }
+      @if (getFieldError('usuario')) {
+        <small class="text-red-500">{{ getFieldError("usuario") }}</small>
+        }
     </div>
 
     <div class="field md:col-6">
       <label for="password">Contraseña</label>
       <p-password
-      id="password"
-      type="password"
-      feedback="false"
-      toggleMask="true"
-      formControlName="password"
-      placeholder="Ingrese su contraseña"
-      class="w-full mb-3"
-      
-    />
-      @if (hasMinLength('password')) {
-      <small class="text-red-500">La contraseña debe tener minimo 8 caracteres.</small>
-      }
-
-      @if (hasRequiredFields('password')) {
-        <small class="text-red-500">Este campo es requerido.</small>
-      }
+        id="password"
+        type="password"
+        feedback="false"
+        toggleMask="true"
+        formControlName="password"
+        placeholder="Ingrese su contraseña"
+        class="w-full mb-3"
+      />
+      @if (getFieldError('password')) {
+        <small class="text-red-500">{{ getFieldError("password") }}</small>
+        }
     </div>
   </div>
 </form>

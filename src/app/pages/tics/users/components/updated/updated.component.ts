@@ -112,30 +112,32 @@ export class UpdatedComponent {
     }
   }
 
-  hasRequiredFields(field: string) {
+  getFieldError(field: string): string | null {
     const control = this.userForm().get(field);
-    return control?.hasError('required') && control?.touched;
+  
+    if (control?.hasError('required') && control?.touched) {
+      return 'Este campo es requerido.';
+    }
+  
+    if (control?.hasError('minlength') && control?.touched) {
+      return `El campo debe tener al menos ${control.getError('minlength').requiredLength} caracteres.`;
+    }
+  
+    if (control?.hasError('maxlength') && control?.touched) {
+      return `El campo no debe tener más de ${control.getError('maxlength').requiredLength} caracteres.`;
+    }
+  
+    if (control?.hasError('pattern') && control?.touched) {
+      return 'El campo debe tener un formato válido.';
+    }
+  
+    if (control?.hasError('email') && control?.touched) {
+      return 'Debe ser un email válido.';
+    }
+  
+    return null;
   }
-
-  hasMinLength(field: string) {
-    const control = this.userForm().get(field);
-    return control?.hasError('minlength') && control?.touched;
-  }
-
-  hasMaxLength(field: string) {
-    const control = this.userForm().get(field);
-    return control?.hasError('maxlength') && control?.touched;
-  }
-
-  hasPattern(field: string) {
-    const control = this.userForm().get(field);
-    return control?.hasError('pattern') && control?.touched;
-  }
-
-  hasEmail(field: string) {
-    const control = this.userForm().get(field);
-    return control?.hasError('email') && control?.touched;
-  }
+  
   showPassword: boolean = false;
   onResetPassword() {
     const user = this.selectedUser();
