@@ -43,7 +43,7 @@ export class PanelAssingComponent {
       const res = await this.srvPermisos.getListModulos().toPromise();
       if (res.data) {
         this.listAllModules.set(res.data);
-        console.log(this.listAllModules());
+       
         await this.getListModulesUser(this.user()!);
       }
     } catch (error) {}
@@ -114,7 +114,7 @@ export class PanelAssingComponent {
       const res = await this.srvPermisos
         .postCreatePermisos(payload)
         .toPromise();
-      console.log(res);
+      toast.success('Permisos asignados correctamente');
       this.getListModulesUser(this.user()!);
     } catch (error) {
       const storeError = this.srvError.getError().error.message;

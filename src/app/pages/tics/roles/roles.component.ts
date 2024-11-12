@@ -136,8 +136,6 @@ export default class UsuariosRolesComponent implements OnInit {
           },
         ],
       };
-      console.log(payload);
-      
 
       this.authService.createUser(payload).subscribe(
         (response) => {
@@ -229,8 +227,6 @@ export default class UsuariosRolesComponent implements OnInit {
         }
         this.authService.updateUser(userSelected).subscribe(
           (response) => {
-            console.log(response);
-
             this.messageService.add({
               severity: 'success',
               summary: 'Success',

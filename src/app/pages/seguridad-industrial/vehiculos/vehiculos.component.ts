@@ -145,7 +145,6 @@ export default class VehiculosComponent {
 
     this.loadingSave.set(true);
      try {
-      console.log(this.vehiclesForm().value);
       
        currentId  === null ? await this.addVehiculo() : await this.editVehiculo();
        this.dialogVisible.set(false);

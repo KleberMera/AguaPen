@@ -57,7 +57,7 @@ export class ToolbarComponent {
 
   async signOut() {
     const res = await this.srvAuth.logout().toPromise();
-    console.log(res.message);
+
     this.router.navigate(['/auth']);
     this.messageService.add({
       severity: 'info',
