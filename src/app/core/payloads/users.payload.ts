@@ -7,8 +7,14 @@ export function UserForm(): FormGroup {
     cedula: new FormControl('', [
       Validators.required,
       Validators.minLength(10),
+      Validators.maxLength(10),
+      Validators.pattern('^[0-9]*$'),
     ]),
-    telefono: new FormControl('', Validators.required),
+    telefono: new FormControl('', [
+      Validators.minLength(10),
+      Validators.maxLength(10),
+      Validators.pattern('^[0-9]*$'),
+    ]),
     nombres: new FormControl('', [
       Validators.required,
       Validators.minLength(3),
@@ -22,9 +28,12 @@ export function UserForm(): FormGroup {
       Validators.required,
       Validators.minLength(3),
     ]),
-    password: new FormControl('', [
+    password: new FormControl(
+      { value: '', disabled: true }
+      , [
       Validators.required,
-      Validators.minLength(6),
+      Validators.minLength(8),
+
     ]),
     estado: new FormControl(1),
   });

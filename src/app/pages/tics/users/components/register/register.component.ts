@@ -7,11 +7,16 @@ import { ButtonModule } from 'primeng/button';
 import { ListService } from '../../../../../services/seguridad-industrial/list.service';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { UserForm } from '../../../../../core/payloads/users.payload';
+import {
+  createUserPayload,
+  UserForm,
+} from '../../../../../core/payloads/users.payload';
 import { fieldsFormsUsers } from '../../../../../models/users.model';
 
 import { DropdownModule } from 'primeng/dropdown';
 import { TagModule } from 'primeng/tag';
+import { AuthService } from '../../../../../services/auth/auth.service';
+import { PasswordModule } from 'primeng/password';
 
 @Component({
   selector: 'app-register',
@@ -23,6 +28,7 @@ import { TagModule } from 'primeng/tag';
     DropdownModule,
     ReactiveFormsModule,
     TagModule,
+    PasswordModule
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
@@ -32,11 +38,13 @@ export class RegisterComponent {
   userConfig = userComponentConfigWorker;
   protected selectedUser = signal<Worker | null>(null);
   readonly userForm = signal<FormGroup>(UserForm());
+  loading = signal(false);
 
   readonly fields = fieldsFormsUsers;
 
   //Injected
   private readonly srvList = inject(ListService);
+  private readonly srvAuth = inject(AuthService);
 
   private capitalizeWords(str: string): string {
     return str
@@ -66,10 +74,10 @@ export class RegisterComponent {
       toast.success(`Seleccionado: ${user.tx_nombre}`);
       this.selectedUser.set(user);
       const { nombres, apellidos } = this.separateFullName(user.tx_nombre);
-
+      this.userForm().get('password')?.enable();
       this.userForm().patchValue({
         cedula: user.tx_cedula,
-        telefono: user.tx_correo,
+
         nombres: nombres,
         apellidos: apellidos,
 
@@ -108,9 +116,55 @@ export class RegisterComponent {
     } catch (error) {}
   }
 
-  onSaveUser() {
-    console.log(this.userForm().value);
-    if (this.userForm().valid) {
+  async onSaveUser() {
+    const form = this.userForm();
+    if (!form.valid) return;
+    try {
+      this.loading.set(true);
+      const payload = createUserPayload(form);
+      const res = await this.srvAuth.createUser(payload).toPromise();
+
+      if (res) {
+        toast.success('Usuario registrado exitosamente');
+        this.loadDropdown();
+        this.userForm().reset();
+        this.selectedUser.set(null);
+        this.loading.set(false);
+       
+      }
+    } catch (error) {
+      toast.error('Error al registrar usuario');
+      this.loading.set(false);
     }
   }
+
+  hasRequiredFields(field: string) {
+    const control = this.userForm().get(field);
+    return control?.hasError('required') && control?.touched;
+  }
+
+  hasMinLength(field: string) {
+    const control = this.userForm().get(field);
+    return control?.hasError('minlength') && control?.touched;
+  }
+
+  hasMaxLength(field: string) {
+    const control = this.userForm().get(field);
+    return control?.hasError('maxlength') && control?.touched;
+  }
+
+  hasPattern(field: string) {
+    const control = this.userForm().get(field);
+    return control?.hasError('pattern') && control?.touched;
+  }
+
+  hasEmail(field: string) {
+    const control = this.userForm().get(field);
+    return control?.hasError('email') && control?.touched;
+  }
+
+  
+
+
+  
 }
