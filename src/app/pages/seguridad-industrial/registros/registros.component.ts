@@ -110,8 +110,8 @@ export default class RegistrosComponent {
   async onUserSelected(user: Worker) {
     if (user.id) {
       toast.success(`Seleccionado: ${user.tx_nombre}`);
-      
       this.selectedUser.set(user);
+      this.id_usuario.set(user.id);
     }
   }
 
@@ -313,7 +313,7 @@ export default class RegistrosComponent {
       detail: 'Espere un momento mientras se genera el reporte',
     });
     this.PrintService.exportAsignacion(
-      this.selectedUser,
+      this.selectedUser(),
       this.selectedProducts,
       this.observacion,
       this.totalCantidadProductos,
