@@ -1,21 +1,21 @@
 <p-table
-  [value]="data"
+  [value]="data()"
   [paginator]="true"
   [rows]="20"
-  [rowsPerPageOptions]="rowsPerPageOptions"
+  [rowsPerPageOptions]="rowsPerPageOptions()"
   [scrollable]="true"
   [resizableColumns]="true"
 >
   <ng-template pTemplate="header">
     <tr>
-      @for (col of columns; track col.field) {
+      @for (col of columns(); track col.field) {
       <th [pSortableColumn]="col.field">
         {{ col.header }}
         @if (col.sortable) {
         <p-sortIcon [field]="col.field"></p-sortIcon>
         }
       </th>
-      } @if (editable) {
+      } @if (editable()) {
       <th>Acción</th>
       }
     </tr>
@@ -23,7 +23,7 @@
 
   <ng-template pTemplate="body" let-item>
     <tr>
-      @for (col of columns; track col.field) {
+      @for (col of columns(); track col.field) {
       <td>
         @if (isStatusField(col.field)) {
         <p-tag
@@ -34,7 +34,7 @@
         {{ item[col.field] }}
         }
       </td>
-      } @if (editable) {
+      } @if (editable()) {
       <td>
         <p-button
           icon="pi pi-pencil"

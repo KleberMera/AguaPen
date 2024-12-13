@@ -399,6 +399,8 @@ export default class RegistrosComponent {
 
   onFileSelected(event: any) {
     this.selectedFile = event.files[0]; // PrimeNG returns files array
+    console.log(this.selectedFile);
+    
     if (this.selectedFile) {
       const reader = new FileReader();
       reader.onload = () => {
@@ -412,6 +414,8 @@ export default class RegistrosComponent {
   }
 
   async onUpload() {
+    console.log(this.selectedFile);
+    
     if (this.selectedFile) {
       try {
         // Esperar a obtener el id del último registro
@@ -419,7 +423,7 @@ export default class RegistrosComponent {
         const lastRegistroId = res.id_registro;
 
         // Esperar a que se resuelva la promesa y obtén el observable
-        const observable = await this.uploadService.uploadImage(
+        const observable =  this.uploadService.uploadImage(
           lastRegistroId,
           this.selectedFile
         );

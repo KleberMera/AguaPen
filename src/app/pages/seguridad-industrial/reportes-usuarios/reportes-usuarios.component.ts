@@ -40,11 +40,15 @@ export default class ReportesUsuariosComponent implements OnInit {
     try {
       const res: any = await this.srvList.getReportsTrabajadores().toPromise();
       this.listReports = res.data.filter((report : any) => report.estado_registro === 1);
+console.log(this.listReports);
 
        // Actualiza las URLs de las imágenes
        this.listReports.forEach(report => {
         report.imagen = this.setImageUrl(report);
       });
+
+      console.log(this.listReports);
+      
 
       this.filteredReports = this.listReports;
       this.uniqueUsers = this.getUniqueUsers(this.listReports);
@@ -183,6 +187,9 @@ export default class ReportesUsuariosComponent implements OnInit {
  // Método que obtiene las imágenes
  setImageUrl(report: any): string | null {
   if (report.imagen) {
+    console.log(report.imagen);
+    console.log(`${this.environment}${report.imagen}`);
+    
     return `${this.environment}${report.imagen}`;
   }
   return null;

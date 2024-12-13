@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Output, input, output } from '@angular/core';
 import { PRIMENG_MODULES } from './table.imports';
 import { CommonModule } from '@angular/common';
 import { Column } from '../../../models/auth.model';
@@ -11,14 +11,17 @@ import { Column } from '../../../models/auth.model';
   styleUrl: './table.component.scss',
 })
 export class TableComponent {
-  @Input() data: any[] = [];
-  @Input() columns: Column[] = [];
-  @Input() editable!: boolean;
-  @Input() rowsPerPageOptions: number[] = [];
+  readonly data = input<any[]>([]);
+  readonly columns = input<Column[]>([]);
+  readonly editable = input.required<boolean>();
+  readonly rowsPerPageOptions = input<number[]>([]);
   
 
-  @Output() onEdit = new EventEmitter<any>();
-  @Output() onDelete = new EventEmitter<any>();
+  //@Output() onEdit = new EventEmitter<any>();
+  onEdit = output<any>();
+  onDelete = output<any>();
+  
+  
   isActive!: boolean;
 
   editItem(item: any) {

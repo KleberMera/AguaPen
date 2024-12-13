@@ -7,7 +7,7 @@ import { PrimeNGConfig } from 'primeng/api';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, NgxSonnerToaster],
+  imports: [RouterOutlet, NgxSonnerToaster],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

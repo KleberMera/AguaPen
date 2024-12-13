@@ -74,7 +74,7 @@ export class UploadimageService {
     });
   }
 
-  async uploadImage(id: string, imageFile: File): Promise<Observable<any>> {
+ /* async uploadImage(id: string, imageFile: File): Promise<Observable<any>> {
     const compressedImage = await this.compressImage(imageFile, 1024, 1024, 0.8);
     const url = `${this.environment}registros/${id}/imagen`;
 
@@ -85,9 +85,9 @@ export class UploadimageService {
     headers.append('Content-Type', 'multipart/form-data');
 
     return this.http.post(url, formData, { headers });
-  }
+  }*/
 
-  /*   uploadImage(id: string, imageFile: File): Observable<any> {
+   uploadImage(id: string, imageFile: File): Observable<any> {
     const url = `${this.environment}registros/${id}/imagen`;
     const formData: FormData = new FormData();
     formData.append('imagen', imageFile, imageFile.name);
@@ -98,6 +98,6 @@ export class UploadimageService {
     return this.http.post(url, formData, { headers });
   }
 
- */
+ 
 
 }
