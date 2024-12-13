@@ -4,12 +4,12 @@
   </p-inputGroupAddon>
   <input
     pInputText
-    [placeholder]="placeholder"
+    [placeholder]="placeholder()"
     [(ngModel)]="searchTerm"
     (ngModelChange)="onSearchChange()"
   />
 
-  @if (editable) {
+  @if (editable()) {
     <div>
       &nbsp;
       <p-button
